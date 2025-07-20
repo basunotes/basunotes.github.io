@@ -1,33 +1,33 @@
 body {
-    box-sizing: border-box;
-    min-height: 100%;
-    margin: 0 auto;
-    padding: 2em;
-    font-family: Verdana;
-    font-size: 1.2em;
-    background-color: white;
+  box-sizing: border-box;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 2em;
+  font-family: Verdana;
+  font-size: 1.2em;
+  background-color: white;
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .container>div {
-    width: 50%;
-    text-align: left;
-    padding: 0.8em 1.2em;
-    border: solid 0.1em black;
+  width: 50%;
+  text-align: left;
+  padding: 0.8em 1.2em;
+  border: solid 0.1em black;
 }
 
 .scrollable {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
 }
 
 .scrollable>div {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 table {
@@ -36,7 +36,8 @@ table {
   font-size: smaller;
 }
 
-th, td {
+th,
+td {
   border: 0.1em solid #ccc;
   padding: 0.4em 0.6em;
   vertical-align: top;
@@ -47,4 +48,29 @@ th {
   background: #ddd;
   font-weight: bold;
   text-align: left;
+}
+
+a {
+  color: blue;
+  text-decoration: none;
+}
+
+a:visited {
+  color: blue;
+}
+
+a:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #0000FF;
+}
+
+pre {
+  margin: 0em !important;
+  padding: 0em !important;
+  background-color: white !important;
+  font-size: smaller !important;
 }
