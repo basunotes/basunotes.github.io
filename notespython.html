@@ -7,30 +7,33 @@
     <title>Notes on Python</title>
     <link rel="stylesheet" href="styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet" />
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
     <h1><i>Notes on Python</i></h1>
-    <div class="scrollable">
-        <div>
-            <table>
-                <th colspan="2">Heading</th>
-                <tr>
-                    <td>Code snippet</td>
-                    <td>
-                        <pre><code class="language-python">def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n - 1)
-
-print(factorial(5))</code></pre>
-                    </td>
-                </tr>
-            </table>
-        </div>
+    <div style="font-size: smaller;">
+        <b>Variables</b>
+        <div style="height: 0.3em;"></div>
+        The primary way to create a variable in Python is to assign it a value using the assignment operator.
+        There is no need to declare its type.
+        Python will infer a variable's type from the assigned object.
+        <div style="height: 0.3em;"></div>
+        <pre><code class="language-python">name = "Max" 
+age = 23</code></pre>
+        <div style="height: 0.3em;"></div>
+        If you want to ensure that the variable is of a certain type, this can be done with casting.
+        <div style="height: 0.3em;"></div>
+        <pre><code class="language-python">seat = str(10) 
+age = int(23)
+weight = float(70)</code></pre>
+        <div style="height: 0.3em;"></div>
+        To get the data type of a variable you can use the <code style="font-size: 1.2em;">type()</code> function.
+        <div style="height: 0.3em;"></div>
+        <pre><code class="language-python">print(type(age)) #Output: &ltclass 'int'&gt
+print(type(weight)) #Output: &ltclass 'float'&gt</code></pre>
+        <div style="height: 0.3em;"></div>
+    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
