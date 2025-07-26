@@ -45,6 +45,7 @@ th, td {
   width: 50%;
   word-wrap: break-word; 
   word-break: break-word; 
+  font-size: smaller;
 }
 
 th {
