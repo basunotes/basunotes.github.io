@@ -4,7 +4,7 @@ body {
   margin: 0 auto;
   padding: 2em;
   font-family: Verdana;
-  font-size: 12px;
+  font-size: 12px !important;
   background-color: white;
 }
 
