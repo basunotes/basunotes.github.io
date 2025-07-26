@@ -86,3 +86,7 @@ code {
 ul {
   padding-left: 1em;
 }
+
+code[class*="language-"], pre[class*="language-"] {
+  font-size: 12px !important;
+}
