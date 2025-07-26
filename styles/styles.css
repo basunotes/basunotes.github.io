@@ -28,7 +28,7 @@ body {
 }
 
 .scrollable>div, td, th {
-  min-width: 300px;
+  min-width: 50vh;
 }
 
 table {
