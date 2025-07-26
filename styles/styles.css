@@ -27,8 +27,8 @@ body {
   overflow-x: auto;
 }
 
-.scrollable>div {
-  min-width: 600px;
+.scrollable>div, td, th {
+  min-width: 300px;
 }
 
 table {
