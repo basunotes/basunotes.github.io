@@ -17,13 +17,18 @@ body {
   display: flex;
   flex-direction: row;
   font-size: smaller;
+  /* border-bottom: solid 0.1em black !important;*/
 }
 
 .container-two>div {
   width: 50%;
   text-align: left;
-  padding: 0.8em 1.2em;
-  border: solid 0.1em black;
+  /* padding: 0.8em 1.2em;*/
+  /*border: solid 0.1em black;*/
+}
+
+.code-2 {
+  padding: 0em 1.2em;
 }
 
 
@@ -86,8 +91,8 @@ a:active {
 
 pre {
   margin: 0em !important;
-  padding: 0em !important;
   background-color: white !important;
+  padding: 0em 0em !important;
 }
 
 ul {
