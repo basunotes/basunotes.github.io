@@ -84,9 +84,9 @@ code {
 }
 
 ul {
-  padding-left: 1em;
+  padding-left: 1rem;
 }
 
 code[class*="language-"], pre[class*="language-"] {
-  font-size: 0.2rem !important;
+  font-size: 0.7rem !important;
 }
