@@ -45,6 +45,7 @@ th, td {
   width: 50%;
   word-wrap: break-word; 
   word-break: break-word; 
+  font-size: 12px !important;
 }
 
 th {
@@ -75,7 +76,11 @@ pre {
   margin: 0em !important;
   padding: 0em !important;
   background-color: white !important;
-  font-size: smaller !important;
+  font-size: 12px !important;
+}
+
+code {
+  font-size: 12px !important;
 }
 
 ul {
