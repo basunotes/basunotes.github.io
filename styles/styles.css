@@ -24,10 +24,11 @@ body {
   overflow: hidden;
   position: relative;
   width: 100%;
+  overflow-x: auto;
 }
 
 .scrollable>div {
-  overflow-x: auto;
+  min-width: 600px;
 }
 
 table {
@@ -40,7 +41,10 @@ th, td {
   border: 0.1em solid #ccc;
   padding: 0.4em 0.6em;
   vertical-align: top;
-  white-space: nowrap;
+  white-space: normal; 
+  width: 50%;
+  word-wrap: break-word; 
+  word-break: break-word; 
 }
 
 th {
@@ -72,4 +76,8 @@ pre {
   padding: 0em !important;
   background-color: white !important;
   font-size: smaller !important;
+}
+
+ul {
+  padding-left: 1em;
 }
