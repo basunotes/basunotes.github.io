@@ -1,14 +1,10 @@
-html {
-  font-size: 1.2em;
-}
-
 body {
   box-sizing: border-box;
   min-height: 100%;
   margin: 0 auto;
   padding: 2em;
   font-family: Verdana;
-  font-size: 0.8rem !important;
+  font-size: 1.2rem;
   background-color: white;
 }
 
@@ -16,6 +12,20 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.container-two {
+  display: flex;
+  flex-direction: row;
+  font-size: smaller;
+}
+
+.container-two>div {
+  width: 50%;
+  text-align: left;
+  padding: 0.8em 1.2em;
+  border: solid 0.1em black;
+}
+
 
 .container>div {
   width: 50%;
@@ -38,7 +48,6 @@ body {
 table {
   border-collapse: collapse;
   width: auto;
-  font-size: 12px !important;
 }
 
 th, td {
@@ -49,7 +58,6 @@ th, td {
   width: 50%;
   word-wrap: break-word; 
   word-break: break-word; 
-  font-size: 12px !important;
 }
 
 th {
@@ -80,17 +88,12 @@ pre {
   margin: 0em !important;
   padding: 0em !important;
   background-color: white !important;
-  font-size: 12px !important;
-}
-
-code {
-  font-size: 12px !important;
 }
 
 ul {
-  padding-left: 1rem;
+  padding-left: 0.8em;
 }
 
 code[class*="language-"], pre[class*="language-"] {
-  font-size: 0.7rem !important;
+  font-size: 1rem !important;
 }
