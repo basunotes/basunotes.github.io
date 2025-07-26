@@ -79,6 +79,10 @@ pre {
   font-size: smaller !important;
 }
 
+code {
+  font-size: smaller !important;
+}
+
 ul {
   padding-left: 1em;
 }
