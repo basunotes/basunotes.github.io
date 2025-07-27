@@ -1,9 +1,3 @@
-<!--
-Highlight.js Python example:
-<pre><code class="language-python">print(type(age)) #Output: &ltclass 'int'&gt
-print(type(weight)) #Output: &ltclass 'float'&gt</code></pre>
--->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,273 +13,277 @@ print(type(weight)) #Output: &ltclass 'float'&gt</code></pre>
 <body>
     <span style="font-weight: bold;">Variables and Names</span>
     <div style="height: 0.4em;"></div>
-    <div class="container-two scrollable">
+    <div class="container-row scrollable">
         <div>
             Variables in Python are defined using the assignment operator. <br><br>
             There is need to declare their type as Python will infer a variable's type from the assigned
             object.
         </div>
-        <div class="code-2">
+        <div class="right-column">
             <pre><code class="language-python">name = "Max"
 age = 23</code></pre>
         </div>
     </div>
+
     <hr>
-        <div class="container-two scrollable">
+
+    <div class="container-row scrollable">
         <div>
-            Variables in Python are defined using the assignment operator. <br><br>
-            There is need to declare their type as Python will infer a variable's type from the assigned
-            object.
+            If you want to specify the data type of a variable then this can be done with casting.
         </div>
-        <div>
-            <pre><code class="language-python">name = "Max"
-age = 23</code></pre>
-        </div>
-    </div>
-    <div class="scrollable">
-        <div>
-            <table>
-                <tr>
-                    <th colspan="2">Variables and Names</th>
-                </tr>
-                <tr>
-                    <td>
-                        Variables in Python are defined using the assignment operator. <br><br>
-                        There is need to declare their type as Python will infer a variable's type from the assigned
-                        object.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">name = "Max"
-age = 23</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        If you want to specify the data type of a variable then this can be done with casting.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">age = int(23)
+        <div class="right-column">
+            <pre><code class="language-python">age = int(23)
 weight = float(65) # weight will be 65.0
 category = str(5) # category will be "5"</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        The data type of a variable can be found using the <code
-                            style="font-size: larger;">type()</code> function.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">print(type(age)) # Output: &ltclass 'int'&gt
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            The data type of a variable can be found using the <code>type()</code> function.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">print(type(age)) # Output: &ltclass 'int'&gt
 print(type(weight)) # Output: &ltclass 'float'&gt
 print(type(category)) # Output: &ltclass 'str'&gt</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        It is good practice to give variables descriptive names, unlike in mathematics.
-                        Moreover, there are certain strict rules that need to be followed; otherwise, you will get a
-                        syntax error:
-                        <ul>
-                            <li>A variable name must start with a letter or the underscore character</li>
-                            <li>A variable name cannot start with a number</li>
-                            <li>A variable name can only contain alphanumeric characters and underscores</li>
-                            <li>Variable names are case-sensitive</li>
-                            <li>A variable cannot be any of the Python keywords.</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        If you want to give a variable a name with more than one word, there are several naming
-                        conventions to make it more readable.
-                        We will use the snake case: <code>word1_word2</code>.
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Python allows you to define multiple variables in one line.
-                        You can also assign the same value to multiple variables in one line.
-                        <br><br>
-                        It is best to avoid assigning values this way, unless you are absolutely sure it makes your code
-                        more readable and understandable.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">num1, num2, num3 = 10, 20, 30
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            It is good practice to give variables descriptive names, unlike in mathematics.
+            Moreover, there are certain strict rules that need to be followed; otherwise, you will get a
+            syntax error.
+            <br><br>
+            If you want to give a variable a name with more than one word, there are several naming
+            conventions to make it more readable.
+            We will use the snake case: <code>word1_word2</code>.
+        </div>
+        <div class="right-column">
+            <ul>
+                <li>A variable name must start with a letter or the underscore character</li>
+                <li>A variable name cannot start with a number</li>
+                <li>A variable name can only contain alphanumeric characters and underscores</li>
+                <li>Variable names are case-sensitive</li>
+                <li>A variable cannot be any of the Python keywords.</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Python allows you to define multiple variables in one line.
+            You can also assign the same value to multiple variables in one line.
+            <br><br>
+            It is best to avoid assigning values this way, unless you are absolutely sure it makes your code
+            more readable and understandable.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">num1, num2, num3 = 10, 20, 30
+
 name1 = name2 = name3 = "Max"</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                        Output
-                    </th>
-                </tr>
-                <tr>
-                    <td>
-                        Using the <code>print()</code> function you can produce output that the user can view.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">name = "Max" 
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Output</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Using the <code>print()</code> function you can produce output that the user can view.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">name = "Max" 
 print(name) # Output: Max
 age = "23"
 print(name, age) # Output: Max 23</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="2">
-                        Data Types
-                    </th>
-                </tr>
-                <tr>
-                    <td>
-                        Variables can store data of different types, and each type can perform different operations.
-                        There are many built-in data types, but we will often encounter only the ones on the right.
-                    </td>
-                    <td>
-                        <div>
-                            <div>
-                                <table>
-                                    <tr style="font-weight: bold;">
-                                        <td>Example</td>
-                                        <td>Data Type</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = "Max"</code></pre>
-                                        </td>
-                                        <td>str</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = 25</code></pre>
-                                        </td>
-                                        <td>int</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = 3.14</code></pre>
-                                        </td>
-                                        <td>float</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = [1, 2, 3]</code></pre>
-                                        </td>
-                                        <td>list</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = (1, 2, 3)</code></pre>
-                                        </td>
-                                        <td>tuple</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = {a: "1", b: 2}</code></pre>
-                                        </td>
-                                        <td>dict</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = {1, 2, 3}</code></pre>
-                                        </td>
-                                        <td>set</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = True # or False</code></pre>
-                                        </td>
-                                        <td>bool</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <pre><code class="language-python">x = None</code></pre>
-                                        </td>
-                                        <td>NoneType</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th colspan="2">Strings</th>
-                </tr>
-                <tr>
-                    <td>
-                        As we have already seen, strings in Python are surrounded by either single or double quotes.
-                        If you want to include quotes inside the string, you need to ensure that these quotes don't
-                        match the ones surrounding the string, or you can use a backslash to escape them.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">text1 = "Max's notebook" 
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Data Types</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Variables can store data of different types, and each type can perform different operations.
+            There are many built-in data types, but we will often encounter only the ones on the right.
+        </div>
+        <div class="right-column">
+            <div class="scrollable">
+                <table>
+                    <tr style="font-weight: bold;">
+                        <td>Example</td>
+                        <td>Data Type</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = "Max"</code></pre>
+                        </td>
+                        <td>str</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = 25</code></pre>
+                        </td>
+                        <td>int</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = 3.14</code></pre>
+                        </td>
+                        <td>float</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = [1, 2, 3]</code></pre>
+                        </td>
+                        <td>list</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = (1, 2, 3)</code></pre>
+                        </td>
+                        <td>tuple</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = {a: "1", b: 2}</code></pre>
+                        </td>
+                        <td>dict</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = {1, 2, 3}</code></pre>
+                        </td>
+                        <td>set</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = True # or False</code></pre>
+                        </td>
+                        <td>bool</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <pre><code class="language-python">x = None</code></pre>
+                        </td>
+                        <td>NoneType</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Strings</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            As we have already seen, strings in Python are surrounded by either single or double quotes.
+            If you want to include quotes inside the string, you need to ensure that these quotes don't
+            match the ones surrounding the string, or you can use a backslash to escape them.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">text1 = "Max's notebook" 
 text2 = 'Max\'s notebook'</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Using triple single or double quotes it is possible to assign a multiline string to a variable.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">text1 = """This is a
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Using triple single or double quotes it is possible to assign a multiline string to a variable.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">text1 = """This is a
 multiline sentence."""</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Strings in Python are arrays of bytes representing unicode characters.
-                        However, Python does not have a character data type, a single character is simple a string with
-                        a length of 1.
-                        Square brackets can be used to access elements of the string.
-                        The first character has index 0.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "Hello World!"
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Strings in Python are arrays of bytes representing unicode characters.
+            However, Python does not have a character data type, a single character is simple a string with
+            a length of 1.
+            Square brackets can be used to access elements of the string.
+            The first character has index 0.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "Hello World!"
 print(a[1]) # Output: e   
 </code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Since strings are arrays, we can loop through the characters of a string using a
-                        <code>for</code> loop.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">for x in "apple":
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Since strings are arrays, we can loop through the characters of a string using a
+            <code>for</code> loop.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">for x in "apple":
     print(x)
 </code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        To get the length of the string, we can use the <code>len()</code> function.
-                        <br><br>
-                        The empty string <code>""</code> has length 0.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">print(len("apple"))
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            To get the length of the string, we can use the <code>len()</code> function.
+            <br><br>
+            The empty string <code>""</code> has length 0.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">print(len("apple"))
 </code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        To check if certain characters are present or not present in a string,
-                        we can use the keyword <code>in</code> or <code>not in</code>.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">text = "Hello World"
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            To check if certain characters are present or not present in a string,
+            we can use the keyword <code>in</code> or <code>not in</code>.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">text = "Hello World"
 print("World" in text) # Output: True
 print(" World" in text) # Output: True
 print("world" in text) # Output: False
 print("Hi" not in text) # Output: True</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        You can return a range of characters by using the slice syntax,
-                        in which you specify at least the start or end index, separated by a colon.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "Hello World!"
+        </div>
+    </div>
+
+    <hr>
+
+
+    <div class="container-row scrollable">
+        <div>
+            You can return a range of characters by using the slice syntax,
+            in which you specify at least the start or end index, separated by a colon.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "Hello World!"
 
 # Get the characters from position 2 to position 5 (not included):
 print(a[2:5])
@@ -298,63 +296,78 @@ print(a[2:])
 
 # Use negative indices to start from the end of the string:
 print(a[-5:-2]) # Output: orl</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        Python has a bunch of built-in methods that one can use to modify strings.
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        The <code>upper()</code> method returns the strings in upper case.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "Hello World!"
-print(a.upper())</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        The <code>lower()</code> method returns the strings in lower case.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "Hello World!"
-print(a.lower())</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        The <code>strip()</code> method removes any whitespace from the beginning or the end of a
-                        string.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "ABC  "
-print(len(a.strip())) # Output: 3</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        The <code>replace()</code> method replaces a string with another string.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "HELLO WORLD"
-print(a.replace("H", "J"))</code></pre>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        The <code>split()</code> method divides a string into a list of substrings based on a specified
-                        separator.
-                    </td>
-                    <td>
-                        <pre><code class="language-python">a = "2, 3, 4, 6"
-print(a.split(",")) # Output: ['2', ' 3', ' 4', ' 6']</code></pre>
-                    </td>
-                </tr>
-            </table>
         </div>
     </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Python has a bunch of built-in methods that one can use to modify strings.
+
+            <br><br>
+
+            The <code>upper()</code> method returns the strings in upper case.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "Hello World!"
+print(a.upper())</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            The <code>lower()</code> method returns the strings in lower case.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "Hello World!"
+print(a.lower())</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            The <code>strip()</code> method removes any whitespace from the beginning or the end of a
+            string.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "ABC  "
+print(len(a.strip())) # Output: 3</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            The <code>replace()</code> method replaces a string with another string.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "HELLO WORLD"
+print(a.replace("H", "J"))</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+
+    <div class="container-row scrollable">
+        <div>
+            The <code>split()</code> method divides a string into a list of substrings based on a specified
+            separator.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "2, 3, 4, 6"
+print(a.split(",")) # Output: ['2', ' 3', ' 4', ' 6']</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
 </body>
