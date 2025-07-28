@@ -69,6 +69,11 @@ td {
   word-break: break-word;
 }
 
+.three-column>th,
+td {
+  width: 33% !important;
+}
+
 th {
   background: #ddd;
   font-weight: bold;

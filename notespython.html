@@ -368,6 +368,224 @@ print(a.split(",")) # Output: ['2', ' 3', ' 4', ' 6']</code></pre>
 
     <hr>
 
+    <div class="container-row scrollable">
+        <div>
+            To combine two strings you can use the plus operator.
+            <br><br>
+            You cannot combine strings and numbers. You will get a TypeError.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "Hello"
+b = "World"
+c = a + b
+print(c)</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            F-String was introduced in Python 3.6 and allows for clean string formatting.
+            <br><br>
+            To specify a string as an f-string, simply put an <code>f</code> in front of the
+            string literal, and add curly brackets <code>{}</code> as placeholders.
+            <br><br>
+            A placeholder can contain variables, operations, functions and other modifiers to format the value.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = "World!"
+b = f"Hello {a}"
+print(b)</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            A placeholder can include a modifier to format the value.
+            <br><br>
+            A modifier is included by adding a colon <code>:</code> followed by a
+            legal formatting type, like <code>.2f</code> which means fixed point number
+            with 2 decimals.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">price = 59
+txt = f"The price is {price:.2f} dollars" 
+print(txt) # Output: 59.00</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            A placeholder can contain Python code, like math operations.
+            <br><br>
+            Result of the math operation is displayed in the output.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">txt = f"The result is {2 * 5}."
+print(txt)</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            We will come back to escape characters later.
+            <br><br>
+            <code>\n</code> is used to create a new line.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">print("a\nb")</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Booleans</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            A Boolean value can either be <code>True</code> or <code>False.</code>
+            <br><br>
+            When you compare two values, the expression is evaluated and Python returns the
+            Boolean answer.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">print(10 > 9) # Output: True
+print(10 == 9) # Output: False
+print(10 &lt 9) # Output: False</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            If there is a condition inside an <code>if</code> statement, Python evaluates the condition and
+            runs the appropriate code based on whether the condition is <code>True</code> or <code>False</code>.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">a = 10
+b = 9
+
+if b > a:
+  print("b is greater than a")
+else:
+  print("b is not greater than a")</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Using the <code>bool()</code> function you can evaluate any value,
+            and get <code>True</code> or <code>False</code> in return.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">bool("abc")
+bool(123)
+bool(["apple", "cherry", "banana"])</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            Almost any value is evaluated to <code>True</code> if it has some sort of content.
+            <br><br>
+            There are not many values that evaluate to <code>False</code>, except empty values,
+            such as <code>()</code>, <code>[]</code>, <code>{}</code>, <code>""</code>, the number <code>0</code>,
+            and the value <code>None</code>. And of course the value <code>False</code> evaluates to <code>False</code>.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">bool(False)
+bool(None)
+bool(0)
+bool("")
+bool(())
+bool([])
+bool({})</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            A object made from a class with <code>__len__</code> function that
+            returns <code>0</code> or <code>False</code> will be evaluated to <code>False</code>.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">class myclass():
+  def __len__(self):
+    return 0
+
+myobj = myclass()
+print(bool(myobj))</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            The built-in function <code>isinstance()</code> returns a boolean value.
+            It is used to determine whether an object is of certain data type.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">x  = 2
+print(isinstance(x, int))</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Arithmetic Operators</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Arithmetic operators are used with numeric values to perform common mathematical operations.
+        </div>
+        <div class="right-column">
+            <div class="scrollable">
+                <table class="three-columns">
+                    <tr style="font-weight: bold;">
+                        <td>Operator</td>
+                        <td>Name</td>
+                        <td>Example</td>
+                    </tr>
+                    <tr>
+                        <td><code>+</code></td>
+                        <td>Addition</td>
+                        <td><code>x + y</code></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-row scrollable">
+        <div>
+            <!---->
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python"></code></pre>
+        </div>
+    </div>
+
+    <hr>
+
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
 </body>
