@@ -568,12 +568,242 @@ print(isinstance(x, int))</code></pre>
                         <td>Addition</td>
                         <td><code>x + y</code></td>
                     </tr>
+                    <tr>
+                        <td><code>-</code></td>
+                        <td>Subtraction</td>
+                        <td><code>x - y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>*</code></td>
+                        <td>Multiplication</td>
+                        <td><code>x * y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>/</code></td>
+                        <td>Division</td>
+                        <td><code>x / y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>%</code></td>
+                        <td>Modulus</td>
+                        <td><code>x % y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>**</code></td>
+                        <td>Exponentiation</td>
+                        <td><code>x ** y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>//</code></td>
+                        <td>Floor division</td>
+                        <td><code>x // y</code></td>
+                    </tr>
                 </table>
             </div>
         </div>
     </div>
 
     <hr>
+
+    <span style="font-weight: bold;">Assignment Operators</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Assignment operators are used to assign value to variables.
+            <br><br>
+            The syntax is similar for other arithmetic operators introduced above.
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">x = 5
+x += 4 # Same as x = x + 4</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Comparison Operators</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Comparison operators are used to compare two values.
+        </div>
+        <div class="right-column">
+            <div class="scrollable">
+                <table class="three-columns">
+                    <tr style="font-weight: bold;">
+                        <td>Operator</td>
+                        <td>Name</td>
+                        <td>Example</td>
+                    </tr>
+                    <tr>
+                        <td><code>==</code></td>
+                        <td>Equal</td>
+                        <td><code>x == y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>==</code></td>
+                        <td>Not equal</td>
+                        <td><code>x == y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&gt</code></td>
+                        <td>Greater than</td>
+                        <td><code>x &gt y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt</code></td>
+                        <td>Less than</td>
+                        <td><code>x &lt y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&gt=</code></td>
+                        <td>Greater than or equal to</td>
+                        <td><code>x &gt= y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt=</code></td>
+                        <td>Less than or equal to</td>
+                        <td><code>x &lt= y</code></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Logical Operators</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Logical operators are used to combine conditional statements.
+        </div>
+        <div class="right-column">
+            <div class="scrollable">
+                <table class="three-columns">
+                    <tr style="font-weight: bold;">
+                        <td>Operator</td>
+                        <td>Description</td>
+                        <td>Example</td>
+                    </tr>
+                    <tr>
+                        <td><code>and</code></td>
+                        <td>Returns <code>True</code> if both statements are true</td>
+                        <td><code>x &lt 5 and x &lt 10</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>or</code></td>
+                        <td>Returns <code>True</code> if one of the statements is true</td>
+                        <td><code>x &lt 5 or x &lt 4</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>not</code></td>
+                        <td>Reverses the result, returns <code>False</code> if the result is true</td>
+                        <td><code>not(x &lt 5 and x &lt 10)</code></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Identity Operators</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            The identity operators compare the objects to determine whether they share the same memory and refer to the
+            same object type (data type).
+        </div>
+        <div class="right-column">
+            <div class="scrollable">
+                <table class="three-columns">
+                    <tr style="font-weight: bold;">
+                        <td>Operator</td>
+                        <td>Description</td>
+                        <td>Example</td>
+                    </tr>
+                    <tr>
+                        <td><code>is</code></td>
+                        <td>Returns <code>True</code> if both variables are the
+                            same object</td>
+                        <td><code>x is y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>is not</code></td>
+                        <td>Returns <code>True</code> if both variables are not the
+                            same object</td>
+                        <td><code>x is not y</code></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Membership Operators</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Membership operators are used to test if a sequence is presented in an object.
+        </div>
+        <div class="right-column">
+            <div class="scrollable">
+                <table class="three-columns">
+                    <tr style="font-weight: bold;">
+                        <td>Operator</td>
+                        <td>Description</td>
+                        <td>Example</td>
+                    </tr>
+                    <tr>
+                        <td><code>in</code></td>
+                        <td>Returns <code>True</code> if a sequence with the specified value
+                            is present in the object</td>
+                        <td><code>x in y</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>not in</code></td>
+                        <td>Returns <code>True</code> if a sequence with the specified value
+                            is not present in the object</td>
+                        <td><code>x in y</code></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Operator Precedence</span>
+    <div style="height: 0.4em;"></div>
+
+    <div class="container-row scrollable">
+        <div>
+            Operator precedence describes the order in which operations are performed.
+            <br><br>
+            Parentheses has the highest precedence, meaning that expressions inside parentheses must be evaluated first:
+            <br><br>
+            Multiplication <code>*</code> has higher precedence than addition <code>+</code>, and therefore multiplications are evaluated before additions.
+            <br><br>
+            <i>Details later!</i>
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">print((6 + 3) - (6 + 3))
+
+print(100 + 5 * 3)</code></pre>
+        </div>
+    </div>
+
+    <hr>
+
+    <span style="font-weight: bold;">Lists</span>
+    <div style="height: 0.4em;"></div>
 
     <div class="container-row scrollable">
         <div>

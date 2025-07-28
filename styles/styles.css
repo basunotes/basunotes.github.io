@@ -64,14 +64,14 @@ td {
   vertical-align: top;
   white-space: normal;
   width: 50% !important;
-  min-width: fit-content;
-  word-wrap: break-word;
-  word-break: break-word;
+  min-width: min-content;
+  /* word-wrap: break-word; */
+  /* word-break: break-word; */
 }
 
 .three-column>th,
 td {
-  width: 33% !important;
+  width: 33.33% !important;
 }
 
 th {
