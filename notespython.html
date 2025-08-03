@@ -38,6 +38,32 @@
         </div>
     </div>
 
+    <br>
+
+    <div class="container-row scrollable">
+        <div>
+            To further emphasize the point that variables have no type, consider the code 
+            on the right.
+            <br><br>
+        </div>
+        <div class="right-column">
+            <pre><code class="language-python">x = 2
+x = 2.5
+x = "A"</code></pre>
+        </div>
+    </div>
+
+        <div class="scrollable">
+        <div style="font-size: smaller;">
+           With each assignment, we have simply made <code>x</code> refer to a different type of object.
+           <br><br>
+           What happens to the object it was previously referencing?
+           <br>
+           To be imprecise, if the object is no longer in <i>use</i>, then the space it occupied is <i>reclaimed</i>.
+           This is known as <i>garbage collection</i> and we might go into details later.
+        </div>
+    </div>
+
     <hr>
 
     <div class="container-row scrollable">
