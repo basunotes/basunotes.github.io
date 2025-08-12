@@ -22,7 +22,7 @@
     <p>
         They are broadly organised as follows:
     <ul>
-        <li>Variables</li>
+        <li><a href="#Variables">Variables</a></li>
         <li>Numbers</li>
         <li>Strings</li>
         <li>Booleans</li>
@@ -41,58 +41,39 @@
     </ul>
     </p>
 
-    <span style="font-weight: bold;">Variables and Names</span>
-    <div style="height: 0.4em;"></div>
+    <span id="Variables"><b>Variables</b></span>
 
-    <div class="container-row scrollable">
-        <div>
-            A variable in Python is created when you first assign it a value.
-            <br><br>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 2</code></pre>
-        </div>
-    </div>
+    <p>
+        A variable in Python is created when you first assign it a value:
+    <pre><code class="language-python">>>> x = 2</code></pre>
+    </p>
 
-    <div class="scrollable" style="font-size: smaller;">
-        <div>
-            A variable itself never has any <i>type</i>; rather, it refers to a particular
-            object at any particular point in time. The object it refers to has a type.
-            <br><br>
-            In the code above, an object is created to represent the value <code>2</code>.
-            A variable <code>x</code> is created if it does not already exist.
-            The variable <code>x</code> is linked to this new object <code>2</code>.
-            <br><br>
-            Despite this very important technical detail, it is not uncommon for people to say that <code>x</code>
-            is of type integer, as it refers to an object of type integer.
-        </div>
-    </div>
+    <p>
+        In the code above, an object is created to represent the value <code>2</code>.
+        A variable <code>x</code> is created if it does not already exist.
+        The variable <code>x</code> is then linked to this new object <code>2</code>.
+        <br>
+        A variable itself never has any <i>type</i>; rather, it refers to a particular
+        object at any particular point in time. The object it refers to has a type.
+        Despite this very important technical detail, it is not uncommon for people to say that <code>x</code>
+        is of type integer, as it refers to an object of type integer.
+    </p>
 
-    <br>
-
-    <div class="container-row scrollable">
-        <div>
-            To further emphasize the point that variables have no type, consider the code
-            on the right.
-            <br><br>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 2
+    <p>
+        To further emphasize the point that variables have no type, consider the code
+        following code:
+    <pre><code class="language-python">x = 2
 x = 2.5
 x = "A"</code></pre>
-        </div>
-    </div>
+    </p>
 
-    <div class="scrollable">
-        <div style="font-size: smaller;">
-            With each assignment, we have simply made <code>x</code> refer to a different type of object.
-            <br><br>
-            What happens to the object it was previously referencing?
-            <br>
-            To be imprecise, if the object is no longer in <i>use</i>, then the space it occupied is <i>reclaimed</i>.
-            This is known as <i>garbage collection</i> and we might go into details later.
-        </div>
-    </div>
+    <p>
+        With each assignment, we have simply made <code>x</code> refer to a different type of object.
+        <br>
+        What happens to the object it was previously referencing?
+        To be imprecise, if the object is no longer in <i>use</i>, then the space it occupied is <i>reclaimed</i>.
+        This is known as <i>garbage collection</i> and we might go into details later.
+    </p>
 
     <br>
 
