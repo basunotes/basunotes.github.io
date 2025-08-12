@@ -8,6 +8,10 @@ body {
   background-color: white;
 }
 
+p {
+  font-size: smaller !important;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -102,12 +106,13 @@ a:active {
 pre {
   margin: 0em !important;
   background-color: white !important;
-  padding: 0em 0em !important;
+  padding: 0.4em 0.6em !important;
 }
 
 ul {
-  padding-left: 0.8em;
+  /* padding-left: 0.8em; */
   margin-top: 0em !important;
+  font-size: smaller !important;
 }
 
 li {
@@ -117,12 +122,12 @@ li {
 code[class*="language-"],
 pre[class*="language-"] {
   font-size: 1rem !important;
-  /* background-color: yellow !important; */
-  /* text-shadow: none !important; */
+  background-color: #F0F0F0 !important; 
+  text-shadow: none !important;
 }
 
-/*
+
 .token {
-    /* background-color: yellow !important; 
+     background-color: #F0F0F0 !important; 
 }
-*/
+
