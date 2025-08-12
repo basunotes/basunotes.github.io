@@ -45,7 +45,7 @@
 
     <p>
         A variable in Python is created when you first assign it a value:
-        <pre><code class="language-python">>>> x = 2</code></pre>
+    <pre><code class="language-python">>>> x = 2</code></pre>
     </p>
 
     <p>
@@ -62,9 +62,9 @@
     <p>
         To further emphasize the point that variables have no type, consider the code
         following code:
-        <pre><code class="language-python">x = 2
-x = 2.5
-x = "A"</code></pre>
+    <pre><code class="language-python">>>> x = 2
+>>> x = 2.5
+>>> x = "A"</code></pre>
     </p>
 
     <p>
@@ -77,8 +77,8 @@ x = "A"</code></pre>
 
     <p>
         Consider the second line of the following code:
-        <pre><code class="language-python">x = 2
-y = x</code></pre>
+    <pre><code class="language-python">>>> x = 2
+>>> y = x</code></pre>
     </p>
 
     <p>
@@ -90,16 +90,42 @@ y = x</code></pre>
     </p>
 
     <p style="font-size: smaller;">
-        In the following code, the last assignment makes <code>x</code> reference the integer <code>5</code>, but
-        it does not change the object <code>y</code> refers to. This might be expected behavior for many, but it
-        highlights an important fact:
-        There is no way to overwrite the value of the object <code>3</code>, as integers are <i>immutable</i> and thus
-        can never be changed
-        <i>in place</i>.
-    <pre><code class="language-python">x = 2
-y = x
-x = x + 1</code></pre>
+        In the following code, the last assignment makes <code>x</code> reference the integer <code>3</code>, but
+        it does not change the object <code>y</code> refers to.
+    <pre><code class="language-python">>>> x = 2
+>>> y = x
+>>> x = x + 1</code></pre>
     </p>
+
+    <p>
+        This might be expected behavior for many, but it
+        highlights an important fact:
+        There is no way to overwrite the value of the object <code>2</code>, as integers are <i>immutable</i> and thus
+        can never be changed <i>in place</i>. On the other hand, we have <i>mutable</i> objects, which can be changed in
+        place.
+        We will discuss them later.
+    </p>
+
+    <p>
+        It is good practice to give variables descriptive names, unlike in mathematics.
+        Moreover, there are certain strict rules that need to be followed; otherwise, you will get a
+        syntax error.
+        <ul>
+            <li>A variable name must start with a letter or the underscore character</li>
+            <li>A variable name cannot start with a number</li>
+            <li>A variable name can only contain alphanumeric characters and underscores</li>
+            <li>Variable names are case-sensitive</li>
+            <li>A variable cannot be any of the Python keywords</li>
+        </ul>
+    </p>
+
+    <p>
+        If you want to give a variable a name with more than one word, there are several naming
+        conventions to make it more readable.
+        We will use the snake case: <code>word1_word2</code>.
+    </p>
+
+    <hr>
 
     <div style="font-size: smaller;">
         On the other hand, we have <i>mutable</i> objects, which can be changed in place. To illustrate this point,
@@ -160,29 +186,6 @@ category = str(5) # category will be "5"</code></pre>
             <pre><code class="language-python">print(type(age)) # Output: &ltclass 'int'&gt
 print(type(weight)) # Output: &ltclass 'float'&gt
 print(type(category)) # Output: &ltclass 'str'&gt</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            It is good practice to give variables descriptive names, unlike in mathematics.
-            Moreover, there are certain strict rules that need to be followed; otherwise, you will get a
-            syntax error.
-            <br><br>
-            If you want to give a variable a name with more than one word, there are several naming
-            conventions to make it more readable.
-            We will use the snake case: <code>word1_word2</code>.
-        </div>
-        <div class="right-column">
-            <ul>
-                <li>A variable name must start with a letter or the underscore character</li>
-                <li>A variable name cannot start with a number</li>
-                <li>A variable name can only contain alphanumeric characters and underscores</li>
-                <li>Variable names are case-sensitive</li>
-                <li>A variable cannot be any of the Python keywords.</li>
-            </ul>
         </div>
     </div>
 
