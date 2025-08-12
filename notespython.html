@@ -45,7 +45,7 @@
 
     <p>
         A variable in Python is created when you first assign it a value:
-    <pre><code class="language-python">>>> x = 2</code></pre>
+        <pre><code class="language-python">>>> x = 2</code></pre>
     </p>
 
     <p>
@@ -62,7 +62,7 @@
     <p>
         To further emphasize the point that variables have no type, consider the code
         following code:
-    <pre><code class="language-python">x = 2
+        <pre><code class="language-python">x = 2
 x = 2.5
 x = "A"</code></pre>
     </p>
@@ -75,23 +75,19 @@ x = "A"</code></pre>
         This is known as <i>garbage collection</i> and we might go into details later.
     </p>
 
-    <br>
-
-    <div class="container-row scrollable">
-        <div>
-            Consider the second line of the code on the right.
-            Since the variable <code>x</code> is being used here, it is replaced
-            by the object it references, namely <code>2</code>.
-            A new variable, <code>y</code>, is created and made to reference the same object.
-            Therefore, both <code>x</code> and <code>y</code> end up referencing the same object.
-            However, there is no <i>link</i> between the two variables.
-            <br><br>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 2
+    <p>
+        Consider the second line of the following code:
+        <pre><code class="language-python">x = 2
 y = x</code></pre>
-        </div>
-    </div>
+    </p>
+
+    <p>
+        Since the variable <code>x</code> is being used here, it is replaced
+        by the object it references, namely <code>2</code>.
+        A new variable, <code>y</code>, is created and made to reference the same object.
+        Therefore, both <code>x</code> and <code>y</code> end up referencing the same object.
+        However, there is no <i>link</i> between the two variables.
+    </p>
 
     <p style="font-size: smaller;">
         In the following code, the last assignment makes <code>x</code> reference the integer <code>5</code>, but
