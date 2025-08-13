@@ -399,13 +399,46 @@ False</code></pre>
         include: Equal to (<code>==</code>), Not equal to (<code>!=</code>), Less than (<code>&lt;</code>), Greater than
         (<code>&gt;</code>), Less than or equal to (<code>&lt;=</code>), and
         Greater than or equal to (<code>&gt;=</code>).
-        <pre><code class="language-python">>>> 10 > 9
+    <pre><code class="language-python">>>> 10 > 9
 True
 >>> 10 == 9
 False
 >>> 10 &lt; 9
 False</code></pre>
     </p>
+
+    <p>
+        Consider the following code. The result is <code>False</code> because floating-point numbers in Python cannot
+        represent decimal values exactly
+        due to precision limitations.
+    <pre><code class="language-python">>>> 1.1 + 2.2 == 3.3
+False
+>>> 1.1 + 2.2
+3.3000000000000003
+</code></pre>
+    </p>
+
+    <p>
+        To handle this issue, you can use the <code>isclose()</code> method from the <code>math</code> module, which
+        allows
+        you to compare floating-point numbers with a tolerance for small errors:
+    <pre><code class="language-python">>>> import math
+>>> math.isclose(1.1 + 2.2, 3.3)
+True
+</code></pre>
+    </p>
+
+    <p>
+        Alternatively, the <code>Decimal</code> class from the <code>decimal</code> module can be used for precise
+        decimal
+        arithmetic. It provides an exact representation of decimal numbers, avoiding the rounding issues associated with
+        floats:
+    <pre><code class="language-python">>>> from decimal import Decimal
+>>> Decimal('1.1') + Decimal('2.2') == Decimal('3.3')
+True
+</code></pre>
+    </p>
+
 
     <p>
         When comparing different types, Python will attempt to convert values to a common type before making the
@@ -439,6 +472,14 @@ False</code></pre>
         <code>if</code> or <code>while</code> statement, according to the normal definition of <code>or</code> and
         <code>and</code>.
     </p>
+
+    <p>
+        Python allows for chained comparisons. For example, the expression <code>X &lt; Y &lt; Z</code> is equivalent to
+        <code>X &lt; Y and Y &lt; Z</code>. It's best to avoid this and be as explicit as possible.
+    </p>
+
+    <!--Start here!-->
+
 
 
     <br><br>
