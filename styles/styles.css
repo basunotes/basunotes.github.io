@@ -123,12 +123,17 @@ li {
 code[class*="language-"],
 pre[class*="language-"] {
   font-size: 1rem !important;
-  background-color: #F0F0F0 !important; 
+  background-color: #F0F0F0 !important;
   text-shadow: none !important;
 }
 
-
-.token {
-     background-color: #F0F0F0 !important; 
+code[class="plain"],
+pre[class="plain"] {
+  font-size: 1rem !important;
+  background-color: #F0F0F0 !important;
+  text-shadow: none !important;
 }
 
+.token {
+  background-color: #F0F0F0 !important;
+}

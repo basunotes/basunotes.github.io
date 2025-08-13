@@ -25,7 +25,7 @@
         <li><a href="#Variables">Variables</a></li>
         <li><a href="#Numbers">Numbers</a></li>
         <li><a href="#Strings">Strings</a></li>
-        <li>Booleans</li>
+        <li><a href="#Booleans">Booleans</a></li>
         <li>Lists</li>
         <li>Tuples</li>
         <li>Sets</li>
@@ -267,14 +267,183 @@ b</code></pre>
     <p>
         You can get an IndexError when you try to access a character in a string using its positional index if the index
         does not exist. But with slicing, out-of-range indexes are automatically adjusted to stay within bounds.
-        <pre><code class="language-python">>>> x = 'abc'
+    <pre><code class="language-python">>>> x = 'abc'
 >>> x[1:100]
 'bc'</code></pre>
     </p>
 
-    <!--Start here-->
+    <p>
+        Since strings are an immutable sequence, they cannot be changed in place by assigning to an index.
+        This results in a <code>TypeError: 'str' object does not support item assignment</code>.
+    <pre><code class="language-python">>>> x = 'abc'
+>>> x[0] = 'd'</code></pre>
+    </p>
+
+
+    <p>
+        To modify a string in Python, you generally need to create a new string using techniques such as concatenation
+        or slicing, and then assign the result back to the original variable. Since strings are immutable, any operation
+        that appears to modify a string actually returns a new string object. String methods also generate new string
+        objects. If you want to retain these new strings, you need to assign them to variables. Python automatically
+        garbage-collects old, unused string objects.
+        <br><br>
+        Methods are functions that are associated with and operate on objects. Consider the following method call
+        expression:
+    <pre class="plain"><code class="plain">object.method(arguments)</code></pre>
+    </p>
+
+    <p>
+        This expression is evaluated from left to right. Python retrieves the method associated with the object, then
+        calls it, passing in both the object and the provided arguments. If the method returns a result, that result
+        becomes the value of the entire method-call expression.
+    </p>
+
+    <p>
+        Here are some of the most frequently used string methods. I have not covered the edge cases, so make sure to be
+        aware of them to avoid unexpected behavior.
+    </p>
+
+    <p>
+        The <code>upper</code> method returns the strings in upper case:
+    <pre><code class="language-python">>>> x = 'abc'
+>>> x.upper()
+'ABC'</code></pre>
+    </p>
+
+
+    <p>
+        The <code>lower</code> method returns the string in lower case:
+    <pre><code class="language-python">>>> x = 'ABC'
+>>> x.lower()
+'abc'</code></pre>
+    </p>
+
+    <p>
+        The <code>strip</code> method removes any whitespace from the beginning or the end of a string:
+    <pre><code class="language-python">>>> x = 'abc '
+>>> x.strip()
+'abc'</code></pre>
+    </p>
+
+    <p>
+        The <code>replace</code> method replaces a substring with another string:
+    <pre><code class="language-python">>>> x = 'abc'
+>>> x.replace('a', 'd')
+'dbc'</code></pre>
+    </p>
+
+    <p>
+        The <code>split</code> method divides a string into a list of substrings based on a specified separator:
+    <pre><code class="language-python">>>> x = "1, 2, 3"
+>>> x.split(",")
+['1', ' 2', ' 3']</code></pre>
+    </p>
+
+    <p>
+        F-strings were introduced in Python 3.6 and allow for clean, concise string formatting.
+        To specify a string as an f-string, simply put <code>f</code> in front of the string literal,
+        and use curly brackets <code>{}</code> as placeholders:
+    <pre><code class="language-python">>>> x = 'd'
+>>> y = f'abc{x}'
+>>> y
+'abcd'</code></pre>
+    </p>
+
+    <p>
+        The expressions inside <code>{}</code> are evaluated at runtime, using the current values of the variables or
+        expressions they contain.
+        A placeholder can include variables, operations, function calls, and formatting modifiers.
+    <pre><code class="language-python">>>> x = 'd'
+>>> f'abc{x.upper()}'
+'abcD'
+>>> x = 2
+>>> f'{x:.2f}'
+'2.00'
+>>> f'The result is {2 * 5}'
+'The result is 10'</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="Booleans"><b>Booleans</b></span>
+
+    <p>
+        Python comes with Booleans with predefined <code>True</code> and
+        <code>False</code> objects that are essentially just the integers 1 and 0
+        with custom display logic.
+    <pre><code class="language-python">>>> True + 1
+2</code></pre>
+    </p>
+    <p>
+        It also has a special placeholder object called <code>None</code>, which is commonly
+        used to initialize names and objects and designate the absence of a result in functions.
+    </p>
+
+    <p>
+        Python provides a <code>bool</code> built-in function that can be used to extract the Boolean
+        value of an object. You can use this to explicitly check if an object is true, that is,
+        nonzero or nonempty.
+    <pre><code class="language-python">>>> bool(1)
+True
+>>> bool(0)
+False
+>>> bool('abc')
+True
+>>> bool('')
+False</code></pre>
+    </p>
+
+    <p>
+    <p>
+        Comparison operators are used to compare values. For numbers, they work exactly as you'd expect. These operators
+        include: Equal to (<code>==</code>), Not equal to (<code>!=</code>), Less than (<code>&lt;</code>), Greater than
+        (<code>&gt;</code>), Less than or equal to (<code>&lt;=</code>), and
+        Greater than or equal to (<code>&gt;=</code>).
+        <pre><code class="language-python">>>> 10 > 9
+True
+>>> 10 == 9
+False
+>>> 10 &lt; 9
+False</code></pre>
+    </p>
+
+    <p>
+        When comparing different types, Python will attempt to convert values to a common type before making the
+        comparison. For example, comparing an integer with a float will
+        convert the integer to a float before performing the comparison.
+    </p>
+
+    <p>
+        Python has three Boolean operators: <code>and</code>, <code>or</code>, and <code>not</code>.
+        These operators always return an object, either the object on the left side of the operator
+        or the object on the right.
+        The <code>and</code> operator returns the first false operand or the last operand if both are true.
+        The <code>or</code> operator returns the first true operand or the last if both are false.
+        The <code>not</code> operator inverts the truth value.
+    <pre><code class="language-python">>>> {} and []
+{}
+>>> {} and 4
+{}
+>>> 3 and 4
+4
+>>> 3 or 4
+3
+>>> {} or []
+[]
+>>> not 3
+False</code></pre>
+    </p>
+
+    <p>
+        The net result of all this is that you get a value that is logically true or false when tested in an
+        <code>if</code> or <code>while</code> statement, according to the normal definition of <code>or</code> and
+        <code>and</code>.
+    </p>
+
 
     <br><br>
+
+    <hr>
 
     <div style="font-size: smaller;">
         On the other hand, we have <i>mutable</i> objects, which can be changed in place. To illustrate this point,
@@ -374,82 +543,6 @@ print(name, age) # Output: Max 23</code></pre>
 
     <hr>
 
-    <span style="font-weight: bold;">Data Types</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Variables can store data of different types, and each type can perform different operations.
-            There are many built-in data types, but we will often encounter only the ones on the right.
-        </div>
-        <div class="right-column">
-            <div class="scrollable">
-                <table>
-                    <tr style="font-weight: bold;">
-                        <td>Example</td>
-                        <td>Data Type</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = "Max"</code></pre>
-                        </td>
-                        <td>str</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = 25</code></pre>
-                        </td>
-                        <td>int</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = 3.14</code></pre>
-                        </td>
-                        <td>float</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = [1, 2, 3]</code></pre>
-                        </td>
-                        <td>list</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = (1, 2, 3)</code></pre>
-                        </td>
-                        <td>tuple</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = {a: "1", b: 2}</code></pre>
-                        </td>
-                        <td>dict</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = {1, 2, 3}</code></pre>
-                        </td>
-                        <td>set</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = True # or False</code></pre>
-                        </td>
-                        <td>bool</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <pre><code class="language-python">x = None</code></pre>
-                        </td>
-                        <td>NoneType</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Strings</span>
     <div style="height: 0.4em;"></div>
 
@@ -477,19 +570,6 @@ multiline sentence."""</code></pre>
         </div>
     </div>
 
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To get the length of the string, we can use the <code>len()</code> function.
-            <br><br>
-            The empty string <code>""</code> has length 0.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print(len("apple"))
-</code></pre>
-        </div>
-    </div>
 
     <hr>
 
@@ -511,141 +591,6 @@ print("Hi" not in text) # Output: True</code></pre>
 
     <div class="container-row scrollable">
         <div>
-            Python has a bunch of built-in methods that one can use to modify strings.
-
-            <br><br>
-
-            The <code>upper()</code> method returns the strings in upper case.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "Hello World!"
-print(a.upper())</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>lower()</code> method returns the strings in lower case.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "Hello World!"
-print(a.lower())</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>strip()</code> method removes any whitespace from the beginning or the end of a
-            string.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "ABC  "
-print(len(a.strip())) # Output: 3</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>replace()</code> method replaces a string with another string.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "HELLO WORLD"
-print(a.replace("H", "J"))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>split()</code> method divides a string into a list of substrings based on a specified
-            separator.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "2, 3, 4, 6"
-print(a.split(",")) # Output: ['2', ' 3', ' 4', ' 6']</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            F-String was introduced in Python 3.6 and allows for clean string formatting.
-            <br><br>
-            To specify a string as an f-string, simply put an <code>f</code> in front of the
-            string literal, and add curly brackets <code>{}</code> as placeholders.
-            <br><br>
-            A placeholder can contain variables, operations, functions and other modifiers to format the value.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "World!"
-b = f"Hello {a}"
-print(b)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            A placeholder can include a modifier to format the value.
-            <br><br>
-            A modifier is included by adding a colon <code>:</code> followed by a
-            legal formatting type, like <code>.2f</code> which means fixed point number
-            with 2 decimals.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">price = 59
-txt = f"The price is {price:.2f} dollars" 
-print(txt) # Output: 59.00</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            A placeholder can contain Python code, like math operations.
-            <br><br>
-            Result of the math operation is displayed in the output.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">txt = f"The result is {2 * 5}."
-print(txt)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Booleans</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            A Boolean value can either be <code>True</code> or <code>False.</code>
-            <br><br>
-            When you compare two values, the expression is evaluated and Python returns the
-            Boolean answer.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print(10 > 9) # Output: True
-print(10 == 9) # Output: False
-print(10 &lt 9) # Output: False</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
             If there is a condition inside an <code>if</code> statement, Python evaluates the condition and
             runs the appropriate code based on whether the condition is <code>True</code> or <code>False</code>.
         </div>
@@ -660,40 +605,6 @@ else:
         </div>
     </div>
 
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Using the <code>bool()</code> function you can evaluate any value,
-            and get <code>True</code> or <code>False</code> in return.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">bool("abc")
-bool(123)
-bool(["apple", "cherry", "banana"])</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Almost any value is evaluated to <code>True</code> if it has some sort of content.
-            <br><br>
-            There are not many values that evaluate to <code>False</code>, except empty values,
-            such as <code>()</code>, <code>[]</code>, <code>{}</code>, <code>""</code>, the number <code>0</code>,
-            and the value <code>None</code>. And of course the value <code>False</code> evaluates to <code>False</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">bool(False)
-bool(None)
-bool(0)
-bool("")
-bool(())
-bool([])
-bool({})</code></pre>
-        </div>
-    </div>
 
     <hr>
 
@@ -740,95 +651,6 @@ print(isinstance(x, int))</code></pre>
         <div class="right-column">
             <pre><code class="language-python">x = 5
 x += 4 # Same as x = x + 4</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Comparison Operators</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Comparison operators are used to compare two values.
-        </div>
-        <div class="right-column">
-            <div class="scrollable">
-                <table class="three-columns">
-                    <tr style="font-weight: bold;">
-                        <td>Operator</td>
-                        <td>Name</td>
-                        <td>Example</td>
-                    </tr>
-                    <tr>
-                        <td><code>==</code></td>
-                        <td>Equal</td>
-                        <td><code>x == y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>==</code></td>
-                        <td>Not equal</td>
-                        <td><code>x == y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>&gt</code></td>
-                        <td>Greater than</td>
-                        <td><code>x &gt y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>&lt</code></td>
-                        <td>Less than</td>
-                        <td><code>x &lt y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>&gt=</code></td>
-                        <td>Greater than or equal to</td>
-                        <td><code>x &gt= y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>&lt=</code></td>
-                        <td>Less than or equal to</td>
-                        <td><code>x &lt= y</code></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Logical Operators</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Logical operators are used to combine conditional statements.
-        </div>
-        <div class="right-column">
-            <div class="scrollable">
-                <table class="three-columns">
-                    <tr style="font-weight: bold;">
-                        <td>Operator</td>
-                        <td>Description</td>
-                        <td>Example</td>
-                    </tr>
-                    <tr>
-                        <td><code>and</code></td>
-                        <td>Returns <code>True</code> if both statements are true</td>
-                        <td><code>x &lt 5 and x &lt 10</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>or</code></td>
-                        <td>Returns <code>True</code> if one of the statements is true</td>
-                        <td><code>x &lt 5 or x &lt 4</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>not</code></td>
-                        <td>Reverses the result, returns <code>False</code> if the result is true</td>
-                        <td><code>not(x &lt 5 and x &lt 10)</code></td>
-                    </tr>
-                </table>
-            </div>
         </div>
     </div>
 
