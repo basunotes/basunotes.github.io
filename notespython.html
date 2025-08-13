@@ -23,8 +23,8 @@
         They are broadly organised as follows:
     <ul>
         <li><a href="#Variables">Variables</a></li>
-        <li>Numbers</li>
-        <li>Strings</li>
+        <li><a href="#Numbers">Numbers</a></li>
+        <li><a href="#Strings">Strings</a></li>
         <li>Booleans</li>
         <li>Lists</li>
         <li>Tuples</li>
@@ -110,13 +110,13 @@
         It is good practice to give variables descriptive names, unlike in mathematics.
         Moreover, there are certain strict rules that need to be followed; otherwise, you will get a
         syntax error.
-        <ul>
-            <li>A variable name must start with a letter or the underscore character</li>
-            <li>A variable name cannot start with a number</li>
-            <li>A variable name can only contain alphanumeric characters and underscores</li>
-            <li>Variable names are case-sensitive</li>
-            <li>A variable cannot be any of the Python keywords</li>
-        </ul>
+    <ul>
+        <li>A variable name must start with a letter or the underscore character</li>
+        <li>A variable name cannot start with a number</li>
+        <li>A variable name can only contain alphanumeric characters and underscores</li>
+        <li>Variable names are case-sensitive</li>
+        <li>A variable cannot be any of the Python keywords</li>
+    </ul>
     </p>
 
     <p>
@@ -126,6 +126,155 @@
     </p>
 
     <hr>
+
+    <span id="Numbers"><b>Numbers</b></span>
+
+    <p>
+        Python supports the usual numeric types: integers and floating-point numbers.
+        It also provides more advanced numeric programming support, which we will explore later.
+    </p>
+
+    <p>
+        Arithmetic operators are used to perform common mathematical operations. These operators include: Addition
+        (<code>+</code>), Subtraction (<code>-</code>), Multiplication (<code>*</code>), Division (<code>/</code>),
+        Modulus
+        (<code>%</code>), Exponentiation (<code>**</code>), and Floor Division (<code>//</code>).
+    </p>
+
+    <p>
+        If an expression contains more than one operator, Python uses precedence rules to determine which operation to
+        perform first.
+        Many of these rules are similar to those in mathematics. For example, multiplication takes precedence over
+        addition.
+        Expressions within parentheses are evaluated first.
+    <pre><code class="language-python">>>> 2 * 3 + 5
+11
+>>> 2 * (3 + 5)
+16</code></pre>
+    </p>
+
+    <p>
+        If an expression consists of different numeric types, Python converts all the operands up to the type of the
+        most complex operand in the expression.
+        In the following example, the integer is promoted to a floating-point number.
+    <pre><code class="language-python">>>> 2.5 + 3 
+5.5</code></pre>
+    </p>
+
+    <p>
+        In Python, you can represent numbers not only in decimal (base 10), but also in hexadecimal (base 16), octal
+        (base 8), and binary (base 2) using specific prefixes:
+    <pre><code class="language-python">>>> 0xA, 0o11, 0b110
+(10, 9, 6)</code></pre>
+    </p>
+
+    <p>
+        To convert decimal integers to these other bases, you can use Python’s built-in functions:
+    <pre><code class="language-python">>>> hex(10), oct(9), bin(6)
+('0xa', '0o11', '0b110')</code></pre>
+    </p>
+
+    <p>These functions return strings formatted with the appropriate base prefix. To convert a string representation of
+        a number back into an integer, use the built-in <code>int</code> function and specify the base:
+    <pre><code class="language-python">>>> int('0xA', 16)
+10</code></pre>
+    </p>
+
+    <p>
+        A large value such as 9,999,999 is easier to read when written with commas to group digits. As of Python 3.6,
+        numeric literals in Python can contain underscores to group digits together, making them easier to read. These
+        underscores do not change the value of the literal.
+    <pre><code class="language-python">>>> 9_999_999
+9999999</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="Strings"><b>Strings</b></span>
+
+    <p>
+        Python strings are categorized as immutable sequences, meaning that the characters they contain have a
+        left-to-right positional order and cannot be changed in place.
+        <br><br>
+        Escape sequences let us embed characters that cannot be easily inserted into a string literal. The character
+        <code>\</code>,
+        along with one or more characters following it in the string literal, is replaced with a single character in the
+        resulting string object.
+    <pre><code class="language-python">>>> x = 'a\nb'
+>>> print(x)
+a
+b</code></pre>
+    </p>
+
+    <p>
+        File paths usually contain backslashes. This can cause problems when you try to open the file, as Python
+        interprets those backslashes as escape characters. To avoid this problem, you can use the letter <code>r</code>
+        before the
+        string to tell Python to treat the backslashes as literal characters.
+    <pre><code class="language-python">>>> path = r"C:\new\test.dat"</code></pre>
+    </p>
+
+    <p>
+        You can use Python’s built-in <code>ord</code> function to convert a single character into its corresponding
+        Unicode code point (an integer).
+    <pre><code class="language-python">>>> ord('A')
+65</code></pre>
+    </p>
+
+    <p>
+        To do the reverse, that is, convert a Unicode code point back to a character, use the <code>chr</code> function.
+    <pre><code class="language-python">>>> chr(65)
+'A'</code></pre>
+    </p>
+
+    <p>
+        You can concatenate strings using the <code>+</code> operator and repeat them
+        using the <code>*</code> operator. The meaning of an operator depends on the types of objects being processed.
+        This is known as polymorphism, which we will discuss later.
+        However, Python does not allow combining numbers and strings using the <code>+</code> operator; doing so will
+        result in a
+        <code>TypeError</code>.
+    </p>
+
+    <p>
+        Slicing lets you get a part of a sequence, like a string, using two numbers separated by a colon: start:end.
+        The first number is the starting index (included), and the second is the ending index (not included).
+        Python returns a new object with the items in that range.
+        If you leave out the start index, it defaults to 0. If you leave out the end index, it defaults to the length of
+        the sequence.
+    <pre><code class="language-python">>>> x = 'abcdef'
+>>> x[0], x[-2], x[1:3], x[1:], x[:-1]
+('a', 'e', 'bc', 'bcdef', 'abcde')</code></pre>
+    <p>
+
+    <p>
+        You can also add a third number, like this: start:end:step. This is called the step or stride. By default, the
+        step is 1 (go one item at a time).
+        But you can use it to skip items (e.g., every other item) or even go backward by using a negative step.
+    <pre><code class="language-python">>>> x = 'abcdef'
+>>> x[::2]
+'ace'
+>>> x[::-1]
+'fedcba'</code></pre>
+    </p>
+
+    <p>
+        In the slicing expression <code>x[::-1]</code>, the first two bounds can be
+        thought of as defaulting to <code>len(x)-1</code> and <code>-1</code>.
+    </p>
+
+
+    <p>
+        You can get an IndexError when you try to access a character in a string using its positional index if the index
+        does not exist. But with slicing, out-of-range indexes are automatically adjusted to stay within bounds.
+        <pre><code class="language-python">>>> x = 'abc'
+>>> x[1:100]
+'bc'</code></pre>
+    </p>
+
+    <!--Start here-->
+
+    <br><br>
 
     <div style="font-size: smaller;">
         On the other hand, we have <i>mutable</i> objects, which can be changed in place. To illustrate this point,
@@ -304,28 +453,6 @@ print(name, age) # Output: Max 23</code></pre>
     <span style="font-weight: bold;">Strings</span>
     <div style="height: 0.4em;"></div>
 
-    <div style="font-size: smaller;">
-        Python strings are categorized as <i>immutable sequences</i>, meaning
-        that the characters they contain have a left-to-right positional order
-        and cannot be changed in place.
-    </div>
-
-    <br>
-
-    <div class="container-row scrollable">
-        <div>
-            As we have already seen, strings in Python are surrounded by either single or double quotes.
-            If you want to include quotes inside the string, you need to ensure that these quotes don't
-            match the ones surrounding the string, or you can use a backslash to escape them.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">text1 = "Max's notebook" 
-text2 = 'Max\'s notebook'</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <div class="container-row scrollable">
         <div>
             Using triple single or double quotes it is possible to assign a multiline string to a variable.
@@ -333,23 +460,6 @@ text2 = 'Max\'s notebook'</code></pre>
         <div class="right-column">
             <pre><code class="language-python">text1 = """This is a
 multiline sentence."""</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Strings in Python are arrays of bytes representing unicode characters.
-            However, Python does not have a character data type, a single character is simple a string with
-            a length of 1.
-            Square brackets can be used to access elements of the string.
-            The first character has index 0.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "Hello World!"
-print(a[1]) # Output: e   
-</code></pre>
         </div>
     </div>
 
@@ -394,31 +504,6 @@ print("World" in text) # Output: True
 print(" World" in text) # Output: True
 print("world" in text) # Output: False
 print("Hi" not in text) # Output: True</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-
-    <div class="container-row scrollable">
-        <div>
-            You can return a range of characters by using the slice syntax,
-            in which you specify at least the start or end index, separated by a colon.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "Hello World!"
-
-# Get the characters from position 2 to position 5 (not included):
-print(a[2:5])
-
-# Get the characters from the start to position 5 (not included):
-print(a[:5])
-
-# Get the characters from position 2, and all the way to the end:
-print(a[2:])
-
-# Use negative indices to start from the end of the string:
-print(a[-5:-2]) # Output: orl</code></pre>
         </div>
     </div>
 
@@ -493,22 +578,6 @@ print(a.split(",")) # Output: ['2', ' 3', ' 4', ' 6']</code></pre>
 
     <div class="container-row scrollable">
         <div>
-            To combine two strings you can use the plus operator.
-            <br><br>
-            You cannot combine strings and numbers. You will get a TypeError.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = "Hello"
-b = "World"
-c = a + b
-print(c)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
             F-String was introduced in Python 3.6 and allows for clean string formatting.
             <br><br>
             To specify a string as an f-string, simply put an <code>f</code> in front of the
@@ -551,19 +620,6 @@ print(txt) # Output: 59.00</code></pre>
         <div class="right-column">
             <pre><code class="language-python">txt = f"The result is {2 * 5}."
 print(txt)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            We will come back to escape characters later.
-            <br><br>
-            <code>\n</code> is used to create a new line.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print("a\nb")</code></pre>
         </div>
     </div>
 
@@ -671,68 +727,12 @@ print(isinstance(x, int))</code></pre>
 
     <hr>
 
-    <span style="font-weight: bold;">Arithmetic Operators</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Arithmetic operators are used with numeric values to perform common mathematical operations.
-        </div>
-        <div class="right-column">
-            <div class="scrollable">
-                <table class="three-columns">
-                    <tr style="font-weight: bold;">
-                        <td>Operator</td>
-                        <td>Name</td>
-                        <td>Example</td>
-                    </tr>
-                    <tr>
-                        <td><code>+</code></td>
-                        <td>Addition</td>
-                        <td><code>x + y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-</code></td>
-                        <td>Subtraction</td>
-                        <td><code>x - y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>*</code></td>
-                        <td>Multiplication</td>
-                        <td><code>x * y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>/</code></td>
-                        <td>Division</td>
-                        <td><code>x / y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>%</code></td>
-                        <td>Modulus</td>
-                        <td><code>x % y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>**</code></td>
-                        <td>Exponentiation</td>
-                        <td><code>x ** y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>//</code></td>
-                        <td>Floor division</td>
-                        <td><code>x // y</code></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Assignment Operators</span>
     <div style="height: 0.4em;"></div>
 
     <div class="container-row scrollable">
         <div>
+            # More on augmented assignments later!
             Assignment operators are used to assign value to variables.
             <br><br>
             The syntax is similar for other arithmetic operators introduced above.
@@ -898,29 +898,6 @@ x += 4 # Same as x = x + 4</code></pre>
                     </tr>
                 </table>
             </div>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Operator Precedence</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Operator precedence describes the order in which operations are performed.
-            <br><br>
-            Parentheses has the highest precedence, meaning that expressions inside parentheses must be evaluated first:
-            <br><br>
-            Multiplication <code>*</code> has higher precedence than addition <code>+</code>, and therefore
-            multiplications are evaluated before additions.
-            <br><br>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print((6 + 3) - (6 + 3))
-
-print(100 + 5 * 3)</code></pre>
         </div>
     </div>
 

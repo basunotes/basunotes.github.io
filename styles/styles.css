@@ -110,7 +110,7 @@ pre {
 }
 
 ul {
-  /* padding-left: 0.8em; */
+  padding-left: 1rem;
   margin-top: 0em !important;
   font-size: smaller !important;
 }
