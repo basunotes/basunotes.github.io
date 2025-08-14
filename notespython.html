@@ -26,10 +26,10 @@
         <li><a href="#Numbers">Numbers</a></li>
         <li><a href="#Strings">Strings</a></li>
         <li><a href="#Booleans">Booleans</a></li>
-        <li>Lists</li>
-        <li>Tuples</li>
-        <li>Sets</li>
-        <li>Dictionaries</li>
+        <li><a href="#Lists">Lists</a></li>
+        <li><a href="#Tuples">Tuples</a></li>
+        <li><a href="#Sets">Sets</a></li>
+        <li><a href="#Dictionaries">Dictionaries</a></li>
         <li>if and match Selections</li>
         <li>while and for Loops</li>
         <li>Functions</li>
@@ -478,49 +478,349 @@ False</code></pre>
         <code>X &lt; Y and Y &lt; Z</code>. It's best to avoid this and be as explicit as possible.
     </p>
 
-    <!--Start here!-->
+    <p>
+        In Python, there are two primary ways to compare objects: the <code>==</code> operator and the <code>is</code>
+        operator. The <code>==</code> operator
+        tests for equality, checking whether the values of two objects are the same by comparing all parts of compound
+        objects and their nested components, from left to right, until a difference is found. On the other hand, the
+        <code>is</code>
+        operator tests for object identity, verifying whether two names point to the exact same object in memory,
+        essentially checking if they occupy the same address.
+    <pre><code class="language-python">>>> L1 = [1, ('a', 3)]
+>>> L2 = [1, ('a', 3)]
+>>> L1 == L2, L1 is L2
+(True, False)
+>>> L1 = [1, ('a', 3)]
+>>> L2 = [1, ('a', 2)]
+>>> L1 &lt; L2
+False</code></pre>
+    </p>
 
+    <p>
+        You need to be careful, as Python internally caches and reuses certain objects
+        for optimization purposes. For example:
+    <pre><code class="language-python">>>> x = 256
+>>> y = 256
+>>> x is y
+True</code></pre>
+    </p>
 
-
-    <br><br>
+    <p>
+        The <code>getrefcount</code>function can help explore this behavior by showing how many references an object
+        has.
+    </p>
 
     <hr>
 
-    <div style="font-size: smaller;">
-        On the other hand, we have <i>mutable</i> objects, which can be changed in place. To illustrate this point,
-        consider the following code:
-        <pre><code class="language-python">x = [1, 2, 3]
-y = x
-x[0] = 4</code></pre>
+    <span id="Lists"><b>Lists</b></span>
+
+
+
+    <p>
+        Lists are sequences and support many of the same operations as strings.
+        <br>
+        The <code>+</code> and <code>*</code> operators represent concatenation and repetition, respectively.
+        Indexing and slicing work the same way.
+    </p>
+
+    <p>
+        However, lists are mutable, meaning they support operations that modify
+        a list object in place. To illustrate this point, consider the following code:
+    <pre><code class="language-python">>>> x = [1, 2, 3]
+>>> y = x
+>>> x[0] = 4
+>>> y
+[4, 2, 3]</code></pre>
+    </p>
+
+    <p>
         One might expect that the last assignment does not affect <code>y</code>, as it still refers to the old object.
         This is not the case. We have changed a component of the object <code>x</code> refers to. This overwrites the
-        value
-        in place, so it affects <code>y</code> because it refers to the same object.
+        value in place, so it affects <code>y</code> because it refers to the same object.
         <br><br>
         If you don't want this, you can make a copy of the object. There are multiple ways to do this, one of which is:
-        <pre><code class="language-python">x = [1, 2, 3]
-y = x[:]
-x[0] = 4</code></pre>
-    </div>
+    <pre><code class="language-python">>>> x = [1, 2, 3]
+>>> y = x[:]
+>>> x[0] = 4
+>>> y
+[1, 2, 3]</code></pre>
+    </p>
 
-    <div style="font-size: smaller;">
-        There are two ways to check for <i>equality</i> in a Python program.
-        One is using the <code>==</code> operator, which tests whether the referenced objects have the same value.
-        The other is the <code>is</code> operator, which tests for object <i>identity</i>, that is, whether both names
-        point to the exact same object.
-        <pre><code class="language-python">x = [1, 2, 3]
-y = [1, 2, 3]
-x == y
-x is y</code></pre>
-        If, however, we perform the same operations on an immutable object, we won't necessarily get the same result.
-        <pre><code class="language-python">x = 100
-y = 100
-x == y
-x is y</code></pre>
-        This is because some integers and strings are cached and reused.
-        More on the <code>getrefcount</code> function later!
-    </div>
+    <p> When using a list, you can modify its contents by assigning a new value to a specific item or to a range (slice)
+        of items. The length of the sequence being assigned does not need to match the length of the slice being
+        replaced. Slice assignment can be used to replace, expand, or shrink the subject list.
+    <pre><code class="language-python">>>> x = [1, 2, 3] 
+>>> x[1:2] = [4, 5] 
+>>> x 
+[1, 4, 5, 3] 
+>>> x[1:1] = [6, 7] 
+>>> x 
+[1, 6, 7, 4, 5, 3] 
+>>> x[1:2] = [] 
+>>> x 
+[1, 7, 4, 5, 3]</code></pre>
+    </p>
 
+    <p>
+        Like strings, Python list objects also support type-specific method calls,
+        most of which modify the list itself.
+    </p>
+
+    <p>
+        The <code>insert</code> method can be used to insert items at a specified location without replacing any of the
+        existing items.
+    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+>>> x.insert(2, 5)
+>>> x
+[1, 2, 5, 3, 4]</code></pre>
+    </p>
+
+    <p>
+        To add an item to the end of the list, use the <code>append</code> method.
+    <pre><code class="language-python">>>> x = [1, 2, 3]
+>>> x.append(4)
+>>> x
+[1, 2, 3, 4]</code></pre>
+    </p>
+
+    <p>
+        To append elements from another list to the current list, use the <code>extend</code> method.
+        The elements will be added to the end of the list.
+        The <code>extend</code> method does not have to append lists, you can add any iterable object.
+    <pre><code class="language-python">>>> x = [1, 2, 3]
+>>> y = [4, 5]
+>>> x.extend(y)
+>>> x
+[1, 2, 3, 4, 5]</code></pre>
+    </p>
+
+    <p>
+        The <code>remove</code> method removes the specified item.
+        If there are more than one item with the specified value, then the method removes the first occurrence.
+    <pre><code class="language-python">>>> x = [1, 1, 2, 3]
+>>> x.remove(1)
+>>> x
+[1, 2, 3]</code></pre>
+    </p>
+
+    <p>
+        The <code>pop</code> method removes and returns the item from the specified index.
+        If no index is specified, then it removes the last item.
+    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+>>> x.pop(2)
+3
+>>> x
+[1, 2, 4]
+>>> x.pop()
+4
+>>> x
+[1, 2]</code></pre>
+    </p>
+
+    <p>
+        The <code>del</code> keyword also removes item from specied index. The syntax is different.
+        You can use it also to delete the entire list.
+    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+>>> del x[2]
+>>> x
+[1, 2, 4]
+>>> del x</code></pre>
+    </p>
+
+    <p>
+        The <code>clear</code> method empties the list but it does not delete it.
+    <pre><code class="language-python">>>> x = [1, 2, 3]
+>>> x.clear()
+>>> x
+[]</code></pre>
+    </p>
+
+    <p>
+        List objects have a <code>sort</code> method that sorts the list alphanumerically, ascending by default.
+        Just make sure that the items are of the same data type.
+        <br>
+        To sort descending use the keyword argument <code>reverse = True</code>.
+        Alternatively, one can use the <code>reverse</code> method.
+    <pre><code class="language-python">>>> x = [3, 1, 2]
+>>> x.sort()
+>>> x
+[1, 2, 3]
+>>> x.sort(reverse = True)
+>>> x
+[3, 2, 1]
+>>> x.reverse()
+>>> x
+[1, 2, 3]</code></pre>
+    </p>
+
+    <p>
+        You can also sort based on a function by using the keyword argument <code>key = function</code>.
+        The function will return a value for each item in list based on which the list will be sorted.
+        The <code>sort</code> method is case-sensitive. To avoid unexpect results you can use <code>str.lower</code>
+        as a key function.
+    <pre><code class="language-python">>>> def myfunc(n):
+...     return abs(n - 50)
+... 
+>>> x = [100, 50, 65, 82, 23]
+>>> x.sort(key = myfunc)
+>>> x
+[50, 65, 23, 82, 100]</code></pre>
+    </p>
+
+    <p>
+        Instead of using slice syntax, you can also use the <code>copy</code> method or the
+        <code>List</code> constructor.
+    <pre><code class="language-python">>>> x = [1, 2, 3]
+>>> y = list(x)
+>>> z = x.copy()
+>>> y, z
+([1, 2, 3], [1, 2, 3])</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="Tuples"><b>Tuples</b></span>
+
+    <p>
+        Tuples, like strings, are immutable sequences. There are certain
+        peculiarities one must be aware of when working with them. For example,
+        if you want a single-item tuple, you need to add a trailing comma:
+    <pre><code class="language-python">>>> x = (2)
+>>> x
+2
+>>> x = (2,)
+>>> x
+(2,)</code></pre>
+    </p>
+
+    <p>
+        Python allows you to omit the opening and closing round brackets for a tuple
+        where it is not ambiguous to do so:
+    <pre><code class="language-python">>>> x = 2, 3, 4
+>>> x
+(2, 3, 4)</code></pre>
+    </p>
+
+    <p>
+        Tuples don't provide the same methods as strings, lists, or
+        dictionaries. For example, there is no built-in <code>append</code> method.
+        A workaround for modifying a tuple is to convert it into a list, make your changes,
+        and then convert it back into a tuple using the <code>tuple</code> constructor.
+        The immutability of tuples provides some integrity; you can be sure that
+        a tuple won't be changed elsewhere in a program unintentionally.
+    </p>
+
+    <hr>
+
+    <span id="Sets"><b>Sets</b></span>
+
+    <p>Python sets are unordered collections of unique and immutable (hashable) elements. Unlike lists or tuples, sets
+        do not allow duplicates and do not maintain any order. You can create a set using the built-in <code>set</code>
+        function
+        with any iterable, or with curly brace (<code>{}</code>) literals.
+    <pre><code class="language-python">>>> A = set('abc')
+>>> B = {'d', 'e', 'f'}
+>>> A, B
+({'c', 'a', 'b'}, {'e', 'd', 'f'})</code></pre>
+    </p>
+
+    <p>
+        Sets support fast membership testing and standard set operations like union, intersection, difference, subset
+        and superset checks:
+    <pre><code class="language-python">>>> A = {1, 2, 3, 4}
+>>> B = {2, 4, 5, 6}
+>>> A & B
+{2, 4}
+>>> A | B
+{1, 2, 3, 4, 5, 6}
+>>> A - B
+{1, 3}
+>>> A > B
+False</code></pre>
+    </p>
+
+    <p>
+        Sets are especially handy for eliminating duplicates, comparing collections regardless of order, or checking
+        what's missing or extra:
+    <pre><code class="language-python">>>> list(set([1, 2, 2, 3, 1]))
+[1, 2, 3]
+>>> set('learn') - set('ear')
+{'n', 'l'}
+>>> set('note') == set('tone')
+True</code></pre>
+    </p>
+
+    <p>
+        Regular sets are mutable, meaning you can add or remove items using methods like <code>add</code> and
+        <code>remove</code>.
+        However, the elements themselves must be immutable. You can use the <code>update</code> method to add items
+        from an iterable object.
+    </p>
+
+    <hr>
+
+    <span id="Dictionaries"><b>Dictionaries</b></span>
+
+    <p>Dictionaries are key-based collections of objects. Items are stored and retrieved using keys, rather than by
+        positional index as in lists. Internally, dictionaries are implemented as hash tables.
+    </p>
+
+    <p> When you assign a new key to a dictionary, a new key-value pair is added to the dictionary. This differs from
+        lists, where you can only assign values to existing indices. Dictionary keys are not limited to strings; any
+        immutable object (such as numbers, strings, or tuples) can be used as a key.
+    </p>
+
+    <p>As of Python 3.7, dictionaries preserve the insertion order of keys as an implementation detail, and this
+        behavior became an official part of the Python language specification in Python 3.8.
+    <pre><code class="language-python">>>> D = {'a': 1, 'b': 2, 3: 'c'}
+>>> D
+{'a': 1, 'b': 2, 3: 'c'}
+>>> D['e'] = 4
+>>> D
+{'a': 1, 'b': 2, 3: 'c', 'e': 4}
+>>> D = {'a' : 1, 'a': 2}
+>>> D
+{'a': 2}</code></pre>
+    </p>
+
+    <p>
+        You can build dictionaries using the <code>dict</code> constructor.
+    <pre><code class="language-python">>>> x = dict(a = 1, b = 2)
+>>> x
+{'a': 1, 'b': 2}</code></pre>
+    </p>
+
+    <p>
+        Dictionary methods <code>keys</code>, <code>values</code>, and <code>items</code> return iterable objects
+        containing keys, values, and (key,
+        value) pairs, respectively, which can be used in loops or converted to lists for display. Any changes done to
+        the dictionary will be
+        reflected accordingly.
+    <pre><code class="language-python">>>> x = {'a' : 1, 'b': 2, 'c': 3}
+>>> list(x.keys())
+['a', 'b', 'c']
+>>> list(x.values())
+[1, 2, 3]
+>>> list(x.items())
+[('a', 1), ('b', 2), ('c', 3)]
+>>> x['d'] = 4
+>>> list(x.keys())
+['a', 'b', 'c', 'd']</code></pre>
+    </p>
+
+    <p>
+        Fetching a nonexistent key is normally an error, but the <code>get</code>
+        method returns a default value, <code>None</code>, or a passed-in default if the key
+        doesn't exist.
+        <pre><code class="language-python">>>> D = {'a' : 1}
+>>> D.get('b')
+>>> D.get('b', 2)
+2</code></pre>
+    </p>
+
+    <!--Bookmark-->
+
+    <br><br>
 
     <hr>
 
@@ -697,41 +997,6 @@ x += 4 # Same as x = x + 4</code></pre>
 
     <hr>
 
-    <span style="font-weight: bold;">Identity Operators</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            The identity operators compare the objects to determine whether they share the same memory and refer to the
-            same object type (data type).
-        </div>
-        <div class="right-column">
-            <div class="scrollable">
-                <table class="three-columns">
-                    <tr style="font-weight: bold;">
-                        <td>Operator</td>
-                        <td>Description</td>
-                        <td>Example</td>
-                    </tr>
-                    <tr>
-                        <td><code>is</code></td>
-                        <td>Returns <code>True</code> if both variables are the
-                            same object</td>
-                        <td><code>x is y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>is not</code></td>
-                        <td>Returns <code>True</code> if both variables are not the
-                            same object</td>
-                        <td><code>x is not y</code></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Membership Operators</span>
     <div style="height: 0.4em;"></div>
 
@@ -769,250 +1034,6 @@ x += 4 # Same as x = x + 4</code></pre>
     <span style="font-weight: bold;">Lists</span>
     <div style="height: 0.4em;"></div>
 
-    <div class="container-row scrollable">
-        <div>
-            Lists are used to store multiple items in a single variable.
-            <br>
-            List items can be of any data type, and lists allow duplicate values.
-            <br>
-            You create them simply by using square brackets.
-            <br>
-            List items are ordered, changeable, and allow duplicate values.
-            <br>
-            List items are indexed: the first item has index 0, the second item has index 1,
-            and so on.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">myList = ["abc", 34, True, 40, "abc"]
-
-print(myList[0]) # Output: abc</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To determine how many items a list has, use the <code>len()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print(len([1, 2, 3]))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            It is also possible to use the <code>list()</code> constructor when creating a new list.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">myList = list((1, 2, 3))            
-print(myList)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Just like with strings, negative indexing in lists means counting from the end.
-            <br>
-            You can extract a portion of a list by specifying a range of indexes, indicating where to start and where to
-            end.
-            <br>
-            When you specify a range, Python returns a new list containing the selected items.
-            <br>
-            To do this, you use slice syntax, which involves specifying the start and/or end index, separated by a
-            colon.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">myList =  ["apple", "banana", "cherry", "orange", "kiwi", "melon", "mango"]
-
-print(mylist[-1])
-
-print(mylist[2:5])
-
-print(mylist[:4])
-
-print(mylist[2:])
-
-print(mylist[-4:-1])</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can change the value of a specific item by referring to its index.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-thislist[1] = "blackcurrant"
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To change the value of items within a specific range, define a list with the new values, and refer to the
-            range of index numbers where you want to insert the new values.
-            <br><br>
-            If you insert more items than you replace, the new items will be inserted where you specified, and the
-            remaining items will move accordingly.
-            <br><br>
-            If you insert less items than you replace, the new items will be inserted where you specified, and the
-            remaining items will move accordingly.
-            <br><br>
-            The length of the list will change when the number of items inserted does not match the number of items
-            replaced.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry", "orange", "kiwi", "mango"]
-thislist[1:3] = ["blackcurrant", "watermelon"]
-print(thislist)
-
-thislist = ["apple", "banana", "cherry"]
-thislist[1:2] = ["blackcurrant", "watermelon"]
-print(thislist)
-
-thislist = ["apple", "banana", "cherry"]
-thislist[1:3] = ["watermelon"]
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>insert()</code> method can be used to insert items at a specified location
-            without replacing any of the existing items.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-thislist.insert(2, "watermelon")
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To add an item to the end of the list, use the <code>append()</code> method.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-thislist.append("orange")
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To append elements from another list to the current list, use the <code>extend()</code>
-            method.
-            <br><br>
-            The elements will be added to the end of the list.
-            <br><br>
-            The <code>extend()</code> method does not have to append lists, you can add any
-            iterable object. For you example you can elements of a tuple to a list.
-            <br><br>
-            Another easier way to join lists is using the <code>+</code> operator.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-tropical = ["mango", "pineapple", "papaya"]
-thislist.extend(tropical)
-print(thislist)
-
-thislist = ["apple", "banana", "cherry"]
-thistuple = ("kiwi", "orange")
-thislist.extend(thistuple)
-print(thislist)
-
-list1 = ["a", "b", "c"]
-list2 = [1, 2, 3]
-
-list3 = list1 + list2
-print(list3)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>remove()</code> method removes the specified item.
-            <br><br>
-            If there are more than one item with the specified value, then the method removes
-            the first occurrence.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "banana", "cherry"]
-thislist.remove("banana")
-print(thislist)
-</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>pop()</code> method removes the item from the specified index.
-            <br><br>
-            If no index is specified, then it removes the last item.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-thislist.pop(1)
-print(thislist)
-
-thislist = ["apple", "banana", "cherry"]
-thislist.pop()
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>del</code> keyword also removes item from specied index. <br>
-            The syntax is different.
-            <br><br>
-            You can use it also to delete the entire list.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-del thislist[0]
-print(thislist)
-
-thislist = ["apple", "banana", "cherry"]
-del thislist</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>clear()</code> method empties the list but it does not delete it.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-thislist.clear()
-print(thislist)</code></pre>
-        </div>
-    </div>
-
     <hr>
 
     <span style="font-weight: bold;">List Comprehension</span>
@@ -1029,250 +1050,9 @@ print(thislist)</code></pre>
 
     <hr>
 
-    <span style="font-weight: bold;">Sorting lists</span>
-    <div style="height: 0.4em;"></div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            List objects have a <code>sort()</code> method that will sort the list
-            alphanumerically, ascending, by default.
-            <br><br>
-            Only make sure that the items are of same data type.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["orange", "mango", "kiwi", "pineapple", "banana"]
-thislist.sort()
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To sort descending use the keyword argument <code>reverse = True</code>.
-            <br><br>
-            Alternatively, one can use the <code>reverse()</code> method.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["orange", "mango", "kiwi", "pineapple", "banana"]
-thislist.sort(reverse = True)
-print(thislist)
-
-thislist = ["banana", "Orange", "Kiwi", "cherry"]
-thislist.reverse()
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can also sort based on a function by using the keyword argument <code>key = function</code>.
-            <br><br>
-            The function will return a value for each item in list based on which the list will be sorted.
-            <br><br>
-            <code>list.reverse()</code> takes no keyword arguments.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunc(n):
-  return abs(n - 50)
-
-thislist = [100, 50, 65, 82, 23]
-
-thislist.sort(key = myfunc)
-
-print(thislist)
-</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The sort() method is case-sensitive. To avoid unexpected result, you can use <code>str.lower()</code> as a
-            key function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["banana", "Orange", "Kiwi", "cherry"]
-thislist.sort(key = str.lower)
-print(thislist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You cannot copy a list simply by typing <code>list2 = list1</code>, because
-            <code>list2</code> will only be a reference to <code>list1</code>, and changes
-            made in <code>list1</code> will automatically also be made in <code>list2</code>.
-            <br><br>
-            You can use the built-in methods <code>copy()</code> and <code>list()</code> to copy a list.
-            <br><br>
-            You can also make a copy of a list using the slice operator.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thislist = ["apple", "banana", "cherry"]
-mylist = thislist.copy()
-print(mylist)
-
-thislist = ["apple", "banana", "cherry"]
-mylist = list(thislist)
-print(mylist)
-
-thislist = ["apple", "banana", "cherry"]
-mylist = list[:]
-print(mylist)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Tuples</span>
     <div style="height: 0.4em;"></div>
 
-    <div class="container-row scrollable">
-        <div>
-            Tuples can also be used to store multiple items in a single variable.
-            Tuple items can be of any data type, and tuples allow duplicate values.
-            They are created simply by using round brackets.
-            Tuple items are ordered but not changeable.
-            Tuple items are indexed: the first item has index 0, the second item has index 1, and so on.
-            <br><br>
-            Note: To create a tuple with only one item, you have to add a comma after the item, otherwise Python will
-            not recognize it as a tuple.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">myTuple = ("abc", 34, True, 40, "abc")
-
-print(myTuple[0])
-
-thistuple = ("apple",)
-print(type(thistuple))
-
-#NOT a tuple
-thistuple = ("apple")
-print(type(thistuple))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To determine how many items a tuple has, use the <code>len()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thistuple = ("apple", "banana", "cherry")
-print(len(thistuple))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            It is also possible to use the <code>tuple()</code> constructor to make a tuple.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thistuple = tuple(("apple", "banana", "cherry")) # note the double round-brackets
-print(thistuple)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Indexing works similar to strings and lists.
-            <br><br>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Once a tuple is created, you cannot change its values. Tuples are unchangeable, or immutable as it also is
-            called.
-            <br><br>
-
-            But there is a workaround. You can convert the tuple into a list, change the list, and convert the list back
-            into a tuple.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = ("apple", "banana", "cherry")
-y = list(x)
-y[1] = "kiwi"
-x = tuple(y)
-
-print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Since tuples are immutable, they do not have a built-in append() method, but there are other ways to add
-            items to a tuple.
-            <br><br>
-            Just like the workaround for changing a tuple, you can convert it into a list, add your item(s), and convert
-            it back into a tuple.
-            <br><br>
-            You are allowed to add tuples to tuples, so if you want to add one item, (or many), create a new tuple with
-            the item(s), and add it to the existing tuple.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thistuple = ("apple", "banana", "cherry")
-y = list(thistuple)
-y.append("orange")
-thistuple = tuple(y)
-
-thistuple = ("apple", "banana", "cherry")
-y = ("orange",)
-thistuple += y
-
-print(thistuple)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Tuples are unchangeable, so you cannot remove items from it, but you can use the same workaround as we used
-            for changing and adding tuple items.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thistuple = ("apple", "banana", "cherry")
-y = list(thistuple)
-y.remove("apple")
-thistuple = tuple(y)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Or you can delete the tuple completely using the <code>del</code> keyword.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thistuple = ("apple", "banana", "cherry")
-del thistuple
-print(thistuple) #this will raise an error because the tuple no longer exists</code></pre>
-        </div>
-    </div>
 
     <hr>
 
@@ -1333,347 +1113,8 @@ print(red)</code></pre>
 
     <hr>
 
-    <div class="container-row scrollable">
-        <div>
-            To join two or more tuples you can use the <code>+</code> operator.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">tuple1 = ("a", "b" , "c")
-tuple2 = (1, 2, 3)
-
-tuple3 = tuple1 + tuple2
-print(tuple3)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you want to multiply the content of a tuple a given number of times,
-            you can use the <code>*</code> operator.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ("apple", "banana", "cherry")
-mytuple = fruits * 2
-
-print(mytuple)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Sets are also used to store multiple items in a single variable.
-            <br><br>
-            Set is a collection which is unordered, unchangeable, and unindexed.
-            To be precise, set items are unchangeable, but you can remove items and add new items.
-            <br><br>
-            Sets are written with curly brackets.
-            <br><br>
-            <code>True</code> and <code>1</code> considered the same value.
-            <br>
-            <code>False</code> and <code>0</code> considered the same value.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry", "apple"}
-
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You cannot access items in a set by referring to an index or a key.
-            <br><br>
-            But you can loop through the set items using a <code>for</code> loop, or ask if a specified value is present
-            in a set, by using the <code>in</code> keyword.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-
-for x in thisset:
-  print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            It is also possible to use the <code>set()</code> constructor to make a set.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = set(("apple", "banana", "cherry")) # note the double round-brackets
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To determine how many items a set has, use the <code>len()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-
-print(len(thisset))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Once a set is created, you cannot change its items, but you can add new items.
-            <br><br>
-            To add one item to a set use the <code>add()</code> method.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-
-thisset.add("orange")
-
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To add items from another set into the current set, use the <code>update()</code> method.
-            <br><br>
-            The object in the <code>update()</code> method does not have to be a set, it can be any iterable object.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-tropical = {"pineapple", "mango", "papaya"}
-thisset.update(tropical)
-print(thisset)
-
-thisset = {"apple", "banana", "cherry"}
-mylist = ["kiwi", "orange"]
-
-thisset.update(mylist)
-
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To remove an item in a set, use the <code>remove()</code>, or the <code>discard()</code> method.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-thisset.remove("banana")
-print(thisset)
-
-thisset = {"apple", "banana", "cherry"}
-thisset.discard("banana")
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can also use the <code>pop()</code> method to remove an item, but this method will remove a random item,
-            so you cannot be sure what item that gets removed.
-
-            The return value of the <code>pop()</code> method is the removed item.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-
-x = thisset.pop()
-
-print(x)
-
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>clear()</code> method empties the set.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-
-thisset.clear()
-
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>del</code> keyword will delete the set completely.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisset = {"apple", "banana", "cherry"}
-
-del thisset
-
-print(thisset)</code></pre>
-        </div>
-    </div>
-
-    <div class="container-row scrollable">
-        <div>
-            <i>More on set operations later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Dictionaries</span>
     <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Dictionaries are used to store data values in key:value pairs.
-            <br><br>
-            A dictionary is a collection which is ordered (as of Python version 3.7),
-            changeable and does not allow duplicates.
-            <br><br>
-            Dictionaries are written with curly brackets, and have keys and values.
-            <br>
-            The values in dictionary items can be of any data type.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Dictionaries cannot have two items with the same key.
-            <br><br>
-            Duplicate values will overwrite existing values.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964,
-  "year": 2020
-}
-print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To determine how many items a dictionary has, use the <code>len()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print(len(thisdict))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            It is also possible to use the <code>dict()</code> constructor to make a dictionary.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = dict(name = "John", age = 36, country = "Norway")
-print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can access the items of a dictionary by referring to its key name, inside square brackets.
-            <br><br>
-            There is also a method called <code>get()</code> that will give you the same result.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-x = thisdict["model"]
-
-x = thisdict.get("model")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>keys()</code> method will return a list of all the keys in the dictionary.
-            <br><br>
-            The list of the keys is a view of the dictionary, meaning that any changes done to the dictionary will be
-            reflected in the keys list.
-            <br><br>
-            Add a new item to the original dictionary, and see that the keys list gets updated as well.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = thisdict.keys()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>values()</code> method will return a list of all the values in the dictionary.
-            <br><br>
-            The list of the values is a view of the dictionary, meaning that any changes done to the dictionary will be
-            reflected in the values list.
-            <br><br>
-            Add a new item to the original dictionary, and see that the values list gets updated as well.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = thisdict.values()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>items()</code> method will return each item in a dictionary, as tuples in a list.
-            <br><br>
-            The returned list is a view of the items of the dictionary, meaning that any changes done to the dictionary
-            will be reflected in the items list.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = thisdict.items()</code></pre>
-        </div>
-    </div>
 
     <hr>
 
@@ -1696,22 +1137,6 @@ if "model" in thisdict:
 
     <div class="container-row scrollable">
         <div>
-            You can change the value of a specific item by referring to its key name.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-thisdict["year"] = 2018</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
             The <code>update()</code> method will update the dictionary with the items from the given argument.
             <br><br>
             If the item does not exist, the item will be added.
@@ -1725,23 +1150,6 @@ thisdict["year"] = 2018</code></pre>
   "year": 1964
 }
 thisdict.update({"year": 2020})</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Adding an item to the dictionary is done by using a new index key and assigning a value to it.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-thisdict["color"] = "red"
-print(thisdict)</code></pre>
         </div>
     </div>
 
@@ -1828,169 +1236,6 @@ print(thisdict) #this will cause an error because "thisdict" no longer exists.</
 }
 thisdict.clear()
 print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Print all key names in the dictionary, one by one.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in thisdict:
-  print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Print all values in the dictionary, one by one.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in thisdict:
-  print(thisdict[x])</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can also use the <code>values()</code> method to return values of a dictionary.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code>for x in thisdict.values():
-  print(x)</pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can use the <code>keys()</code> method to return the keys of a dictionary.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in thisdict.keys():
-  print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Loop through both keys and values, by using the <code>items()</code> method.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x, y in thisdict.items():
-  print(x, y)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You cannot copy a dictionary simply by typing <code>dict2 = dict1</code>, because: <code>dict2</code> will
-            only be a reference to
-            <code>dict1</code>, and changes made in <code>dict1</code> will automatically also be made in
-            <code>dict2</code>.
-            <br><br>
-            There are ways to make a copy, one way is to use the built-in Dictionary method <code>copy()</code>.
-            <br><br>
-            Another way to make a copy is to use the built-in function <code>dict()</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-mydict = thisdict.copy()
-print(mydict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            A dictionary can contain dictionaries, this is called nested dictionaries.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">myfamily = {
-  "child1" : {
-    "name" : "Emil",
-    "year" : 2004
-  },
-  "child2" : {
-    "name" : "Tobias",
-    "year" : 2007
-  },
-  "child3" : {
-    "name" : "Linus",
-    "year" : 2011
-  }
-}</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Create three dictionaries, then create one dictionary that will contain the other three dictionaries.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">child1 = {
-  "name" : "Emil",
-  "year" : 2004
-}
-child2 = {
-  "name" : "Tobias",
-  "year" : 2007
-}
-child3 = {
-  "name" : "Linus",
-  "year" : 2011
-}
-
-myfamily = {
-  "child1" : child1,
-  "child2" : child2,
-  "child3" : child3
-}</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To access items from a nested dictionary, you use the name of the dictionaries, starting with the outer
-            dictionary.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print(myfamily["child2"]["name"])</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Loop through the keys and values of all nested dictionaries.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x, obj in myfamily.items():
-  print(x)
-
-  for y in obj:
-    print(y + ':', obj[y])</code></pre>
         </div>
     </div>
 
