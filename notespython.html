@@ -887,6 +887,27 @@ True</code></pre>
 
     <span id="ifMatch"><b>if and Match Selections</b></span>
 
+    <p>
+        All Python compound statements, statements that have other statements nested inside them, follow the same
+        general pattern of a header line terminated in a colon, followed by a nested block of code usually indented
+        underneath the header line, like this:
+    <pre style="background-color: #f0f0f0 !important;"><code style="font-size: smaller;">Header line:
+	Nested statement block</code></pre>
+    </p>
+
+    <p>
+        Python relies on indentation (whitespace at the beginning of a line) to define scope in the code. Other
+        programming languages often use curly brackets for this purpose. Consider the following code: Python evaluates
+        the condition inside an <code>if</code> statement and runs the appropriate code based on whether the condition
+        is <code>True</code> or <code>False</code>.
+    <pre><code class="language-python">>>> a = 33
+>>> b = 200
+>>> if b > 0:
+...     print('b is greater than a')
+... 
+b is greater than a</code></pre>
+    </p>
+
 
     <!--Bookmark-->
 
@@ -1090,26 +1111,6 @@ if "model" in thisdict:
 
     <span style="font-weight: bold;">Conditionals</span>
     <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Python supports the usual logical conditions from mathematics.
-            <br><br>
-            These conditions can be used in several ways, most commonly in "if statements" and loops.
-            An "if statement" is written by using the <code>if</code> keyword.
-            <br><br>
-            Python relies on indentation (whitespace at the beginning of a line) to define scope in the code.
-            Other programming languages often use curly-brackets for this purpose.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 33
-b = 200
-if b > a:
-  print("b is greater than a")</code></pre>
-        </div>
-    </div>
-
-    <hr>
 
     <div class="container-row scrollable">
         <div>
