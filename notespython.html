@@ -31,8 +31,8 @@
         <li><a href="#Sets">Sets</a></li>
         <li><a href="#Dictionaries">Dictionaries</a></li>
         <li><a href="#ifMatch">if and match Selections</a></li>
-        <li>while and for Loops</li>
-        <li>Functions</li>
+        <li><a href="#whileFor">while and for Loops</a></li>
+        <li><a href="#Functions">Functions</a></li>
         <li>Lambdas</li>
         <li>Generators</li>
         <li>Modules</li>
@@ -726,6 +726,19 @@ True</code></pre>
 ([1, 2, 3], [1, 2, 3])</code></pre>
     </p>
 
+    <p>
+        If a collection object contains a reference to itself, it is called a cyclic object.
+        Python prints a <code>[...] </code> whenever it detects a cycle in the object back to itself, rather than getting stuck in an infinite loop.
+        Cyclic structures may cause code of your own to fall into unexpected loops if you don't anticipate them.
+        <pre><code class="language-python">>>> L = ['a']
+>>> L.append(L)
+>>> L
+['a', [...]]
+>>> L[1]
+['a', [...]]
+</code></pre>
+    </p>
+
     <hr>
 
     <span id="Tuples"><b>Tuples</b></span>
@@ -908,12 +921,216 @@ True</code></pre>
 b is greater than a</code></pre>
     </p>
 
+    <p>
+        The <code>elif</code> keyword in Python stands for else if.
+        It allows you to check a new condition if the previous <code>if</code> or <code>elif</code> conditions were not
+        true. You can use multiple <code>elif</code> statements to test several different conditions in sequence.
+    <pre><code class="language-python">>>> a = 33
+>>> b = 33
+>>> if b > a:
+...     print('b is greater than a')
+... elif a == b:
+...     print('a and b are equal')
+... 
+a and b are equal</code></pre>
+    </p>
 
-    <!--Bookmark-->
+    <p>
+        The <code>else</code> keyword catches anything which isn't caught by the preceding conditions.
+    <pre><code class="language-python">>>> a = 200
+>>> b = 33
+>>> if b > a:
+...     print('b is greater than a')
+... elif a == b:
+...     print('and b are equal')
+... else:
+...     print('a is greater than b')
+... 
+a is greater than b</code></pre>
+    </p>
+
+    <p>
+        If you have only one statement to execute, you can put it on the same line as the if statement.
+    <pre><code class="language-python">>>> if a > b: print("a is greater than b")
+... 
+a is greater than b</code></pre>
+    </p>
+
+    <p>
+        If you have only one statement to execute, one for <code>if</code>,
+        and one for <code>else</code>, you can put it all on the same line:
+    <pre><code class="language-python">>>> a = 2
+>>> b = 330
+>>> print("A") if a > b else print("B")
+B</code></pre>
+    </p>
+
+    <p>
+        You can also have multiple else statements on the same line.
+    <pre><code class="language-python">>>> a = 330
+>>> b = 330
+>>> print("A") if a > b else print("=") if a == b else print("B")
+=</code></pre>
+    </p>
+
+    <p>
+        The <code>match</code> statement is used to perform different actions based on different conditions. Instead of
+        writing many if/else statements, you can use the match statement. The <code>match</code> statement selects one
+        of many code blocks to be executed. Here's how it works: the match expression is evaluated once. The value of
+        the expression is then compared with the values of each case. If there is a match, the associated block of code
+        is executed.
+    <pre><code class="language-python">>>> day = 2
+>>> match day:
+...     case 1:
+...             print('Monday')
+...     case 2:
+...             print('Tuesday')
+... 
+Tuesday</code></pre>
+    </p>
+
+    <p>
+        You can use the underscore character <code>_</code> as a fallback case when no other match is found, similar to
+        a default case. It will always match, so it should be placed at the end of the <code>match</code> statement.
+        To check for multiple values in a single case, use the pipe character <code>|</code> as an <code>OR</code>
+        operator.
+        You can also include an <code>if</code> condition in a case to apply additional checks.
+    </p>
+
+    <hr>
+
+    <span id="whileFor"><b>while and for Loops</b></span>
+
+    <p>
+        <code>while</code> statement repetedly executes an associated block
+        of statements as long as a test at the top keeps evaluating to a
+        true value.
+    <pre><code class="language-python">>>> a = 0; b = 10
+>>> while a &lt; b:
+...     print(a, end = ' ')
+...     a += 1
+... 
+0 1 2 3 4 5 6 7 8 9</code></pre>
+    </p>
+
+    <p>
+        The <code>break</code> and <code>continue</code> statements control the flow inside a <code>while</code> loop.
+        They can be placed anywhere within the loop's body, but are often used inside <code>if</code> statements to
+        react to specific conditions.
+        <code>break</code> exits the nearest enclosing loop immediately, skipping any remaining code in the loop
+        body.
+        <code>continue</code> skips the rest of the current iteration and jumps back to the loop’s condition check.
+    <pre><code class="language-python">>>> a = 0; b = 10
+>>> while a &lt; b:
+...     if a == 3:
+...         a += 1
+...         continue
+...     if a == 8:
+...         break
+...     print(a, end=' ')
+...     a += 1
+... 
+0 1 2 4 5 6 7 </code></pre>
+    </p>
+
+    <p>
+        The <code>else</code> statement can be used with a <code>while</code> loop to run a block of code once after the
+        loop condition becomes false, but only if the loop was not exited using a <code>break</code>.
+
+    <pre><code class="language-python">>>> a = 0
+>>> while a &lt; 5:
+...     print(a, end = ' ')
+...     a += 1
+... else:
+...     print('Loop finished normally')
+... 
+0 1 2 3 4 Loop finished normally</code></pre>
+    </p>
+
+    <p>
+        The <code>pass</code> statement is a no-operation placeholder. It is roughly to
+        statements what <code>None</code> is to objects. For example:
+    <pre><code class="language-python">>>> while True:
+...     pass
+... </code></pre>
+    </p>
+
+    <p>
+        The Python <code>for</code> loop starts with a header line that specifies an assignment target (or targets),
+        along with the iterable object you want to step through. This header is followed by a block of indented
+        statements that you want to execute repeatedly.
+
+        When Python runs a <code>for</code> loop, it assigns each item from the iterable to the target variable, one by
+        one, and executes the loop body for each item.
+
+        The <code>for</code> loop also supports an optional <code>else</code> block, which works the same way as in a
+        <code>while</code> loop.
+
+        The <code>break</code> and <code>continue</code> statements also behave the same in a <code>for</code> loop as
+        they
+        do in a <code>while</code> loop.
+    <pre><code class="language-python">>>> for x in [1, 2, 3]:
+...     print(x, end = ' ')
+... 
+1 2 3
+>>> for (x, y) in [(1, 2), (3, 4), (5, 6)]:
+...     print(x, y)
+... 
+1 2
+3 4
+5 6</code></pre>
+    </p>
+
+    <p>
+        The built-in functions <code>range</code>, <code>zip</code>, and <code>enumerate</code>
+        allow you to write more powerful and flexible loop iterations in Python.
+    </p>
+
+    <p>
+        With one argument, <code>range</code> generates a series of integers starting from zero up to, but not
+        including, the specified value.
+        With two arguments, the first argument acts as the inclusive lower bound, and the second argument as the
+        exclusive upper bound.
+        With three arguments, the third argument specifies the step, which defaults to +1.
+    <pre><code class="language-python">>>> list(range(5))
+[0, 1, 2, 3, 4]
+>>> list(range(2, 5))
+[2, 3, 4]
+>>> list(range(1, 5, 2))
+[1, 3]</code></pre>
+    </p>
+
+    <p>
+        The <code>zip</code> function can take one or more sequence arguments (more generally, any type of iterable
+        object) and returns an iterator
+        that produces tuples, each containing elements from the corresponding positions in the input sequences.
+    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+>>> y = ['a', 'b', 'c', 'd']
+>>> list(zip(x, y))
+[(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')]</code></pre>
+    </p>
+
+    <p>
+        The <code>enumerate</code> function takes an iterable and returns an iterator that produces
+        tuples, where each tuple contains the index and the corresponding item from the iterable.
+        <pre><code class="language-python">>>> x = 'abcd'
+>>> list(enumerate(x))
+[(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')]</code></pre>
+    </p>
+
+    <hr>
+
+    <span id = "Functions"><b>Functions</b></span>
+
 
     <br><br>
 
     <hr>
+
+
+    <!--Bookmark-->
+
+
 
     <div class="container-row scrollable">
         <div>
@@ -958,21 +1175,6 @@ multiline sentence."""</code></pre>
 
     <div class="container-row scrollable">
         <div>
-            Since strings are arrays, we can loop through the characters of a string using a
-            <code>for</code> loop.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in "apple":
-    print(x)
-</code></pre>
-        </div>
-    </div>
-
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
             To check if certain characters are present or not present in a string,
             we can use the keyword <code>in</code> or <code>not in</code>.
         </div>
@@ -984,25 +1186,6 @@ print("world" in text) # Output: False
 print("Hi" not in text) # Output: True</code></pre>
         </div>
     </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If there is a condition inside an <code>if</code> statement, Python evaluates the condition and
-            runs the appropriate code based on whether the condition is <code>True</code> or <code>False</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 10
-b = 9
-
-if b > a:
-  print("b is greater than a")
-else:
-  print("b is not greater than a")</code></pre>
-        </div>
-    </div>
-
 
     <hr>
 
@@ -1068,30 +1251,6 @@ print(isinstance(x, int))</code></pre>
         </div>
     </div>
 
-    <hr>
-
-    <span style="font-weight: bold;">Lists</span>
-    <div style="height: 0.4em;"></div>
-
-    <hr>
-
-    <span style="font-weight: bold;">List Comprehension</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <span style="font-weight: bold;">Dictionaries</span>
-    <div style="height: 0.4em;"></div>
-
-    <hr>
-
     <div class="container-row scrollable">
         <div>
             To determine if a specified key is present in a dictionary use the <code>in</code> keyword.
@@ -1104,462 +1263,6 @@ print(isinstance(x, int))</code></pre>
 }
 if "model" in thisdict:
   print("Yes, 'model' is one of the keys in the thisdict dictionary")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Conditionals</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>elif</code> keyword is Python's way of saying "if the previous conditions were not true, then try
-            this condition".
-            <br><br>
-            You can have mutltiple elif conditions.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 33
-b = 33
-if b > a:
-  print("b is greater than a")
-elif a == b:
-  print("a and b are equal")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>else</code> keyword catches anything which isn't caught by the preceding conditions.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 200
-b = 33
-if b > a:
-  print("b is greater than a")
-elif a == b:
-  print("a and b are equal")
-else:
-  print("a is greater than b")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you have only one statement to execute, you can put it on the same line as the if statement.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">if a > b: print("a is greater than b")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you have only one statement to execute, one for if, and one for else, you can put it all on the same
-            line:
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 2
-b = 330
-print("A") if a > b else print("B")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can also have multiple else statements on the same line.
-            <br><br>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 330
-b = 330
-print("A") if a > b else print("=") if a == b else print("B")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>and</code> keyword is a logical operator, and is used to combine conditional statements.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 200
-b = 33
-c = 500
-if a > b and c > a:
-  print("Both conditions are True")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>or</code> keyword is a logical operator, and is used to combine conditional statements.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 200
-b = 33
-c = 500
-if a > b or a > c:
-  print("At least one of the conditions is True")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>not</code> keyword is a logical operator, and is used to reverse the result of the conditional
-            statement.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 33
-b = 200
-if not a > b:
-  print("a is NOT greater than b")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can have <code>if</code> statements inside <code>if</code> statements, this is called nested
-            <code>if</code> statements.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 41
-
-if x > 10:
-  print("Above ten,")
-  if x > 20:
-    print("and also above 20!")
-  else:
-    print("but not above 20.")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            <code>if</code> statements cannot be empty, but if you for some reason have an <code>if</code> statement
-            with no content, put in the pass statement to avoid getting an error.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">a = 33
-b = 200
-
-if b > a:
-  pass</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Match</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>match</code> statement is used to perform different actions based on different conditions.
-            <br><br>
-            Instead of writing many <code>if..else</code> statements, you can use the <code>match</code> statement.
-            <br><br>
-            The <code>match</code> statement selects one of many code blocks to be executed.
-            <br><br>
-            This is how it works: The match expression is evaluated once. The value of the expression is compared with
-            the values of each case.
-            If there is a match, the associated block of code is executed.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">day = 4
-match day:
-  case 1:
-    print("Monday")
-  case 2:
-    print("Tuesday")
-  case 3:
-    print("Wednesday")
-  case 4:
-    print("Thursday")
-  case 5:
-    print("Friday")
-  case 6:
-    print("Saturday")
-  case 7:
-    print("Sunday")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Use the underscore character <code>_</code> as the last case value if you want a code block to execute when
-            there are not other matches.
-            <br><br>
-            The value <code>_</code> will always match, so it is important to place it as the last <code>case</code> to
-            make it
-            behave as a default <code>case</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">day = 4
-match day:
-  case 6:
-    print("Today is Saturday")
-  case 7:
-    print("Today is Sunday")
-  case _:
-    print("Looking forward to the Weekend")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-
-    <div class="container-row scrollable">
-        <div>
-            Use the pipe character <code>|</code> as an or operator in the <code>case</code> evaluation to check for
-            more than one value match in one <code>case</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">day = 4
-match day:
-  case 1 | 2 | 3 | 4 | 5:
-    print("Today is a weekday")
-  case 6 | 7:
-    print("I love weekends!")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can add <code>if</code> statements in the case evaluation as an extra condition-check.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">month = 5
-day = 4
-match day:
-  case 1 | 2 | 3 | 4 | 5 if month == 4:
-    print("A weekday in April")
-  case 1 | 2 | 3 | 4 | 5 if month == 5:
-    print("A weekday in May")
-  case _:
-    print("No match")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">While Loops</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            With the <code>while</code> loop we can execute a set of statements as long as a condition is true.
-            <br><br>
-            Remember to increment <code>i</code>, or else the loop will continue forever.
-            <br><br>
-            The <code>while</code> loop requires relevant variables to be ready, in this example we need to define an
-            indexing variable, <code>i</code>, which we set to 1.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">i = 1
-while i &lt 6:
-  print(i)
-  i += 1</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            With the <code>break</code> statement we can stop the loop even if the while condition is true.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">i = 1
-while i &lt 6:
-  print(i)
-  if i == 3:
-    break
-  i += 1</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            With the <code>continue</code> statement we can stop the current iteration, and continue with the next.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">i = 0
-while i &lt 6:
-  i += 1
-  if i == 3:
-    continue
-  print(i)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            With the <code>else</code> statement we can run a block of code once when the condition no longer is true.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">i = 1
-while i &lt 6:
-  print(i)
-  i += 1
-else:
-  print("i is no longer less than 6")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">For Loops</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            A <code>for</code> loop is used for iterating over a sequence (that is either a list, a tuple, a dictionary,
-            a set, or a
-            string).
-            <br><br>
-            This is less like the <code>for</code> keyword in other programming languages, and works more like an
-            iterator method as
-            found in other object-orientated programming languages.
-            <br><br>
-            With the <code>for</code> loop we can execute a set of statements, once for each item in a list, tuple, set
-            etc.
-            <br><br>
-            The <code>for</code> loop does not require an indexing variable to set beforehand.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
-for x in fruits:
-  print(x)
-
-for x in "banana":
-  print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            With the <code>break</code> statement we can stop the loop before it has looped through all the items.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
-for x in fruits:
-  print(x)
-  if x == "banana":
-    break</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            With the <code>continue</code> statement we can stop the current iteration of the loop, and continue with
-            the next.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ["apple", "banana", "cherry"]
-for x in fruits:
-  if x == "banana":
-    continue
-  print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To loop through a set of code a specified number of times, we can use the <code>range()</code> function.
-            <br><br>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in range(6):
-  print(x)
-
-for x in range(2, 6):
-  print(x)
-
-for x in range(2, 30, 3):
-  print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>else</code> keyword in a <code>for</code> loop specifies a block of code to be executed when the
-            loop is finished.
-            <br><br>
-            The <code>else</code> block will NOT be executed if the loop is stopped by a <code>break</code> statement.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in range(6):
-  print(x)
-else:
-  print("Finally finished!")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            A nested loop is a loop inside a loop.
-            <br><br>
-            The "inner loop" will be executed one time for each iteration of the "outer loop":
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">adj = ["red", "big", "tasty"]
-fruits = ["apple", "banana", "cherry"]
-
-for x in adj:
-  for y in fruits:
-    print(x, y)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            <code>for</code> loops cannot be empty, but if you for some reason have a <code>for</code> loop with no
-            content, put in the <code>pass</code> statement to avoid getting an error.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">for x in [0, 1, 2]:
-  pass</code></pre>
         </div>
     </div>
 
