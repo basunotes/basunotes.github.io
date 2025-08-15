@@ -30,7 +30,7 @@
         <li><a href="#Tuples">Tuples</a></li>
         <li><a href="#Sets">Sets</a></li>
         <li><a href="#Dictionaries">Dictionaries</a></li>
-        <li>if and match Selections</li>
+        <li><a href="#ifMatch">if and match Selections</a></li>
         <li>while and for Loops</li>
         <li>Functions</li>
         <li>Lambdas</li>
@@ -105,6 +105,55 @@
         place.
         We will discuss them later.
     </p>
+
+    <p>
+        Python allows us to perform sequence assignments. It pairs the values
+        on the right side of the assignment operator with the variables on the
+        left side, assigning the values one at a time. The left side of a sequence assignment must be a sequence (such
+        as a tuple or list of targets), while the right side can be any iterable object, not just a sequence. Both sides
+        must have the same length.
+    <pre><code class="language-python">>>> A, B = 1, 2
+>>> A, B
+(1, 2)
+>>> [A, B] = [3, 4]
+>>> A, B
+(3, 4)
+>>> [a, b, c] = (1, 2, 3) 
+>>> a, b, c
+(1, 2, 3)
+>>> (a, b, c) = 'ABC'
+>>> a, c
+('A', 'C')</code></pre>
+    </p>
+
+    <p>
+        In Python, slicing allows you to assign values to specific parts of a sequence. For more flexible unpacking, you
+        can use a <i>starred target</i> on the left side of an assignment. This lets you match and capture multiple
+        elements from an iterable on the right-hand side. This technique is known as sequence unpacking.
+        There are some edge cases that need to be considered. I might discuss them later!
+    <pre><code class="language-python">>>> a, *b = [1, 2, 3, 4]
+>>> a, b
+(1, [2, 3, 4])
+>>> *a, b = [1, 2, 3, 4]
+>>> a, b
+([1, 2, 3], 4)
+>>> a, *b, c = [1, 2, 3, 4]
+>>> a, b, c
+(1, [2, 3], 4)</code></pre>
+    </p>
+
+    <p>
+        Python allows for multiple-target and augmented assignments:
+    <pre><code class="language-python">>>> x = y = z = 1
+>>> x, y, z
+(1, 1, 1)
+>>> x = 'abc'
+>>> x += 'd'
+>>> x
+'abcd'</code></pre>
+    </p>
+
+    <!--Bookmarks-->
 
     <p>
         It is good practice to give variables descriptive names, unlike in mathematics.
@@ -812,11 +861,32 @@ True</code></pre>
         Fetching a nonexistent key is normally an error, but the <code>get</code>
         method returns a default value, <code>None</code>, or a passed-in default if the key
         doesn't exist.
-        <pre><code class="language-python">>>> D = {'a' : 1}
+    <pre><code class="language-python">>>> D = {'a' : 1}
 >>> D.get('b')
 >>> D.get('b', 2)
 2</code></pre>
     </p>
+
+    <p>
+        The <code>update</code> method merges the keys and values of one
+        dictionary into another, both adding new entries for new keys and blindly
+        overwriting values of existing keys if there's a clash. The dictionary's <code>pop</code>
+        method deletes a key from the dictionary and returns the value it had, similar to other
+        <code>pop</code> methods.
+    <pre><code class="language-python">>>> D = {'a': 1, 'b': 2}
+>>> D.update({'c': 3})
+>>> D
+{'a': 1, 'b': 2, 'c': 3}
+>>> D.pop('a')
+1
+>>> D
+{'b': 2, 'c': 3}</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="ifMatch"><b>if and Match Selections</b></span>
+
 
     <!--Bookmark-->
 
@@ -845,40 +915,6 @@ category = str(5) # category will be "5"</code></pre>
             <pre><code class="language-python">print(type(age)) # Output: &ltclass 'int'&gt
 print(type(weight)) # Output: &ltclass 'float'&gt
 print(type(category)) # Output: &ltclass 'str'&gt</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Python allows you to define multiple variables in one line.
-            You can also assign the same value to multiple variables in one line.
-            <br><br>
-            It is best to avoid assigning values this way, unless you are absolutely sure it makes your code
-            more readable and understandable.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">num1, num2, num3 = 10, 20, 30
-
-name1 = name2 = name3 = "Max"</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Output</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Using the <code>print()</code> function you can produce output that the user can view.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">name = "Max" 
-print(name) # Output: Max
-age = "23"
-print(name, age) # Output: Max 23</code></pre>
         </div>
     </div>
 
@@ -979,24 +1015,6 @@ print(isinstance(x, int))</code></pre>
 
     <hr>
 
-    <span style="font-weight: bold;">Assignment Operators</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            # More on augmented assignments later!
-            Assignment operators are used to assign value to variables.
-            <br><br>
-            The syntax is similar for other arithmetic operators introduced above.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 5
-x += 4 # Same as x = x + 4</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Membership Operators</span>
     <div style="height: 0.4em;"></div>
 
@@ -1048,71 +1066,6 @@ x += 4 # Same as x = x + 4</code></pre>
         </div>
     </div>
 
-    <hr>
-
-    <span style="font-weight: bold;">Tuples</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            When we create a tuple, we normally assign values to it. This is called "packing" a tuple.
-            <br><br>
-            But, in Python, we are also allowed to extract the values back into variables. This is called "unpacking".
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ("apple", "banana", "cherry")
-
-(green, yellow, red) = fruits
-
-print(green)
-print(yellow)
-print(red)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If the number of variables is less than the number of values, you can add an <code>*</code> to the variable
-            name and
-            the values will be assigned to the variable as a list.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ("apple", "banana", "cherry", "strawberry", "raspberry")
-
-(green, yellow, *red) = fruits
-
-print(green)
-print(yellow)
-print(red)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If the asterisk is added to another variable name than the last,
-            Python will assign values to the variable until the number of values left matches the number of variables
-            left.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">fruits = ("apple", "mango", "papaya", "pineapple", "cherry")
-
-(green, *tropic, red) = fruits
-
-print(green)
-print(tropic)
-print(red)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Dictionaries</span>
     <div style="height: 0.4em;"></div>
 
@@ -1130,112 +1083,6 @@ print(red)</code></pre>
 }
 if "model" in thisdict:
   print("Yes, 'model' is one of the keys in the thisdict dictionary")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>update()</code> method will update the dictionary with the items from the given argument.
-            <br><br>
-            If the item does not exist, the item will be added.
-            <br><br>
-            The argument must be a dictionary, or an iterable object with key:value pairs.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-thisdict.update({"year": 2020})</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>pop()</code> method removes the item with the specified key name.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-thisdict.pop("model")
-print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>popitem()</code> method removes the last inserted item (in versions before 3.7, a random item is
-            removed instead).
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-thisdict.popitem()
-print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>del</code> keyword removes the item with the specified key name.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-del thisdict["model"]
-print(thisdict)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The del keyword can also delete the dictionary completely.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-del thisdict
-print(thisdict) #this will cause an error because "thisdict" no longer exists.</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>clear()</code> method empties the dictionary.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-thisdict.clear()
-print(thisdict)</code></pre>
         </div>
     </div>
 
