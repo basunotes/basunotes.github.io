@@ -33,8 +33,9 @@
         <li><a href="#ifMatch">if and match Selections</a></li>
         <li><a href="#whileFor">while and for Loops</a></li>
         <li><a href="#Functions">Functions</a></li>
-        <li>Lambdas</li>
-        <li>Generators</li>
+        <li><a href="#Lambdas">Lambdas</a></li>
+        <li><a href="#Comprehensions">Comprehensions</a></li>
+        <li><a href="#Generators">Generators</a></li>
         <li>Modules</li>
         <li>Classes and OOP</li>
         <li>Exceptions</li>
@@ -728,9 +729,10 @@ True</code></pre>
 
     <p>
         If a collection object contains a reference to itself, it is called a cyclic object.
-        Python prints a <code>[...] </code> whenever it detects a cycle in the object back to itself, rather than getting stuck in an infinite loop.
+        Python prints a <code>[...] </code> whenever it detects a cycle in the object back to itself, rather than
+        getting stuck in an infinite loop.
         Cyclic structures may cause code of your own to fall into unexpected loops if you don't anticipate them.
-        <pre><code class="language-python">>>> L = ['a']
+    <pre><code class="language-python">>>> L = ['a']
 >>> L.append(L)
 >>> L
 ['a', [...]]
@@ -1113,14 +1115,314 @@ Tuesday</code></pre>
     <p>
         The <code>enumerate</code> function takes an iterable and returns an iterator that produces
         tuples, where each tuple contains the index and the corresponding item from the iterable.
-        <pre><code class="language-python">>>> x = 'abcd'
+    <pre><code class="language-python">>>> x = 'abcd'
 >>> list(enumerate(x))
 [(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')]</code></pre>
     </p>
 
     <hr>
 
-    <span id = "Functions"><b>Functions</b></span>
+    <span id="Functions"><b>Functions</b></span>
+
+    <p>
+        In Python, functions are defined using the <code>def</code> keyword. When Python encounters a <code>def</code>
+        statement, it creates a function object and assigns it to the function's name, allowing the function to be
+        referenced, assigned to variables, or stored in collections. The code inside the function doesn't run until the
+        function is called, and <code>def</code> statements themselves are not executed until reached. Functions in
+        Python can also have custom attributes attached to them to store additional data. The <code>return</code>
+        statement, which can appear anywhere in the function body, ends the function call and sends a result back to the
+        caller. If no value is specified with <code>return</code>, Python returns <code>None</code> by default.
+    <pre><code class="language-python">>>> def adder(x, y):
+...     return x + y
+... 
+>>> myfunc = adder
+>>> myfunc(2, 3)
+5</code></pre>
+    </p>
+
+    <p>
+        Names assigned inside a function using <code>def</code> are local to that function and can only be accessed
+        within its scope. These names are not visible outside the function, meaning you can't refer to them from outside
+        the function body. Additionally, names defined inside a function don't interfere with variables in other scopes,
+        even if the same name is used. This behavior is governed by Python's LEGB (Local, Enclosing, Global, Built-in)
+        rule, which dictates the order in which Python looks for a variable.
+    <pre><code class="language-python">>>> x = 300
+>>> def myfunc():
+...     x = 200
+...     return x
+... 
+>>> myfunc()
+200
+>>> x
+300</code></pre>
+    </p>
+
+    <p>
+        If you need to create a global variable but are stuck in the local scope, you can use the <code>global</code>
+        keyword.
+        The <code>global</code> keyword makes the variable global. Additionally, use the <code>global</code> keyword if
+        you want to modify a
+        global variable inside a function.
+    <pre><code class="language-python">>>> def myfunc():
+...     global x
+...     x = 300
+... 
+>>> myfunc()
+>>> x
+300
+>>> y = 200
+>>> def myfunc():
+...     global y
+...     y = 300
+... 
+>>> myfunc()
+>>> y
+300</code></pre>
+    </p>
+
+    <p>
+        The <code>nonlocal</code> keyword is used to work with variables inside nested
+        functions. The <code>nonlocal</code> keyword makes the variable belong to the outer
+        function.
+    <pre><code class="language-python">>>> def myfunc1():
+...     x = 1
+...     def myfunc2():
+...             nonlocal x
+...             x = 2
+...     myfunc2()
+...     return x
+... 
+>>> myfunc1()
+2</code></pre>
+    </p>
+
+    <p> To understand how argument passing works in Python, let's examine the following code: Inside the function
+        <code>f</code>, the variable <code>a</code> is assigned the value <code>1</code>. However, this change only
+        affects the variable <code>a</code> within the function itself, and does not impact the value of <code>b</code>
+        outside the function. This is because Python uses pass-by-assignment (also called
+        pass-by-object-reference). When a variable is passed into a function, what actually gets passed is a reference
+        to the object, not the object itself. If the object is reassigned within the function (like <code>a = 1</code>),
+        it doesn't affect the original variable outside the function.
+    <pre><code class="language-python">>>> def f(a):
+...     a = 1
+... 
+>>> b = 2
+>>> f(b)
+>>> b
+2</code></pre>
+    </p>
+
+    <p>
+        However, when arguments are passed as mutable objects like lists and dictionaries, changes made in-place to such
+        objects may live on after a function exits.
+    <pre><code class="language-python">>>> def f(a):
+...     a[0] = 2
+... 
+>>> b = [1, 4, 6]
+>>> f(b)
+>>> b
+[2, 4, 6]</code></pre>
+    </p>
+
+    <p>
+        If you don't want in-place changes to impact the objects we pass, you can simply make explicit copies of mutable
+        objects.
+    </p>
+
+    <p>
+        Python matches names by <i>position</i> from left to right. In the following, <code>a</code> is matched to
+        <code>1</code>, <code>b</code> is matched to <code>2</code>, and so on. Keyword arguments allow you to match by
+        <i>name</i>, instead of by position. You can even combine positional and keyword arguments in a single call. In
+        this case, all positionals are matched first from left to right in the definition, before keywords are matched
+        by name.
+    <pre><code class="language-python">>>> def f(a, b, c):
+...     print(a, b, c)
+... 
+>>> f(1, 2, 3)
+1 2 3
+>>> def f(a, b, c):
+...     print(a, b, c)
+... 
+>>> f(1, 2, 3)
+1 2 3
+>>> f(c = 1, b = 3, a = 2)
+2 3 1</code></pre>
+    </p>
+
+    <p>
+        Defaults allow you to make selected function arguments <i>optional</i>. If not
+        passed by value, the argument is assigned its default. You can also combine keywords and defaults.
+    <pre><code class="language-python">>>> f(c = 1, b = 3, a = 2)
+2 3 1
+>>> def f(a, b = 2, c = 3):
+...     print(a, b, c)
+... 
+>>> f(1)
+1 2 3
+>>> f(5, 4, 3)
+5 4 3</code></pre>
+    </p>
+
+    <p>
+        The argument-matching extensions <code>*</code> and <code>**</code> are
+        designed to support any number of arguments. They can appear in function definition and function calls.
+    </p>
+
+    <p>
+        When a function is called, Python collects all the positional arguments into a new tuple and assigns the
+        variable <code>args</code> to that tuple.
+    <pre><code class="language-python">>>> def f(*args):
+...     print(args)
+... 
+>>> f()
+()
+>>> f(1)
+(1,)
+>>> f(1, 2, 3)
+(1, 2, 3)</code></pre>
+    </p>
+
+    <p>
+        The <code>**kwargs</code> syntax is similar, but it collects keyword arguments into a new dictionary.
+    <pre><code class="language-python">>>> def f(**kwargs):
+...     print(kwargs)
+... 
+>>> f()
+{}
+>>> f(a = 1, b = 2)
+{'a': 1, 'b': 2}</code></pre>
+    </p>
+
+    <p>
+        You can combine regular arguments, <code>*args</code>, and <code>**kwargs</code> to create flexible function
+        signatures. For example, in the following:
+        <code>1</code> is passed to <code>a</code> by position, <code>2</code> and <code>3</code> are collected into the
+        <code>pargs</code> tuple, and <code>x</code> and <code>y</code> are collected into the <code>kargs</code>
+        dictionary.
+    <pre><code class="language-python">>>> def f(a, *args, **kwargs):
+...     print(a, args, kwargs)
+... 
+>>> f(1, 2, 3, x = 1, y = 2)
+1 (2, 3) {'x': 1, 'y': 2}</code></pre>
+    </p>
+
+    <p>
+        The <code>*</code> syntax can be used when calling a function to unpack a collection of arguments, such as a
+        tuple or any other iterable, into individual positional arguments. For example, you can pass a tuple with four
+        arguments to a function, and Python will unpack them into separate arguments.
+    <pre><code class="language-python">>>> def func(a, b, c):
+...     print(a, b, c)
+... 
+>>> func(*(1, 2, 3))
+1 2 3</code></pre>
+    </p>
+
+    <p>
+        Similarly, the <code>**</code> syntax can be used to unpack a dictionary into key-value pairs, where the
+        dictionary keys are used as argument names (keywords) and the values are passed as the corresponding argument
+        values.
+    <pre><code class="language-python">>>> def func(a, b, c):
+...     print(a, b, c)
+... 
+>>> func(**{'a': 1, 'b': 2, 'c': 3})
+1 2 3</code></pre>
+    </p>
+
+    <p>
+        Starting from Python 3.5, it is possible to use multiple <code>*</code> and <code>**</code> items in function
+        calls to unpack multiple iterables and mappings. The <code>*</code> unpacks positional arguments, while
+        <code>**</code> unpacks keyword arguments. However, note that <code>*</code> must appear before <code>**</code>
+        when used together, as per Python's formal argument-passing rules. There are some other peculiarities that we
+        might discuss later.
+    <pre><code class="language-python">>>> def func(a, b, c, d, e, f):
+...     print(a, b, c, d, e, f)
+... 
+>>> func(1, *(2, 3, 4), **{'e': 5, 'f': 6})
+1 2 3 4 5 6</code></pre>
+    </p>
+
+    <p>
+        You can specify that a function can have only positional arguments by adding <code>/</code> after the positional
+        arguments. To specify that a function can have only keyword arguments, add <code>*</code> before the arguments.
+        These two types of arguments can be combined in the same function. Any argument before the <code>/</code> is
+        positional-only, and any argument after the <code>*</code> is keyword-only.
+    <pre><code class="language-python">>>> def func(a, b, /, c, *, d):
+...     print(a, b, c, d)
+... 
+>>> func(1, 2, c = 3, d = 4)
+1 2 3 4
+</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="Lambdas"><b>Lambdas</b></span>
+
+    <p>
+        A lambda function is a small, anonymous function.
+        A lambda function can take any number of arguments, but it can only have one expression. The result of that
+        expression is automatically returned.
+        Syntax: <code>lambda arguments: expression</code>
+    <pre><code class="language-python">>>> x = lambda a: a + 10
+>>> x(5)
+15
+>>> x = lambda a, b: a*b
+>>> x(5, 6)
+30</code></pre>
+    </p>
+
+    <p>
+        The power of lambda is better shown when you use them as an anonymous function inside another function.
+        Say you have a function definition that takes one argument, and that argument will be multiplied with an unknown
+        number.
+        Use that function definition to make a function that always doubles or triples the number you send in.
+    <pre><code class="language-python">>>> def func(n):
+...     return lambda a: a*n
+... 
+>>> double = func(2)
+>>> double(11)
+22
+>>> triple = func(3)
+>>> triple(9)
+27</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="Comprehensions"><b>Comprehensions</b></span>
+
+    <p> List comprehensions can be used to build a new list by applying an expression to each item in a sequence or,
+        more generally, any iterable. Similarly, set comprehensions create a set, which automatically removes
+        duplicates.
+    <pre><code class="language-python">>>> L = [x*2 for x in 'abc'] 
+>>> L [
+'aa', 'bb', 'cc'] 
+>>> S = {x*2 for x in 'abc'} 
+>>> S 
+{'aa', 'cc', 'bb'}</code></pre>
+    </p>
+
+    <p> Comprehensions also support extensions such as <code>if</code> filters and nested <code>for</code> loops. </p>
+    <pre><code class="language-python">>>> L = [x*2 for x in 'abc' if x >= 'b'] 
+>>> L 
+['bb', 'cc'] 
+>>> [x + y for x in 'abc' for y in '123'] 
+['a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'c1', 'c2', 'c3']</code></pre>
+
+    <p>
+        Dictionary comprehensions run an implicit loop, collecting the key/value
+        results of expressions on each iteration and using them to fill out a new dictionary.
+        <pre><code class="language-python">>>> D = {x: x**2 for x in [1, 2, 3]}
+>>> D
+{1: 1, 2: 4, 3: 9}
+>>> D = {x: x*4 for x in 'abc'}
+>>> D
+{'a': 'aaaa', 'b': 'bbbb', 'c': 'cccc'}</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="Generators"><b>Generators</b></span>
 
 
     <br><br>
@@ -1251,6 +1553,8 @@ print(isinstance(x, int))</code></pre>
         </div>
     </div>
 
+    <br>
+
     <div class="container-row scrollable">
         <div>
             To determine if a specified key is present in a dictionary use the <code>in</code> keyword.
@@ -1268,248 +1572,6 @@ if "model" in thisdict:
 
     <hr>
 
-    <span style="font-weight: bold;">Functions</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            A function is a block of code which only runs when it is called.
-            <br><br>
-            You can pass data, known as parameters, into a function.
-            <br><br>
-            A function can return data as a result.
-            <br><br>
-            In Python a function is defined using the <code>def</code> keyword.
-            <br>
-            To call a function, use the function name followed by parenthesis.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function():
-  print("Hello from a function")
-
-my_function()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Information can be passed into functions as arguments.
-            <br><br>
-            Arguments are specified after the function name, inside the parentheses. You can add as many arguments as
-            you want, just separate them with a comma.
-            <br><br>
-            Arguments are often shortened to args in Python documentations.
-            <br><br>
-            <i>Detials later! (Arguments and Parameters. Errors.)</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(fname):
-  print(fname + " Refsnes")
-
-my_function("Emil")
-my_function("Tobias")
-my_function("Linus")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you do not know how many arguments that will be passed into your function, add a <code>*</code> before
-            the parameter name in the function definition.
-            <br><br>
-            This way the function will receive a tuple of arguments, and can access the items accordingly.
-            <br><br>
-            Arbitrary Arguments are often shortened to *args in Python documentations.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(*kids):
-  print("The youngest child is " + kids[2])
-
-my_function("Emil", "Tobias", "Linus")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can also send arguments with the key = value syntax.
-            <br><br>
-            This way the order of the arguments does not matter.
-            <br><br>
-            he phrase Keyword Arguments are often shortened to kwargs in Python documentations.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(child3, child2, child1):
-  print("The youngest child is " + child3)
-
-my_function(child1 = "Emil", child2 = "Tobias", child3 = "Linus")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you do not know how many keyword arguments that will be passed into your function, add two asterisk:
-            <code>**</code> before the parameter name in the function definition.
-            <br><br>
-            This way the function will receive a dictionary of arguments, and can access the items accordingly.
-            <br><br>
-            Arbitrary Kword Arguments are often shortened to **kwargs in Python documentations.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(**kid):
-  print("His last name is " + kid["lname"])
-
-my_function(fname = "Tobias", lname = "Refsnes")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The example on the right shows how to use a default parameter value.
-            <br><br>
-            If we call the function without argument, it uses the default value.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(country = "Norway"):
-  print("I am from " + country)
-
-my_function("Sweden")
-my_function("India")
-my_function()
-my_function("Brazil")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can send any data types of argument to a function (string, number, list, dictionary etc.), and it will
-            be treated as the same data type inside the function.
-            <br><br>
-            E.g. if you send a List as an argument, it will still be a List when it reaches the function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(food):
-  for x in food:
-    print(x)
-
-fruits = ["apple", "banana", "cherry"]
-
-my_function(fruits)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To let a function return a value, use the <code>return</code> statement.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(x):
-  return 5 * x
-
-print(my_function(3))
-print(my_function(5))
-print(my_function(9))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            <code>function</code> definitions cannot be empty, but if you for some reason have a <code>function</code>
-            definition with no content,
-            put in the <code>pass</code> statement to avoid getting an error.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunction():
-  pass</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can specify that a function can have ONLY positional arguments.
-            <br><br>
-            To specify that a function can have only positional arguments, add <code>, /</code> after the arguments.
-            <br><br>
-            Without the <code>, / </code> you are actually allowed to use keyword arguments even if the function expects
-            positional arguments.
-            <br><br>
-            But when adding the <code>, /</code> you will get an error if you try to send a keyword argument.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(x, /):
-  print(x)
-
-my_function(3)
-
-def my_function(x):
-  print(x)
-
-my_function(x = 3)
-
-def my_function(x, /):
-  print(x)
-
-my_function(x = 3)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To specify that a function can have only keyword arguments, add <code>*</code>, before the arguments.
-            <br><br>
-            You will get an error if you try to send a positional argument.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(*, x):
-  print(x)
-
-my_function(x = 3)
-
-def my_function(*, x):
-  print(x)
-
-my_function(3)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can combine the two argument types in the same function.
-            <br><br>
-            Any argument before the <code>/ ,</code> are positional-only, and any argument after the <code>*</code>, are
-            keyword-only.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def my_function(a, b, /, *, c, d):
-  print(a + b + c + d)
-
-my_function(5, 6, c = 7, d = 8)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <div class="container-row scrollable">
         <div>
             Recursion.
@@ -1518,60 +1580,6 @@ my_function(5, 6, c = 7, d = 8)</code></pre>
         </div>
         <div class="right-column">
             <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Lambda</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            A lambda function is a small anonymous function.
-            <br><br>
-            A lambda function can take any number of arguments, but can only have one expression.
-            <br><br>
-            Syntax: <br>
-            <code>lambda arguments : expression</code>
-            <br><br>
-            The expression is executed and the result is returned.
-            <br><br>
-            Lambda functions can take any number of arguments.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = lambda a : a + 10
-print(x(5))
-
-x = lambda a, b : a * b
-print(x(5, 6))
-
-x = lambda a, b, c : a + b + c
-print(x(5, 6, 2))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The power of lambda is better shown when you use them as an anonymous function inside another function.
-            <br><br>
-            Say you have a function definition that takes one argument, and that argument will be multiplied with an
-            unknown number.
-            <br><br>
-            Use that function definition to make a function that always doubles or triples the number you send in.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunc(n):
-  return lambda a : a * n
-
-mydoubler = myfunc(2)
-print(mydoubler(11))
-
-mytripler = myfunc(3)
-print(mytripler(11))</code></pre>
         </div>
     </div>
 
@@ -2140,148 +2148,6 @@ for x in (car1, boat1, plane1):
   print(x.brand)
   print(x.model)
   x.move()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Scope</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            A variable is only available from inside the region it is created.
-            This is called <b>scope</b>.
-            <br><br>
-            A variable created inside a function belongs to the local scope of that function, and can only be used
-            inside that function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunc():
-  x = 300
-  print(x)
-
-myfunc()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            As explained in the example above, the variable <code>x</code> is not available outside the function,
-            but it is available for any function inside the function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunc():
-  x = 300
-  def myinnerfunc():
-    print(x)
-  myinnerfunc()
-
-myfunc()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            A variable created in the main body of the Python code is a global variable and belongs to the global scope.
-            <br><br>
-            Global variables are available from within any scope, global and local.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 300
-
-def myfunc():
-  print(x)
-
-myfunc()
-
-print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you operate with the same variable name inside and outside of a function, Python will treat them as two
-            separate variables, one available in the global scope (outside the function) and one available in the local
-            scope (inside the function).
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 300
-
-def myfunc():
-  x = 200
-  print(x)
-
-myfunc()
-
-print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            If you need to create a global variable, but are stuck in the local scope, you can use the
-            <code>global</code> keyword.
-            <br><br>
-            The <code>global</code> keyword makes the variable global.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunc():
-  global x
-  x = 300
-
-myfunc()
-
-print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Also, use the <code>global</code> keyword if you want to make a change to a global variable inside a
-            function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = 300
-
-def myfunc():
-  global x
-  x = 200
-
-myfunc()
-
-print(x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-    <div class="container-row scrollable">
-        <div>
-            The <code>nonlocal</code> keyword is used to work with variables inside nested functions.
-            <br><br>
-            The <code>nonlocal</code> keyword makes the variable belong to the outer function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">def myfunc1():
-  x = "Jane"
-  def myfunc2():
-    nonlocal x
-    x = "hello"
-  myfunc2()
-  return x
-
-print(myfunc1())</code></pre>
         </div>
     </div>
 
