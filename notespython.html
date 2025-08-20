@@ -38,6 +38,7 @@
         <li><a href="#Generators">Generators</a></li>
         <li><a href="#Modules">Modules</a></li>
         <li><a href="#ClassesOOP">Classes and OOP</a></li>
+        <li><a href="#Iterators">Iterators</a></li>
         <li>Exceptions</li>
     </ul>
     </p>
@@ -1667,493 +1668,149 @@ dict_keys(['__name__', '__doc__', '__package__', '__loader__', '__spec__', '__fi
 
     <span id="ClassesOOP"><b>Classes and OOP</b></span>
 
-    <p></p>
+    <p>
+        Classes in Python allow us to define custom objects with specific behavior and data.
+        In Python's object-oriented programming model, there are two main types of objects: class
+        objects and instance objects.
+        Class objects act as blueprints for creating instance objects.
+        <br><br>
+        A <code>class</code> statement defines a class object and assigns it a name.
+        Any assignments made within the <code>class</code> body become class attributes.
+        <br><br>
+        When you call a class object like a function, it creates a new instance object.
+        This instance inherits the class's attributes but also has its own independent namespace.
+        Inside class methods, the first parameter, conventionally named <code>self</code>, refers to the instance being
+        operated on.
+        Assigning attributes to <code>self</code> creates or updates instance-specific data, without affecting the class
+        itself.
+    <pre><code class="language-python">>>> class FirstClass:
+...     def setdata(self, value):
+...             self.data = value
+...     def display(self):
+...             print(self.data)
+... </code></pre>
+    </p>
 
-    <br><br>
-
-    <hr>
-
-
-    <!--Bookmark-->
-
-
-
-    <div class="container-row scrollable">
-        <div>
-            If you want to specify the data type of a variable then this can be done with casting.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">age = int(23)
-weight = float(65) # weight will be 65.0
-category = str(5) # category will be "5"</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The data type of a variable can be found using the <code>type()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">print(type(age)) # Output: &ltclass 'int'&gt
-print(type(weight)) # Output: &ltclass 'float'&gt
-print(type(category)) # Output: &ltclass 'str'&gt</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Strings</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Using triple single or double quotes it is possible to assign a multiline string to a variable.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">text1 = """This is a
-multiline sentence."""</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            To check if certain characters are present or not present in a string,
-            we can use the keyword <code>in</code> or <code>not in</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">text = "Hello World"
-print("World" in text) # Output: True
-print(" World" in text) # Output: True
-print("world" in text) # Output: False
-print("Hi" not in text) # Output: True</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            A object made from a class with <code>__len__</code> function that
-            returns <code>0</code> or <code>False</code> will be evaluated to <code>False</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class myclass():
-  def __len__(self):
-    return 0
-
-myobj = myclass()
-print(bool(myobj))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The built-in function <code>isinstance()</code> returns a boolean value.
-            It is used to determine whether an object is of certain data type.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x  = 2
-print(isinstance(x, int))</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Membership Operators</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Membership operators are used to test if a sequence is presented in an object.
-        </div>
-        <div class="right-column">
-            <div class="scrollable">
-                <table class="three-columns">
-                    <tr style="font-weight: bold;">
-                        <td>Operator</td>
-                        <td>Description</td>
-                        <td>Example</td>
-                    </tr>
-                    <tr>
-                        <td><code>in</code></td>
-                        <td>Returns <code>True</code> if a sequence with the specified value
-                            is present in the object</td>
-                        <td><code>x in y</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>not in</code></td>
-                        <td>Returns <code>True</code> if a sequence with the specified value
-                            is not present in the object</td>
-                        <td><code>x in y</code></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <br>
-
-    <div class="container-row scrollable">
-        <div>
-            To determine if a specified key is present in a dictionary use the <code>in</code> keyword.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">thisdict = {
-  "brand": "Ford",
-  "model": "Mustang",
-  "year": 1964
-}
-if "model" in thisdict:
-  print("Yes, 'model' is one of the keys in the thisdict dictionary")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Recursion.
-            <br><br>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Object-Oriented Programming</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Classes/Objects</span>
-    <div style="height: 0.4em;"></div>
-
-    <div class="container-row scrollable">
-        <div>
-            Python is an object oriented programming language.
-            <br><br>
-            Almost everything in Python is an object, with its properties and methods.
-            <br><br>
-            A Class is like an object constructor, or a "blueprint" for creating objects.
-            <br><br>
-            To create a class, use the keyword <code>class</code>.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class MyClass:
-  x = 5</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Now we can use the class named MyClass to create objects.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">p1 = MyClass()
-print(p1.x)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The examples above are classes and objects in their simplest form, and are not really useful in real life
-            applications.
-            <br><br>
-            To understand the meaning of classes we have to understand the built-in <code>__init__()</code> method.
-            <br><br>
-            All classes have a method called <code>__init__()</code>, which is always executed when the class is being
-            initiated.
-            <br><br>
-            Use the <code>__init__()</code> method to assign values to object properties, or other operations that are
-            necessary to
-            do when the object is being created.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Person:
-  def __init__(self, name, age):
-    self.name = name
-    self.age = age
-
-p1 = Person("John", 36)
-
-print(p1.name)
-print(p1.age)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>__str__()</code> method controls what should be returned when the class object is represented as a
-            string.
-            <br><br>
-            If the <code>__str__()</code> method is not set, the string representation of the object is returned.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Person:
-  def __init__(self, name, age):
-    self.name = name
-    self.age = age
-
-# Remove this method to see what happens
-  def __str__(self):
-    return f"{self.name}({self.age})"
-
-p1 = Person("John", 36)
-
-print(p1)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can create your own methods inside objects. Methods in objects are functions that belong to the object.
-            <br><br>
-            Let us create a method in the Person class.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Person:
-  def __init__(self, name, age):
-    self.name = name
-    self.age = age
-
-  def myfunc(self):
-    print("Hello my name is " + self.name)
-
-p1 = Person("John", 36)
-p1.myfunc()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>self</code> parameter is a reference to the current instance of the class, and is used to access
-            variables that
-            belong to the class.
-            <br><br>
-            It does not have to be named <code>self</code>, you can call it whatever you like, but it has to be the
-            first parameter
-            of any function in the class.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Person:
-  def __init__(mysillyobject, name, age):
-    mysillyobject.name = name
-    mysillyobject.age = age
-
-  def myfunc(abc):
-    print("Hello my name is " + abc.name)
-
-p1 = Person("John", 36)
-p1.myfunc()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can modify properties on objects like this.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">p1.age = 40</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            You can delete properties on objects by using the <code>del</code> keyword.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">del p1.age</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-
-    <div class="container-row scrollable">
-        <div>
-            You can delete objects by using the <code>del</code> keyword.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">del p1</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            <code>class</code> definitions cannot be empty, but if you for some reason have a <code>class</code>
-            definition with no content, put in the <code>pass</code> statement to avoid getting an error.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Person:
-  pass
+    <p>
+        Calling a class like a function creates a new instance object. Each instance
+        starts with its own empty namespace, inherits attributes from its class and
+        gets its own instance attributes via assignments to <code>self</code> inside methods.
+    <pre><code class="language-python">>>> x = FirstClass()
+>>> y = FirstClass()
+>>> x.setdata("coding")
+>>> y.setdata(3.14)
+>>> x.display()
+coding
+>>> y.display()
+3.14
 </code></pre>
-        </div>
-    </div>
+    </p>
+
+    <p>
+        Classes can be specialized by creating subclasses that inherit from superclasses.
+        Subclass is defined with parentheses: <code>class Sub(Base): ...</code>, subclass overrides attributes/methods
+        of its superclass and attribute search goes: <i>instance → class → superclasses</i>.
+    <pre><code class="language-python">>>> class SecondClass(FirstClass):
+...     def display(self):
+...             print(f'Current value = {self.data}')
+... 
+>>> z = SecondClass()
+>>> z.setdata("Hello")
+>>> z.display()
+Current value = Hello</code></pre>
+    </p>
+
+    <p>
+        Operator overloading in Python allows classes to intercept and define custom behavior for built-in operators by
+        using specially named methods. For example, the <code>__init__</code> method acts as a constructor and is
+        automatically
+        called when a new instance of the class is created. The <code>__str__</code> method determines how an object is
+        represented
+        as a string when printed. Similarly, the <code>__add__</code> method defines the behavior of the <code>+</code>
+        operator, enabling
+        objects of the class to be added together using customized logic.
+    <pre><code class="language-python">>>> class ThirdClass(SecondClass):
+...     def __init__(self, value):
+...         self.data = value
+...     def __add__(self, other):
+...         return ThirdClass(self.data + other)
+...     def __str__(self):
+...         return f"[ThirdClass: {self.data}]"
+...     def mul(self, other):
+...         self.data *= other  # in-place
+... 
+>>> a = ThirdClass(3)
+>>> print(a)
+[ThirdClass: 3]
+>>> b = a + 4
+>>> print(b)
+[ThirdClass: 7]
+>>> a.mul(5)
+>>> print(a)
+[ThirdClass: 15]
+</code></pre>
+    </p>
+
+    <p>
+        A class can be completely empty, used as a record-like container:
+    <pre><code class="language-python">>>> class rec: pass
+... 
+>>> rec.name = 'Pat'
+>>> rec.age = 40
+>>> print(rec.name)
+Pat</code></pre>
+    </p>
+
+
+    <p>
+        Instances inherit class attributes but can also have their own:
+    </p>
+
+    <pre><code class="language-python">>>> x = rec()
+>>> y = rec()
+>>> x.name = 'Sue'
+>>> print(rec.name, x.name, y.name)
+Pat Sue Pat</code></pre>
+
+    <p>
+        In Python, both classes and instances store their attributes in dictionaries internally.
+        You can access these dictionaries through the <code>__dict__</code> attribute:
+        For example:
+    <pre><code class="language-python">>>> rec.__dict__ 
+>>> x.__dict__ </code></pre>
+    </p>
+
+    <p>
+        Classes can serve as records, often more structured than dictionaries:
+    <pre><code class="language-python">>>> class Person:
+...     def __init__(self, name, jobs, age=None):
+...             self.name = name
+...             self.jobs = jobs
+...             self.age = age
+...     def info(self):
+...             return (self.name, self.jobs)
+... 
+>>> rec1 = Person('Bob', ['dev', 'mgr'], 40)
+>>> rec2 = Person('Sue', ['dev', 'cto'])
+>>> print(rec1.jobs, rec2.info())
+['dev', 'mgr'] ('Sue', ['dev', 'cto'])
+</code></pre>
+    </p>
+
+    <p>
+        Unlike dictionaries, classes bundle both data and logic in a reusable structure,
+        and can leverage inheritance and operator overloading.
+    </p>
+
+    <p><i>More details later!</i></p>
 
     <hr>
 
-    <span style="font-weight: bold;">Inheritance</span>
-    <div style="height: 0.4em;"></div>
+    <span id="Iterators"><b>Iterators</b></span>
 
-    <div class="container-row scrollable">
-        <div>
-            Inheritance allows us to define a class that inherits all the methods and properties from another class.
-            <br><br>
-            <b>Parent class</b> is the class being inherited from, also called base class.
-            <br><br>
-            <b>Child class</b> is the class that inherits from another class, also called derived class.
-            <br><br>
-            To create a class that inherits the functionality from another class, send the parent class as a parameter
-            when creating the child class.
-            <br><br>
-            Now the Student class has the same properties and methods as the Person class.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"># Parent class
-class Person:
-  def __init__(self, fname, lname):
-    self.firstname = fname
-    self.lastname = lname
-
-  def printname(self):
-    print(self.firstname, self.lastname)
-
-# Child class
-class Student(Person):
-  pass
-
-x = Student("Mike", "Olsen")
-x.printname()</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            So far we have created a child class that inherits the properties and methods from its parent.
-            <br><br>
-            We want to add the <code>__init__()</code> function to the child class.
-            <br><br>
-            The child's <code>__init__()</code> function overrides the inheritance of the parent's
-            <code>__init__()</code> function.
-            <br><br>
-            To keep the inheritance of the parent's <code>__init__()</code> function, add a call to the parent's
-            <code>__init__()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Student(Person):
-  def __init__(self, fname, lname):
-    Person.__init__(self, fname, lname)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            By using the <code>super()</code> function, you do not have to use the name of the parent element, it will
-            automatically inherit the methods and properties from its parent.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Student(Person):
-  def __init__(self, fname, lname):
-    super().__init__(fname, lname)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Add a property called <code>graduationyear</code> to the <code>Student</code> class.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Student(Person):
-  def __init__(self, fname, lname):
-    super().__init__(fname, lname)
-    self.graduationyear = 2019</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            In the example on the right, the year <code>2019</code> should be a variable, and passed into the
-            <code>Student</code> class when creating student objects.
-            To do so, add another parameter in the <code>__init__()</code> function.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Student(Person):
-  def __init__(self, fname, lname, year):
-    super().__init__(fname, lname)
-    self.graduationyear = year
-
-x = Student("Mike", "Olsen", 2019)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            Add a method called <code>welcome</code> to the <code>Student</code> class.
-            <br><br>
-            If you add a method in the child class with the same name as a function in the parent class, the inheritance
-            of the parent method will be overridden.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">class Student(Person):
-  def __init__(self, fname, lname, year):
-    super().__init__(fname, lname)
-    self.graduationyear = year
-
-  def welcome(self):
-    print("Welcome", self.firstname, self.lastname, "to the class of", self.graduationyear)</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Iterators</span>
-    <div style="height: 0.4em;"></div>
-
-    <hr>
+    <p>
+        <!--Start here!-->
+    </p>
 
     <div class="container-row scrollable">
         <div>
@@ -2281,8 +1938,6 @@ for x in myiter:
     <span style="font-weight: bold;">Polymorphism</span>
     <div style="height: 0.4em;"></div>
 
-    <hr>
-
     <div class="container-row scrollable">
         <div>
             The word "polymorphism" means "many forms", and in programming it refers to methods/functions/operators with
@@ -2397,81 +2052,6 @@ for x in (car1, boat1, plane1):
 
     <hr>
 
-    <span style="font-weight: bold;">Dates</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Math</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">JSON</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Regular Expression</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">PIP</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
     <span style="font-weight: bold;">Errors and Exceptions</span>
     <div style="height: 0.4em;"></div>
 
@@ -2579,7 +2159,7 @@ except:
         <div class="right-column">
             <pre><code class="language-python">x = -1
 
-if x < 0:
+if x &lt; 0:
   raise Exception("Sorry, no numbers below zero")
 
 x = "hello"
@@ -2591,44 +2171,14 @@ if not type(x) is int:
 
     <hr>
 
-    <span style="font-weight: bold;">User Input</span>
-    <div style="height: 0.4em;"></div>
 
+    <p>
+        <i>
+            More on Recursion, Dates, Math, JSON, Regular Expressions, PIP, User Input and
+            Virtual Environments later!
+        </i>
+    </p>
 
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <span style="font-weight: bold;">Virtual Environment</span>
-    <div style="height: 0.4em;"></div>
-
-
-    <div class="container-row scrollable">
-        <div>
-            <i>Details later!</i>
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            <!---->
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python"></code></pre>
-        </div>
-    </div>
 
     <hr>
 
