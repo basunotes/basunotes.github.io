@@ -1877,125 +1877,96 @@ StopIteration</code></pre>
 StopIteration</code></pre>
     </p>
 
-
     <hr>
 
     <span style="font-weight: bold;">Errors and Exceptions</span>
     <div style="height: 0.4em;"></div>
 
 
-    <div class="container-row scrollable">
-        <div>
-            When an error occurs, or exception as we call it, Python will normally stop and generate an error message.
-            <br><br>
-            These exceptions can be handled using the <code>try</code> statement.
-            <br><br>
-            Since the try block raises an error, the except block will be executed.
-            <br><br>
-            Without the try block, the program will crash and raise an error:
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">try:
-  print(x)
-except:
-  print("An exception occurred")</code></pre>
-        </div>
-    </div>
+    <p>
+        When an error occurs, or exception as we call it, Python will normally stop and generate an error message.
+        These exceptions can be handled using the <code>try</code> statement.
+        Since the <code>try</code> block raises an error, the <code>except</code> block will be executed.
+        Without the <code>try</code> block, the program will crash and raise an error:
+    <pre><code class="language-python">>>> try:
+...     print(x)
+... except:
+...     print("An exception occurred")
+... 
+An exception occurred</code></pre>
+    </p>
 
-    <hr>
+    <p>
+        You can define as many exception blocks as you want, e.g. if you want to execute a special block of code for
+        a special kind of error.
+    <pre><code class="language-python">>>> try:
+...     print(x)
+... except NameError:
+...     print("Variable x is not defined")
+... except:
+...     print("Something else went wrong")
+... 
+Variable x is not defined</code></pre>
+    </p>
 
-    <div class="container-row scrollable">
-        <div>
-            You can define as many exception blocks as you want, e.g. if you want to execute a special block of code for
-            a special kind of error.
+    <p>
+        You can use the <code>else</code> keyword to define a block of code to be executed if no errors were raised.
         </div>
-        <div class="right-column">
-            <pre><code class="language-python">try:
-  print(x)
-except NameError:
-  print("Variable x is not defined")
-except:
-  print("Something else went wrong")</code></pre>
-        </div>
-    </div>
+    <pre><code class="language-python">>>> try:
+...     print('Hello')
+... except:
+...     print('Something went wrong')
+... else:
+...     print('Nothing went wrong')
+... 
+Hello
+Nothing went wrong</code></pre>
+    </p>
 
-    <hr>
+    <p>
+        The <code>finally</code> block, if specified, will be executed regardless if the try block raises an
+        error or not.
+    <pre><code class="language-python">>>> try:
+...     print(x)
+... except:
+...     print('Something went wrong')
+... finally:
+...     print("The 'try except' is finished")
+... 
+Something went wrong
+The 'try except' is finished</code></pre>
+    </p>
 
-    <div class="container-row scrollable">
-        <div>
-            You can use the <code>else</code> keyword to define a block of code to be executed if no errors were raised.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">try:
-  print("Hello")
-except:
-  print("Something went wrong")
-else:
-  print("Nothing went wrong")</code></pre>
-        </div>
-    </div>
+    <p>
+        This can be useful to close objects and clean up resources.
+        The program can continue, without leaving the file object open.
+    <pre><code class="language-python">>>> try:
+...     f = open('demofile.txt')
+...     try:
+...             f.write('Lorum Ipsum')
+...     except: 
+...             print('Something went wrong when writing to the file')
+...     finally:
+...             f.close()
+... except:
+...     print('Something went wrong when opening the file')</code></pre>
+    </p>
 
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            The <code>finally</code> block, if specified, will be executed regardless if the try block raises an error
-            or not.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">try:
-  print(x)
-except:
-  print("Something went wrong")
-finally:
-  print("The 'try except' is finished")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            This can be useful to close objects and clean up resources.
-            <br><br>
-            The program can continue, without leaving the file object open.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">try:
-  f = open("demofile.txt")
-  try:
-    f.write("Lorum Ipsum")
-  except:
-    print("Something went wrong when writing to the file")
-  finally:
-    f.close()
-except:
-  print("Something went wrong when opening the file")</code></pre>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="container-row scrollable">
-        <div>
-            As a Python developer you can choose to throw an exception if a condition occurs.
-            <br><br>
+    <p>
+            You can choose to throw an exception if a condition occurs.
             To throw (or raise) an exception, use the <code>raise</code> keyword.
-            <br><br>
             You can define what kind of error to raise, and the text to print to the user.
-        </div>
-        <div class="right-column">
-            <pre><code class="language-python">x = -1
-
-if x &lt; 0:
-  raise Exception("Sorry, no numbers below zero")
-
-x = "hello"
-
-if not type(x) is int:
-  raise TypeError("Only integers are allowed")</code></pre>
-        </div>
-    </div>
+            <pre><code class="language-python">>>> x = -1
+>>> if x &lt; 0:
+...     raise Exception('Sorry, no numbers below zero')
+... 
+Exception: Sorry, no numbers below zero
+>>> x = 'Hello'
+>>> if not type(x) is int:
+...     raise TypeError('Only Integers are allowed')
+... 
+TypeError: Only Integers are allowed</code></pre>
+            </p>
 
     <hr>
 
