@@ -1,11 +1,3 @@
-<!--
-Highlight.js SQL example:
-<pre><code class="language-sql">SELECT name, age
-FROM users
-WHERE age > 25
-ORDER BY age DESC;</code></pre>
--->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,15 +10,28 @@ ORDER BY age DESC;</code></pre>
 </head>
 
 <body>
-    <div class="scrollable">
-        <div>
-            <table>
-                <tr>
-                    <td><a href="" target="_blank"><b>Notes</b></a> on SQL</td>
-                </tr>
-            </table>
-        </div>
-    </div>
+
+    <span><b>Notes on SQL</b></span>
+
+    <p>
+        Notes providing a rough overview of SQL. I do not claim complete accuracy, but they seem to be correct.
+    </p>
+
+    <p>
+         Type the following in the terminal and enter the password.
+        <pre><code class="language-sql">mysql -u root -p</code></pre>
+    </p>
+
+    <p>
+        The following query asks the server to return its version number and the current date.
+        <pre><code class="language-sql">mysql> select version(), current_date;
++-----------+--------------+
+| version() | current_date |
++-----------+--------------+
+| 9.4.0     | 2025-08-24   |
++-----------+--------------+
+1 row in set (0.006 sec)</code></pre>
+    </p>
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
