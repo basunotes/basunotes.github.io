@@ -20,7 +20,7 @@
     </p>
 
     <p>
-        They are broadly organised as follows:
+        They are broadly organized as follows:
     <ul>
         <li><a href="#Variables">Variables</a></li>
         <li><a href="#Numbers">Numbers</a></li>
@@ -30,8 +30,8 @@
         <li><a href="#Tuples">Tuples</a></li>
         <li><a href="#Sets">Sets</a></li>
         <li><a href="#Dictionaries">Dictionaries</a></li>
-        <li><a href="#ifMatch">if and match Selections</a></li>
-        <li><a href="#whileFor">while and for Loops</a></li>
+        <li><a href="#ifMatch">If and Match Selections</a></li>
+        <li><a href="#whileFor">While and For Loops</a></li>
         <li><a href="#Functions">Functions</a></li>
         <li><a href="#Lambdas">Lambdas</a></li>
         <li><a href="#Comprehensions">Comprehensions</a></li>
@@ -47,7 +47,7 @@
 
     <p>
         A variable in Python is created when you first assign it a value:
-    <pre><code class="language-python">>>> x = 2</code></pre>
+    <pre class="plain"><code>>>> x = 2</code></pre>
     </p>
 
     <p>
@@ -64,7 +64,7 @@
     <p>
         To further emphasize the point that variables have no type, consider the code
         following code:
-    <pre><code class="language-python">>>> x = 2
+    <pre class="plain"><code>>>> x = 2
 >>> x = 2.5
 >>> x = "A"</code></pre>
     </p>
@@ -74,18 +74,18 @@
         <br>
         What happens to the object it was previously referencing?
         To be imprecise, if the object is no longer in <i>use</i>, then the space it occupied is <i>reclaimed</i>.
-        This is known as <i>garbage collection</i> and we might go into details later.
+        This is known as <i>garbage collection</i> and we might go into detail later.
     </p>
 
     <p>
         Consider the second line of the following code:
-    <pre><code class="language-python">>>> x = 2
+    <pre class="plain"><code>>>> x = 2
 >>> y = x</code></pre>
     </p>
 
     <p>
         Since the variable <code>x</code> is being used here, it is replaced
-        by the object it references, namely <code>2</code>.
+        with the object it references, namely <code>2</code>.
         A new variable, <code>y</code>, is created and made to reference the same object.
         Therefore, both <code>x</code> and <code>y</code> end up referencing the same object.
         However, there is no <i>link</i> between the two variables.
@@ -94,7 +94,7 @@
     <p style="font-size: smaller;">
         In the following code, the last assignment makes <code>x</code> reference the integer <code>3</code>, but
         it does not change the object <code>y</code> refers to.
-    <pre><code class="language-python">>>> x = 2
+    <pre class="plain"><code>>>> x = 2
 >>> y = x
 >>> x = x + 1</code></pre>
     </p>
@@ -114,7 +114,7 @@
         left side, assigning the values one at a time. The left side of a sequence assignment must be a sequence (such
         as a tuple or list of targets), while the right side can be any iterable object, not just a sequence. Both sides
         must have the same length.
-    <pre><code class="language-python">>>> A, B = 1, 2
+    <pre class="plain"><code>>>> A, B = 1, 2
 >>> A, B
 (1, 2)
 >>> [A, B] = [3, 4]
@@ -133,7 +133,7 @@
         can use a <i>starred target</i> on the left side of an assignment. This lets you match and capture multiple
         elements from an iterable on the right-hand side. This technique is known as sequence unpacking.
         There are some edge cases that need to be considered. I might discuss them later!
-    <pre><code class="language-python">>>> a, *b = [1, 2, 3, 4]
+    <pre class="plain"><code>>>> a, *b = [1, 2, 3, 4]
 >>> a, b
 (1, [2, 3, 4])
 >>> *a, b = [1, 2, 3, 4]
@@ -146,7 +146,7 @@
 
     <p>
         Python allows for multiple-target and augmented assignments:
-    <pre><code class="language-python">>>> x = y = z = 1
+    <pre class="plain"><code>>>> x = y = z = 1
 >>> x, y, z
 (1, 1, 1)
 >>> x = 'abc'
@@ -164,7 +164,7 @@
         <li>A variable name cannot start with a number</li>
         <li>A variable name can only contain alphanumeric characters and underscores</li>
         <li>Variable names are case-sensitive</li>
-        <li>A variable cannot be any of the Python keywords</li>
+        <li>A variable name cannot be any of the Python keywords</li>
     </ul>
     </p>
 
@@ -196,7 +196,7 @@
         Many of these rules are similar to those in mathematics. For example, multiplication takes precedence over
         addition.
         Expressions within parentheses are evaluated first.
-    <pre><code class="language-python">>>> 2 * 3 + 5
+    <pre class="plain"><code>>>> 2 * 3 + 5
 11
 >>> 2 * (3 + 5)
 16</code></pre>
@@ -206,26 +206,26 @@
         If an expression consists of different numeric types, Python converts all the operands up to the type of the
         most complex operand in the expression.
         In the following example, the integer is promoted to a floating-point number.
-    <pre><code class="language-python">>>> 2.5 + 3 
+    <pre class="plain"><code>>>> 2.5 + 3 
 5.5</code></pre>
     </p>
 
     <p>
         In Python, you can represent numbers not only in decimal (base 10), but also in hexadecimal (base 16), octal
         (base 8), and binary (base 2) using specific prefixes:
-    <pre><code class="language-python">>>> 0xA, 0o11, 0b110
+    <pre class="plain"><code>>>> 0xA, 0o11, 0b110
 (10, 9, 6)</code></pre>
     </p>
 
     <p>
         To convert decimal integers to these other bases, you can use Python’s built-in functions:
-    <pre><code class="language-python">>>> hex(10), oct(9), bin(6)
+    <pre class="plain"><code>>>> hex(10), oct(9), bin(6)
 ('0xa', '0o11', '0b110')</code></pre>
     </p>
 
     <p>These functions return strings formatted with the appropriate base prefix. To convert a string representation of
         a number back into an integer, use the built-in <code>int</code> function and specify the base:
-    <pre><code class="language-python">>>> int('0xA', 16)
+    <pre class="plain"><code>>>> int('0xA', 16)
 10</code></pre>
     </p>
 
@@ -233,7 +233,7 @@
         A large value such as 9,999,999 is easier to read when written with commas to group digits. As of Python 3.6,
         numeric literals in Python can contain underscores to group digits together, making them easier to read. These
         underscores do not change the value of the literal.
-    <pre><code class="language-python">>>> 9_999_999
+    <pre class="plain"><code>>>> 9_999_999
 9999999</code></pre>
     </p>
 
@@ -249,7 +249,7 @@
         <code>\</code>,
         along with one or more characters following it in the string literal, is replaced with a single character in the
         resulting string object.
-    <pre><code class="language-python">>>> x = 'a\nb'
+    <pre class="plain"><code>>>> x = 'a\nb'
 >>> print(x)
 a
 b</code></pre>
@@ -260,19 +260,19 @@ b</code></pre>
         interprets those backslashes as escape characters. To avoid this problem, you can use the letter <code>r</code>
         before the
         string to tell Python to treat the backslashes as literal characters.
-    <pre><code class="language-python">>>> path = r"C:\new\test.dat"</code></pre>
+    <pre class="plain"><code>>>> path = r"C:\new\test.dat"</code></pre>
     </p>
 
     <p>
         You can use Python’s built-in <code>ord</code> function to convert a single character into its corresponding
         Unicode code point (an integer).
-    <pre><code class="language-python">>>> ord('A')
+    <pre class="plain"><code>>>> ord('A')
 65</code></pre>
     </p>
 
     <p>
         To do the reverse, that is, convert a Unicode code point back to a character, use the <code>chr</code> function.
-    <pre><code class="language-python">>>> chr(65)
+    <pre class="plain"><code>>>> chr(65)
 'A'</code></pre>
     </p>
 
@@ -291,7 +291,7 @@ b</code></pre>
         Python returns a new object with the items in that range.
         If you leave out the start index, it defaults to 0. If you leave out the end index, it defaults to the length of
         the sequence.
-    <pre><code class="language-python">>>> x = 'abcdef'
+    <pre class="plain"><code>>>> x = 'abcdef'
 >>> x[0], x[-2], x[1:3], x[1:], x[:-1]
 ('a', 'e', 'bc', 'bcdef', 'abcde')</code></pre>
     <p>
@@ -300,7 +300,7 @@ b</code></pre>
         You can also add a third number, like this: start:end:step. This is called the step or stride. By default, the
         step is 1 (go one item at a time).
         But you can use it to skip items (e.g., every other item) or even go backward by using a negative step.
-    <pre><code class="language-python">>>> x = 'abcdef'
+    <pre class="plain"><code>>>> x = 'abcdef'
 >>> x[::2]
 'ace'
 >>> x[::-1]
@@ -316,7 +316,7 @@ b</code></pre>
     <p>
         You can get an IndexError when you try to access a character in a string using its positional index if the index
         does not exist. But with slicing, out-of-range indexes are automatically adjusted to stay within bounds.
-    <pre><code class="language-python">>>> x = 'abc'
+    <pre class="plain"><code>>>> x = 'abc'
 >>> x[1:100]
 'bc'</code></pre>
     </p>
@@ -324,7 +324,7 @@ b</code></pre>
     <p>
         Since strings are an immutable sequence, they cannot be changed in place by assigning to an index.
         This results in a <code>TypeError: 'str' object does not support item assignment</code>.
-    <pre><code class="language-python">>>> x = 'abc'
+    <pre class="plain"><code>>>> x = 'abc'
 >>> x[0] = 'd'</code></pre>
     </p>
 
@@ -338,7 +338,7 @@ b</code></pre>
         <br><br>
         Methods are functions that are associated with and operate on objects. Consider the following method call
         expression:
-    <pre class="plain"><code class="plain">object.method(arguments)</code></pre>
+    <pre class="plain"><code>object.method(arguments)</code></pre>
     </p>
 
     <p>
@@ -353,37 +353,37 @@ b</code></pre>
     </p>
 
     <p>
-        The <code>upper</code> method returns the strings in upper case:
-    <pre><code class="language-python">>>> x = 'abc'
+        The <code>upper</code> method returns the string in uppercase:
+    <pre class="plain"><code>>>> x = 'abc'
 >>> x.upper()
 'ABC'</code></pre>
     </p>
 
 
     <p>
-        The <code>lower</code> method returns the string in lower case:
-    <pre><code class="language-python">>>> x = 'ABC'
+        The <code>lower</code> method returns the string in lowercase:
+    <pre class="plain"><code>>>> x = 'ABC'
 >>> x.lower()
 'abc'</code></pre>
     </p>
 
     <p>
         The <code>strip</code> method removes any whitespace from the beginning or the end of a string:
-    <pre><code class="language-python">>>> x = 'abc '
+    <pre class="plain"><code>>>> x = 'abc '
 >>> x.strip()
 'abc'</code></pre>
     </p>
 
     <p>
         The <code>replace</code> method replaces a substring with another string:
-    <pre><code class="language-python">>>> x = 'abc'
+    <pre class="plain"><code>>>> x = 'abc'
 >>> x.replace('a', 'd')
 'dbc'</code></pre>
     </p>
 
     <p>
         The <code>split</code> method divides a string into a list of substrings based on a specified separator:
-    <pre><code class="language-python">>>> x = "1, 2, 3"
+    <pre class="plain"><code>>>> x = "1, 2, 3"
 >>> x.split(",")
 ['1', ' 2', ' 3']</code></pre>
     </p>
@@ -392,7 +392,7 @@ b</code></pre>
         F-strings were introduced in Python 3.6 and allow for clean, concise string formatting.
         To specify a string as an f-string, simply put <code>f</code> in front of the string literal,
         and use curly brackets <code>{}</code> as placeholders:
-    <pre><code class="language-python">>>> x = 'd'
+    <pre class="plain"><code>>>> x = 'd'
 >>> y = f'abc{x}'
 >>> y
 'abcd'</code></pre>
@@ -402,7 +402,7 @@ b</code></pre>
         The expressions inside <code>{}</code> are evaluated at runtime, using the current values of the variables or
         expressions they contain.
         A placeholder can include variables, operations, function calls, and formatting modifiers.
-    <pre><code class="language-python">>>> x = 'd'
+    <pre class="plain"><code>>>> x = 'd'
 >>> f'abc{x.upper()}'
 'abcD'
 >>> x = 2
@@ -420,7 +420,7 @@ b</code></pre>
         Python comes with Booleans with predefined <code>True</code> and
         <code>False</code> objects that are essentially just the integers 1 and 0
         with custom display logic.
-    <pre><code class="language-python">>>> True + 1
+    <pre class="plain"><code>>>> True + 1
 2</code></pre>
     </p>
     <p>
@@ -432,7 +432,7 @@ b</code></pre>
         Python provides a <code>bool</code> built-in function that can be used to extract the Boolean
         value of an object. You can use this to explicitly check if an object is true, that is,
         nonzero or nonempty.
-    <pre><code class="language-python">>>> bool(1)
+    <pre class="plain"><code>>>> bool(1)
 True
 >>> bool(0)
 False
@@ -448,7 +448,7 @@ False</code></pre>
         include: Equal to (<code>==</code>), Not equal to (<code>!=</code>), Less than (<code>&lt;</code>), Greater than
         (<code>&gt;</code>), Less than or equal to (<code>&lt;=</code>), and
         Greater than or equal to (<code>&gt;=</code>).
-    <pre><code class="language-python">>>> 10 > 9
+    <pre class="plain"><code>>>> 10 > 9
 True
 >>> 10 == 9
 False
@@ -460,7 +460,7 @@ False</code></pre>
         Consider the following code. The result is <code>False</code> because floating-point numbers in Python cannot
         represent decimal values exactly
         due to precision limitations.
-    <pre><code class="language-python">>>> 1.1 + 2.2 == 3.3
+    <pre class="plain"><code>>>> 1.1 + 2.2 == 3.3
 False
 >>> 1.1 + 2.2
 3.3000000000000003
@@ -471,7 +471,7 @@ False
         To handle this issue, you can use the <code>isclose()</code> method from the <code>math</code> module, which
         allows
         you to compare floating-point numbers with a tolerance for small errors:
-    <pre><code class="language-python">>>> import math
+    <pre class="plain"><code>>>> import math
 >>> math.isclose(1.1 + 2.2, 3.3)
 True
 </code></pre>
@@ -482,7 +482,7 @@ True
         decimal
         arithmetic. It provides an exact representation of decimal numbers, avoiding the rounding issues associated with
         floats:
-    <pre><code class="language-python">>>> from decimal import Decimal
+    <pre class="plain"><code>>>> from decimal import Decimal
 >>> Decimal('1.1') + Decimal('2.2') == Decimal('3.3')
 True
 </code></pre>
@@ -502,7 +502,7 @@ True
         The <code>and</code> operator returns the first false operand or the last operand if both are true.
         The <code>or</code> operator returns the first true operand or the last if both are false.
         The <code>not</code> operator inverts the truth value.
-    <pre><code class="language-python">>>> {} and []
+    <pre class="plain"><code>>>> {} and []
 {}
 >>> {} and 4
 {}
@@ -535,7 +535,7 @@ False</code></pre>
         <code>is</code>
         operator tests for object identity, verifying whether two names point to the exact same object in memory,
         essentially checking if they occupy the same address.
-    <pre><code class="language-python">>>> L1 = [1, ('a', 3)]
+    <pre class="plain"><code>>>> L1 = [1, ('a', 3)]
 >>> L2 = [1, ('a', 3)]
 >>> L1 == L2, L1 is L2
 (True, False)
@@ -548,14 +548,14 @@ False</code></pre>
     <p>
         You need to be careful, as Python internally caches and reuses certain objects
         for optimization purposes. For example:
-    <pre><code class="language-python">>>> x = 256
+    <pre class="plain"><code>>>> x = 256
 >>> y = 256
 >>> x is y
 True</code></pre>
     </p>
 
     <p>
-        The <code>getrefcount</code>function can help explore this behavior by showing how many references an object
+        The <code>getrefcount</code> function can help explore this behavior by showing how many references an object
         has.
     </p>
 
@@ -575,7 +575,7 @@ True</code></pre>
     <p>
         However, lists are mutable, meaning they support operations that modify
         a list object in place. To illustrate this point, consider the following code:
-    <pre><code class="language-python">>>> x = [1, 2, 3]
+    <pre class="plain"><code>>>> x = [1, 2, 3]
 >>> y = x
 >>> x[0] = 4
 >>> y
@@ -588,7 +588,7 @@ True</code></pre>
         value in place, so it affects <code>y</code> because it refers to the same object.
         <br><br>
         If you don't want this, you can make a copy of the object. There are multiple ways to do this, one of which is:
-    <pre><code class="language-python">>>> x = [1, 2, 3]
+    <pre class="plain"><code>>>> x = [1, 2, 3]
 >>> y = x[:]
 >>> x[0] = 4
 >>> y
@@ -598,7 +598,7 @@ True</code></pre>
     <p> When using a list, you can modify its contents by assigning a new value to a specific item or to a range (slice)
         of items. The length of the sequence being assigned does not need to match the length of the slice being
         replaced. Slice assignment can be used to replace, expand, or shrink the subject list.
-    <pre><code class="language-python">>>> x = [1, 2, 3] 
+    <pre class="plain"><code>>>> x = [1, 2, 3] 
 >>> x[1:2] = [4, 5] 
 >>> x 
 [1, 4, 5, 3] 
@@ -618,7 +618,7 @@ True</code></pre>
     <p>
         The <code>insert</code> method can be used to insert items at a specified location without replacing any of the
         existing items.
-    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+    <pre class="plain"><code>>>> x = [1, 2, 3, 4]
 >>> x.insert(2, 5)
 >>> x
 [1, 2, 5, 3, 4]</code></pre>
@@ -626,7 +626,7 @@ True</code></pre>
 
     <p>
         To add an item to the end of the list, use the <code>append</code> method.
-    <pre><code class="language-python">>>> x = [1, 2, 3]
+    <pre class="plain"><code>>>> x = [1, 2, 3]
 >>> x.append(4)
 >>> x
 [1, 2, 3, 4]</code></pre>
@@ -636,7 +636,7 @@ True</code></pre>
         To append elements from another list to the current list, use the <code>extend</code> method.
         The elements will be added to the end of the list.
         The <code>extend</code> method does not have to append lists, you can add any iterable object.
-    <pre><code class="language-python">>>> x = [1, 2, 3]
+    <pre class="plain"><code>>>> x = [1, 2, 3]
 >>> y = [4, 5]
 >>> x.extend(y)
 >>> x
@@ -646,7 +646,7 @@ True</code></pre>
     <p>
         The <code>remove</code> method removes the specified item.
         If there are more than one item with the specified value, then the method removes the first occurrence.
-    <pre><code class="language-python">>>> x = [1, 1, 2, 3]
+    <pre class="plain"><code>>>> x = [1, 1, 2, 3]
 >>> x.remove(1)
 >>> x
 [1, 2, 3]</code></pre>
@@ -655,7 +655,7 @@ True</code></pre>
     <p>
         The <code>pop</code> method removes and returns the item from the specified index.
         If no index is specified, then it removes the last item.
-    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+    <pre class="plain"><code>>>> x = [1, 2, 3, 4]
 >>> x.pop(2)
 3
 >>> x
@@ -667,9 +667,9 @@ True</code></pre>
     </p>
 
     <p>
-        The <code>del</code> keyword also removes item from specied index. The syntax is different.
-        You can use it also to delete the entire list.
-    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+        The <code>del</code> keyword also removes an item from a specified index. The syntax is different.
+        You can also use it to delete the entire list.
+    <pre class="plain"><code>>>> x = [1, 2, 3, 4]
 >>> del x[2]
 >>> x
 [1, 2, 4]
@@ -678,7 +678,7 @@ True</code></pre>
 
     <p>
         The <code>clear</code> method empties the list but it does not delete it.
-    <pre><code class="language-python">>>> x = [1, 2, 3]
+    <pre class="plain"><code>>>> x = [1, 2, 3]
 >>> x.clear()
 >>> x
 []</code></pre>
@@ -688,13 +688,13 @@ True</code></pre>
         List objects have a <code>sort</code> method that sorts the list alphanumerically, ascending by default.
         Just make sure that the items are of the same data type.
         <br>
-        To sort descending use the keyword argument <code>reverse = True</code>.
+        To sort in descending order, use the keyword argument <code>reverse=True</code>.
         Alternatively, one can use the <code>reverse</code> method.
-    <pre><code class="language-python">>>> x = [3, 1, 2]
+    <pre class="plain"><code>>>> x = [3, 1, 2]
 >>> x.sort()
 >>> x
 [1, 2, 3]
->>> x.sort(reverse = True)
+>>> x.sort(reverse=True)
 >>> x
 [3, 2, 1]
 >>> x.reverse()
@@ -704,22 +704,22 @@ True</code></pre>
 
     <p>
         You can also sort based on a function by using the keyword argument <code>key = function</code>.
-        The function will return a value for each item in list based on which the list will be sorted.
-        The <code>sort</code> method is case-sensitive. To avoid unexpect results you can use <code>str.lower</code>
+        The function will return a value for each item in the list, by which the list will be sorted.
+        The <code>sort</code> method is case-sensitive. To avoid unexpected results you can use <code>str.lower</code>
         as a key function.
-    <pre><code class="language-python">>>> def myfunc(n):
+    <pre class="plain"><code>>>> def myfunc(n):
 ...     return abs(n - 50)
 ... 
 >>> x = [100, 50, 65, 82, 23]
->>> x.sort(key = myfunc)
+>>> x.sort(key=myfunc)
 >>> x
 [50, 65, 23, 82, 100]</code></pre>
     </p>
 
     <p>
         Instead of using slice syntax, you can also use the <code>copy</code> method or the
-        <code>List</code> constructor.
-    <pre><code class="language-python">>>> x = [1, 2, 3]
+        <code>list</code> constructor.
+    <pre class="plain"><code>>>> x = [1, 2, 3]
 >>> y = list(x)
 >>> z = x.copy()
 >>> y, z
@@ -731,7 +731,7 @@ True</code></pre>
         Python prints a <code>[...] </code> whenever it detects a cycle in the object back to itself, rather than
         getting stuck in an infinite loop.
         Cyclic structures may cause code of your own to fall into unexpected loops if you don't anticipate them.
-    <pre><code class="language-python">>>> L = ['a']
+    <pre class="plain"><code>>>> L = ['a']
 >>> L.append(L)
 >>> L
 ['a', [...]]
@@ -748,7 +748,7 @@ True</code></pre>
         Tuples, like strings, are immutable sequences. There are certain
         peculiarities one must be aware of when working with them. For example,
         if you want a single-item tuple, you need to add a trailing comma:
-    <pre><code class="language-python">>>> x = (2)
+    <pre class="plain"><code>>>> x = (2)
 >>> x
 2
 >>> x = (2,)
@@ -759,7 +759,7 @@ True</code></pre>
     <p>
         Python allows you to omit the opening and closing round brackets for a tuple
         where it is not ambiguous to do so:
-    <pre><code class="language-python">>>> x = 2, 3, 4
+    <pre class="plain"><code>>>> x = 2, 3, 4
 >>> x
 (2, 3, 4)</code></pre>
     </p>
@@ -780,8 +780,8 @@ True</code></pre>
     <p>Python sets are unordered collections of unique and immutable (hashable) elements. Unlike lists or tuples, sets
         do not allow duplicates and do not maintain any order. You can create a set using the built-in <code>set</code>
         function
-        with any iterable, or with curly brace (<code>{}</code>) literals.
-    <pre><code class="language-python">>>> A = set('abc')
+        with any iterable, or with curly-brace (<code>{}</code>) literals.
+    <pre class="plain"><code>>>> A = set('abc')
 >>> B = {'d', 'e', 'f'}
 >>> A, B
 ({'c', 'a', 'b'}, {'e', 'd', 'f'})</code></pre>
@@ -790,7 +790,7 @@ True</code></pre>
     <p>
         Sets support fast membership testing and standard set operations like union, intersection, difference, subset
         and superset checks:
-    <pre><code class="language-python">>>> A = {1, 2, 3, 4}
+    <pre class="plain"><code>>>> A = {1, 2, 3, 4}
 >>> B = {2, 4, 5, 6}
 >>> A & B
 {2, 4}
@@ -805,7 +805,7 @@ False</code></pre>
     <p>
         Sets are especially handy for eliminating duplicates, comparing collections regardless of order, or checking
         what's missing or extra:
-    <pre><code class="language-python">>>> list(set([1, 2, 2, 3, 1]))
+    <pre class="plain"><code>>>> list(set([1, 2, 2, 3, 1]))
 [1, 2, 3]
 >>> set('learn') - set('ear')
 {'n', 'l'}
@@ -835,7 +835,7 @@ True</code></pre>
 
     <p>As of Python 3.7, dictionaries preserve the insertion order of keys as an implementation detail, and this
         behavior became an official part of the Python language specification in Python 3.8.
-    <pre><code class="language-python">>>> D = {'a': 1, 'b': 2, 3: 'c'}
+    <pre class="plain"><code>>>> D = {'a': 1, 'b': 2, 3: 'c'}
 >>> D
 {'a': 1, 'b': 2, 3: 'c'}
 >>> D['e'] = 4
@@ -848,7 +848,7 @@ True</code></pre>
 
     <p>
         You can build dictionaries using the <code>dict</code> constructor.
-    <pre><code class="language-python">>>> x = dict(a = 1, b = 2)
+    <pre class="plain"><code>>>> x = dict(a = 1, b = 2)
 >>> x
 {'a': 1, 'b': 2}</code></pre>
     </p>
@@ -856,10 +856,9 @@ True</code></pre>
     <p>
         Dictionary methods <code>keys</code>, <code>values</code>, and <code>items</code> return iterable objects
         containing keys, values, and (key,
-        value) pairs, respectively, which can be used in loops or converted to lists for display. Any changes done to
-        the dictionary will be
-        reflected accordingly.
-    <pre><code class="language-python">>>> x = {'a' : 1, 'b': 2, 'c': 3}
+        value) pairs, respectively, which can be used in loops or converted to lists for display. Any changes made to
+        the dictionary will be reflected accordingly.
+    <pre class="plain"><code>>>> x = {'a' : 1, 'b': 2, 'c': 3}
 >>> list(x.keys())
 ['a', 'b', 'c']
 >>> list(x.values())
@@ -875,7 +874,7 @@ True</code></pre>
         Fetching a nonexistent key is normally an error, but the <code>get</code>
         method returns a default value, <code>None</code>, or a passed-in default if the key
         doesn't exist.
-    <pre><code class="language-python">>>> D = {'a' : 1}
+    <pre class="plain"><code>>>> D = {'a' : 1}
 >>> D.get('b')
 >>> D.get('b', 2)
 2</code></pre>
@@ -887,7 +886,7 @@ True</code></pre>
         overwriting values of existing keys if there's a clash. The dictionary's <code>pop</code>
         method deletes a key from the dictionary and returns the value it had, similar to other
         <code>pop</code> methods.
-    <pre><code class="language-python">>>> D = {'a': 1, 'b': 2}
+    <pre class="plain"><code>>>> D = {'a': 1, 'b': 2}
 >>> D.update({'c': 3})
 >>> D
 {'a': 1, 'b': 2, 'c': 3}
@@ -899,7 +898,7 @@ True</code></pre>
 
     <hr>
 
-    <span id="ifMatch"><b>if and Match Selections</b></span>
+    <span id="ifMatch"><b>If and Match Selections</b></span>
 
     <p>
         All Python compound statements, statements that have other statements nested inside them, follow the same
@@ -914,7 +913,7 @@ True</code></pre>
         programming languages often use curly brackets for this purpose. Consider the following code: Python evaluates
         the condition inside an <code>if</code> statement and runs the appropriate code based on whether the condition
         is <code>True</code> or <code>False</code>.
-    <pre><code class="language-python">>>> a = 33
+    <pre class="plain"><code>>>> a = 33
 >>> b = 200
 >>> if b > 0:
 ...     print('b is greater than a')
@@ -926,7 +925,7 @@ b is greater than a</code></pre>
         The <code>elif</code> keyword in Python stands for else if.
         It allows you to check a new condition if the previous <code>if</code> or <code>elif</code> conditions were not
         true. You can use multiple <code>elif</code> statements to test several different conditions in sequence.
-    <pre><code class="language-python">>>> a = 33
+    <pre class="plain"><code>>>> a = 33
 >>> b = 33
 >>> if b > a:
 ...     print('b is greater than a')
@@ -938,12 +937,12 @@ a and b are equal</code></pre>
 
     <p>
         The <code>else</code> keyword catches anything which isn't caught by the preceding conditions.
-    <pre><code class="language-python">>>> a = 200
+    <pre class="plain"><code>>>> a = 200
 >>> b = 33
 >>> if b > a:
 ...     print('b is greater than a')
 ... elif a == b:
-...     print('and b are equal')
+...     print('a and b are equal')
 ... else:
 ...     print('a is greater than b')
 ... 
@@ -952,7 +951,7 @@ a is greater than b</code></pre>
 
     <p>
         If you have only one statement to execute, you can put it on the same line as the if statement.
-    <pre><code class="language-python">>>> if a > b: print("a is greater than b")
+    <pre class="plain"><code>>>> if a > b: print("a is greater than b")
 ... 
 a is greater than b</code></pre>
     </p>
@@ -960,15 +959,15 @@ a is greater than b</code></pre>
     <p>
         If you have only one statement to execute, one for <code>if</code>,
         and one for <code>else</code>, you can put it all on the same line:
-    <pre><code class="language-python">>>> a = 2
+    <pre class="plain"><code>>>> a = 2
 >>> b = 330
 >>> print("A") if a > b else print("B")
 B</code></pre>
     </p>
 
     <p>
-        You can also have multiple else statements on the same line.
-    <pre><code class="language-python">>>> a = 330
+        You can also have multiple <code>else</code> statements on the same line.
+    <pre class="plain"><code>>>> a = 330
 >>> b = 330
 >>> print("A") if a > b else print("=") if a == b else print("B")
 =</code></pre>
@@ -980,7 +979,7 @@ B</code></pre>
         of many code blocks to be executed. Here's how it works: the match expression is evaluated once. The value of
         the expression is then compared with the values of each case. If there is a match, the associated block of code
         is executed.
-    <pre><code class="language-python">>>> day = 2
+    <pre class="plain"><code>>>> day = 2
 >>> match day:
 ...     case 1:
 ...             print('Monday')
@@ -1000,15 +999,15 @@ Tuesday</code></pre>
 
     <hr>
 
-    <span id="whileFor"><b>while and for Loops</b></span>
+    <span id="whileFor"><b>While and For Loops</b></span>
 
     <p>
-        <code>while</code> statement repetedly executes an associated block
+        <code>while</code> statement repeatedly executes an associated block
         of statements as long as a test at the top keeps evaluating to a
         true value.
-    <pre><code class="language-python">>>> a = 0; b = 10
+    <pre class="plain"><code>>>> a = 0; b = 10
 >>> while a &lt; b:
-...     print(a, end = ' ')
+...     print(a, end=' ')
 ...     a += 1
 ... 
 0 1 2 3 4 5 6 7 8 9</code></pre>
@@ -1021,7 +1020,7 @@ Tuesday</code></pre>
         <code>break</code> exits the nearest enclosing loop immediately, skipping any remaining code in the loop
         body.
         <code>continue</code> skips the rest of the current iteration and jumps back to the loop’s condition check.
-    <pre><code class="language-python">>>> a = 0; b = 10
+    <pre class="plain"><code>>>> a = 0; b = 10
 >>> while a &lt; b:
 ...     if a == 3:
 ...         a += 1
@@ -1038,9 +1037,9 @@ Tuesday</code></pre>
         The <code>else</code> statement can be used with a <code>while</code> loop to run a block of code once after the
         loop condition becomes false, but only if the loop was not exited using a <code>break</code>.
 
-    <pre><code class="language-python">>>> a = 0
+    <pre class="plain"><code>>>> a = 0
 >>> while a &lt; 5:
-...     print(a, end = ' ')
+...     print(a, end=' ')
 ...     a += 1
 ... else:
 ...     print('Loop finished normally')
@@ -1051,7 +1050,7 @@ Tuesday</code></pre>
     <p>
         The <code>pass</code> statement is a no-operation placeholder. It is roughly to
         statements what <code>None</code> is to objects. For example:
-    <pre><code class="language-python">>>> while True:
+    <pre class="plain"><code>>>> while True:
 ...     pass
 ... </code></pre>
     </p>
@@ -1070,8 +1069,8 @@ Tuesday</code></pre>
         The <code>break</code> and <code>continue</code> statements also behave the same in a <code>for</code> loop as
         they
         do in a <code>while</code> loop.
-    <pre><code class="language-python">>>> for x in [1, 2, 3]:
-...     print(x, end = ' ')
+    <pre class="plain"><code>>>> for x in [1, 2, 3]:
+...     print(x, end=' ')
 ... 
 1 2 3
 >>> for (x, y) in [(1, 2), (3, 4), (5, 6)]:
@@ -1093,7 +1092,7 @@ Tuesday</code></pre>
         With two arguments, the first argument acts as the inclusive lower bound, and the second argument as the
         exclusive upper bound.
         With three arguments, the third argument specifies the step, which defaults to +1.
-    <pre><code class="language-python">>>> list(range(5))
+    <pre class="plain"><code>>>> list(range(5))
 [0, 1, 2, 3, 4]
 >>> list(range(2, 5))
 [2, 3, 4]
@@ -1105,7 +1104,7 @@ Tuesday</code></pre>
         The <code>zip</code> function can take one or more sequence arguments (more generally, any type of iterable
         object) and returns an iterator
         that produces tuples, each containing elements from the corresponding positions in the input sequences.
-    <pre><code class="language-python">>>> x = [1, 2, 3, 4]
+    <pre class="plain"><code>>>> x = [1, 2, 3, 4]
 >>> y = ['a', 'b', 'c', 'd']
 >>> list(zip(x, y))
 [(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')]</code></pre>
@@ -1114,7 +1113,7 @@ Tuesday</code></pre>
     <p>
         The <code>enumerate</code> function takes an iterable and returns an iterator that produces
         tuples, where each tuple contains the index and the corresponding item from the iterable.
-    <pre><code class="language-python">>>> x = 'abcd'
+    <pre class="plain"><code>>>> x = 'abcd'
 >>> list(enumerate(x))
 [(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd')]</code></pre>
     </p>
@@ -1131,7 +1130,7 @@ Tuesday</code></pre>
         Python can also have custom attributes attached to them to store additional data. The <code>return</code>
         statement, which can appear anywhere in the function body, ends the function call and sends a result back to the
         caller. If no value is specified with <code>return</code>, Python returns <code>None</code> by default.
-    <pre><code class="language-python">>>> def adder(x, y):
+    <pre class="plain"><code>>>> def adder(x, y):
 ...     return x + y
 ... 
 >>> myfunc = adder
@@ -1145,7 +1144,7 @@ Tuesday</code></pre>
         the function body. Additionally, names defined inside a function don't interfere with variables in other scopes,
         even if the same name is used. This behavior is governed by Python's LEGB (Local, Enclosing, Global, Built-in)
         rule, which dictates the order in which Python looks for a variable.
-    <pre><code class="language-python">>>> x = 300
+    <pre class="plain"><code>>>> x = 300
 >>> def myfunc():
 ...     x = 200
 ...     return x
@@ -1162,7 +1161,7 @@ Tuesday</code></pre>
         The <code>global</code> keyword makes the variable global. Additionally, use the <code>global</code> keyword if
         you want to modify a
         global variable inside a function.
-    <pre><code class="language-python">>>> def myfunc():
+    <pre class="plain"><code>>>> def myfunc():
 ...     global x
 ...     x = 300
 ... 
@@ -1183,7 +1182,7 @@ Tuesday</code></pre>
         The <code>nonlocal</code> keyword is used to work with variables inside nested
         functions. The <code>nonlocal</code> keyword makes the variable belong to the outer
         function.
-    <pre><code class="language-python">>>> def myfunc1():
+    <pre class="plain"><code>>>> def myfunc1():
 ...     x = 1
 ...     def myfunc2():
 ...             nonlocal x
@@ -1202,7 +1201,7 @@ Tuesday</code></pre>
         pass-by-object-reference). When a variable is passed into a function, what actually gets passed is a reference
         to the object, not the object itself. If the object is reassigned within the function (like <code>a = 1</code>),
         it doesn't affect the original variable outside the function.
-    <pre><code class="language-python">>>> def f(a):
+    <pre class="plain"><code>>>> def f(a):
 ...     a = 1
 ... 
 >>> b = 2
@@ -1214,7 +1213,7 @@ Tuesday</code></pre>
     <p>
         However, when arguments are passed as mutable objects like lists and dictionaries, changes made in-place to such
         objects may live on after a function exits.
-    <pre><code class="language-python">>>> def f(a):
+    <pre class="plain"><code>>>> def f(a):
 ...     a[0] = 2
 ... 
 >>> b = [1, 4, 6]
@@ -1224,7 +1223,8 @@ Tuesday</code></pre>
     </p>
 
     <p>
-        If you don't want in-place changes to impact the objects we pass, you can simply make explicit copies of mutable
+        If you don't want in-place changes to impact the objects you pass, you can simply make explicit copies of
+        mutable
         objects.
     </p>
 
@@ -1234,7 +1234,7 @@ Tuesday</code></pre>
         <i>name</i>, instead of by position. You can even combine positional and keyword arguments in a single call. In
         this case, all positionals are matched first from left to right in the definition, before keywords are matched
         by name.
-    <pre><code class="language-python">>>> def f(a, b, c):
+    <pre class="plain"><code>>>> def f(a, b, c):
 ...     print(a, b, c)
 ... 
 >>> f(1, 2, 3)
@@ -1251,7 +1251,7 @@ Tuesday</code></pre>
     <p>
         Defaults allow you to make selected function arguments <i>optional</i>. If not
         passed by value, the argument is assigned its default. You can also combine keywords and defaults.
-    <pre><code class="language-python">>>> f(c = 1, b = 3, a = 2)
+    <pre class="plain"><code>>>> f(c = 1, b = 3, a = 2)
 2 3 1
 >>> def f(a, b = 2, c = 3):
 ...     print(a, b, c)
@@ -1264,13 +1264,13 @@ Tuesday</code></pre>
 
     <p>
         The argument-matching extensions <code>*</code> and <code>**</code> are
-        designed to support any number of arguments. They can appear in function definition and function calls.
+        designed to support any number of arguments. They can appear in function definitions and function calls.
     </p>
 
     <p>
         When a function is called, Python collects all the positional arguments into a new tuple and assigns the
         variable <code>args</code> to that tuple.
-    <pre><code class="language-python">>>> def f(*args):
+    <pre class="plain"><code>>>> def f(*args):
 ...     print(args)
 ... 
 >>> f()
@@ -1283,7 +1283,7 @@ Tuesday</code></pre>
 
     <p>
         The <code>**kwargs</code> syntax is similar, but it collects keyword arguments into a new dictionary.
-    <pre><code class="language-python">>>> def f(**kwargs):
+    <pre class="plain"><code>>>> def f(**kwargs):
 ...     print(kwargs)
 ... 
 >>> f()
@@ -1298,7 +1298,7 @@ Tuesday</code></pre>
         <code>1</code> is passed to <code>a</code> by position, <code>2</code> and <code>3</code> are collected into the
         <code>pargs</code> tuple, and <code>x</code> and <code>y</code> are collected into the <code>kargs</code>
         dictionary.
-    <pre><code class="language-python">>>> def f(a, *args, **kwargs):
+    <pre class="plain"><code>>>> def f(a, *args, **kwargs):
 ...     print(a, args, kwargs)
 ... 
 >>> f(1, 2, 3, x = 1, y = 2)
@@ -1309,7 +1309,7 @@ Tuesday</code></pre>
         The <code>*</code> syntax can be used when calling a function to unpack a collection of arguments, such as a
         tuple or any other iterable, into individual positional arguments. For example, you can pass a tuple with four
         arguments to a function, and Python will unpack them into separate arguments.
-    <pre><code class="language-python">>>> def func(a, b, c):
+    <pre class="plain"><code>>>> def func(a, b, c):
 ...     print(a, b, c)
 ... 
 >>> func(*(1, 2, 3))
@@ -1320,7 +1320,7 @@ Tuesday</code></pre>
         Similarly, the <code>**</code> syntax can be used to unpack a dictionary into key-value pairs, where the
         dictionary keys are used as argument names (keywords) and the values are passed as the corresponding argument
         values.
-    <pre><code class="language-python">>>> def func(a, b, c):
+    <pre class="plain"><code>>>> def func(a, b, c):
 ...     print(a, b, c)
 ... 
 >>> func(**{'a': 1, 'b': 2, 'c': 3})
@@ -1333,7 +1333,7 @@ Tuesday</code></pre>
         <code>**</code> unpacks keyword arguments. However, note that <code>*</code> must appear before <code>**</code>
         when used together, as per Python's formal argument-passing rules. There are some other peculiarities that we
         might discuss later.
-    <pre><code class="language-python">>>> def func(a, b, c, d, e, f):
+    <pre class="plain"><code>>>> def func(a, b, c, d, e, f):
 ...     print(a, b, c, d, e, f)
 ... 
 >>> func(1, *(2, 3, 4), **{'e': 5, 'f': 6})
@@ -1345,7 +1345,7 @@ Tuesday</code></pre>
         arguments. To specify that a function can have only keyword arguments, add <code>*</code> before the arguments.
         These two types of arguments can be combined in the same function. Any argument before the <code>/</code> is
         positional-only, and any argument after the <code>*</code> is keyword-only.
-    <pre><code class="language-python">>>> def func(a, b, /, c, *, d):
+    <pre class="plain"><code>>>> def func(a, b, /, c, *, d):
 ...     print(a, b, c, d)
 ... 
 >>> func(1, 2, c = 3, d = 4)
@@ -1362,7 +1362,7 @@ Tuesday</code></pre>
         A lambda function can take any number of arguments, but it can only have one expression. The result of that
         expression is automatically returned.
         Syntax: <code>lambda arguments: expression</code>
-    <pre><code class="language-python">>>> x = lambda a: a + 10
+    <pre class="plain"><code>>>> x = lambda a: a + 10
 >>> x(5)
 15
 >>> x = lambda a, b: a*b
@@ -1371,11 +1371,11 @@ Tuesday</code></pre>
     </p>
 
     <p>
-        The power of lambda is better shown when you use them as an anonymous function inside another function.
+        The power of lambdas is better shown when you use them as an anonymous function inside another function.
         Say you have a function definition that takes one argument, and that argument will be multiplied with an unknown
         number.
         Use that function definition to make a function that always doubles or triples the number you send in.
-    <pre><code class="language-python">>>> def func(n):
+    <pre class="plain"><code>>>> def func(n):
 ...     return lambda a: a*n
 ... 
 >>> double = func(2)
@@ -1393,16 +1393,16 @@ Tuesday</code></pre>
     <p> List comprehensions can be used to build a new list by applying an expression to each item in a sequence or,
         more generally, any iterable. Similarly, set comprehensions create a set, which automatically removes
         duplicates.
-    <pre><code class="language-python">>>> L = [x*2 for x in 'abc'] 
->>> L [
-'aa', 'bb', 'cc'] 
+    <pre class="plain"><code>>>> L = [x*2 for x in 'abc'] 
+>>> L 
+['aa', 'bb', 'cc'] 
 >>> S = {x*2 for x in 'abc'} 
 >>> S 
 {'aa', 'cc', 'bb'}</code></pre>
     </p>
 
     <p> Comprehensions also support extensions such as <code>if</code> filters and nested <code>for</code> loops. </p>
-    <pre><code class="language-python">>>> L = [x*2 for x in 'abc' if x >= 'b'] 
+    <pre class="plain"><code>>>> L = [x*2 for x in 'abc' if x >= 'b'] 
 >>> L 
 ['bb', 'cc'] 
 >>> [x + y for x in 'abc' for y in '123'] 
@@ -1411,7 +1411,7 @@ Tuesday</code></pre>
     <p>
         Dictionary comprehensions run an implicit loop, collecting the key/value
         results of expressions on each iteration and using them to fill out a new dictionary.
-    <pre><code class="language-python">>>> D = {x: x**2 for x in [1, 2, 3]}
+    <pre class="plain"><code>>>> D = {x: x**2 for x in [1, 2, 3]}
 >>> D
 {1: 1, 2: 4, 3: 9}
 >>> D = {x: x*4 for x in 'abc'}
@@ -1437,7 +1437,7 @@ Tuesday</code></pre>
         that either starts the function or resumes execution from the point where the last <code>yield</code> was
         encountered.
         When the sequence is exhausted, it raises a <code>StopIteration</code> exception.
-    <pre><code class="language-python">>>> def gensquares(n):
+    <pre class="plain"><code>>>> def gensquares(n):
 ...     for i in range(n):
 ...         yield i**2
 ...
@@ -1462,7 +1462,7 @@ StopIteration</code></pre>
         that yields values one at a time, which can be more memory-efficient. The syntax consists of an expression
         followed
         by a <code>for</code> clause, and optionally an <code>if</code> clause.
-    <pre><code class="language-python">>>> squares = (i**2 for i in range(3))
+    <pre class="plain"><code>>>> squares = (i**2 for i in range(3))
 >>> squares
 <generator object <genexpr> at 0x106a1f060>
 >>> next(squares)
@@ -1488,13 +1488,13 @@ StopIteration</code></pre>
 
     <p>For example, if we have a file called <code>mymodule.py</code> with the following code:</p>
 
-    <pre><code class="language-python">def printer(x):
+    <pre class="plain"><code>def printer(x):
     print(x)
 </code></pre>
 
     <p>we can import it and use it like this:</p>
 
-    <pre><code class="language-python">>>> import mymodule
+    <pre class="plain"><code>>>> import mymodule
 >>> mymodule.printer("Hello")
 Hello
 </code></pre>
@@ -1514,7 +1514,7 @@ Hello
         the importing scope. For instance:
     </p>
 
-    <pre><code class="language-python">from mymodule import printer
+    <pre class="plain"><code>from mymodule import printer
 printer("Hello")
 </code></pre>
 
@@ -1528,7 +1528,7 @@ printer("Hello")
         the importing scope:
     </p>
 
-    <pre><code class="language-python">from mymodule import *
+    <pre class="plain"><code>from mymodule import *
 printer("Hello")
 </code></pre>
 
@@ -1549,7 +1549,7 @@ printer("Hello")
         For example, suppose we have the following file called <code>init.py</code>:
     </p>
 
-    <pre><code class="language-python">print("hello")
+    <pre class="plain"><code>print("hello")
 flag = 1
 </code></pre>
 
@@ -1557,7 +1557,7 @@ flag = 1
         When we import this module the first time, the statements inside it are executed:
     </p>
 
-    <pre><code class="language-python">>>> import init
+    <pre class="plain"><code>>>> import init
 hello
 >>> init.flag
 1
@@ -1567,7 +1567,7 @@ hello
         If we change a value and import the module again, the code is not rerun and the object from the cache is reused:
     </p>
 
-    <pre><code class="language-python">>>> init.flag = 2
+    <pre class="plain"><code>>>> init.flag = 2
 >>> import init
 >>> init.flag
 2
@@ -1578,7 +1578,7 @@ hello
         module:
     </p>
 
-    <pre><code class="language-python">import importlib
+    <pre class="plain"><code>import importlib
 importlib.reload(init)
 </code></pre>
 
@@ -1588,7 +1588,7 @@ importlib.reload(init)
         might import different modules depending on a condition:
     </p>
 
-    <pre><code class="language-python">if use_a:
+    <pre class="plain"><code>if use_a:
     from moduleA import name
 else:
     from moduleB import name
@@ -1604,7 +1604,7 @@ else:
         link back to the original module. For instance:
     </p>
 
-    <pre><code class="language-python">from share import x
+    <pre class="plain"><code>from share import x
 x = 23        # changes my local x only, not share.x
 </code></pre>
 
@@ -1612,7 +1612,7 @@ x = 23        # changes my local x only, not share.x
         If instead you use <code>import share</code>, you can modify the names inside the module object directly:
     </p>
 
-    <pre><code class="language-python">import share
+    <pre class="plain"><code>import share
 share.x = 23  # changes x inside share
 </code></pre>
 
@@ -1622,7 +1622,7 @@ share.x = 23  # changes x inside share
         <code>y</code> in your script and <code>share.y</code> reference the same list object:
     </p>
 
-    <pre><code class="language-python">from share import y
+    <pre class="plain"><code>from share import y
 y[0] = 99     # modifies the list in both places
 </code></pre>
 
@@ -1632,7 +1632,7 @@ y[0] = 99     # modifies the list in both places
         name:
     </p>
 
-    <pre><code class="language-python">import module
+    <pre class="plain"><code>import module
 name1 = module.name1
 name2 = module.name2
 del module
@@ -1649,7 +1649,8 @@ del module
         <code>__dict__</code> attribute. The keys of this dictionary are the variable and function names defined in the
         module, along with some special system-defined names such as <code>__name__</code> and <code>__file__</code>.
         For example:
-    <pre><code class="language-python">>>> mymodule.__dict__.keys()
+    <pre
+        class="plain"><code>>>> mymodule.__dict__.keys()
 dict_keys(['__name__', '__doc__', '__package__', '__loader__', '__spec__', '__file__', '__cached__', '__builtins__', 'printer'])</code></pre>
     </p>
 
@@ -1681,7 +1682,7 @@ dict_keys(['__name__', '__doc__', '__package__', '__loader__', '__spec__', '__fi
         operated on.
         Assigning attributes to <code>self</code> creates or updates instance-specific data, without affecting the class
         itself.
-    <pre><code class="language-python">>>> class FirstClass:
+    <pre class="plain"><code>>>> class FirstClass:
 ...     def setdata(self, value):
 ...             self.data = value
 ...     def display(self):
@@ -1693,7 +1694,7 @@ dict_keys(['__name__', '__doc__', '__package__', '__loader__', '__spec__', '__fi
         Calling a class like a function creates a new instance object. Each instance
         starts with its own empty namespace, inherits attributes from its class and
         gets its own instance attributes via assignments to <code>self</code> inside methods.
-    <pre><code class="language-python">>>> x = FirstClass()
+    <pre class="plain"><code>>>> x = FirstClass()
 >>> y = FirstClass()
 >>> x.setdata("coding")
 >>> y.setdata(3.14)
@@ -1706,9 +1707,10 @@ coding
 
     <p>
         Classes can be specialized by creating subclasses that inherit from superclasses.
-        Subclass is defined with parentheses: <code>class Sub(Base): ...</code>, subclass overrides attributes/methods
-        of its superclass and attribute search goes: <i>instance → class → superclasses</i>.
-    <pre><code class="language-python">>>> class SecondClass(FirstClass):
+        A subclass is defined with parentheses: <code>class Sub(Base): ...</code>, a subclass overrides
+        attributes/methods
+        of its superclass and attribute lookup goes: <i>instance → class → superclasses</i>.
+    <pre class="plain"><code>>>> class SecondClass(FirstClass):
 ...     def display(self):
 ...             print(f'Current value = {self.data}')
 ... 
@@ -1727,7 +1729,7 @@ Current value = Hello</code></pre>
         as a string when printed. Similarly, the <code>__add__</code> method defines the behavior of the <code>+</code>
         operator, enabling
         objects of the class to be added together using customized logic.
-    <pre><code class="language-python">>>> class ThirdClass(SecondClass):
+    <pre class="plain"><code>>>> class ThirdClass(SecondClass):
 ...     def __init__(self, value):
 ...         self.data = value
 ...     def __add__(self, other):
@@ -1751,7 +1753,7 @@ Current value = Hello</code></pre>
 
     <p>
         A class can be completely empty, used as a record-like container:
-    <pre><code class="language-python">>>> class rec: pass
+    <pre class="plain"><code>>>> class rec: pass
 ... 
 >>> rec.name = 'Pat'
 >>> rec.age = 40
@@ -1764,7 +1766,7 @@ Pat</code></pre>
         Instances inherit class attributes but can also have their own:
     </p>
 
-    <pre><code class="language-python">>>> x = rec()
+    <pre class="plain"><code>>>> x = rec()
 >>> y = rec()
 >>> x.name = 'Sue'
 >>> print(rec.name, x.name, y.name)
@@ -1774,13 +1776,13 @@ Pat Sue Pat</code></pre>
         In Python, both classes and instances store their attributes in dictionaries internally.
         You can access these dictionaries through the <code>__dict__</code> attribute:
         For example:
-    <pre><code class="language-python">>>> rec.__dict__ 
+    <pre class="plain"><code>>>> rec.__dict__ 
 >>> x.__dict__ </code></pre>
     </p>
 
     <p>
         Classes can serve as records, often more structured than dictionaries:
-    <pre><code class="language-python">>>> class Person:
+    <pre class="plain"><code>>>> class Person:
 ...     def __init__(self, name, jobs, age=None):
 ...             self.name = name
 ...             self.jobs = jobs
@@ -1811,7 +1813,7 @@ Pat Sue Pat</code></pre>
         <i>iterator</i>. The <i>iterator</i> is the object returned by calling <code>__iter__</code> on the iterable. An
         <i>iterator</i> implements the <code>__next__</code> method, which produces values. When there are no more
         values to produce, <code>__next__</code> raises a <code>StopIteration</code> exception.
-    <pre><code class="language-python">>>> L = [1, 2] 
+    <pre class="plain"><code>>>> L = [1, 2] 
 >>> I = iter(L) 
 >>> next(I) 
 1 
@@ -1830,7 +1832,7 @@ StopIteration</code></pre>
 
 
     <p>
-    <pre><code class="language-python">class Squares:
+    <pre class="plain"><code>class Squares:
     def __init__(self, start, stop):
         self.value = start - 1
         self.stop = stop
@@ -1847,7 +1849,7 @@ StopIteration</code></pre>
 
     <p>
         Instances of this class behave like built-in iterables:
-    <pre><code class="language-python">>>> for i in Squares(1, 5):
+    <pre class="plain"><code>>>> for i in Squares(1, 5):
 ...     print(i, end=" ")
 1 4 9 16 25</code></pre>
     </p>
@@ -1861,7 +1863,7 @@ StopIteration</code></pre>
 
     <p>
         Manual iteration works the same way as with built-ins:
-    <pre><code class="language-python">>>> X = Squares(1, 5)
+    <pre class="plain"><code>>>> X = Squares(1, 5)
 >>> I = iter(X)
 >>> next(I)
 1
@@ -1887,7 +1889,7 @@ StopIteration</code></pre>
         These exceptions can be handled using the <code>try</code> statement.
         Since the <code>try</code> block raises an error, the <code>except</code> block will be executed.
         Without the <code>try</code> block, the program will crash and raise an error:
-    <pre><code class="language-python">>>> try:
+    <pre class="plain"><code>>>> try:
 ...     print(x)
 ... except:
 ...     print("An exception occurred")
@@ -1897,8 +1899,8 @@ An exception occurred</code></pre>
 
     <p>
         You can define as many exception blocks as you want, e.g. if you want to execute a special block of code for
-        a special kind of error.
-    <pre><code class="language-python">>>> try:
+        a specific kind of error.
+    <pre class="plain"><code>>>> try:
 ...     print(x)
 ... except NameError:
 ...     print("Variable x is not defined")
@@ -1910,8 +1912,7 @@ Variable x is not defined</code></pre>
 
     <p>
         You can use the <code>else</code> keyword to define a block of code to be executed if no errors were raised.
-        </div>
-    <pre><code class="language-python">>>> try:
+    <pre class="plain"><code>>>> try:
 ...     print('Hello')
 ... except:
 ...     print('Something went wrong')
@@ -1923,9 +1924,10 @@ Nothing went wrong</code></pre>
     </p>
 
     <p>
-        The <code>finally</code> block, if specified, will be executed regardless if the try block raises an
+        The <code>finally</code> block, if specified, will be executed regardless of whether the <code>try</code>block
+        raises an
         error or not.
-    <pre><code class="language-python">>>> try:
+    <pre class="plain"><code>>>> try:
 ...     print(x)
 ... except:
 ...     print('Something went wrong')
@@ -1939,10 +1941,10 @@ The 'try except' is finished</code></pre>
     <p>
         This can be useful to close objects and clean up resources.
         The program can continue, without leaving the file object open.
-    <pre><code class="language-python">>>> try:
+    <pre class="plain"><code>>>> try:
 ...     f = open('demofile.txt')
 ...     try:
-...             f.write('Lorum Ipsum')
+...             f.write('Lorem Ipsum')
 ...     except: 
 ...             print('Something went wrong when writing to the file')
 ...     finally:
@@ -1955,16 +1957,16 @@ The 'try except' is finished</code></pre>
         You can choose to throw an exception if a condition occurs.
         To throw (or raise) an exception, use the <code>raise</code> keyword.
         You can define what kind of error to raise, and the text to print to the user.
-    <pre><code class="language-python">>>> x = -1
+    <pre class="plain"><code>>>> x = -1
 >>> if x &lt; 0:
 ...     raise Exception('Sorry, no numbers below zero')
 ... 
 Exception: Sorry, no numbers below zero
 >>> x = 'Hello'
 >>> if not type(x) is int:
-...     raise TypeError('Only Integers are allowed')
+...     raise TypeError('Only integers are allowed')
 ... 
-TypeError: Only Integers are allowed</code></pre>
+TypeError: Only integers are allowed</code></pre>
     </p>
 
     <hr>
