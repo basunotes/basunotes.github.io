@@ -19,12 +19,12 @@
 
     <p>
         Type the following in the terminal and enter the password:
-        <pre class="plain"><code>mysql -u root -p</code></pre>
+    <pre class="plain"><code>mysql -u root -p</code></pre>
     </p>
 
     <p>
         The following query asks the server to return its version number and the current date:
-        <pre class="plain"><code>mysql> select version(), current_date;
+    <pre class="plain"><code>mysql> select version(), current_date;
 +-----------+--------------+
 | version() | current_date |
 +-----------+--------------+
@@ -35,25 +35,25 @@
 
     <p>
         The above query is simple, but it reveals several things about MySQL:
-        <ul>
-            <li>A query ends with a semicolon. There are some exceptions.</li>
-            <li>When you issue a query, MySQL sends it to the server for execution and displays the results.</li>
-            <li>
-                MySQL displays the results in tabular form. Normally, column labels are the names of the columns
-                you fetch, but if you are retrieving the value of an expression, MySQL labels the column using
-                the expression itself.
-            </li>
-            <li>
-                MySQL shows how many rows were returned and how long the query took to execute. Be aware that this only
-                gives you a rough idea of performance, as execution time can depend on several other factors.
-            </li>
-        </ul>
+    <ul>
+        <li>A query ends with a semicolon. There are some exceptions.</li>
+        <li>When you issue a query, MySQL sends it to the server for execution and displays the results.</li>
+        <li>
+            MySQL displays the results in tabular form. Normally, column labels are the names of the columns
+            you fetch, but if you are retrieving the value of an expression, MySQL labels the column using
+            the expression itself.
+        </li>
+        <li>
+            MySQL shows how many rows were returned and how long the query took to execute. Be aware that this only
+            gives you a rough idea of performance, as execution time can depend on several other factors.
+        </li>
+    </ul>
     </p>
 
     <p>
-        Keywords may be entered in any letter case. The following query demonstrates that you can use 
+        Keywords may be entered in any letter case. The following query demonstrates that you can use
         MySQL as a simple calculator:
-        <pre class="plain"><code>mysql> select sin(pi()/4), (4+1)*5;
+    <pre class="plain"><code>mysql> select sin(pi()/4), (4+1)*5;
 +--------------------+---------+
 | sin(pi()/4)        | (4+1)*5 |
 +--------------------+---------+
@@ -64,10 +64,10 @@
 
     <p>
         You can enter multiple statements on a single line; they need to be separated by a semicolon.
-        A query can also span multiple lines. MySQL determines where your statement ends by looking for the 
-        terminating semicolon. If you decide you do not want to execute a query while you're in the 
+        A query can also span multiple lines. MySQL determines where your statement ends by looking for the
+        terminating semicolon. If you decide you do not want to execute a query while you're in the
         process of entering it, cancel it by typing <code>\c</code>:
-        <pre class="plain"><code>mysql> select 
+    <pre class="plain"><code>mysql> select 
     -> user()
     -> \c
 mysql> </code></pre>
@@ -75,7 +75,7 @@ mysql> </code></pre>
 
     <p>
         Use the <code>SHOW</code> statement to find out what databases currently exist on the server:
-        <pre class="plain"><code>mysql> show databases;
+    <pre class="plain"><code>mysql> show databases;
 +--------------------+
 | Database           |
 +--------------------+
@@ -86,6 +86,57 @@ mysql> </code></pre>
 +--------------------+
 4 rows in set (0.201 sec)</code></pre>
     </p>
+
+    <p>
+        If there isn't a database for you to use, you can create it yourself:
+    <pre class="plain"><code>create database test;</code></pre>
+    </p>
+
+    <p>
+        Depending on the system, database names (and also table names) are case-sensitive, so it is best to use the
+        same lettercase. Creating a database does not select it for use; you must do that explicitly:
+    <pre class="plain">use test;<code></code></pre>
+    </p>
+    <p>
+        Your database needs to be created only once, but you must select it for use each time you begin a mysql session.
+        The database you just created is empty, as the following query shows:
+    <pre class="plain"><code>mysql> show tables;
+Empty set (0.002 sec)</code></pre>
+    </p>
+
+    <p>
+        For the moment, we will skip the table creation part and load the <code>test.sql</code> file using
+        <code>source test.sql</code>, which creates Northwind sample database used in W3Schools:
+        <pre class="plain"><code>mysql> use w3schools; show tables;
+Database changed
++---------------------+
+| Tables_in_w3schools |
++---------------------+
+| Categories          |
+| Customers           |
+| Employees           |
+| OrderDetails        |
+| Orders              |
+| Products            |
+| Shippers            |
+| Suppliers           |
++---------------------+
+8 rows in set (0.005 sec)</code></pre>
+    </p>
+
+    <p>
+        The simplest way to display columns from a table is to use <code>SELECT * FROM table_name</code>.
+        The <code>*</code> specifier is a shortcut that means <i>all columns</i>:
+        <pre class="plain"><code>mysql> select * from Orders;
++---------+------------+------------+------------+-----------+
+| OrderID | CustomerID | EmployeeID | OrderDate  | ShipperID |
++---------+------------+------------+------------+-----------+
+|   10248 |         90 |          5 | 1996-07-04 |         3 |
+|   10249 |         81 |          6 | 1996-07-05 |         1 |
+|   10250 |         34 |          4 | 1996-07-08 |         2 |
+...</code></pre>
+    </p>
+
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
