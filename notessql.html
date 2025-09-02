@@ -14,23 +14,63 @@
     <span><b>Notes on SQL</b></span>
 
     <p>
-        Notes providing a rough overview of SQL. I do not claim complete accuracy, but they seem to be correct.
+        These notes provide a rough overview of SQL. I do not claim complete accuracy, but they appear to be correct.
     </p>
 
     <p>
-         Type the following in the terminal and enter the password.
-        <pre><code class="language-sql">mysql -u root -p</code></pre>
+        Type the following in the terminal and enter the password:
+        <pre class="plain"><code>mysql -u root -p</code></pre>
     </p>
 
     <p>
-        The following query asks the server to return its version number and the current date.
-        <pre><code class="language-sql">mysql> select version(), current_date;
+        The following query asks the server to return its version number and the current date:
+        <pre class="plain"><code>mysql> select version(), current_date;
 +-----------+--------------+
 | version() | current_date |
 +-----------+--------------+
 | 9.4.0     | 2025-08-24   |
 +-----------+--------------+
 1 row in set (0.006 sec)</code></pre>
+    </p>
+
+    <p>
+        The above query is simple, but it reveals several things about MySQL:
+        <ul>
+            <li>A query ends with a semicolon. There are some exceptions.</li>
+            <li>When you issue a query, MySQL sends it to the server for execution and displays the results.</li>
+            <li>
+                MySQL displays the results in tabular form. Normally, column labels are the names of the columns
+                you fetch, but if you are retrieving the value of an expression, MySQL labels the column using
+                the expression itself.
+            </li>
+            <li>
+                MySQL shows how many rows were returned and how long the query took to execute. Be aware that this only
+                gives you a rough idea of performance, as execution time can depend on several other factors.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Keywords may be entered in any letter case. The following query demonstrates that you can use 
+        MySQL as a simple calculator:
+        <pre class="plain"><code>mysql> select sin(pi()/4), (4+1)*5;
++--------------------+---------+
+| sin(pi()/4)        | (4+1)*5 |
++--------------------+---------+
+| 0.7071067811865475 |      25 |
++--------------------+---------+
+1 row in set (0.018 sec)</code></pre>
+    </p>
+
+    <p>
+        You can enter multiple statements on a single line; they need to be separated by a semicolon.
+        A query can also span multiple lines. MySQL determines where your statement ends by looking for the 
+        terminating semicolon. If you decide you do not want to execute a query while you're in the 
+        process of entering it, cancel it by typing <code>\c</code>:
+        <pre class="plain"><code>mysql> select 
+    -> user()
+    -> \c
+mysql> </code></pre>
     </p>
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
