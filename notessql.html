@@ -95,7 +95,7 @@ mysql> </code></pre>
     <p>
         Depending on the system, database names (and also table names) are case-sensitive, so it is best to use the
         same lettercase. Creating a database does not select it for use; you must do that explicitly:
-    <pre class="plain">use test;<code></code></pre>
+    <pre class="plain"><code>use test;</code></pre>
     </p>
     <p>
         Your database needs to be created only once, but you must select it for use each time you begin a mysql session.
@@ -107,7 +107,7 @@ Empty set (0.002 sec)</code></pre>
     <p>
         For the moment, we will skip the table creation part and load the <code>test.sql</code> file using
         <code>source test.sql</code>, which creates Northwind sample database used in W3Schools:
-        <pre class="plain"><code>mysql> use w3schools; show tables;
+    <pre class="plain"><code>mysql> use w3schools; show tables;
 Database changed
 +---------------------+
 | Tables_in_w3schools |
@@ -127,7 +127,7 @@ Database changed
     <p>
         The simplest way to display columns from a table is to use <code>SELECT * FROM table_name</code>.
         The <code>*</code> specifier is a shortcut that means <i>all columns</i>:
-        <pre class="plain"><code>mysql> select * from Orders;
+    <pre class="plain"><code>mysql> select * from Orders;
 +---------+------------+------------+------------+-----------+
 | OrderID | CustomerID | EmployeeID | OrderDate  | ShipperID |
 +---------+------------+------------+------------+-----------+
@@ -135,6 +135,157 @@ Database changed
 |   10249 |         81 |          6 | 1996-07-05 |         1 |
 |   10250 |         34 |          4 | 1996-07-08 |         2 |
 ...</code></pre>
+    </p>
+
+    <p>
+        Naming columns explicitly enables you to select only the ones of interest, in any order:
+    <pre class="plain"><code>mysql> select CustomerID, OrderDate from Orders;
++------------+------------+
+| CustomerID | OrderDate  |
++------------+------------+
+|         90 | 1996-07-04 |
+|         81 | 1996-07-05 |
+|         34 | 1996-07-08 |
+...</code></pre>
+    </p>
+
+    <p>
+        Unless you qualify or restrict a <code>SELECT</code> query in some way, it retrieves
+        every row in your table. You can provide a <code>WHERE</code> clause that specifies one or
+        more conditions that rows must satisfy:
+    <pre class="plain">mysql> select CustomerName, City from Customers where City = "Berlin";
++---------------------+--------+
+| CustomerName        | City   |
++---------------------+--------+
+| Alfreds Futterkiste | Berlin |
++---------------------+--------+
+1 row in set (0.002 sec)<code></code></pre>
+    </p>
+
+    <p>
+        Conditions can test for equality, inequality or relative ordering. For some types of
+        data, such as strings, you can use pattern matches. The following statement selects only those
+        customers that live in a city that begin with the letter 'b':
+    <pre class="plain"><code>mysql> select CustomerName, City from Customers where City LIKE  "B%";
++------------------------------+--------------+
+| CustomerName                 | City         |
++------------------------------+--------------+
+| Alfreds Futterkiste          | Berlin       |
+| Cactus Comidas para llevar   | Buenos Aires |
+| Chop-suey Chinese            | Bern         |
+| Folk och fä HB               | Bräcke       |
+...</code></pre>
+    </p>
+
+    <p>
+        The <code>LIKE</code> operator in the previous query performs a pattern match, where <code>%</code> acts
+        as a wildcard that matches any string. A <code>WHERE</code> clause can test multiple conditions and different
+        conditions can test different columns:
+    <pre class="plain"><code>mysql> select * from Customers where City like "B%" and CustomerName like "A%";
++------------+---------------------+--------------+---------------+--------+------------+---------+
+| CustomerID | CustomerName        | ContactName  | Address       | City   | PostalCode | Country |
++------------+---------------------+--------------+---------------+--------+------------+---------+
+|          1 | Alfreds Futterkiste | Maria Anders | Obere Str. 57 | Berlin | 12209      | Germany |
++------------+---------------------+--------------+---------------+--------+------------+---------+
+1 row in set (0.001 sec)</code></pre>
+    </p>
+
+    <p>
+        Output columns can be calculated by evaluating expressions. This query combines two different columns
+        using <code>CONCAT()</code>:
+    <pre class="plain"><code>mysql> select concat(CustomerID, ', ', CustomerName) from Customers;
++------------------------------------------+
+| concat(CustomerID, ', ', CustomerName)   |
++------------------------------------------+
+| 1, Alfreds Futterkiste                   |
+| 2, Ana Trujillo Emparedados y helados    |
+...</code></pre>
+    </p>
+
+    <p>
+        Inside a table, a column often contains many duplicate values;
+        and sometimes you only want to list the distinct values.
+        This can be done using the <code>SELECT DISTINCT</code> statement:
+    <pre class="plain"><code>mysql> select distinct Country from Customers;
++-------------+
+| Country     |
++-------------+
+| Germany     |
+| Mexico      |
+| UK          |
+...</code></pre>
+    </p>
+
+    <p>
+        SQL requires single quotes around text values (most database systems will also
+        allow double quotes). However, numeric fields not be enclosed in quotes:
+    <pre class="plain"><code>mysql> select * from Customers where CustomerID = 1;
++------------+---------------------+--------------+---------------+--------+------------+---------+
+| CustomerID | CustomerName        | ContactName  | Address       | City   | PostalCode | Country |
++------------+---------------------+--------------+---------------+--------+------------+---------+
+|          1 | Alfreds Futterkiste | Maria Anders | Obere Str. 57 | Berlin | 12209      | Germany |
++------------+---------------------+--------------+---------------+--------+------------+---------+
+1 row in set (0.004 sec)</code></pre>
+    </p>
+
+    <p>
+        The following operators can be used in the <code>WHERE</code> clause:
+        <br>
+        <code>=</code> (equal),
+        <code>&lt;&gt;</code> or <code>!=</code> (not equal),
+        <code>&gt;</code> (greater than),
+        <code>&lt;</code> (less than),
+        <code>&gt;=</code> (greater than or equal to),
+        <code>&lt;=</code> (less than or equal to),
+        <code>BETWEEN</code> (within a range),
+        <code>LIKE</code> (pattern matching), and
+        <code>IN</code> (match any value in a list).
+    </p>
+
+    <p>
+        The <code>WHERE</code> clause can be combined with the usual logical
+        operators <code>AND</code>, <code>OR</code>, and <code>NOT</code> operators:
+    <pre class="plain"><code>mysql> select * from Customers where Country = 'Germany' and (City = 'Berlin' or City = 'Stuttgart'); 
++------------+---------------------+--------------+-------------------+-----------+------------+---------+
+| CustomerID | CustomerName        | ContactName  | Address           | City      | PostalCode | Country |
++------------+---------------------+--------------+-------------------+-----------+------------+---------+
+|          1 | Alfreds Futterkiste | Maria Anders | Obere Str. 57     | Berlin    | 12209      | Germany |
+|         86 | Die Wandernde Kuh   | Rita Müller  | Adenauerallee 900 | Stuttgart | 70563      | Germany |
++------------+---------------------+--------------+-------------------+-----------+------------+---------+
+2 rows in set (0.005 sec)
+
+mysql> select * from Customers where not Country = 'Germany' and not Country = 'USA';
++------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
+| CustomerID | CustomerName                         | ContactName          | Address                                         | City            | PostalCode | Country     |
++------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
+|          2 | Ana Trujillo Emparedados y helados   | Ana Trujillo         | Avda. de la Constitución 2222                   | México D.F.     | 05021      | Mexico      |
+...</code></pre>
+    </p>
+
+    <p>
+        The <code>ORDER BY</code> keyword is used to sort the result-set in
+        ascending or descending order. It sorts in ascending order by default.
+        To sort the results in descending order, use the <code>DESC</code> keyword.
+    <pre class="plain"><code>mysql> select * from Customers order by Country desc;
++------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
+| CustomerID | CustomerName                         | ContactName          | Address                                         | City            | PostalCode | Country     |
++------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
+|         35 | HILARIÓN-Abastos                     | Carlos Hernández     | Carrera 22 con Ave. Carlos Soublette #8-35      | San Cristóbal   | 5022       | Venezuela   |
+...</code></pre>
+    </p>
+
+    <p>
+        It is also possible to order by several columns. If two rows have the same values in the
+        first column, they will be ordered by the next column, and so on.
+    <pre class="plain"><code>mysql> select * from Customers order by Country asc, CustomerName desc;
++------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
+| CustomerID | CustomerName                         | ContactName          | Address                                         | City            | PostalCode | Country     |
++------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
+|         64 | Rancho grande                        | Sergio Gutiérrez     | Av. del Libertador 900                          | Buenos Aires    | 1010       | Argentina   |
+...</code></pre>
+    </p>
+
+    <p>
     </p>
 
 
