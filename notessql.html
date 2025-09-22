@@ -18,19 +18,65 @@
     </p>
 
     <p>
-        Type the following in the terminal and enter the password:
+        These notes are broadly organized as follows:
+    <ul>
+        <li><a href="#GettingStarted">Getting Started with MySQL</a></li>
+        <li><a href="#QueryingData">Querying data</a></li>
+        <li><a href="#SortingData">Sorting data</a></li>
+        <li><a href="#FilteringData">Filtering data</a></li>
+        <li><a href="#JoiningTables">Joining tables</a></li>
+        <li><a href="#GroupBy">Group by</a></li>
+        <li><a href="#Subqueries">Subqueries</a></li>
+        <li><a href="#SetOperators">Set operators</a></li>
+        <li><a href="#ManagingDatabases">Managing databases</a></li>
+        <li><a href="#WorkingWithTables">Working with tables</a></li>
+        <li><a href="#AggregateFunctions">Aggregate Functions</a></li>
+        <li><a href="#CommonTableExpressions">Common table expressions</a></li>
+        <li><a href="#StatisticalTechniques">Statistical techniques</a></li>
+        <li><a href="#WindowFunctions">Window functions</a></li>
+        <li><a href="#ControlFlowFunctions">Control flow functions</a></li>
+        <li><a href="#SQLViews">MySQL Views</a></li>
+    </ul>
+    </p>
+
+    <span id="GettingStarted"><b>Getting Started with MySQL</b></span>
+
+    <p>
+        After installing MySQL on your computer, you can connect to the
+        MySQL Server by typing the following in the terminal and then entering
+        the password:
     <pre class="plain"><code>mysql -u root -p</code></pre>
     </p>
 
     <p>
-        The following query asks the server to return its version number and the current date:
-    <pre class="plain"><code>mysql> select version(), current_date;
-+-----------+--------------+
-| version() | current_date |
-+-----------+--------------+
-| 9.4.0     | 2025-08-24   |
-+-----------+--------------+
-1 row in set (0.006 sec)</code></pre>
+        If you are already running <code>MySQL</code>, you can execute an SQL script file
+        using the <code>source</code> command or <code>\.</code> command:
+    <pre class="plain"><code>mysql> source file_name
+mysql> \. file_name</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="QueryingData"><b>Querying data</b></span>
+
+    <p>
+        The <code>SELECT</code> statement allows you to select data from
+        one or more tables. It has the following syntax:
+    <pre class="plain"><code>SELECT column1, column2, ...
+FROM table_name</code></pre>
+    </p>
+
+    <p>
+        For example, the following query selects the <code>CustomerID</code> and
+        <code>OrderDate</code> columns from the <code>Orders</code> table:
+    <pre class="plain"><code>mysql> select CustomerID, OrderDate from Orders;
++------------+------------+
+| CustomerID | OrderDate  |
++------------+------------+
+|         90 | 1996-07-04 |
+|         81 | 1996-07-05 |
+|         34 | 1996-07-08 |
+...</code></pre></code></pre>
     </p>
 
     <p>
@@ -44,22 +90,118 @@
             the expression itself.
         </li>
         <li>
-            MySQL shows how many rows were returned and how long the query took to execute. Be aware that this only
-            gives you a rough idea of performance, as execution time can depend on several other factors.
+            MySQL shows how many rows were returned and how long the query took to execute.
+            We have omitted this. Be aware that this only gives you a rough idea of performance, as execution time can
+            depend on several other factors.
         </li>
     </ul>
     </p>
 
+    <p>Keywords may be entered in any letter case.</p>
+
     <p>
-        Keywords may be entered in any letter case. The following query demonstrates that you can use
-        MySQL as a simple calculator:
+        When executing the <code>SELECT</code> statement, MySQL evaluates the
+        <code>FROM</code> clause before the <code>SELECT</code> clause.
+    </p>
+
+    <p>
+        The result of a <code>SELECT</code> statement is called a <b>result set</b>
+        as it is a set of rows that results from the query.
+    </p>
+
+    <p>
+        If you want to select all the columns available in the table, you can use
+        an asterisk <code>*</code> as shown below:
+    <pre class="plain"><code>mysql> select * from Orders;
++---------+------------+------------+------------+-----------+
+| OrderID | CustomerID | EmployeeID | OrderDate  | ShipperID |
++---------+------------+------------+------------+-----------+
+|   10248 |         90 |          5 | 1996-07-04 |         3 |
+|   10249 |         81 |          6 | 1996-07-05 |         1 |
+|   10250 |         34 |          4 | 1996-07-08 |         2 |
+...</code></pre></code></pre>
+    </p>
+
+    <p>
+        In MySQL, the <code>SELECT</code> statement does not require the
+        <code>FROM</code> clause. The following example uses a <code>SELECT</code>
+        statement to perform a simple calculation:
+    <pre class="plain"><code>mysql> select 1 + 1;
++-------+
+| 1 + 1 |
++-------+
+|     2 |
++-------+</code></pre>
+    </p>
+
+    <p> The following query demonstrates that you can use
+        MySQL to perform even more complex calculations:
     <pre class="plain"><code>mysql> select sin(pi()/4), (4+1)*5;
 +--------------------+---------+
 | sin(pi()/4)        | (4+1)*5 |
 +--------------------+---------+
 | 0.7071067811865475 |      25 |
-+--------------------+---------+
-1 row in set (0.018 sec)</code></pre>
++--------------------+---------+</code></pre>
+    </p>
+
+    <p>
+        The following query asks the server to return its version number and the current date:
+    <pre class="plain"><code>mysql> select version(), current_date;
++-----------+--------------+
+| version() | current_date |
++-----------+--------------+
+| 9.4.0     | 2025-08-24   |
++-----------+--------------+</code></pre>
+    </p>
+
+    <p>
+        The following statement uses the <code>NOW()</code> function in the <code>SELECT</code>
+        statement to return the current date <b>and</b> time:
+    <pre class="plain"><code>mysql> select now();
++---------------------+
+| now()               |
++---------------------+
+| 2025-09-15 18:34:40 |
++---------------------+</code></pre>
+    </p>
+
+    <p>
+        Aliases are used to give a table, a column in a table, or an expression a temporary name.
+        Aliases are often used to make column names more readable. An alias exists only for the duration
+        of that query. The syntax is as follows:
+    <pre class="plain"><code>SELECT column_name AS alias_name
+FROM table_name
+
+SELECT column_name 
+FROM table_name AS alias_name</code></pre>
+    </p>
+
+    <p>
+        For example:
+    <pre class="plain"><code>mysql> select CustomerID AS ID, OrderDate AS Date from Orders;
++------+------------+
+| ID   | Date       |
++------+------------+
+|   90 | 1996-07-04 |
+|   81 | 1996-07-05 |
+|   34 | 1996-07-08 |
+...</code></pre>
+    </p>
+
+    <p>The <code>AS</code> keyword is optional.</p>
+
+    <p>
+        To concatenate multiple strings into a single string, you can use the
+        <code>CONCAT()</code> function. Unlike <code>NOW()</code>, this function
+        has parameters, so you need to pass arguments to it. To change a column name
+        in the result set, you can use a column alias:
+    <pre class="plain"><code>mysql> select concat('Max', 'Muster') as 'Full name';
++-----------+
+| Full name |
++-----------+
+| MaxMuster |
++-----------+
+</code></pre>
     </p>
 
     <p>
@@ -68,144 +210,217 @@
         terminating semicolon. If you decide you do not want to execute a query while you're in the
         process of entering it, cancel it by typing <code>\c</code>:
     <pre class="plain"><code>mysql> select 
-    -> user()
+    -> now()
     -> \c
 mysql> </code></pre>
     </p>
 
+    <hr>
+
+    <span id="SortingData"><b>Sorting data</b></span>
+
     <p>
-        Use the <code>SHOW</code> statement to find out what databases currently exist on the server:
-    <pre class="plain"><code>mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| mysql              |
-| performance_schema |
-| sys                |
-+--------------------+
-4 rows in set (0.201 sec)</code></pre>
+        The <code>ORDER BY</code> keyword is used to sort the result set in ascending or
+        descending order. It has the following syntax:
+    <pre class="plain"><code>SELECT column1, column2, ...
+FROM table_name
+ORDER BY column1 [ASC | DESC], column2 [ASC | DESC], ...</code></pre>
     </p>
 
     <p>
-        If there isn't a database for you to use, you can create it yourself:
-    <pre class="plain"><code>create database test;</code></pre>
-    </p>
-
-    <p>
-        Depending on the system, database names (and also table names) are case-sensitive, so it is best to use the
-        same lettercase. Creating a database does not select it for use; you must do that explicitly:
-    <pre class="plain"><code>use test;</code></pre>
-    </p>
-    <p>
-        Your database needs to be created only once, but you must select it for use each time you begin a mysql session.
-        The database you just created is empty, as the following query shows:
-    <pre class="plain"><code>mysql> show tables;
-Empty set (0.002 sec)</code></pre>
-    </p>
-
-    <p>
-        For the moment, we will skip the table creation part and load the <code>test.sql</code> file using
-        <code>source test.sql</code>, which creates Northwind sample database used in W3Schools:
-    <pre class="plain"><code>mysql> use w3schools; show tables;
-Database changed
-+---------------------+
-| Tables_in_w3schools |
-+---------------------+
-| Categories          |
-| Customers           |
-| Employees           |
-| OrderDetails        |
-| Orders              |
-| Products            |
-| Shippers            |
-| Suppliers           |
-+---------------------+
-8 rows in set (0.005 sec)</code></pre>
-    </p>
-
-    <p>
-        The simplest way to display columns from a table is to use <code>SELECT * FROM table_name</code>.
-        The <code>*</code> specifier is a shortcut that means <i>all columns</i>:
-    <pre class="plain"><code>mysql> select * from Orders;
-+---------+------------+------------+------------+-----------+
-| OrderID | CustomerID | EmployeeID | OrderDate  | ShipperID |
-+---------+------------+------------+------------+-----------+
-|   10248 |         90 |          5 | 1996-07-04 |         3 |
-|   10249 |         81 |          6 | 1996-07-05 |         1 |
-|   10250 |         34 |          4 | 1996-07-08 |         2 |
+        For example:
+    <pre class="plain"><code>mysql> select CustomerName, Country from Customers order by Country asc, CustomerName desc;
++------------------------------------+--------------+
+| CustomerName                       | Country      |
++------------------------------------+--------------+
+| Souveniers And Things Co.          | Australia    |
+| Australian Gift Network, Co        | Australia    |
+| Australian Collectors, Co.         | Australia    |
+| Australian Collectables, Ltd       | Australia    |
+| Anna's Decorations, Ltd            | Australia    |
 ...</code></pre>
     </p>
 
     <p>
-        Naming columns explicitly enables you to select only the ones of interest, in any order:
-    <pre class="plain"><code>mysql> select CustomerID, OrderDate from Orders;
-+------------+------------+
-| CustomerID | OrderDate  |
-+------------+------------+
-|         90 | 1996-07-04 |
-|         81 | 1996-07-05 |
-|         34 | 1996-07-08 |
+        The <code>ORDER BY</code> clause sorts the result set in ascending order by default,
+        if you don't specify any option.
+    </p>
+
+    <p>
+        When ordering by several columns, if two rows have the same values in the first
+        column, they will be ordered by the next specified column, and so on.
+    </p>
+
+    <p>
+        When executing the <code>SELECT</code> statement with an <code>ORDER BY</code> clause,
+        MySQL always evaluates the <code>ORDER BY</code> clause after the <code>FROM</code> and
+        <code>SELECT</code> clauses.
+    </p>
+
+    <p>
+        You can use the <code>ORDER BY</code> clause to sort a result set by an expression.
+        For example, the following query calculates the subtotal for each item and sorts the result set based on the
+        subtotal:
+    <pre class="plain"><code>mysql> select orderNumber, orderlinenumber, quantityOrdered * priceEach
+    -> from orderdetails
+    -> order by quantityOrdered * priceEach desc;
++-------------+-----------------+-----------------------------+
+| orderNumber | orderlinenumber | quantityOrdered * priceEach |
++-------------+-----------------+-----------------------------+
+|       10403 |               9 |                    11503.14 |
+|       10405 |               5 |                    11170.52 |
+|       10407 |               2 |                    10723.60 |
 ...</code></pre>
     </p>
+
+    <p>
+        You can use <code>subtotal</code> as the column alias for the expression
+        <code>quantityOrdered * priceEach</code> and sort the result set by the
+        <code>subtotal</code> alias.
+    </p>
+
+    <p>
+        Since MySQL evaluates the <code>SELECT </code>clause before the <code>ORDER BY</code> clause, you can use the
+        column alias specified in
+        the <code>SELECT</code> clause in the <code>ORDER BY</code> clause.
+    </p>
+
+    <p>
+        The <code>FIELD()</code> function returns the index position of a value in
+        a list of values. This function performs a case-insensitive search.
+        <b>Note:</b> If the specified value is not found in the list of values, this function
+        will return <code>0</code>. If the value is <code>NULL</code>, this function will return <code>0</code>.
+        The syntax is as follows:
+    <pre class="plain"><code>FIELD(value, val1, val2, val3, ...)</code></pre>
+    </p>
+
+    <p>
+        For example, the following query returns <code>1</code> because the position of
+        the string <code>'A'</code> is the first position on the list <code>'A'</code>, <code>'B'</code>,
+        and <code>'C'</code>:
+    <pre class="plain"><code>mysql> select field('A', 'a', 'B', 'A');
++---------------------------+
+| field('A', 'a', 'B', 'A') |
++---------------------------+
+|                         1 |
++---------------------------+</code></pre>
+    </p>
+
+    <p>
+        Consider the <code>orders</code> table. Suppose that you want
+        to sort the sales orders based on their statuses in the following order:
+    <ul>
+        <li>In Process</li>
+        <li>On Hold</li>
+        <li>Canceled</li>
+        <li>Resolved</li>
+        <li>Disputed</li>
+        <li>Shipped</li>
+    </ul>
+    </p>
+
+    <p>
+        To do this, you can use the <code>FIELD()</code> function to map each order
+        status to a number and sort the result by the result of the <code>FIELD()</code>
+        function:
+    <pre class="plain"><code>mysql> select orderNumber, status
+    -> from orders
+    -> order by field(status, 'In Process', 'On Hold', 'Cancelled', 
+    ->  'Resolved', 'Disputed', 'Shipped');
++-------------+------------+
+| orderNumber | status     |
++-------------+------------+
+|       10420 | In Process |
+|       10421 | In Process |
+|       10422 | In Process |
+|       10423 | In Process |
+|       10424 | In Process |
+|       10425 | In Process |
+|       10334 | On Hold    |
+...</code></pre>
+    </p>
+
+    <p>
+        In MySQL, <code>NULL</code> comes before non-NULL values.
+        For example, the following query uses the <code>ORDER BY</code> clause to
+        sort employees by values in <code>reportsTo</code> column:
+    <pre class="plain"><code>mysql> select firstName, lastName, reportsTo
+    -> from employees
+    -> order by reportsTo;
++-----------+-----------+-----------+
+| firstName | lastName  | reportsTo |
++-----------+-----------+-----------+
+| Diane     | Murphy    |      NULL |
+| Mary      | Patterson |      1002 |
+| Jeff      | Firrelli  |      1002 |
+...</code></pre>
+    </p>
+
+    <p>
+        However, if you use the <code>ORDER BY</code> with the <code>DESC</code> option,
+        then the NULL values will appear last in the result set.
+    </p>
+
+    <hr>
+
+    <span id="FilteringData"><b>Filtering Data</b></span>
 
     <p>
         Unless you qualify or restrict a <code>SELECT</code> query in some way, it retrieves
         every row in your table. You can provide a <code>WHERE</code> clause that specifies one or
-        more conditions that rows must satisfy:
-    <pre class="plain">mysql> select CustomerName, City from Customers where City = "Berlin";
-+---------------------+--------+
-| CustomerName        | City   |
-+---------------------+--------+
-| Alfreds Futterkiste | Berlin |
-+---------------------+--------+
-1 row in set (0.002 sec)<code></code></pre>
+        more conditions that rows must satisfy. It has the following syntax:
+    <pre class="plain"><code>SELECT column1, column2, ...
+FROM table_name
+WHERE condition;</code></pre>
     </p>
 
     <p>
-        Conditions can test for equality, inequality or relative ordering. For some types of
-        data, such as strings, you can use pattern matches. The following statement selects only those
-        customers that live in a city that begin with the letter 'b':
-    <pre class="plain"><code>mysql> select CustomerName, City from Customers where City LIKE  "B%";
-+------------------------------+--------------+
-| CustomerName                 | City         |
-+------------------------------+--------------+
-| Alfreds Futterkiste          | Berlin       |
-| Cactus Comidas para llevar   | Buenos Aires |
-| Chop-suey Chinese            | Bern         |
-| Folk och fä HB               | Bräcke       |
+        Conditions can test for equality, inequality or relative ordering.
+        The <code>WHERE</code> clause can be combined with the usual logical operators.
+    </p>
+
+    <p>
+        The following query uses the <code>WHERE</code> clause to find all employees
+        whose job titles are <code>Sales Rep</code>:
+    <pre class="plain"><code>mysql> select lastname, firstname, jobtitle
+    -> from employees
+    -> where jobtitle = 'Sales Rep';
++-----------+-----------+-----------+
+| lastname  | firstname | jobtitle  |
++-----------+-----------+-----------+
+| Jennings  | Leslie    | Sales Rep |
+| Thompson  | Leslie    | Sales Rep |
 ...</code></pre>
     </p>
 
     <p>
-        The <code>LIKE</code> operator in the previous query performs a pattern match, where <code>%</code> acts
-        as a wildcard that matches any string. A <code>WHERE</code> clause can test multiple conditions and different
-        conditions can test different columns:
-    <pre class="plain"><code>mysql> select * from Customers where City like "B%" and CustomerName like "A%";
+        Besides the <code>SELECT</code> statement, you can use the <code>WHERE</code>
+        clause in <code>UPDATE</code> or <code>DELETE</code> statement to specify
+        which rows to update or delete.
+    </p>
+
+    <p>
+        MySQL requires single quotes around text values (most database systems will also
+        allow double quotes). However, numeric fields should not be enclosed in quotes:
+    <pre class="plain"><code>mysql> select * from Customers where CustomerID = 1;
 +------------+---------------------+--------------+---------------+--------+------------+---------+
 | CustomerID | CustomerName        | ContactName  | Address       | City   | PostalCode | Country |
 +------------+---------------------+--------------+---------------+--------+------------+---------+
 |          1 | Alfreds Futterkiste | Maria Anders | Obere Str. 57 | Berlin | 12209      | Germany |
-+------------+---------------------+--------------+---------------+--------+------------+---------+
-1 row in set (0.001 sec)</code></pre>
++------------+---------------------+--------------+---------------+--------+------------+---------+</code></pre>
     </p>
 
     <p>
-        Output columns can be calculated by evaluating expressions. This query combines two different columns
-        using <code>CONCAT()</code>:
-    <pre class="plain"><code>mysql> select concat(CustomerID, ', ', CustomerName) from Customers;
-+------------------------------------------+
-| concat(CustomerID, ', ', CustomerName)   |
-+------------------------------------------+
-| 1, Alfreds Futterkiste                   |
-| 2, Ana Trujillo Emparedados y helados    |
-...</code></pre>
+        When querying data from a table, you may get duplicate rows. To remove these
+        duplicate rows, you use the <code>DISTINCT</code> clause in the <code>SELECT</code> statement.
+        If you specify one column, the <code>DISTINCT</code> clause will evaluate the
+        uniqueness of rows based on the values of that column. However, if you specify two or more
+        columns, the <code>DISTINCT</code> clause will use the values of these columns to evaluate the
+        uniqueness of the rows.
     </p>
 
     <p>
-        Inside a table, a column often contains many duplicate values;
-        and sometimes you only want to list the distinct values.
-        This can be done using the <code>SELECT DISTINCT</code> statement:
+        For example:
     <pre class="plain"><code>mysql> select distinct Country from Customers;
 +-------------+
 | Country     |
@@ -217,19 +432,21 @@ Database changed
     </p>
 
     <p>
-        SQL requires single quotes around text values (most database systems will also
-        allow double quotes). However, numeric fields not be enclosed in quotes:
-    <pre class="plain"><code>mysql> select * from Customers where CustomerID = 1;
-+------------+---------------------+--------------+---------------+--------+------------+---------+
-| CustomerID | CustomerName        | ContactName  | Address       | City   | PostalCode | Country |
-+------------+---------------------+--------------+---------------+--------+------------+---------+
-|          1 | Alfreds Futterkiste | Maria Anders | Obere Str. 57 | Berlin | 12209      | Germany |
-+------------+---------------------+--------------+---------------+--------+------------+---------+
-1 row in set (0.004 sec)</code></pre>
+        When you specify a column that has <code>NULL</code> values in the
+        <code>DISTINCT</code> clause, the <code>DISTINCT</code> clause will keep only
+        one <code>NULL</code> value because it considers all <code>NULL</code> values
+        are the same.
     </p>
 
     <p>
-        The following operators can be used in the <code>WHERE</code> clause:
+        When executing the <code>SELECT</code> statement with the <code>DISTINCT</code> clause, MySQL evaluates the
+        <code>DISTINCT</code> clause after the
+        <code>FROM</code>, <code>WHERE</code>, and <code>SELECT</code> clause and before the <code>ORDER BY</code>
+        clause.
+    </p>
+
+    <p>
+        The following comparison operators can be used in the <code>WHERE</code> clause:
         <br>
         <code>=</code> (equal),
         <code>&lt;&gt;</code> or <code>!=</code> (not equal),
@@ -243,49 +460,2784 @@ Database changed
     </p>
 
     <p>
-        The <code>WHERE</code> clause can be combined with the usual logical
-        operators <code>AND</code>, <code>OR</code>, and <code>NOT</code> operators:
-    <pre class="plain"><code>mysql> select * from Customers where Country = 'Germany' and (City = 'Berlin' or City = 'Stuttgart'); 
-+------------+---------------------+--------------+-------------------+-----------+------------+---------+
-| CustomerID | CustomerName        | ContactName  | Address           | City      | PostalCode | Country |
-+------------+---------------------+--------------+-------------------+-----------+------------+---------+
-|          1 | Alfreds Futterkiste | Maria Anders | Obere Str. 57     | Berlin    | 12209      | Germany |
-|         86 | Die Wandernde Kuh   | Rita Müller  | Adenauerallee 900 | Stuttgart | 70563      | Germany |
-+------------+---------------------+--------------+-------------------+-----------+------------+---------+
-2 rows in set (0.005 sec)
+        MySQL does not have a built-in Boolean type. Instead, it uses the number zero
+        as FALSE and non-zero values as TRUE.
+    </p>
 
-mysql> select * from Customers where not Country = 'Germany' and not Country = 'USA';
-+------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
-| CustomerID | CustomerName                         | ContactName          | Address                                         | City            | PostalCode | Country     |
-+------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
-|          2 | Ana Trujillo Emparedados y helados   | Ana Trujillo         | Avda. de la Constitución 2222                   | México D.F.     | 05021      | Mexico      |
+    <p>
+        The <code>AND</code> operator is a logical operator that combines two or more
+        Boolean expressions and returns 1, 0, or NULL:
+    <pre class="plain"><code>A AND B</code></pre>
+    </p>
+
+    <p>
+        In this expression, A and B are called operands. They can be literal values or expressions.
+    </p>
+
+    <p>
+        The logical AND operator returns 1 if both A and B are non-zero and not NULL. It returns 0 if either operand is
+        zero; otherwise, it returns NULL. For example:
+    <pre class="plain"><code>mysql> select 1 and 1, 1 and 0, 0 and 0, 0 and null, 1 and null, null and null;
++---------+---------+---------+------------+------------+---------------+
+| 1 and 1 | 1 and 0 | 0 and 0 | 0 and null | 1 and null | null and null |
++---------+---------+---------+------------+------------+---------------+
+|       1 |       0 |       0 |          0 |       NULL |          NULL |
++---------+---------+---------+------------+------------+---------------+</code></pre>
+    </p>
+
+    <p>
+        When evaluating an expression that contains the <code>AND</code> operator,
+        MySQL stops evaluating the remaining parts of the expression as soon as it can determine the result.
+    </p>
+
+    <p>
+        This is called short-circuit evaluation. In other words, the <code>AND</code> operator is short-circuited.
+        For example, in the following, MySQL only evaluates the first part and does not issue a division
+        by zero error:
+    <pre class="plain"><code>mysql> select 1 = 0 and 1/0;
++---------------+
+| 1 = 0 and 1/0 |
++---------------+
+|             0 |
++---------------+</code></pre>
+    </p>
+
+    <p>
+        You can test the properties of the <code>OR</code> operator yourself.
+        Like the <code>AND</code> operator, the <code>OR</code> operator is also short-circuited.
+    </p>
+
+    <p>
+        When an expression contains both <code>AND</code> and <code>OR</code> operators,
+        MySQL uses the operator precedence to determine the order of evaluation of the operators. MySQL evaluates the
+        operator with higher precedence first.
+    </p>
+
+    <p>
+        Since the <code>AND</code> operator has higher precedence than the <code>OR</code> operator, MySQL evaluates the
+        <code>AND</code> operator before the
+        <code>OR</code> operator. For example:
+    <pre class="plain"><code>mysql> select 1 or 0 and 0;
++--------------+
+| 1 or 0 and 0 |
++--------------+
+|            1 |
++--------------+</code></pre>
+    </p>
+
+    <p>
+        To change the order of evaluation, you can use the parentheses.
+        For example:
+    <pre class="plain"><code>mysql> select (1 or 0) and 0;
++----------------+
+| (1 or 0) and 0 |
++----------------+
+|              0 |
++----------------+
+</code></pre>
+    </p>
+
+    <p>
+        The <code>IN</code> operator allows you to determine if a value matches
+        any value in a list of values. Here's the syntax of the <code>IN</code>
+        operator:
+    <pre class="plain"><code>value IN (value1, value2, value3, ...)</code></pre>
+    </p>
+
+    <p>
+        The <code>IN</code> operator returns <code>1</code> (true) if the
+        <code>value</code> equals any value in the list (<code>value1</code>,
+        <code>value2</code>, <code>value3</code>, ...). Otherwise, it returns <code>0</code>.
+    </p>
+
+    <p>
+        The <code>IN</code> operator is functionally equivalent to a combination of
+        multiple <code>OR</code> operators.
+    </p>
+
+    <p>
+        The following example returns 1 because 1 is in the list:
+    <pre class="plain"><code>mysql> select 1 in (1,2,3);
++--------------+
+| 1 in (1,2,3) |
++--------------+
+|            1 |
++--------------+</code></pre>
+    </p>
+
+    <p>
+        The following example returns 0 because 4 is not in the list:
+    <pre class="plain"><code>mysql> select 4 in (1,2,3);
++--------------+
+| 4 in (1,2,3) |
++--------------+
+|            0 |
++--------------+</code></pre>
+    </p>
+
+    <p>
+        The <code>IN</code> operator returns <code>NULL</code> in two cases:
+        The <code>value</code> on the left side of the operator is <code>NULL</code>.
+        The value doesn't equal any value in the list and one of the values in the
+        list is <code>NULL</code>. Also, note that the following also returns <code>NULL</code>:
+    <pre class="plain"><code>mysql> select null in (1,2,3,null);
++----------------------+
+| null in (1,2,3,null) |
++----------------------+
+|                 NULL |
++----------------------+</code></pre>
+    </p>
+
+    <p>
+        The <code>NOT</code> operator negates the <code>IN</code> operator.
+        Its syntax is as follows:
+    <pre class="plain"><code>value NOT IN (value1, value2, value3, ...)</code></pre>
+    </p>
+
+    <p>
+        The <code>NOT IN</code> operator returns <code>NULL</code> if the value
+        on the left side of the <code>IN</code> operator is <code>NULL</code>.
+        For example:
+    <pre class="plain"><code>mysql> select null not in (1,2,3);
++---------------------+
+| null not in (1,2,3) |
++---------------------+
+|                NULL |
++---------------------+</code></pre>
+    </p>
+
+    <p>
+        The <code>BETWEEN</code> operator is a logical operator that specifies
+        whether a value is within a range. Here is the syntax of the <code>BETWEEN</code>
+        operator:
+    <pre class="plain"><code>value BETWEEN low AND high</code></pre>
+    </p>
+
+    <p>
+        The <code>BETWEEN</code> operator returns 1 if:
+    <pre class="plain"><code>value >= low AND value <= high</code></pre>
+    </p>
+
+    <p>
+        Otherwise, it returns 0. If the <code>value</code>, <code>low</code>,
+        or <code>high</code> is <code>NULL</code>, the <code>BETWEEN</code> operator
+        returns <code>NULL</code>.
+    </p>
+
+    <p>
+        To negate the <code>BETWEEN</code> operator, you can use the <code>NOT</code>
+        operator.
+    </p>
+
+    <p>
+        To check if a value is between a date range, you can explicitly cast
+        the value to a <code>DATE</code> type. For example, the following statement
+        returns the orders with required dates between 01/01/2003 and 01/31/2003:
+    <pre class="plain"><code>mysql> select orderNumber, requiredDate, status
+    -> from orders
+    -> where requiredDate between 
+    -> cast('2003-01-01' as date) and
+    -> cast('2003-01-31' as date);
++-------------+--------------+---------+
+| orderNumber | requiredDate | status  |
++-------------+--------------+---------+
+|       10100 | 2003-01-13   | Shipped |
+|       10101 | 2003-01-18   | Shipped |
+|       10102 | 2003-01-18   | Shipped |
++-------------+--------------+---------+</code></pre>
+    </p>
+
+    <p>
+        The <code>LIKE</code> operator is a logical operator that tests whether
+        a string contains a specified pattern. If the expression
+        matches the pattern, the <code>LIKE</code> operator returns 1.
+        Otherwise, it returns 0.
+    </p>
+
+    <p>
+        MySQL provides two wildcard characters for constructing patterns:
+        percent <code>%</code> and underscore <code>_</code>. The percent
+        wildcard matches any string of zero or more characters. The underscore
+        wildcard matches any single character.
+    </p>
+
+    <p>
+        For example, <code>s%</code> matches any string starting with the character
+        <i>s</i>, such as <i>sun</i> and <i>six</i>. <code>se_</code> matches any string starting with
+        <i>se</i> and followed by any single character, such as <i>see</i> and <i>sea</i>.
+    </p>
+
+    <p>
+        If you want to match a string that contains special characters, you must
+        escape those characters. We’ll cover this in detail later.
+    </p>
+
+    <p>
+        The <code>LIMIT</code> clause is used to specify the number of records
+        to return. The following query selects the first three records
+        from the <i>Customers</i> table:
+    <pre class="plain"><code>mysql> select * from Customers limit 3;
++------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+
+| CustomerID | CustomerName                       | ContactName    | Address                        | City         | PostalCode | Country |
++------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+
+|          2 | Ana Trujillo Emparedados y helados | Ana Trujillo   | Avda. de la Constitución 2222  | México D.F.  | 05021      | Mexico  |
+|          3 | Antonio Moreno Taquería            | Antonio Moreno | Mataderos 2312                 | México D.F.  | 05023      | Mexico  |
+|          4 | Around the Horn                    | Thomas Hardy   | 120 Hanover Sq.                | London       | WA1 1DP    | UK      |
++------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+
+3 rows in set (0.001 sec)</code></pre>
+    </p>
+
+    <p>
+        If you want to start at record 4, you can use <code>OFFSET</code>:
+    <pre class="plain"><code>mysql> select * from Customers limit 3 offset 3;
++------------+-------------------------+----------------------+-------------------+------------+------------+---------+
+| CustomerID | CustomerName            | ContactName          | Address           | City       | PostalCode | Country |
++------------+-------------------------+----------------------+-------------------+------------+------------+---------+
+|          5 | Berglunds snabbköp      | Christina Berglund   | Berguvsvägen 8    | Luleå      | S-958 22   | Sweden  |
+|          6 | Blauer See Delikatessen | Hanna Moos           | Forsterstr. 57    | Mannheim   | 68306      | Germany |
+|          7 | Blondel père et fils    | Frédérique Citeaux   | 24, place Kléber  | Strasbourg | 67000      | France  |
++------------+-------------------------+----------------------+-------------------+------------+------------+---------+
+3 rows in set (0.001 sec)</code></pre>
+    </p>
+
+    <p>
+        The evaluation order of the <code>LIMIT</code> clause in the
+        <code>SELECT</code> statement is as follows:
+    <pre class="plain"><code>FROM -> WHERE -> DISTINCT -> SELECT -> ORDER BY -> LIMIT</code></pre>
+    </p>
+
+    <p>
+        A field with a <code>NULL</code> value is a field with no value.
+        If a field in a table is optional, it is possible to insert a new record or update a record without adding a
+        value to this field. In that case, the field will be saved with a <code>NULL</code> value.
+        It is not possible to test for <code>NULL</code> values with comparison operators.
+        You will have to use the <code>IS NULL</code> and <code>IS NOT NULL</code> operators.
+    <pre class="plain"><code>mysql> select CustomerName, ContactName, Address
+    -> from Customers
+    -> where Address is null;
++--------------+-------------+---------+
+| CustomerName | ContactName | Address |
++--------------+-------------+---------+
+| Max          | NULL        | NULL    |
++--------------+-------------+---------+
+1 row in set (0.002 sec)</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="JoiningTables"><b>Joining Tables</b></span>
+
+    <p>
+        Sometimes you need to perform a task that requires information from more than
+        one table. This can be done using a <code>JOIN</code>, which we will now explore in detail.
+    </p>
+
+    <p>
+        Consider the following two tables:
+    <pre class="plain">mysql> select * from artist order by a_id;
++------+----------+
+| a_id | name     |
++------+----------+
+|    1 | Da Vinci |
+|    2 | Monet    |
+|    3 | Van Gogh |
+|    4 | Renoir   |
++------+----------+
+mysql> select * from painting order by a_id, p_id;
++------+------+-------------------+-------+-------+
+| a_id | p_id | title             | state | price |
++------+------+-------------------+-------+-------+
+|    1 |    1 | The Last Supper   | IN    |    34 |
+|    1 |    2 | Mona Lisa         | MI    |    87 |
+|    3 |    3 | Starry Night      | KY    |    48 |
+|    3 |    4 | The Potato Eaters | KY    |    67 |
+|    4 |    5 | Les Deux Soeurs   | NE    |    64 |
++------+------+-------------------+-------+-------+<code></code></pre>
+    </p>
+
+    <p>
+        An <code>INNER JOIN</code> produces results that combine values in one
+        table with values in the other table. The following query specifies no
+        restriction on row matching, so the join generates all row combinations.
+        In set-theoretic language, this is known as the Cartesian product.
+    <pre class="plain"><code>mysql> select * from artist inner join painting order by artist.a_id;
++------+----------+------+------+-------------------+-------+-------+
+| a_id | name     | a_id | p_id | title             | state | price |
++------+----------+------+------+-------------------+-------+-------+
+|    1 | Da Vinci |    1 |    1 | The Last Supper   | IN    |    34 |
+|    1 | Da Vinci |    1 |    2 | Mona Lisa         | MI    |    87 |
+|    1 | Da Vinci |    3 |    3 | Starry Night      | KY    |    48 |
+|    1 | Da Vinci |    3 |    4 | The Potato Eaters | KY    |    67 |
+|    1 | Da Vinci |    4 |    5 | Les Deux Soeurs   | NE    |    64 |
+|    2 | Monet    |    1 |    1 | The Last Supper   | IN    |    34 |
+|    2 | Monet    |    1 |    2 | Mona Lisa         | MI    |    87 |
+|    2 | Monet    |    3 |    3 | Starry Night      | KY    |    48 |
 ...</code></pre>
     </p>
 
     <p>
-        The <code>ORDER BY</code> keyword is used to sort the result-set in
-        ascending or descending order. It sorts in ascending order by default.
-        To sort the results in descending order, use the <code>DESC</code> keyword.
-    <pre class="plain"><code>mysql> select * from Customers order by Country desc;
-+------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
-| CustomerID | CustomerName                         | ContactName          | Address                                         | City            | PostalCode | Country     |
-+------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
-|         35 | HILARIÓN-Abastos                     | Carlos Hernández     | Carrera 22 con Ave. Carlos Soublette #8-35      | San Cristóbal   | 5022       | Venezuela   |
+        The above join is not meaningful. You don't want to match every artist
+        with every painting. To produce only relevant matches you have to include
+        appropriate join conditions. This can be done by using a <code>WHERE</code>
+        clause that matches values based on the artist ID column:
+    <pre class="plain"><code>mysql> select * from artist inner join painting
+    -> where artist.a_id = painting.a_id
+    -> order by artist.a_id;
++------+----------+------+------+-------------------+-------+-------+
+| a_id | name     | a_id | p_id | title             | state | price |
++------+----------+------+------+-------------------+-------+-------+
+|    1 | Da Vinci |    1 |    1 | The Last Supper   | IN    |    34 |
+|    1 | Da Vinci |    1 |    2 | Mona Lisa         | MI    |    87 |
+|    3 | Van Gogh |    3 |    3 | Starry Night      | KY    |    48 |
+|    3 | Van Gogh |    3 |    4 | The Potato Eaters | KY    |    67 |
+|    4 | Renoir   |    4 |    5 | Les Deux Soeurs   | NE    |    64 |
++------+----------+------+------+-------------------+-------+-------+</code></pre>
+    </p>
+
+    <p>
+        The results indicate who painted each painting and, conversely,
+        which paintings by each artist are in your collection.
+    </p>
+
+    <p>
+        A join can easily cause <code>MySQL</code> to process large numbers of
+        row combinations, so it is a good idea to index the comparison columns.
+        Otherwise, performance drops off quickly as table size increases. When
+        the tables <code>artist</code> and <code>painting</code> were created,
+        <code>a_id</code> was indexed in each table.
+    </p>
+
+    <p>
+        Another way to write the same join indicates the matching
+        conditions with an <code>ON</code> clause:
+    <pre class="plain"><code>mysql> select * from artist inner join painting
+    -> on artist.a_id = painting.a_id
+    -> order by artist.a_id;</code></pre>
+    </p>
+
+    <p>
+        In the special case where the columns have the same name in
+        both tables, you can use an <code>INNER JOIN</code> with a
+        <code>USING</code> clause instead. This requires no table qualifiers
+        and names each joined column only once:
+    <pre class="plain"><code>mysql> select * from artist inner join painting
+    -> using (a_id)
+    -> order by a_id;
++------+----------+------+-------------------+-------+-------+
+| a_id | name     | p_id | title             | state | price |
++------+----------+------+-------------------+-------+-------+
+|    1 | Da Vinci |    1 | The Last Supper   | IN    |    34 |
+|    1 | Da Vinci |    2 | Mona Lisa         | MI    |    87 |
+|    3 | Van Gogh |    3 | Starry Night      | KY    |    48 |
+|    3 | Van Gogh |    4 | The Potato Eaters | KY    |    67 |
+|    4 | Renoir   |    5 | Les Deux Soeurs   | NE    |    64 |
++------+----------+------+-------------------+-------+-------+</code></pre>
+    </p>
+
+    <p>
+        As a rule of thumb, it is conventional to use <code>ON</code> or
+        <code>USING</code> to specify how to join the tables, and the
+        <code>WHERE</code> clause to restrict which of the joined rows to select.
+        For example, the following selects only paintings obtained in Kentucky:
+    <pre class="plain"><code>mysql> select * from artist inner join painting
+    -> on artist.a_id = painting.a_id
+    -> where painting.state = 'KY';
++------+----------+------+------+-------------------+-------+-------+
+| a_id | name     | a_id | p_id | title             | state | price |
++------+----------+------+------+-------------------+-------+-------+
+|    3 | Van Gogh |    3 |    3 | Starry Night      | KY    |    48 |
+|    3 | Van Gogh |    3 |    4 | The Potato Eaters | KY    |    67 |
++------+----------+------+------+-------------------+-------+-------+</code></pre>
+    </p>
+
+    <p>
+        The preceding queries use <code>SELECT *</code> to display all columns.
+        As usual, you can name only those columns in which you're interested.
+    </p>
+
+    <p>
+        Joins can use more than two tables. Suppose that you prefer to see
+        complete state names rather than abbreviations. The <code>states</code>
+        table maps state abbreviations to names.
+    <pre class="plain"><code>mysql> select artist.name, painting.title, states.name, painting.price
+    -> from artist inner join painting inner join states
+    -> on artist.a_id = painting.a_id and painting.state = states.abbrev
+    -> where painting.state = 'KY';
++----------+-------------------+----------+-------+
+| name     | title             | name     | price |
++----------+-------------------+----------+-------+
+| Van Gogh | Starry Night      | Kentucky |    48 |
+| Van Gogh | The Potato Eaters | Kentucky |    67 |
++----------+-------------------+----------+-------+</code></pre>
+    </p>
+
+    <p>
+        So far we have used the <code>artist</code> and <code>painting</code>
+        tables with the implicit understanding that both are in the
+        <code>cookbook</code> database. But suppose instead <code>artist</code>
+        is in the <code>db1</code> database and <code>painting</code> is in the
+        <code>db2</code> database. To indicate this, qualify each table name with
+        a prefix that specifies which database it is in:
+    <pre class="plain"><code>select db1.artist.name, db2.painting.title
+from db1.artist inner join db2.painting
+on db1.artist.a_id = db2.painting.a_id;</code></pre>
+    </p>
+
+    <p>
+        Table aliases can simplify that considerably:
+    <pre class="plain"><code>select a.name, p.title
+from db1.artist as a inner join db2.painting AS p
+on a.a_id = p.a_id;</code></pre>
+    </p>
+
+    <p>
+        Suppose you want to find rows in one table that have no match
+        in another. Or you want to produce a list on the basis of a join between
+        tables, and you want the list to include an entry for every row in the
+        first table, including those for which no match occurs in the second table.
+        This can be done using an outer join (a <code>LEFT JOIN</code> or a
+        <code>RIGHT JOIN</code>) or a <code>NOT IN</code> subquery.
+    </p>
+
+    <p>
+        A <code>LEFT JOIN</code> is one type of outer join: it is similar to an
+        inner join in that it matches rows in the first (left) table with rows
+        in the second (right) table. In addition, if a left table row has no
+        match in the right table, a <code>LEFT JOIN</code> still produces a row,
+        one in which all the columns from the right table are set to <code>NULL</code>.
+    <pre class="plain"><code>mysql> select * from artist left join painting
+    -> on artist.a_id = painting.a_id
+    -> order by artist.a_id;
++------+----------+------+------+-------------------+-------+-------+
+| a_id | name     | a_id | p_id | title             | state | price |
++------+----------+------+------+-------------------+-------+-------+
+|    1 | Da Vinci |    1 |    2 | Mona Lisa         | MI    |    87 |
+|    1 | Da Vinci |    1 |    1 | The Last Supper   | IN    |    34 |
+|    2 | Monet    | NULL | NULL | NULL              | NULL  |  NULL |
+|    3 | Van Gogh |    3 |    4 | The Potato Eaters | KY    |    67 |
+|    3 | Van Gogh |    3 |    3 | Starry Night      | KY    |    48 |
+|    4 | Renoir   |    4 |    5 | Les Deux Soeurs   | NE    |    64 |
++------+----------+------+------+-------------------+-------+-------+</code></pre>
+    </p>
+
+    <p>
+        To restrict the output only to the unmatched <code>artist</code> rows,
+        add a <code>WHERE</code> clause. And to show only the <code>artist</code>
+        table values, limit the output column list to columns
+        from the <code>artist</code> table:
+    <pre class="plain"><code>mysql> select artist.* from artist left join painting
+    -> on artist.a_id = painting.a_id
+    -> where painting.a_id is null;
++------+-------+
+| a_id | name  |
++------+-------+
+|    2 | Monet |
++------+-------+</code></pre>
+    </p>
+
+    <p>
+        A <code>RIGHT JOIN</code> is an outer join that is like <code>LEFT JOIN</code>
+        but reverses the roles of the left and right tables. Semantically, <code>RIGHT JOIN</code>
+        forces the matching process to produce a row from each row in the
+        right table, even in the absence of a corresponding row in the left table.
+    </p>
+
+    <p>
+        Another way to identify values present in one table but missing
+        from another is to use a <code>NOT IN</code> subquery. The following
+        finds artists not represented in the <code>painting</code> table:
+    <pre class="plain"><code>mysql> select * from artist
+    -> where a_id not in (select a_id from painting);
++------+-------+
+| a_id | name  |
++------+-------+
+|    2 | Monet |
++------+-------+</code></pre>
+    </p>
+
+    <p>
+        As with <code>INNER JOIN</code>, if the names of the columns
+        to be matched in an outer join are the same in both tables and you
+        compare them with the <code>=</code> operator, you can use a
+        <code>USING</code> clause rather than <code>ON</code>. For example,
+        the following two statements are equivalent:
+    <pre class="plain"><code>SELECT * FROM t1 LEFT JOIN t2 ON t1.n = t2.n;
+SELECT * FROM t1 LEFT JOIN t2 USING (n);</code></pre>
+    </p>
+
+    <p>
+        More on <code>NATURAL LEFT JOIN</code> or <code>NATURAL RIGHT JOIN</code>
+        later!
+    </p>
+
+    <p>
+        Some problems require comparing a table to itself. This involves an
+        operation known as a self-join. It's performed much like other joins,
+        except that you must use table aliases so that you can refer to the same
+        table in different ways within the statement.
+    </p>
+
+    <p>
+        A tip-off that a self-join is required is that you want to know
+        which pairs of rows in a table satisfy some condition. Suppose that your
+        favorite painting is <i>The Potato Eaters</i>, and you want to identify
+        all items in your collection that were painted by the same artist.
+        The trick is to use the proper notation:
+    <pre class="plain"><code>mysql> select p2.title
+    -> from painting as p1 inner join painting as p2
+    -> on p1.a_id = p2.a_id
+    -> where p1.title = 'The Potato Eaters';
++-------------------+
+| title             |
++-------------------+
+| Starry Night      |
+| The Potato Eaters |
++-------------------+</code></pre>
+    </p>
+
+    <p>
+        In addition to the equal operator, you can use other operators such as
+        greater-than, less-than, and not-equal operators to form the join
+        condition. The following query uses a less-than join to find the sales
+        price of the product whose code is <code>S10_1678</code> that is less than the
+        manufacturer's suggested retail price (MSRP) for that product.
+    <pre class="plain"><code>mysql> select 
+    ->     ordernumber, 
+    ->     productname, 
+    ->     msrp, 
+    ->     priceeach
+    -> from
+    ->     products p
+    -> inner join orderdetails o 
+    ->     on p.productcode = o.productcode
+    ->        and p.msrp > o.priceeach
+    -> where
+    ->     p.productcode = 'S10_1678';
++-------------+---------------------------------------+-------+-----------+
+| orderNumber | productName                           | msrp  | priceEach |
++-------------+---------------------------------------+-------+-----------+
+|       10107 | 1969 Harley Davidson Ultimate Chopper | 95.70 |     81.35 |
+|       10121 | 1969 Harley Davidson Ultimate Chopper | 95.70 |     86.13 |
+|       10134 | 1969 Harley Davidson Ultimate Chopper | 95.70 |     90.92 |
+...</code></pre>
+    </p>
+
+    <!--PDF Page 492 Maybe later! Statehood-->
+
+    <hr>
+
+    <span id="GroupBy"><b>Group By</b></span>
+
+    <p>
+        Suppose you want a summary for each subgroup of a set of rows, not
+        just an overall summary value. To arrange a set of rows into
+        subgroups and summarize each group, use aggregate functions in
+        conjunction with a <code>GROUP BY</code> clause.
+    </p>
+
+    <p>
+        For example, to determine the number of messages per sender, group
+        the rows by sender name, count how many times each name occurs, and
+        display the names with the counts:
+    <pre class="plain"><code>mysql> select srcuser, count(*) from mail group by srcuser;
++---------+----------+
+| srcuser | count(*) |
++---------+----------+
+| barb    |        3 |
+| tricia  |        2 |
+| phil    |        5 |
+| gene    |        6 |
++---------+----------+</code></pre>
+    </p>
+
+    <p>
+        Suppose you also want to show for each sender the total amount of
+        traffic sent (in bytes) and the average number of bytes per message.
+        This can be done as follows:
+    <pre class="plain"><code>mysql> select srcuser,
+    -> sum(size) as 'total bytes',
+    -> avg(size) as 'bytes per message'
+    -> from mail group by srcuser;
++---------+-------------+-------------------+
+| srcuser | total bytes | bytes per message |
++---------+-------------+-------------------+
+| barb    |      156696 |        52232.0000 |
+| tricia  |     2589407 |      1294703.5000 |
+| phil    |       18974 |         3794.8000 |
+| gene    |     1033108 |       172184.6667 |
++---------+-------------+-------------------+</code></pre>
+    </p>
+
+    <p>
+        By listing more than one column, you can make the grouping more
+        fine-grained. For example, the following shows how many messages each
+        sender sent from each host:
+    <pre class="plain"><code>mysql> select srcuser, srchost, count(srcuser) from mail
+    -> group by srcuser, srchost;
++---------+---------+----------------+
+| srcuser | srchost | count(srcuser) |
++---------+---------+----------------+
+| barb    | saturn  |              2 |
+| tricia  | mars    |              1 |
+| phil    | mars    |              3 |
 ...</code></pre>
     </p>
 
     <p>
-        It is also possible to order by several columns. If two rows have the same values in the
-        first column, they will be ordered by the next column, and so on.
-    <pre class="plain"><code>mysql> select * from Customers order by Country asc, CustomerName desc;
-+------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
-| CustomerID | CustomerName                         | ContactName          | Address                                         | City            | PostalCode | Country     |
-+------------+--------------------------------------+----------------------+-------------------------------------------------+-----------------+------------+-------------+
-|         64 | Rancho grande                        | Sergio Gutiérrez     | Av. del Libertador 900                          | Buenos Aires    | 1010       | Argentina   |
+        You can group by multiple columns and display a maximum for
+        each combination of values in the columns. This query finds
+        the size of the largest message sent between each pair of sender
+        and recipient values listed in the <code>mail</code> table:
+    <pre class="plain"><code>mysql> select srcuser, dstuser, max(size) from mail
+    -> group by srcuser, dstuser;
++---------+---------+-----------+
+| srcuser | dstuser | max(size) |
++---------+---------+-----------+
+| barb    | tricia  |     58274 |
+| tricia  | gene    |    194925 |
 ...</code></pre>
     </p>
 
     <p>
+        When using aggregate functions to produce per-group summary values,
+        watch out for the following trap, which involves selecting nonsummary
+        table columns not related to the grouping columns. Suppose you want to know
+        the longest trip per driver in the <code>driver_log</code> table:
+    <pre class="plain"><code>mysql> select name, max(miles) as 'longest trip'
+    -> from driver_log group by name;
++-------+--------------+
+| name  | longest trip |
++-------+--------------+
+| Ben   |          152 |
+| Suzi  |          502 |
+| Henry |          300 |
++-------+--------------+</code></pre>
+    </p>
+
+    <p>
+        If you also want to show the date on which each driver's longest trip occurred, you cannot simply add
+        <code>trav_date</code> to the output column list. That is, the following query will not work; it will produce an
+        error:
+    <pre class="plain"><code>mysql> select name, trav_date, max(miles) as 'longest trip'
+    -> from driver_log group by name;
+ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and contains 
+nonaggregated column 'cookbook.driver_log.trav_date' which is not functionally dependent on columns 
+in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by</code></pre>
+    <p>
+
+    <p>
+        You can solve the above problem, however, using a <code>JOIN</code>.
+    </p>
+
+    <p>
+        Most aggregate functions ignore <code>NULL</code> values.
+        <code>COUNT()</code> is different: <code>COUNT(expr)</code> ignores
+        <code>NULL</code> instances of <code>expr</code>, but <code>COUNT(*)</code>
+        counts rows regardless of content.
+    </p>
+
+    <p>
+        The following query selects only <code>NULL</code> test scores to
+        illustrate what happens when there is nothing for the aggregate
+        functions to operate on:
+    <pre class="plain"><code>mysql> select subject,
+    -> count(score) as n,
+    -> sum(score) as total,
+    -> avg(score) as average,
+    -> min(score) as lowest,
+    -> max(score) as highest
+    -> from expt where score is null group by subject;
++---------+---+-------+---------+--------+---------+
+| subject | n | total | average | lowest | highest |
++---------+---+-------+---------+--------+---------+
+| Jane    | 0 |  NULL |    NULL |   NULL |    NULL |
+| Marvin  | 0 |  NULL |    NULL |   NULL |    NULL |
++---------+---+-------+---------+--------+---------+</code></pre>
+    </p>
+
+    <p>
+        For <code>COUNT()</code>, the number of scores per subject is zero
+        and is reported that way. On the other hand, the other functions return
+        <code>NULL</code> when there are no values to summarize. If you don't
+        want an aggregate value of <code>NULL</code> to display as <code>NULL</code>,
+        use <code>IFNULL()</code> to map it appropriately.
+    </p>
+
+    <p>
+        The different forms of <code>COUNT()</code> can be very useful for
+        counting missing values. Just take the difference:
+    <pre class="plain"><code>mysql> select count(*) - count(score) as missing from expt;
++---------+
+| missing |
++---------+
+|       3 |
++---------+</code></pre>
+    </p>
+
+    <p>
+        You want to calculate group summaries but display results only
+        for groups that match certain criteria. One might, for example, think of
+        using a <code>WHERE</code> clause, but the following results in an error:
+    <pre class="plain"><code>mysql> select count(*), name from driver_log
+    -> where count(*) > 3
+    -> group by name;
+ERROR 1111 (HY000): Invalid use of group function</code></pre>
+    </p>
+
+    <p>
+        The problem is that <code>WHERE</code> specifies the initial constraints that determine which rows to
+        select, but the value of <code>COUNT()</code> can be determined only after the rows have been selected.
+        The solution is to put the <code>COUNT()</code> expression in a <code>HAVING</code> clause instead:
+    <pre class="plain"><code>mysql> select count(*), name from driver_log
+    -> group by name
+    -> having count(*) > 3;
++----------+-------+
+| count(*) | name  |
++----------+-------+
+|        5 | Henry |
++----------+-------+</code></pre>
+    </p>
+
+    <p>
+        When you use <code>HAVING</code>, you can still include a <code>WHERE</code>
+        clause, but only to select rows to be summarized, not to test already
+        calculated summary values.
+    </p>
+
+    <p>
+        Another use case is the following: to find message sender/recipient
+        pairs between whom only one message was sent, look for combinations
+        that occur only once in the <code>mail</code> table:
+    <pre class="plain"><code>mysql> select srcuser, dstuser from mail
+    -> group by srcuser, dstuser having count(*) = 1;
++---------+---------+
+| srcuser | dstuser |
++---------+---------+
+| tricia  | gene    |
+| barb    | barb    |
+| tricia  | phil    |
+| gene    | tricia  |
+| phil    | barb    |
++---------+---------+</code></pre>
+    </p>
+
+    <p>
+        Note that the above query doesn't print the count. You can refer to an
+        aggregate value in a <code>HAVING</code> clause without including it in the
+        output column list.
+    </p>
+
+    <p>
+        The <code>GROUP BY</code> clause can refer to expressions. You can either write the grouping expression directly
+        in the <code>GROUP BY</code> clause or use an alias (if the expression appears in the output column list) and
+        refer to that alias in the <code>GROUP BY</code>.
+        For example, to find the days of the year on which more than one state joined the Union, group by the month and
+        day of statehood. Then, use <code>HAVING</code> with <code>COUNT()</code> to filter for dates that are not
+        unique:
+    <pre class="plain"><code>mysql> select monthname(statehood) as month,
+    -> dayofmonth(statehood) as day,
+    -> count(*) as count
+    -> from states group by month, day having count > 1;
++----------+------+-------+
+| month    | day  | count |
++----------+------+-------+
+| February |   14 |     2 |
+| June     |    1 |     2 |
+| November |    2 |     2 |
+| March    |    1 |     2 |
+| May      |   29 |     2 |
++----------+------+-------+</code></pre>
+    </p>
+
+    <p>
+        When working with values that aren't naturally categorical, you can create meaningful groups by applying a
+        transformation that divides the values into categories.
+    </p>
+
+    <p>
+        Suppose you want to analyze population data by grouping rows in the <code>states</code> table based on values in
+        the <code>pop</code> column. This won't work directly, because most population values are unique. When data
+        doesn’t neatly fall into a small number of groups, you can apply a transformation to force them into categories.
+        Start by examining the range of population values:
+    <pre class="plain"><code>mysql> select min(pop), max(pop) from states;
++----------+----------+
+| min(pop) | max(pop) |
++----------+----------+
+|   578803 | 39237836 |
++----------+----------+</code></pre>
+    </p>
+
+    <p>
+        Based on this output, you can divide the population values into categories of 5 million each, resulting in about
+        eight groups. The ranges would look like: 1–5,000,000; 5,000,001–10,000,000; and so on.
+        For categories of size <i>n</i>, you can place a value <i>x</i> into the proper category using the expression
+        <code>FLOOR((x + (n-1))/n)</code>. The query will look like this:
+    <pre class="plain"><code>mysql> select floor((pop+4999999)/5000000)*5 as `max population (millions)`,
+    -> count(*) as `number of states`
+    -> from states group by `max population (millions)`;
++---------------------------+------------------+
+| max population (millions) | number of states |
++---------------------------+------------------+
+|                         5 |               26 |
+|                        10 |               14 |
+|                        40 |                1 |
+|                        25 |                1 |
+|                        15 |                6 |
+|                        20 |                1 |
+|                        30 |                1 |
++---------------------------+------------------+</code></pre>
+    </p>
+
+    <p>
+        In some instances, it may be more appropriate to categorize groups on a logarithmic
+        scale. For example, you can treat the state population values that way as follows:
+    <pre class="plain"><code>mysql> select floor(log10(pop)) as `log10(population)`,
+    -> count(*) as `number of states`
+    -> from states group by `log10(population)`;
++-------------------+------------------+
+| log10(population) | number of states |
++-------------------+------------------+
+|                 5 |                5 |
+|                 6 |               35 |
+|                 7 |               10 |
++-------------------+------------------+
+</code></pre>
+    </p>
+
+    <p>
+        You may have noticed that aliases in the preceding queries are written using backticks
+        (identifier quoting) rather than single quotes (string quoting).
+        Quoted aliases in the <code>GROUP BY</code> clause must use identifier quoting; otherwise, the alias is treated
+        as a
+        constant string expression and the grouping produces the wrong result.
+    </p>
+
+    <p>
+        To assess how much repetition is present in a set of values, use the ratio of
+        <code>COUNT(DISTINCT)</code> to <code>COUNT()</code>. If all the values are unique,
+        both counts are the same and the ratio is 1. A result close to zero indicates a high degree of
+        repetition, which means the values will group into a small number of categories naturally. A result of 1, or
+        close to it, indicates many unique values, with the consequence that
+        <code>GROUP BY</code> won’t be very efficient for grouping the values into categories.
+    </p>
+
+    <p>
+        Suppose you want to compute per-group summary values but display only the smallest
+        or largest of them. Consider the <code>driver_log</code> table and the following query:
+    <pre class="plain"><code>mysql> select name, sum(miles)
+    -> from driver_log
+    -> group by name
+    -> order by sum(miles) desc limit 1;
++-------+------------+
+| name  | sum(miles) |
++-------+------------+
+| Henry |        911 |
++-------+------------+</code></pre>
+    </p>
+
+    <p>
+        If more than one row has the given summary value, a <code>LIMIT 1</code> query
+        won't tell you that. As another example, you might attempt to find the most
+        common initial letter for state names like this:
+    <pre class="plain"><code>mysql> select left(name, 1) as letter, count(*) from states
+    -> group by letter order by count(*) desc limit 1;
++--------+----------+
+| letter | count(*) |
++--------+----------+
+| M      |        8 |
++--------+----------+</code></pre>
+    </p>
+
+    <p>
+        But eight state names also begin with <code>N</code>. To find all most-frequent
+        values when there may be more than one, use a user-defined variable or a subquery to determine
+        the maximum count, then select those values with a count equal to the maximum:
+    <pre class="plain"><code>mysql> set @max = (select count(*) from states
+    -> group by left(name,1) order by count(*) desc limit 1);
+mysql> select left(name, 1) as letter, count(*) from states
+    -> group by letter having count(*) = @max;
++--------+----------+
+| letter | count(*) |
++--------+----------+
+| M      |        8 |
+| N      |        8 |
++--------+----------+
+mysql> select left(name,1) as letter, count(*) from states
+    -> group by letter having count(*) =
+    -> (select count(*) from states
+    -> group by left(name,1) order by count(*) desc limit 1);
++--------+----------+
+| letter | count(*) |
++--------+----------+
+| M      |        8 |
+| N      |        8 |
++--------+----------+</code></pre>
+    </p>
+
+    <p>
+        If you want to produce a summary based on date or time values, you can
+        use <code>GROUP BY</code> to place temporal values into categories of the
+        appropriate duration. Often this involves using expressions that extract
+        significant parts of dates or times.
+    </p>
+
+    <p>
+        To produce daily summaries from <code>DATETIME</code> or <code>TIMESTAMP</code> columns that may contain many
+        unique values, strip the
+        time-of-day part to group all values occurring within a given day.
+        You can achieve this using the following <code>GROUP BY</code> clauses:
+    <pre class="plain"><code>GROUP BY DATE(col_name)
+GROUP BY FROM_DAYS(TO_DAYS(col_name))
+GROUP BY YEAR(col_name), MONTH(col_name), DAYOFMONTH(col_name)
+GROUP BY DATE_FORMAT(col_name, '%Y-%m-%e')</code></pre>
+    </p>
+
+    <p>
+        Note that the last option may be slower than the others.
+        For monthly or quarterly sales reports, use <code>GROUP BY MONTH(col_name)</code> for monthly summaries
+        and <code>GROUP BY QUARTER(col_name)</code> for quarterly summaries.
+    </p>
+
+    <p>
+        The <code>GROUP BY</code> clause permits a <code>WITH ROLLUP</code>
+        modifier that causes summary output to include extra rows representing
+        higher-level (that is, super-aggregate) summary operations. For example,
+        consider the following two queries:
+    <pre class="plain"><code>mysql> select name, sum(miles) as 'miles/driver'
+    -> from driver_log group by name with rollup;
++-------+--------------+
+| name  | miles/driver |
++-------+--------------+
+| Ben   |          362 |
+| Henry |          911 |
+| Suzi  |          893 |
+| NULL  |         2166 |
++-------+--------------+
+
+mysql> select name, avg(miles) as driver_avg from driver_log
+    -> group by name with rollup;
++-------+------------+
+| name  | driver_avg |
++-------+------------+
+| Ben   |   120.6667 |
+| Henry |   182.2000 |
+| Suzi  |   446.5000 |
+| NULL  |   216.6000 |
++-------+------------+</code></pre>
+    </p>
+
+    <p>
+        In each case, the output row with <code>NULL</code> in the <code>name</code>
+        column represents the overall sum or average calculated over all drivers.
+    </p>
+
+    <p>
+        <code>WITH ROLLUP</code> produces multiple summary levels if you group by
+        more than one column. The following statement shows the number of mail
+        messages sent between each pair of users:
+    <pre class="plain"><code>mysql> select srcuser, dstuser, count(*)
+    -> from mail group by srcuser, dstuser;
++---------+---------+----------+
+| srcuser | dstuser | count(*) |
++---------+---------+----------+
+| barb    | tricia  |        2 |
+| tricia  | gene    |        1 |
+| phil    | phil    |        2 |
+| gene    | barb    |        2 |
+| phil    | tricia  |        2 |
+| barb    | barb    |        1 |
+| tricia  | phil    |        1 |
+| gene    | gene    |        3 |
+| gene    | tricia  |        1 |
+| phil    | barb    |        1 |
++---------+---------+----------+</code></pre>
+    </p>
+
+    <p>
+        Adding <code>WITH ROLLUP</code> causes the output to include an
+        intermediate count for each <code>srcuser</code> value (these are
+        the lines with <code>NULL</code> in the <code>dstuser</code> column),
+        plus an overall count at the end:
+    <pre class="plain"><code>mysql> select srcuser, dstuser, count(*)
+    -> from mail group by srcuser, dstuser with rollup;
++---------+---------+----------+
+| srcuser | dstuser | count(*) |
++---------+---------+----------+
+| barb    | barb    |        1 |
+| barb    | tricia  |        2 |
+| barb    | NULL    |        3 |
+| gene    | barb    |        2 |
+| gene    | gene    |        3 |
+| gene    | tricia  |        1 |
+| gene    | NULL    |        6 |
+| phil    | barb    |        1 |
+| phil    | phil    |        2 |
+| phil    | tricia  |        2 |
+| phil    | NULL    |        5 |
+| tricia  | gene    |        1 |
+| tricia  | phil    |        1 |
+| tricia  | NULL    |        2 |
+| NULL    | NULL    |       16 |
++---------+---------+----------+</code></pre>
+    </p>
+
+    <p>
+        If you have more than one column specified in the <code>GROUP BY</code>
+        clause, the <code>ROLLUP</code> clause assumes a hierarchy among the input
+        columns. For example, consider:
+    <pre class="plain"><code>GROUP BY c1, c2, c3 WITH ROLLUP</code></pre>
+    </p>
+
+    <p>
+        <code>ROLLUP</code> assumes the following hierarchy:
+    <pre class="plain"><code>c1 > c2 > c3</code></pre>
+    </p>
+
+    <p>
+        It generates the following grouping sets:
+    <pre class="plain"><code>(c1, c2, c3)
+(c1, c2)
+(c1)
+()</code></pre>
+    </p>
+
+    <p>
+        The order of evaluation is as follows:
+    <pre
+        class="plain"><code>FROM -> JOINs -> WHERE -> GROUP BY -> HAVING -> SELECT -> DISTINCT -> ORDER BY -> LIMIT</code></pre>
+    </p>
+
+    <!--More on GROUPING() function later!-->
+
+    <hr>
+
+    <span id="Subqueries"><b>Subqueries</b></span>
+
+    <p>
+        A MySQL subquery is a query nested within another query such as
+        <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, or
+        <code>DELETE</code>. Also, a subquery can be nested within another
+        subquery.
+    </p>
+
+    <p>
+        A MySQL subquery is called an inner query, whereas the query that contains
+        the subquery is called an outer query. A subquery can be used anywhere an
+        expression is used and must be enclosed in parentheses.
+    </p>
+
+    <p>
+        For example, the following query uses a subquery to return the employees
+        who work in the offices located in the USA:
+    <pre class="plain"><code>mysql> select lastName, firstName
+    -> from employees
+    -> where officeCode in (select
+    -> officeCode from offices where country = 'USA');
++-----------+-----------+
+| lastName  | firstName |
++-----------+-----------+
+| Murphy    | Diane     |
+| Patterson | Mary      |
+| Firrelli  | Jeff      |
+| Bow       | Anthony   |
+...</code></pre>
+    </p>
+
+    <p>
+        In the above example:
+    <ul>
+        <li>
+            The subquery returns all office codes of the offices
+            located in the USA.
+        </li>
+        <li>
+            The outer query selects the last name and first name of employees who work in the offices whose office codes
+            are in the result set returned by the subquery.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        When executing the query, MySQL evaluates the subquery first and uses the result of the subquery for the outer
+        query.
+    </p>
+
+    <p>
+        You can use comparison operators to compare a single value returned by
+        the subquery with an expression in the <code>WHERE</code> clause.
+    </p>
+
+    <p>
+        For example, the following query returns the customer who has the highest
+        payment:
+    <pre class="plain"><code>mysql> select customerNumber,
+    -> checkNumber,
+    -> amount
+    -> from payments
+    -> where amount = (select max(amount) from payments);
++----------------+-------------+-----------+
+| customerNumber | checkNumber | amount    |
++----------------+-------------+-----------+
+|            141 | JE105477    | 120166.58 |
++----------------+-------------+-----------+</code></pre>
+    </p>
+
+    <p>
+        If a subquery returns more than one value, you can use other
+        operators such as the <code>IN</code> or <code>NOT IN</code> operators
+        in the <code>WHERE</code> clause.
+    </p>
+
+    <p>
+        The following query selects all customers who are from the same
+        countries as the suppliers:
+    <pre class="plain"><code>mysql> select * from Customers where Country in (select Country from Suppliers);
++------------+--------------------------------------+----------------------+--------------------------------+----------------+------------+---------+
+| CustomerID | CustomerName                         | ContactName          | Address                        | City           | PostalCode | Country |
++------------+--------------------------------------+----------------------+--------------------------------+----------------+------------+---------+
+|          4 | Around the Horn                      | Thomas Hardy         | 120 Hanover Sq.                | London         | WA1 1DP    | UK      |
+...</code></pre>
+    </p>
+
+    <p>
+        When you use a subquery in the <code>FROM</code> clause, the result
+        set returned by the subquery is used as a temporary table.
+        This table is referred to as a derived table or materialized subquery.
+    </p>
+
+    <p>
+        For example, the following subquery finds the maximum, minimum, and
+        average number of items in sales orders:
+    <pre class="plain"><code>mysql> select 
+    -> max(items), min(items), floor(avg(items))
+    -> from (select 
+    -> orderNumber, count(orderNumber) as items
+    -> from orderdetails 
+    -> group by orderNumber) as lineitems;
++------------+------------+-------------------+
+| max(items) | min(items) | floor(avg(items)) |
++------------+------------+-------------------+
+|         18 |          1 |                 9 |
++------------+------------+-------------------+</code></pre>
+    </p>
+
+    <p>
+        In the above query, <code>FLOOR()</code> is used to remove decimal places
+        from the average values of items.
+    </p>
+
+    <p>
+        In the previous example, you may notice that a subquery is independent.
+        It means that you can execute the subquery as a standalone query.
+        Unlike a standalone subquery, a correlated subquery is a subquery that uses
+        data from the outer query. In other words, a correlated subquery depends
+        on the outer query. A correlated subquery is evaluated once for each row
+        in the outer query.
+    </p>
+
+    <p>
+        The following example uses a correlated subquery to select products
+        whose buy prices are greater than the average buy price of all products
+        in each product line.
+    <pre class="plain"><code>mysql> select productname, buyprice
+    -> from products p1
+    -> where buyprice > 
+    -> (select avg(buyprice) from products where productline = p1.productline);
++-----------------------------------------+----------+
+| productname                             | buyprice |
++-----------------------------------------+----------+
+| 1952 Alpine Renault 1300                |    98.58 |
+| 1996 Moto Guzzi 1100i                   |    68.99 |
+| 2003 Harley-Davidson Eagle Drag Bike    |    91.02 |
+...</code></pre>
+    </p>
+
+    <p>
+        In the above example, both the outer query and the correlated subquery
+        reference the same <code>products</code> table. Therefore, we need to
+        use the table alias <code>p1</code> for the <code>products</code> table
+        in the outer query.
+    </p>
+
+    <p>
+        Unlike a regular subquery, you cannot execute a correlated subquery independently.
+        If you do so, MySQL won’t know the <code>p1</code> table and will issue an error.
+    </p>
+
+
+    <p>
+        For each row in the <code>products</code> (or p1) table, the correlated subquery executes once to get
+        the average buy price of all products in the <code>productline</code> of that row.
+    </p>
+
+    <p>
+        If the buy price of the current row is greater than the average buy price returned by the correlated subquery,
+        the query includes that row in the result set.
+    </p>
+
+    <p>
+        When a subquery is used with the <code>EXISTS</code> or <code>NOT EXISTS</code>
+        operator, it returns a Boolean value of <code>TRUE</code> or <code>FALSE</code>.
+        The <code>EXISTS</code> and <code>NOT EXISTS</code> operators are often used in correlated subqueries.
+    </p>
+
+    <p>
+        Let's consider the <code>orders</code> and <code>orderdetails</code> tables
+        from the sample database. The following query finds sales orders whose total
+        values are greater than 60,000:
+    <pre class="plain"><code>mysql> select orderNumber,
+    -> sum(priceEach*quantityOrdered) total
+    -> from orderdetails
+    -> inner join
+    -> orders using (orderNumber)
+    -> group by orderNumber
+    -> having sum(priceEach*quantityOrdered) > 60000;
++-------------+----------+
+| orderNumber | total    |
++-------------+----------+
+|       10165 | 67392.85 |
+|       10310 | 61234.67 |
+|       10287 | 61402.00 |
++-------------+----------+</code></pre>
+    </p>
+
+    <p>
+        It returns 3 rows, meaning there are three sales orders with total values greater than 60,000.
+    </p>
+
+    <p>
+        You can use the query above as a correlated subquery to find customers who placed at least one sales order with
+        a total value greater than 60,000 by using the <code>EXISTS</code> operator:
+    <pre class="plain"><code>mysql> select 
+    ->     customernumber, 
+    ->     customername
+    -> from
+    ->     customers
+    -> where
+    ->     exists (
+    ->         select 
+    ->             ordernumber, 
+    ->             sum(priceeach * quantityordered)
+    ->         from
+    ->             orderdetails
+    ->             inner join orders using (ordernumber)
+    ->         where
+    ->             customernumber = customers.customernumber
+    ->         group by 
+    ->             ordernumber
+    ->         having 
+    ->             sum(priceeach * quantityordered) > 60000
+    ->     );
++----------------+--------------------------+
+| customernumber | customername             |
++----------------+--------------------------+
+|            148 | Dragon Souveniers, Ltd.  |
+|            259 | Toms Spezialitäten, Ltd  |
+|            298 | Vida Sport, Ltd          |
++----------------+--------------------------+</code></pre>
+    </p>
+
+    <!-- Platinum, Gold and Silver question -->
+
+    <hr>
+
+    <span id="SetOperators"><b>Set operators</b></span>
+
+    <p>
+        The <code>UNION</code> operator is used to combine the result sets
+        of two or more <code>SELECT</code> statements.
+    </p>
+
+    <p>
+        The <code>UNION</code> operator automatically removes duplicate
+        rows from the result set.
+    </p>
+
+    <p>
+        Requirements for <code>UNION</code>:
+    <ul>
+        <li>
+            Every <code>SELECT</code> statement within a <code>UNION</code> must
+            have the same number of columns.
+        </li>
+        <li>
+            The columns must also have similar data types.
+        </li>
+        <li>
+            The columns in each <code>SELECT</code> statement must be in
+            the same order.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        Note: The column names in the result set are usually taken from the
+        first <code>SELECT</code> statement.
+    </p>
+
+    <p>
+        By default, the <code>UNION</code> operator removes duplicate rows even if
+        you don't specify the <code>DISTINCT</code> keyword explicitly.
+    </p>
+
+    <p>
+        If you use <code>UNION ALL</code>, duplicate rows (if any) remain in the result. Because <code>UNION ALL</code>
+        does not check for
+        duplicates, it performs faster than <code>UNION DISTINCT</code>.
+    </p>
+
+    <p>
+        Suppose you want to combine the first and last names of
+        employees and customers into a single result set. You can use the
+        <code>UNION</code> operator as follows:
+    <pre class="plain"><code>mysql> select firstName, lastName
+    -> from employees
+    -> union
+    -> select contactFirstName, contactLastName
+    -> from customers;
++---------------+-----------------+
+| firstName     | lastName        |
++---------------+-----------------+
+| Diane         | Murphy          |
+| Mary          | Patterson       |
+| Jeff          | Firrelli        |
+| William       | Patterson       |
+...</code></pre>
+    </p>
+
+    <p>
+        As you can see from the output, MySQL <code>UNION</code> uses the
+        column names from the first <code>SELECT</code> statement for the column
+        headings in the output.
+    </p>
+
+    <p>
+        If you want to use different column headings, you need to specify column aliases
+        explicitly in the first <code>SELECT</code> statement.
+    </p>
+
+    <p>
+        The MySQL <code>EXCEPT</code> operator allows you to retrieve rows from
+        one query that do not appear in another query. The basic syntax is as follows:
+    <pre class="plain"><code>query1
+EXCEPT [ALL | DISTINCT]
+query2</code></pre>
+    </p>
+
+    <p>
+        In this syntax, <code>EXCEPT</code> compares the result of <code>query1</code>
+        with the result of <code>query2</code> and returns the rows from <code>query1</code>
+        that do not appear in <code>query2</code>.
+    </p>
+
+    <p>
+        By default, the <code>EXCEPT</code> operator uses <code>DISTINCT</code>
+        if you omit it. The <code>EXCEPT DISTINCT</code> option removes duplicate rows from the result set.
+    </p>
+
+    <p>
+        To use the <code>EXCEPT</code> operator, <code>query1</code> and <code>query2</code>
+        must follow these rules:
+    <ul>
+        <li>
+            The order and number of columns in the select list of both queries must be the same.
+        </li>
+        <li>
+            The data types of the corresponding columns must be compatible.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        The <code>EXCEPT</code> operator returns a result set with column names derived
+        from the first query.
+    </p>
+
+    <p>
+        If you want to keep duplicate rows, you need to specify the <code>ALL</code> option explicitly.
+    </p>
+
+    <p>
+        The following query uses the <code>EXCEPT</code> operator to find the first names
+        that appear in the <code>customers</code> table but not in the <code>employees</code>
+        table:
+    <pre class="plain"><code>mysql> select firstName
+    -> from employees
+    -> except
+    -> select contactFirstName
+    -> from customers;
++-----------+
+| firstName |
++-----------+
+| Diane     |
+| Gerard    |
+| Anthony   |
+| Foon Yue  |
+| George    |
+...</code></pre>
+    </p>
+
+    <p>
+        The <code>INTERSECT</code> operator is a set operator that returns the common
+        rows from two or more queries. Its syntax and rules are similar to those of the <code>EXCEPT</code>
+        operator.
+    </p>
+
+    <hr>
+
+    <span id="ManagingDatabases"><b>Managing databases</b></span>
+
+    <p>
+        To display the current database, use the following statement:
+    <pre class="plain"><code>select database();</code></pre>
+    </p>
+
+    <p>
+        If the current database is not set, it will return <code>NULL</code>.
+    </p>
+
+    <p>
+        To select a database to work with, use the <code>USE</code> statement.
+        For example, the following statement sets the current database to <code>classicmodels</code>:
+    <pre class="plain"><code>USE classicmodels;</code></pre>
+    </p>
+
+    <p>
+        Depending on the system, database names (and table names) may be case-sensitive, so it is best to use consistent
+        letter case.
+    </p>
+
+    <p>
+        Use the <code>SHOW</code> statement to find out which databases currently exist on the server:
+    <pre class="plain"><code>mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.201 sec)</code></pre>
+    </p>
+
+    <p>
+        If you know which database you want to work with before logging in,
+        you can use the <code>-D</code> flag.
+        For example, the following command connects to the <code>classicmodels</code> database with the user account
+        <code>root</code>:
+    <pre class="plain"><code>mysql -u root -D classicmodels -p</code></pre>
+    </p>
+
+    <p>
+        If there isn't a database for you to use, you can create one yourself:
+    <pre class="plain"><code>create database test;</code></pre>
+    </p>
+
+    <p>
+        You only need to create a database once, but you must select it for use each time you begin a MySQL session.
+        The database you just created is empty, as the following query shows:
+    <pre class="plain"><code>mysql> show tables;
+Empty set</code></pre>
+    </p>
+
+    <p>
+        The <code>DROP DATABASE</code> statement drops all tables in the database
+        and deletes the database permanently. Therefore, use this statement with caution. The syntax is as follows:
+    <pre class="plain"><code>DROP DATABASE [IF EXISTS] database_name;</code></pre>
+    </p>
+
+    <p>
+        For example:
+    <pre class="plain"><code>mysql> drop database if exists test;
+Query OK, 0 rows affected</code></pre>
+    </p>
+
+    <p>
+        The <code>DROP DATABASE</code> statement returns the number of tables it deleted.
+        In the example above, MySQL returned zero affected rows, indicating that the <code>test</code> database had no
+        tables.
+    </p>
+
+    <hr>
+
+    <span id="WorkingWithTables"><b>Working with tables</b></span>
+
+    <p>
+        In MySQL, a storage engine is a software component responsible for managing how data is stored, retrieved, and
+        manipulated within tables. A storage engine also determines the underlying structure and features of the tables.
+    </p>
+
+    <p>
+        MySQL supports multiple storage engines, each with its own set of features. To find the available storage
+        engines
+        on your MySQL server, you can use the following query:
+    <pre class="plain"><code>mysql> select engine, support
+    -> from information_schema.engines
+    -> order by engine;
++--------------------+---------+
+| engine             | support |
++--------------------+---------+
+| ARCHIVE            | YES     |
+| BLACKHOLE          | YES     |
+| CSV                | YES     |
+| FEDERATED          | NO      |
+| InnoDB             | DEFAULT |
+| MEMORY             | YES     |
+| MRG_MYISAM         | YES     |
+| MyISAM             | YES     |
+| ndbcluster         | NO      |
+| ndbinfo            | NO      |
+| PERFORMANCE_SCHEMA | YES     |
++--------------------+---------+</code></pre>
+    </p>
+
+    <p>
+        If the support column is <code>YES</code>, the
+        corresponding storage engine is supported. If it is <code>NO</code>, it is not supported.
+    </p>
+
+    <p>
+        If the value in the support column is <code>DEFAULT</code>, it means the storage engine is supported and
+        used as the default.
+    </p>
+
+    <p>
+        Alternatively, you can use the following statement:
+    <pre
+        class="plain"><code>mysql> show engines;
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| ndbcluster         | NO      | Clustered, fault-tolerant tables                               | NULL         | NULL | NULL       |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| ndbinfo            | NO      | MySQL Cluster system information storage engine                | NULL         | NULL | NULL       |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| MEMORY             | YES     | Hash-based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+</code></pre>
+    </p>
+
+    <p>
+        To specify a storage engine when creating a new table, use the <code>ENGINE</code> clause in the
+        <code>CREATE TABLE</code> statement. For example:
+    <pre class="plain"><code>CREATE TABLE t1 (a INT, b CHAR (20), PRIMARY KEY (a)) ENGINE=InnoDB;</code></pre>
+    </p>
+
+    <p>
+        If you omit the <code>ENGINE</code> clause, MySQL uses the default storage engine when creating the table.
+        Note that MySQL 5.5 and later use InnoDB as the default storage engine.
+    </p>
+
+    <p>
+        We will not go into the details of these different types of engines, as that is beyond the scope
+        of these notes.
+    </p>
+
+    <p>
+        The <code>CREATE TABLE</code> statement allows you to create a new
+        table in a database. The following illustrates the basic syntax of the
+        <code>CREATE TABLE</code> statement:
+    <pre class="plain"><code>CREATE TABLE [IF NOT EXISTS] table_name(
+   column1 datatype constraints,
+   column2 datatype constraints,
+   ...
+) ENGINE=storage_engine;</code></pre>
+    </p>
+
+    <p>
+        The following example uses the <code>CREATE TABLE</code> statement
+        to create a new table called <code>tasks</code>:
+    <pre class="plain"><code>mysql> create table tasks (
+-> id int primary key,
+-> title varchar(255) not null,
+-> start_date date,
+-> due_date date 
+-> );</code></pre>
+    </p>
+
+    <p>
+        The <code>tasks</code> table has four columns: the <code>id</code>
+        is an <code>INT</code> column and serves as the primary key.
+        The <code>title</code> is a <code>VARCHAR</code> column and cannot be
+        <code>NULL</code>. The <code>start_date</code> and <code>due_date</code>
+        are <code>DATE</code> columns and can be <code>NULL</code>.
+    </p>
+
+    <p>
+        Suppose each task has a checklist. To store the checklist items,
+        you can create a new table called <code>checklists</code> as follows:
+    <pre class="plain"><code>mysql> create table checklists (
+-> id int,
+-> task_id int,
+-> title varchar(255) not null,
+-> is_complete boolean not null default false,
+-> primary key (id, task_id),
+-> foreign key (task_id)
+-> references tasks (id)
+-> on update restrict
+-> on delete cascade
+-> );</code></pre>
+    </p>
+
+    <p>
+        The <code>checklists</code> table has a primary key that consists of two columns.
+        Therefore, we use a table constraint to define the primary key:
+    <pre class="plain"><code>PRIMARY KEY (id, task_id)</code></pre>
+    </p>
+
+    <p>
+        In addition, <code>task_id</code> is a foreign key column that references the <code>id</code>
+        column of the <code>tasks</code> table; therefore, we use a foreign key constraint to
+        establish this relationship:
+    <pre class="plain"><code>FOREIGN KEY (task_id) 
+REFERENCES tasks (id) 
+ON UPDATE RESTRICT 
+ON DELETE CASCADE</code></pre>
+    </p>
+
+    <p>
+        We will go into more detail later!
+    </p>
+
+    <p>
+        A table contains multiple columns with specific data types such as numeric or string. MySQL provides more data
+        types than just numeric and string. Each data type in MySQL can be described by the following
+        characteristics:
+    <ul>
+        <li>The kind of values it represents.</li>
+        <li>The space it takes up and whether the values are fixed length or variable length.</li>
+        <li>Whether the values of the data type can be indexed.</li>
+        <li>How MySQL compares values of that data type.</li>
+    </ul>
+    </p>
+
+    <b>MySQL numeric data types</b>
+
+    <p>
+        In MySQL, you can find all SQL-standard numeric types, including exact-number data types and approximate numeric
+        data types such as integer, fixed-point, and floating-point.
+    </p>
+
+    <p>
+        In addition, MySQL has the <code>BIT</code> data type for storing bit values. Numeric types can be signed or
+        unsigned, except for the <code>BIT</code> type.
+    </p>
+
+    <b>MySQL Boolean data type</b>
+
+    <p>
+        MySQL does not have a built-in <code>BOOLEAN</code> or <code>BOOL</code> data type.
+        To represent Boolean values, MySQL uses the smallest
+        integer type, <code>TINYINT(1)</code>.
+        In other words, <code>BOOLEAN</code> and <code>BOOL</code> are synonyms for <code>TINYINT(1)</code>.
+    </p>
+
+    <b>MySQL string data types</b>
+
+    <p>
+        In MySQL, a string can hold anything from plain text to binary data such as images or files. Strings can be
+        compared and searched using pattern matching with the <code>LIKE</code> operator, regular expressions, and
+        full-text search.
+    </p>
+
+    <b>MySQL date and time data types</b>
+
+    <p>
+        MySQL provides types for date and time as well as the combination of date and time. In addition, MySQL supports
+        the <code>TIMESTAMP</code> data type for tracking changes to a row in a table. If you just want to store
+        years without months and days, you can use the <code>YEAR</code> data type.
+    </p>
+
+    <b>MySQL spatial data types</b>
+
+    <p>MySQL supports several spatial data types that contain various kinds of geometric and geographic values.</p>
+
+    <b>JSON data type</b>
+
+    <p>
+        MySQL has supported a native JSON data type since version 5.7.8, which allows you to store and manage JSON
+        documents
+        more effectively.
+    </p>
+
+    <p>
+        The native JSON data type provides automatic validation of JSON documents and an optimal storage format.
+    </p>
+
+    <p>
+        A copy of an existing table can also be created using <code>CREATE TABLE</code>.
+        The syntax is as follows:
+    <pre class="plain"><code>CREATE TABLE new_table_name AS
+SELECT column1, column2, ...
+FROM existing_table_name
+WHERE ...;</code></pre>
+    </p>
+
+    <p>
+        If you create a new table from an existing table, the new table will be filled
+        with the existing values from the old table.
+    </p>
+
+    <p>
+        The <code>INSERT INTO</code> statement is used to insert new records into
+        a table. This can be done in two ways. You can specify both the column names and the values to be inserted:
+    </p>
+    <pre class="plain">
+mysql> INSERT INTO Customers (CustomerName, Country)
+-> VALUES ('Max', 'Berlin');
+Query OK, 1 row affected (0.050 sec)
+</pre>
+
+    <p>
+        If you are adding values for all the columns in the table, you do not
+        need to specify the column names in the query. However, make sure the order
+        of the values matches the order of the columns in the table.
+    </p>
+
+    <p>
+        The <code>UPDATE</code> statement is used to modify existing records
+        in a table. The syntax is as follows:
+    <pre class="plain"><code>update table_name
+set column1 = value1, column2 = value2, ...
+where condition;</code></pre>
+    </p>
+
+    <p>
+        The <code>WHERE</code> clause in the above query specifies which records should
+        be updated. If you omit it, all records in the table will be updated.
+        The following query updates the first customer (<code>CustomerID = 1</code>)
+        with a new contact person and a new city:
+    <pre class="plain"><code>mysql> update Customers
+-> set ContactName = 'Alfred Schmidt', City = 'Frankfurt'
+-> where CustomerID = 1;
+Query OK, 1 row affected (0.022 sec)
+Rows matched: 1  Changed: 1  Warnings: 0</code></pre>
+    </p>
+
+    <p>
+        The <code>DELETE</code> statement is used to delete existing records in a
+        table. The syntax is as follows:
+    <pre class="plain"><code>delete from table_name where condition;</code></pre>
+    </p>
+
+    <p>
+        As with the <code>UPDATE</code> statement, it is important to be careful,
+        because if you omit the <code>WHERE</code> clause, all records in the table will be deleted.
+        The following statement deletes the customer <i>Alfreds Futterkiste</i> from the
+        <i>Customers</i> table:
+    <pre class="plain"><code>mysql> delete from Customers 
+-> where CustomerName = 'Alfreds Futterkiste';
+Query OK, 1 row affected (0.006 sec)</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="AggregateFunctions"><b>Aggregate functions</b></span>
+
+    <p>
+        The <code>MIN()</code> function returns the smallest value of the selected
+        column, and the <code>MAX()</code> function returns the largest value. For example:
+    <pre class="plain"><code>mysql> select max(Price) as LargestPrice from Products;
++--------------+
+| LargestPrice |
++--------------+
+|        263.5 |
++--------------+
+1 row in set (0.011 sec)</code></pre>
+    </p>
+
+    <p>
+        The <code>COUNT()</code> function returns the number of rows that match
+        a specified criterion. The <code>AVG()</code> function returns the average
+        value of a numeric column. The <code>SUM()</code> function returns the total
+        of a numeric column. Note: <code>NULL</code> values are not counted and are ignored.
+    <pre class="plain"><code>mysql> select count(ProductID) from Products; select avg(Price) from Products; select sum(Quantity) from OrderDetails;
++------------------+
+| count(ProductID) |
++------------------+
+|               77 |
++------------------+
+1 row in set (0.004 sec)
+
++--------------------+
+| avg(Price)         |
++--------------------+
+| 28.866363636363637 |
++--------------------+
+1 row in set (0.000 sec)
+
++---------------+
+| sum(Quantity) |
++---------------+
+|         12743 |
++---------------+
+1 row in set (0.004 sec)</code></pre>
+    </p>
+
+    <!--More on GROUP_CONCAT() later!-->
+
+    <hr>
+
+    <span id="CommonTableExpressions"><b>Common table expressions</b></span>
+
+    <p>
+        Note: The <code>WITH</code> clause is supported from MySQL version 8.0 onward.
+    </p>
+
+    <p>
+        To specify common table expressions, use a <code>WITH</code> clause
+        that has one or more comma-separated subclauses. Each subclause
+        provides a subquery that produces a result set and associates a name
+        with the subquery. The following example defines CTEs named <code>cte1</code>
+        and <code>cte2</code> in the <code>WITH</code> clause, and refers to them in
+        the top-level <code>SELECT</code> that follows:
+    <pre class="plain"><code>with
+  cte1 as (select a, b from table1),
+  cte2 as (select c, d from table2)
+select b, d from cte1 join cte2
+where cte1.a = cte2.c;</code></pre>
+    </p>
+
+    <p>
+        If a parameterized list of names follows the CTE name, those names are
+        the column names:
+    <pre class="plain"><code>mysql> with cte(col1, col2) as
+-> (select 1, 2
+-> union all
+-> select 3, 4)
+-> select col1, col2 from cte;
++------+------+
+| col1 | col2 |
++------+------+
+|    1 |    2 |
+|    3 |    4 |
++------+------+</code></pre>
+    </p>
+
+    <p>
+        The number of names in the list must be the same as the number of
+        columns in the result set.
+    </p>
+
+    <p>
+        Otherwise, the column names come from the select list of the
+        first <code>SELECT</code> within the <code>AS (subquery)</code> part:
+    <pre class="plain"><code>mysql> with cte as
+-> (
+-> select 1 as col1, 2 as col2
+-> union all
+-> select 3, 4
+-> )
+-> select col1, col2 from cte;
++------+------+
+| col1 | col2 |
++------+------+
+|    1 |    2 |
+|    3 |    4 |
++------+------+</code></pre>
+    </p>
+
+    <!--More on legal and illegal statements related to the WITH clause later!-->
+
+    <p>
+        A recursive common table expression has a subquery that refers
+        to its own name. For example:
+    <pre class="plain"><code>mysql> with recursive cte (n) as
+-> (
+-> select 1
+-> union all
+-> select n + 1 from cte where n &lt; 5
+-> )
+-> select * from cte;
++------+
+| n    |
++------+
+|    1 |
+|    2 |
+|    3 |
+|    4 |
+|    5 |
++------+</code></pre>
+    </p>
+
+    <p>
+        A recursive CTE has this structure:
+    <ul>
+        <li>
+            The <code>WITH</code> clause must begin with <code>WITH RECURSIVE</code>
+            if any CTE in the clause refers to itself.
+            (If no CTE refers to itself, <code>RECURSIVE</code> is permitted but not required.)
+        </li>
+        <li>
+            The recursive CTE subquery has two parts, separated by <code>UNION ALL</code>
+            or <code>UNION [DISTINCT]</code>:
+            <pre class="plain"><code>select ...      -- return initial row set
+union all
+select ...      -- return additional row sets</code></pre>
+            The first <code>SELECT</code> produces the initial row or rows for the
+            CTE and does not refer to the CTE name. The second <code>SELECT</code>
+            produces additional rows and recurses by referring to the CTE name in its
+            <code>FROM</code> clause. Recursion ends when this part produces no new rows.
+            Thus, a recursive CTE consists of a nonrecursive <code>SELECT</code> part followed
+            by a recursive <code>SELECT</code> part.
+            <br>
+            Each <code>SELECT</code> part can itself be a union of multiple <code>SELECT</code> statements.
+        </li>
+        <li>
+            The types of the CTE result columns are inferred from the column types of the
+            nonrecursive <code>SELECT</code> part only, and the columns are all nullable.
+            For type determination, the recursive <code>SELECT</code> part is ignored.
+        </li>
+        <li>
+            If the nonrecursive and recursive parts are separated by <code>UNION DISTINCT</code>, duplicate rows are
+            eliminated. This
+            is useful for queries that perform transitive closures, to avoid infinite loops.
+        </li>
+        <li>
+            Each iteration of the recursive part operates only on the rows produced by the previous iteration. If the
+            recursive part has multiple query blocks, iterations of each query block are scheduled in unspecified order,
+            and each query block operates on rows produced either by its previous iteration or by other
+            query blocks since that previous iteration ended.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        The recursive CTE subquery shown earlier has this nonrecursive part that
+        retrieves a single row to produce the initial row set:
+    <pre class="plain"><code>select 1</code></pre>
+    </p>
+
+    <p>
+        The CTE subquery also has this recursive part:
+    <pre class="plain"><code>select n + 1 from cte where n &lt; 5</code></pre>
+    </p>
+
+    <p>
+        At each iteration, that <code>SELECT</code> produces a row with a new value one greater than the value of
+        <code>n</code> from
+        the previous row set. The first iteration operates on the initial row set (<code>1</code>) and produces
+        <code>1+1=2</code>; the second
+        iteration operates on the first iteration's row set (<code>2</code>) and produces <code>2+1=3</code>; and so
+        forth. This continues until
+        recursion ends, which occurs when <code>n</code> is no longer less than <code>5</code>.
+    </p>
+
+    <p>
+        If the recursive part of a CTE produces wider values for a column than the nonrecursive part, it may be
+        necessary to widen the column in the nonrecursive part to avoid data truncation. Consider this statement:
+    <pre class="plain"><code>mysql> with recursive cte as 
+-> (
+-> select 1 as n, 'abc' as str
+-> union all
+-> select n + 1, concat(str, str) from cte where n < 3
+-> )
+-> select * from cte;
+ERROR 1406 (22001): Data too long for column 'str' at row 1</code></pre>
+    </p>
+
+    <p>
+        In strict SQL mode, the statement produces an error. To address this issue
+        so that the statement does not produce truncation or errors, use <code>CAST()</code>
+        in the nonrecursive <code>SELECT</code> to make the <code>str</code> column wider:
+    <pre class="plain"><code>mysql> with recursive cte as
+-> (
+-> select 1 as n, cast('abc' as char(20)) as str
+-> union all
+-> select n+1, concat(str, str) from cte where n < 3
+-> )
+-> select * from cte;
++------+--------------+
+| n    | str          |
++------+--------------+
+|    1 | abc          |
+|    2 | abcabc       |
+|    3 | abcabcabcabc |
++------+--------------+</code></pre>
+    </p>
+
+    <p>
+        Columns are accessed by name, not position, which means that columns in the recursive part can access columns in
+        the nonrecursive part that have a different position, as this CTE illustrates:
+    <pre class="plain"><code>mysql> with recursive cte as
+-> (
+-> select 1 as n, 1 as p, -1 as q
+-> union all
+-> select n+1, q*2, p*2 from cte where n<5
+-> )
+-> select * from cte;
++------+------+------+
+| n    | p    | q    |
++------+------+------+
+|    1 |    1 |   -1 |
+|    2 |   -2 |    2 |
+|    3 |    4 |   -4 |
+|    4 |   -8 |    8 |
+|    5 |   16 |  -16 |
++------+------+------+</code></pre>
+    </p>
+
+    <p>
+        Because <code>p</code> in one row is derived from <code>q</code> in the previous row, and vice versa, the
+        positive and negative values swap positions in each successive row of the output.
+    </p>
+
+    <!--More on recursion later. We will follow the documentation.-->
+
+    <hr>
+
+    <span id="StatisticalTechniques"><b>Statistical techniques</b></span>
+
+    <p>
+        A good first step in analyzing a set of observations is to generate
+        descriptive statistics that summarize their general characteristics
+        as a whole. These include:
+    <ul>
+        <li>
+            The number of observations, their sum, and their range (minimum and maximum)
+        </li>
+        <li>
+            Measures of central tendency, such as mean, median, and mode
+        </li>
+        <li>
+            Measures of variation, such as standard deviation and variance
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        Aside from the median and mode, all of these can be calculated by invoking
+        aggregate functions:
+    <pre class="plain"><code>mysql> select count(score) as n,
+-> sum(score) as sum,
+-> min(score) as minimum,
+-> max(score) as maximum,
+-> avg(score) as mean,
+-> stddev_samp(score) as 'std. dev.',
+-> var_samp(score) as 'variance'
+-> from testscore;
++----+------+---------+---------+--------+--------------------+-------------------+
+| n  | sum  | minimum | maximum | mean   | std. dev.          | variance          |
++----+------+---------+---------+--------+--------------------+-------------------+
+| 20 |  146 |       4 |      10 | 7.3000 | 1.8381913307436342 | 3.378947368421053 |
++----+------+---------+---------+--------+--------------------+-------------------+</code></pre>
+    </p>
+
+    <p>
+        The <code>STDDEV_SAMP()</code> and <code>VAR_SAMP()</code> functions produce
+        sample measures rather than population measures. That is, for a set of <i>n</i>
+        values, they produce results based on <i>n-1</i> degrees of freedom.
+        For population measures, which are based on <i>n</i> degrees of freedom, use
+        <code>STDDEV_POP()</code> and <code>VAR_POP()</code> instead.
+        <code>STDDEV()</code> and <code>VARIANCE()</code> are synonyms for <code>STDDEV_POP()</code> and
+        <code>VAR_POP()</code>.
+    </p>
+
+    <p>
+        Standard deviation can be used to identify outliers. For example:
+    <pre class="plain"><code>mysql> select @mean := avg(score), @std := stddev_samp(score) from testscore;
+mysql> select score from testscore where abs(score-@mean) > @std*3;</code></pre>
+    </p>
+
+    <p>
+        MySQL has no built-in function for computing the mode or median of a set of values,
+        but you can compute them yourself. To determine the mode (the value that occurs most
+        frequently), count each value and see which is most common:
+    <pre class="plain"><code>mysql> select score, count(score) as frequency
+-> from testscore group by score order by frequency desc;
++-------+-----------+
+| score | frequency |
++-------+-----------+
+|     9 |         5 |
+|     6 |         4 |
+|     7 |         4 |
+|     4 |         2 |
+|     8 |         2 |
+|    10 |         2 |
+|     5 |         1 |
++-------+-----------+</code></pre>
+    </p>
+
+    <p>
+        Suppose that a table <code>t</code> contains a <code>score</code>
+        column with 37 values (an odd number). To get the median, select a
+        single value using a statement like this:
+    <pre class="plain"><code>SELECT score FROM t ORDER BY score LIMIT 18,1</code></pre>
+    </p>
+
+    <p>
+        If the column contains 38 values (an even number), select two values:
+    <pre class="plain"><code>SELECT score FROM t ORDER BY score LIMIT 18,2</code></pre>
+    </p>
+
+    <p>
+        Then take the values returned by the statement and compute the median from their
+        average.
+    </p>
+
+    <p>
+        If you want to produce descriptive statistics for each subgroup of a set of
+        observations, you can use aggregate functions with a <code>GROUP BY</code>
+        clause to arrange observations into the appropriate groups.
+    </p>
+
+    <p>
+        You can use the <code>RAND()</code> function to generate random numbers:
+    <pre class="plain"><code>mysql> select rand(), rand(), rand();
++--------------------+--------------------+--------------------+
+| rand()             | rand()             | rand()             |
++--------------------+--------------------+--------------------+
+| 0.9181167398748143 | 0.7877948496377047 | 0.1846240592977256 |
++--------------------+--------------------+--------------------+</code></pre>
+    </p>
+
+    <p>
+        <code>RAND()</code> without an argument produces a different column
+        of values per query, whereas <code>RAND(n)</code> produces a repeatable column.
+        You can randomize a set of rows or values using <code>ORDER BY RAND()</code>.
+    </p>
+
+    <p>
+        Consider the following table that shows the stops for a trip from
+        San Antonio, Texas, to Madison. Each row shows the total miles driven
+        as of each stop:
+    <pre class="plain"><code>mysql> select seq, city, miles from trip_log order by seq;
++-----+------------------+-------+
+| seq | city             | miles |
++-----+------------------+-------+
+|   1 | San Antonio, TX  |     0 |
+|   2 | Dallas, TX       |   263 |
+|   3 | Benton, AR       |   566 |
+|   4 | Memphis, TN      |   745 |
+|   5 | Portageville, MO |   878 |
+|   6 | Champaign, IL    |  1164 |
+|   7 | Madison, WI      |  1412 |
++-----+------------------+-------+</code></pre>
+    </p>
+
+    <p>
+        A self-join can convert these cumulative values to successive
+        differences that represent the distances from each city to the next.
+        The following statement shows how to do that:
+    <pre class="plain"><code>mysql> select t1.seq as seq1, t2.seq as seq2,
+-> t1.city as city1, t2.city as city2,
+-> t1.miles as miles1, t2.miles as miles2,
+-> t2.miles - t1.miles as dist
+-> from trip_log as t1 inner join trip_log as t2
+-> on t1.seq + 1 = t2.seq
+-> order by t1.seq;
++------+------+------------------+------------------+--------+--------+------+
+| seq1 | seq2 | city1            | city2            | miles1 | miles2 | dist |
++------+------+------------------+------------------+--------+--------+------+
+|    1 |    2 | San Antonio, TX  | Dallas, TX       |      0 |    263 |  263 |
+|    2 |    3 | Dallas, TX       | Benton, AR       |    263 |    566 |  303 |
+|    3 |    4 | Benton, AR       | Memphis, TN      |    566 |    745 |  179 |
+|    4 |    5 | Memphis, TN      | Portageville, MO |    745 |    878 |  133 |
+|    5 |    6 | Portageville, MO | Champaign, IL    |    878 |   1164 |  286 |
+|    6 |    7 | Champaign, IL    | Madison, WI      |   1164 |   1412 |  248 |
++------+------+------------------+------------------+--------+--------+------+</code></pre>
+    </p>
+
+    <p>
+        The following table, <code>player_stats</code>, shows cumulative
+        numbers for a baseball player at the end of each month of his season.
+        <code>ab</code> indicates total at-bats, and <code>h</code> the total
+        hits the player has as of a given date.
+    <pre class="plain"><code>mysql> select id, date, ab, h, truncate(ifnull(h/ab,0),3) as ba
+-> from player_stats order by id;
++----+------------+-----+----+-------+
+| id | date       | ab  | h  | ba    |
++----+------------+-----+----+-------+
+|  1 | 2013-04-30 |   0 |  0 | 0.000 |
+|  2 | 2013-05-31 |  38 | 13 | 0.342 |
+|  3 | 2013-06-30 | 109 | 31 | 0.284 |
+|  4 | 2013-07-31 | 196 | 49 | 0.250 |
+|  5 | 2013-08-31 | 304 | 98 | 0.322 |
++----+------------+-----+----+-------+</code></pre>
+    </p>
+
+    <p>
+        The result above provides a general idea of how the player's hitting
+        performance changed over the course of the season, but it does not show
+        how the player performed during each individual month. To determine that,
+        calculate relative differences between pairs of at-bats and hits.
+    <pre class="plain"><code>mysql> select 
+-> t1.id as id1, t2.id as id2,
+-> t2.date,
+-> t1.ab as ab1, t2.ab as ab2,
+-> t1.h as h1, t2.h as h2,
+-> t2.ab - t1.ab as abdiff,
+-> t2.h - t1.h as hdiff,
+-> truncate(ifnull((t2.h-t1.h)/(t2.ab-t1.ab),0),3) as ba
+-> from player_stats as t1 inner join player_stats as t2
+-> on t1.id+1 = t2.id
+-> order by t1.id;
++-----+-----+------------+-----+-----+----+----+--------+-------+-------+
+| id1 | id2 | date       | ab1 | ab2 | h1 | h2 | abdiff | hdiff | ba    |
++-----+-----+------------+-----+-----+----+----+--------+-------+-------+
+|   1 |   2 | 2013-05-31 |   0 |  38 |  0 | 13 |     38 |    13 | 0.342 |
+|   2 |   3 | 2013-06-30 |  38 | 109 | 13 | 31 |     71 |    18 | 0.253 |
+|   3 |   4 | 2013-07-31 | 109 | 196 | 31 | 49 |     87 |    18 | 0.206 |
+|   4 |   5 | 2013-08-31 | 196 | 304 | 49 | 98 |    108 |    49 | 0.453 |
++-----+-----+------------+-----+-----+----+----+--------+-------+-------+</code></pre>
+    </p>
+
+    <p>
+        The two examples above show how a self-join can produce relative values
+        from absolute values. A self-join can do the opposite as well, producing
+        cumulative values at each successive stage of observation.
+        The following table shows rainfall measurements taken over a series of days.
+    <pre class="plain"><code>mysql> select date, precip from rainfall order by date;
++------------+--------+
+| date       | precip |
++------------+--------+
+| 2014-06-01 |   1.50 |
+| 2014-06-02 |   0.00 |
+| 2014-06-03 |   0.50 |
+| 2014-06-04 |   0.00 |
+| 2014-06-05 |   1.00 |
++------------+--------+</code></pre>
+    </p>
+
+    <p>
+        To get the cumulative figures for all days represented in the table, you can
+        use a self-join:
+    <pre class="plain"><code>mysql> select t1.date, t1.precip as 'daily precip',
+-> sum(t2.precip) as 'cum. precip'
+-> from rainfall as t1 inner join rainfall as t2
+-> on t1.date >= t2.date
+-> group by t1.date;
++------------+--------------+-------------+
+| date       | daily precip | cum. precip |
++------------+--------------+-------------+
+| 2014-06-01 |         1.50 |        1.50 |
+| 2014-06-02 |         0.00 |        1.50 |
+| 2014-06-03 |         0.50 |        2.00 |
+| 2014-06-04 |         0.00 |        2.00 |
+| 2014-06-05 |         1.00 |        3.00 |
++------------+--------------+-------------+</code></pre>
+    </p>
+
+    <p>
+        The following table shows a marathon runner’s performance at each stage of a 26-
+        kilometer run. The values in each row show the length of each stage in kilometers and
+        how long the runner took to complete the stage.
+    <pre class="plain"><code>mysql> select stage, km, t from marathon order by stage;
++-------+----+----------+
+| stage | km | t        |
++-------+----+----------+
+|     1 |  5 | 00:15:00 |
+|     2 |  7 | 00:19:30 |
+|     3 |  9 | 00:29:20 |
+|     4 |  5 | 00:17:50 |
++-------+----+----------+</code></pre>
+    </p>
+
+    <p>
+        To compute the runner’s average speed at the end of each stage, take the ratio of cumulative distance
+        to cumulative time. Putting all this together yields the following statement:
+    <pre class="plain"><code>mysql> select t1.stage, t1.km, t1.t,
+-> sum(t2.km) as 'cum. km',
+-> sec_to_time(sum(time_to_sec(t2.t))) as 'cum. t',
+-> sum(t2.km)/(sum(time_to_sec(t2.t))/(60*60)) as 'avg. km/hour'
+-> from marathon as t1 inner join marathon as t2
+-> on t1.stage >= t2.stage
+-> group by t1.stage;
++-------+----+----------+---------+----------+--------------+
+| stage | km | t        | cum. km | cum. t   | avg. km/hour |
++-------+----+----------+---------+----------+--------------+
+|     1 |  5 | 00:15:00 |       5 | 00:15:00 |      20.0000 |
+|     2 |  7 | 00:19:30 |      12 | 00:34:30 |      20.8696 |
+|     3 |  9 | 00:29:20 |      21 | 01:03:50 |      19.7387 |
+|     4 |  5 | 00:17:50 |      26 | 01:21:40 |      19.1022 |
++-------+----+----------+---------+----------+--------------+</code></pre>
+    </p>
+
+    <p>
+        If you want to assign ranks to a set of values, decide on a ranking method,
+        then put the values in the desired order and apply the method to them.
+    </p>
+
+    <!--Team losses and assigning ranks-->
+
+    <hr>
+
+    <span id="WindowFunctions"><b>Window Functions</b></span>
+
+    <!--
+CREATE TABLE sales (
+    year INT,
+    country VARCHAR(50),
+    product VARCHAR(50),
+    profit INT
+);
+
+INSERT INTO sales (year, country, product, profit) VALUES
+(2000, 'Finland', 'Computer', 1500),
+(2000, 'Finland', 'Phone', 100),
+(2001, 'Finland', 'Phone', 10),
+(2000, 'India', 'Calculator', 75),
+(2000, 'India', 'Calculator', 75),
+(2000, 'India', 'Computer', 1200),
+(2000, 'USA', 'Calculator', 75),
+(2000, 'USA', 'Computer', 1500),
+(2001, 'USA', 'Calculator', 50),
+(2001, 'USA', 'Computer', 1500),
+(2001, 'USA', 'Computer', 1200),
+(2001, 'USA', 'TV', 150),
+(2001, 'USA', 'TV', 100);
+-->
+
+    <p>
+        Consider the following table:
+    <pre class="plain"><code>mysql> select * from sales order by country, year, product;
++------+---------+------------+--------+
+| year | country | product    | profit |
++------+---------+------------+--------+
+| 2000 | Finland | Computer   |   1500 |
+| 2000 | Finland | Phone      |    100 |
+| 2001 | Finland | Phone      |     10 |
+| 2000 | India   | Calculator |     75 |
+| 2000 | India   | Calculator |     75 |
+| 2000 | India   | Computer   |   1200 |
+| 2000 | USA     | Calculator |     75 |
+| 2000 | USA     | Computer   |   1500 |
+| 2001 | USA     | Calculator |     50 |
+| 2001 | USA     | Computer   |   1500 |
+| 2001 | USA     | Computer   |   1200 |
+| 2001 | USA     | TV         |    150 |
+| 2001 | USA     | TV         |    100 |
++------+---------+------------+--------+</code></pre>
+    </p>
+
+    <p>
+        A window function performs a calculation using a group of rows, similar to an average or total. But instead of
+        producing a single result for the whole group, it produces a result for each row.
+    <ul>
+        <li>The row being examined is called the current row.</li>
+        <li>The rows used to do the calculation for the current row are called the window for that row.</li>
+    </ul>
+    </p>
+
+    <p>
+        So, each row gets its own result based on the group of rows around it.
+    </p>
+
+    <p>
+        For example, consider the following two queries. One produces a single global
+        sum and the other the sum per country:
+    <pre class="plain"><code>mysql> select sum(profit) as total_profit
+-> from sales;
++--------------+
+| total_profit |
++--------------+
+|         7535 |
++--------------+
+
+mysql> select country, sum(profit) as country_profit
+-> from sales
+-> group by country
+-> order by country;
++---------+----------------+
+| country | country_profit |
++---------+----------------+
+| Finland |           1610 |
+| India   |           1350 |
+| USA     |           4575 |
++---------+----------------+</code></pre>
+    </p>
+
+    <p>
+        By contrast, window operations do not collapse groups of query rows to a single output row.
+        Instead, they produce a result for each row:
+    <pre class="plain"><code>mysql> select 
+-> year, country, product, profit,
+-> sum(profit) over() as total_profit,
+-> sum(profit) over(partition by country) as country_profit
+-> from sales
+-> order by country, year, product, profit;
++------+---------+------------+--------+--------------+----------------+
+| year | country | product    | profit | total_profit | country_profit |
++------+---------+------------+--------+--------------+----------------+
+| 2000 | Finland | Computer   |   1500 |         7535 |           1610 |
+| 2000 | Finland | Phone      |    100 |         7535 |           1610 |
+| 2001 | Finland | Phone      |     10 |         7535 |           1610 |
+| 2000 | India   | Calculator |     75 |         7535 |           1350 |
+| 2000 | India   | Calculator |     75 |         7535 |           1350 |
+| 2000 | India   | Computer   |   1200 |         7535 |           1350 |
+| 2000 | USA     | Calculator |     75 |         7535 |           4575 |
+| 2000 | USA     | Computer   |   1500 |         7535 |           4575 |
+| 2001 | USA     | Calculator |     50 |         7535 |           4575 |
+| 2001 | USA     | Computer   |   1200 |         7535 |           4575 |
+| 2001 | USA     | Computer   |   1500 |         7535 |           4575 |
+| 2001 | USA     | TV         |    100 |         7535 |           4575 |
+| 2001 | USA     | TV         |    150 |         7535 |           4575 |
++------+---------+------------+--------+--------------+----------------+</code></pre>
+    </p>
+
+    <p>
+        Each window operation in the query is signified by inclusion of an
+        <code>OVER</code> clause that specifies how to partition query rows into groups for
+        processing by the window function:
+    <ul>
+        <li>The first <code>OVER</code> clause is empty, which treats the
+            entire set of query rows as a single partition. The window function thus
+            produces a global sum, but does so for each row.
+        </li>
+        <li>
+            The second <code>OVER</code> clause partitions rows by country, producing
+            a sum per country.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        Window functions are permitted only in the select list and <code>ORDER BY</code>
+        clause. Query result rows are determined from the <code>FROM</code> clause, after
+        <code>WHERE</code>, <code>GROUP BY</code>, and <code>HAVING</code> processing,
+        and windowing execution occurs before <code>ORDER BY</code>, <code>LIMIT</code>, and
+        <code>SELECT DISTINCT</code>.
+    </p>
+
+    <p>
+        The <code>OVER</code> clause is permitted for many aggregate functions, which therefore can be used as window or
+        nonwindow functions,
+        depending on whether the <code>OVER</code> clause is present:
+    <pre class="plain"><code>AVG()
+BIT_AND()
+BIT_OR()
+BIT_XOR()
+COUNT()
+JSON_ARRAYAGG()
+JSON_OBJECTAGG()
+MAX()
+MIN()
+STDDEV_POP(), STDDEV(), STD()
+STDDEV_SAMP()
+SUM()
+VAR_POP(), VARIANCE()
+VAR_SAMP()</code></pre>
+    </p>
+
+    <p>
+        MySQL also supports nonaggregate functions that are used only as window functions. For these, the
+        <code>OVER</code> clause is mandatory:
+    <pre class="plain"><code>CUME_DIST()
+DENSE_RANK()
+FIRST_VALUE()
+LAG()
+LAST_VALUE()
+LEAD()
+NTH_VALUE()
+NTILE()
+PERCENT_RANK()
+RANK()
+ROW_NUMBER()</code></pre>
+    </p>
+
+    <p>
+        For example, consider the following query that uses <code>ROW_NUMBER()</code>,
+        which produces the row number of each row within its partition. In this
+        case, rows are numbered per country. By default, partition rows are unordered and
+        row numbering is nondeterministic. To sort partition rows, include an <code>ORDER BY</code>
+        clause within the window definition. The query uses unordered and ordered partitions
+        (the <code>row_num1</code> and <code>row_num2</code> columns) to illustrate the difference between
+        omitting and including <code>ORDER BY</code>:
+    <pre class="plain"><code>mysql> select  
+     year, country, product, profit,  
+     row_number() over(partition by country) as row_num1,  
+     row_number() over(partition by country order by year, product) as row_num2  
+   from sales;
++------+---------+------------+--------+----------+----------+
+| year | country | product    | profit | row_num1 | row_num2 |
++------+---------+------------+--------+----------+----------+
+| 2000 | Finland | Computer   |   1500 |        1 |        1 |
+| 2000 | Finland | Phone      |    100 |        2 |        2 |
+| 2001 | Finland | Phone      |     10 |        3 |        3 |
+| 2000 | India   | Calculator |     75 |        1 |        1 |
+| 2000 | India   | Calculator |     75 |        2 |        2 |
+| 2000 | India   | Computer   |   1200 |        3 |        3 |
+| 2000 | USA     | Calculator |     75 |        1 |        1 |
+| 2000 | USA     | Computer   |   1500 |        2 |        2 |
+| 2001 | USA     | Calculator |     50 |        3 |        3 |
+| 2001 | USA     | Computer   |   1500 |        4 |        4 |
+| 2001 | USA     | Computer   |   1200 |        5 |        5 |
+| 2001 | USA     | TV         |    150 |        6 |        6 |
+| 2001 | USA     | TV         |    100 |        7 |        7 |
++------+---------+------------+--------+----------+----------+</code></pre>
+    </p>
+
+    <!--Window Function Frame Specification-->
+
+    <!--MySQL Tutorial-->
+
+    <hr>
+
+    <span id="ControlFlowFunctions"><b>Control flow functions</b></span>
+
+    <p>
+        The MySQL <code>CASE</code> expression is a control flow structure
+        that allows you to add if–else logic to a query. Generally speaking,
+        you can use the <code>CASE</code> expression anywhere a valid
+        expression is allowed, for example in <code>SELECT</code>, <code>WHERE</code>, and <code>ORDER BY</code>
+        clauses.
+    </p>
+
+    <p>
+        The <code>CASE</code> expression has two forms: simple <code>CASE</code>
+        and searched <code>CASE</code>.
+    </p>
+
+    <p>
+        The following illustrates the syntax of a simple <code>CASE</code> expression:
+    <pre class="plain"><code>CASE value
+   WHEN value1 THEN result1
+   WHEN value2 THEN result2
+   …
+   [ELSE else_result]
+END</code></pre>
+    </p>
+
+    <p>
+        The <code>CASE</code> syntax compares a <code>value</code> with <code>value1</code>, <code>value2</code>, etc.,
+        and returns the corresponding result.
+        If no match is found, it returns the result from the <code>ELSE</code> clause, if specified.
+    </p>
+
+    <p>
+        The following shows the syntax of a searched <code>CASE</code> expression:
+    <pre class="plain"><code>CASE
+   WHEN expression1 THEN result1
+   WHEN expression2 THEN result2
+   …
+   [ELSE else_result]
+END</code></pre>
+    </p>
+
+    <p>
+        In this syntax, <code>CASE</code> evaluates the expressions specified in the <code>WHEN</code> clauses. If
+        an expression evaluates to true, <code>CASE</code> returns the corresponding result in the <code>THEN</code>
+        clause. Otherwise, it returns the result specified in the <code>ELSE</code> clause. If the <code>ELSE</code>
+        clause is not provided, the <code>CASE</code> expression returns <code>NULL</code>.
+    </p>
+
+    <p>
+        The <code>CASE</code> expression returns a result whose data type depends on the context in which it is used.
+        For example, if the <code>CASE</code> expression is used in a character-string context, it returns the result as
+        a character string. If the <code>CASE</code> expression is used in a numeric context, it returns the result as
+        an integer, a decimal, or a real value.
+    </p>
+
+    <p>
+        This example uses the <code>CASE</code> expression in the <code>SELECT</code>
+        clause to return the type of customer based on the number of orders that customers placed:
+    <pre class="plain"><code>mysql> with cte as (
+-> select customerName, count(*) orderCount
+-> from orders
+-> inner join customers 
+-> using (customerNumber)
+-> group by customerName
+-> )
+-> select customerName, orderCount,
+-> case orderCount
+-> when 1 then 'One-time Customer'
+-> when 2 then 'Repeated Customer'
+-> when 3 then 'Frequent Customer'
+-> else 'Loyal Customer'
+-> end customerType
+-> from cte
+-> order by customerName;
++------------------------------------+------------+-------------------+
+| customerName                       | orderCount | customerType      |
++------------------------------------+------------+-------------------+
+| Alpha Cognac                       |          3 | Frequent Customer |
+| Amica Models & Co.                 |          2 | Repeated Customer |
+| Anna's Decorations, Ltd            |          4 | Loyal Customer    |
+...</code></pre>
+    </p>
+
+    <p>
+        The following example uses the <code>CASE</code> expression to sort
+        customers by state if the state is not <code>NULL</code>, or by
+        country if the state is <code>NULL</code>:
+    <pre class="plain"><code>mysql> select 
+->     customername, 
+->     state, 
+->     country
+-> from
+->     customers
+-> order by (
+->     case
+->         when state is null 
+->             then country
+->         else state
+->     end);
++------------------------------------+---------------+--------------+
+| customername                       | state         | country      |
++------------------------------------+---------------+--------------+
+| Salzburg Collectables              | NULL          | Austria      |
+| Mini Auto Werke                    | NULL          | Austria      |
+| Royal Canadian Collectables, Ltd.  | BC            | Canada       |
+...</code></pre>
+    </p>
+
+    <p>
+        The following example uses the <code>CASE</code> expression with
+        the <code>SUM()</code> function to calculate the total number of sales orders by
+        order status:
+    <pre class="plain"><code>mysql> select 
+->     sum(case
+->         when status = 'shipped' then 1
+->         else 0
+->     end) as 'shipped',
+->     sum(case
+->         when status = 'on hold' then 1
+->         else 0
+->     end) as 'on hold',
+->     sum(case
+->         when status = 'in process' then 1
+->         else 0
+->     end) as 'in process',
+->     sum(case
+->         when status = 'resolved' then 1
+->         else 0
+->     end) as 'resolved',
+->     sum(case
+->         when status = 'cancelled' then 1
+->         else 0
+->     end) as 'cancelled',
+->     sum(case
+->         when status = 'disputed' then 1
+->         else 0
+->     end) as 'disputed',
+->     count(*) as total
+-> from
+->     orders;
++---------+---------+------------+----------+-----------+----------+-------+
+| shipped | on hold | in process | resolved | cancelled | disputed | total |
++---------+---------+------------+----------+-----------+----------+-------+
+|     303 |       4 |          6 |        4 |         6 |        3 |   326 |
++---------+---------+------------+----------+-----------+----------+-------+</code></pre>
+    </p>
+
+    <p>
+        Sometimes it's useful to map <code>NULL</code> values to another value that has more meaning in the context of
+        your application.
+        The <code>IF()</code> function returns one value if a condition is <code>TRUE</code>, and another if the
+        condition is <code>FALSE</code>.
+        Syntax: <code>IF(condition, value_if_true, value_if_false)</code>.
+        <br>
+        For example, use <code>IF()</code> to map <code>NULL</code> to the string <code>Unknown</code>:
+    <pre class="plain"><code>mysql> select subject, test, if(score is null, 'Unknown', score) as 'score'
+-> from expt;
++---------+------+---------+
+| subject | test | score   |
++---------+------+---------+
+| Jane    | A    | 47      |
+| Jane    | B    | 50      |
+| Jane    | C    | Unknown |
+| Jane    | D    | Unknown |
+| Marvin  | A    | 52      |
+| Marvin  | B    | 45      |
+| Marvin  | C    | 53      |
+| Marvin  | D    | Unknown |
++---------+------+---------+
+8 rows in set (0.002 sec)</code></pre>
+    </p>
+
+    <p>
+        The preceding query can be written more concisely using
+        <code>IFNULL()</code>, which tests its first argument and returns it
+        if it's not <code>NULL</code>, or returns its second argument otherwise:
+    <pre class="plain"><code>mysql> select subject, test, ifnull(score, 'Unknown') as 'score' from expt;</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="MySQLViews"><b>MySQL Views</b></span>
+
+    <p>
+        Consider the <code>customers</code> and <code>payments</code> tables.
+        The following query returns rows from both tables using an inner join:
+    <pre class="plain"><code>mysql> select customerName, checkNumber, paymentDate, amount
+-> from customers
+-> inner join payments using (customerNumber);
++------------------------------------+-------------+-------------+-----------+
+| customerName                       | checkNumber | paymentDate | amount    |
++------------------------------------+-------------+-------------+-----------+
+| Atelier graphique                  | HQ336336    | 2004-10-19  |   6066.78 |
+| Atelier graphique                  | JM555205    | 2003-06-05  |  14571.44 |
+...</code></pre>
+    </p>
+
+    <p>
+        The next time you want the same information—customer name, check number, payment date, and
+        amount—you would need to issue the same query again.
+    </p>
+
+    <p>
+        One way to do this is to save the query in a file (a .txt or .sql file) so that later you can open and
+        execute it from MySQL Workbench or any other MySQL client tool.
+    </p>
+
+    <p>
+        A better way is to save the query on the database server and assign a name to it. This named query is
+        called a database view, or simply, a view.
+    </p>
+
+    <p>
+        To create a new view, use the <code>CREATE VIEW</code> statement.
+        The following statement creates a view <code>customerPayments</code> based on
+        the query above:
+    <pre class="plain"><code>mysql> create view customerpayments
+-> as 
+-> select 
+->     customername, 
+->     checknumber, 
+->     paymentdate, 
+->     amount
+-> from
+->     customers
+-> inner join
+->     payments using (customernumber);</code></pre>
+    </p>
+
+    <p>
+        After you execute the <code>CREATE VIEW</code> statement, MySQL creates
+        the view and stores it in the database.
+    </p>
+
+    <p>
+        Now you can reference the view as a table in SQL statements. For example,
+        you can query data from the <code>customerPayments</code> view using the
+        <code>SELECT</code> statement:
+    <pre class="plain"><code>SELECT * FROM customerPayments;</code></pre>
+    </p>
+
+    <p>
+        Note that a view does not physically store the data. When you issue a <code>SELECT</code> statement against
+        the view, MySQL
+        executes the underlying query specified in the view’s definition and returns the result set. For this reason,
+        a view is sometimes referred to as a virtual table.
+    </p>
+
+    <p>
+        MySQL views can help simplify complex queries, make business logic consistent,
+        add extra security layers, and enable backward compatibility.
+    </p>
+
+    <p>
+        MySQL treats views as tables with the type <code>'VIEW'</code>. Therefore,
+        you can use the <code>SHOW FULL TABLES</code> statement to display all views in
+        the current database as follows:
+    <pre class="plain"><code>SHOW FULL TABLES 
+WHERE table_type = 'VIEW';</code></pre>
     </p>
 
 
