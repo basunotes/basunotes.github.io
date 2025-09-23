@@ -683,8 +683,7 @@ WHERE condition;</code></pre>
 |          2 | Ana Trujillo Emparedados y helados | Ana Trujillo   | Avda. de la Constitución 2222  | México D.F.  | 05021      | Mexico  |
 |          3 | Antonio Moreno Taquería            | Antonio Moreno | Mataderos 2312                 | México D.F.  | 05023      | Mexico  |
 |          4 | Around the Horn                    | Thomas Hardy   | 120 Hanover Sq.                | London       | WA1 1DP    | UK      |
-+------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+
-3 rows in set (0.001 sec)</code></pre>
++------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+</code></pre>
     </p>
 
     <p>
@@ -696,8 +695,7 @@ WHERE condition;</code></pre>
 |          5 | Berglunds snabbköp      | Christina Berglund   | Berguvsvägen 8    | Luleå      | S-958 22   | Sweden  |
 |          6 | Blauer See Delikatessen | Hanna Moos           | Forsterstr. 57    | Mannheim   | 68306      | Germany |
 |          7 | Blondel père et fils    | Frédérique Citeaux   | 24, place Kléber  | Strasbourg | 67000      | France  |
-+------------+-------------------------+----------------------+-------------------+------------+------------+---------+
-3 rows in set (0.001 sec)</code></pre>
++------------+-------------------------+----------------------+-------------------+------------+------------+---------+</code></pre>
     </p>
 
     <p>
@@ -719,8 +717,7 @@ WHERE condition;</code></pre>
 | CustomerName | ContactName | Address |
 +--------------+-------------+---------+
 | Max          | NULL        | NULL    |
-+--------------+-------------+---------+
-1 row in set (0.002 sec)</code></pre>
++--------------+-------------+---------+</code></pre>
     </p>
 
     <hr>
@@ -1917,8 +1914,7 @@ query2</code></pre>
 | mysql              |
 | performance_schema |
 | sys                |
-+--------------------+
-4 rows in set (0.201 sec)</code></pre>
++--------------------+</code></pre>
     </p>
 
     <p>
@@ -2191,7 +2187,7 @@ WHERE ...;</code></pre>
     <pre class="plain">
 mysql> INSERT INTO Customers (CustomerName, Country)
 -> VALUES ('Max', 'Berlin');
-Query OK, 1 row affected (0.050 sec)
+Query OK, 1 row affected
 </pre>
 
     <p>
@@ -2216,7 +2212,7 @@ where condition;</code></pre>
     <pre class="plain"><code>mysql> update Customers
 -> set ContactName = 'Alfred Schmidt', City = 'Frankfurt'
 -> where CustomerID = 1;
-Query OK, 1 row affected (0.022 sec)
+Query OK, 1 row affected
 Rows matched: 1  Changed: 1  Warnings: 0</code></pre>
     </p>
 
@@ -2233,7 +2229,7 @@ Rows matched: 1  Changed: 1  Warnings: 0</code></pre>
         <i>Customers</i> table:
     <pre class="plain"><code>mysql> delete from Customers 
 -> where CustomerName = 'Alfreds Futterkiste';
-Query OK, 1 row affected (0.006 sec)</code></pre>
+Query OK, 1 row affected</code></pre>
     </p>
 
     <hr>
@@ -2249,7 +2245,7 @@ Query OK, 1 row affected (0.006 sec)</code></pre>
 +--------------+
 |        263.5 |
 +--------------+
-1 row in set (0.011 sec)</code></pre>
+1 row in set</code></pre>
     </p>
 
     <p>
@@ -2263,21 +2259,18 @@ Query OK, 1 row affected (0.006 sec)</code></pre>
 +------------------+
 |               77 |
 +------------------+
-1 row in set (0.004 sec)
 
 +--------------------+
 | avg(Price)         |
 +--------------------+
 | 28.866363636363637 |
 +--------------------+
-1 row in set (0.000 sec)
 
 +---------------+
 | sum(Quantity) |
 +---------------+
 |         12743 |
-+---------------+
-1 row in set (0.004 sec)</code></pre>
++---------------+</code></pre>
     </p>
 
     <!--More on GROUP_CONCAT() later!-->
@@ -3147,8 +3140,7 @@ END</code></pre>
 | Marvin  | B    | 45      |
 | Marvin  | C    | 53      |
 | Marvin  | D    | Unknown |
-+---------+------+---------+
-8 rows in set (0.002 sec)</code></pre>
++---------+------+---------+</code></pre>
     </p>
 
     <p>
