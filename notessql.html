@@ -37,6 +37,7 @@
         <li><a href="#ControlFlowFunctions">Control flow functions</a></li>
         <li><a href="#SQLViews">MySQL Views</a></li>
         <li><a href="#WorkingWithStrings">Working with Strings</a></li>
+        <li><a href="#WorkingWithDatesAndTimes">Working with Dates and Times</a></li>
     </ul>
     </p>
 
@@ -470,6 +471,8 @@ WHERE condition;</code></pre>
         <code>FROM</code>, <code>WHERE</code>, and <code>SELECT</code> clause and before the <code>ORDER BY</code>
         clause.
     </p>
+
+    <!--How to select distinct rows from a table?-->
 
     <p>
         The following comparison operators can be used in the <code>WHERE</code> clause:
@@ -1550,6 +1553,8 @@ mysql> select name, avg(miles) as driver_avg from driver_log
     </p>
 
     <!--More on GROUPING() function later!-->
+
+    <!--GROUP_CONCAT()-->
 
     <hr>
 
@@ -3282,7 +3287,7 @@ WHERE table_type = 'VIEW';</code></pre>
     <span id="WorkingWithStrings"><b>Working with Strings</b></span>
 
     <p>
-        The <code>LENGTH()</code> function returns the length of a string (in bytes). For example,
+        The <code>LENGTH()</code> function returns the length of a string (in bytes). For example
     <pre class="plain"><code>mysql> select length('abc');
 +---------------+
 | length('abc') |
@@ -3298,9 +3303,240 @@ WHERE table_type = 'VIEW';</code></pre>
     </p>
 
     <p>
-
+        The <code>UPPER()</code> and <code>LOWER()</code> functions convert the letter case
+        of a string. Depending on the data type, there are certain technicalities to consider, but
+        for now, we will assume we are working under reasonable conditions.
     </p>
 
+    <p>
+        Using the <code>REGEXP</code> operator and a regular expression pattern,
+        you can perform a pattern match. Here are some examples:
+    <ul>
+        <li>
+            Strings that begin with a particular substring:
+            <pre class="plain"><code>mysql> select name from metal where name regexp '^me';
++---------+
+| name    |
++---------+
+| mercury |
++---------+</code></pre>
+        </li>
+        <li>
+            Strings that end with a particular substring:
+            <pre class="plain"><code>mysql> select name from metal where name regexp 'd$';
++------+
+| name |
++------+
+| gold |
+| lead |
++------+</code></pre>
+        </li>
+        <li>
+            Strings that contain a particular substring at any position:
+            <pre class="plain"><code>mysql> select name from metal where name regexp 'in';
++----------+
+| name     |
++----------+
+| platinum |
+| tin      |
++----------+</code></pre>
+        </li>
+        <li>
+            Strings that contain a particular substring at a specific position:
+            <pre class="plain"><code>mysql> select name from metal where name regexp '^..at';
++----------+
+| name     |
++----------+
+| platinum |
++----------+</code></pre>
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        In addition, regular expressions have other capabilities and can perform matches that
+        SQL patterns cannot. For example, regular expressions can contain character classes,
+        which match any character in the class:
+    <ul>
+        <li>
+            To write a character class, use square brackets and list the characters you want the
+            class to match inside the brackets. Thus, the pattern <code>[abc]</code> matches
+            <code>a</code>, <code>b</code>, or <code>c</code>.
+        </li>
+        <li>
+            Classes can indicate ranges of characters; use a dash between the beginning and
+            end of the range. <code>[a-z]</code> matches any letter, <code>[0-9]</code> matches digits, and
+            <code>[a-z0-9]</code> matches letters or digits.
+        </li>
+        <li>
+            To negate a character class (<i>match any character but these</i>), begin the list with a
+            <code>^</code> character. For example, <code>[^0-9]</code> matches anything but digits.
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        You can break apart strings by using appropriate substring-extraction functions. For <code>LEFT()</code> and
+        <code>RIGHT()</code>, the second argument indicates how many characters to return from the left or right end of
+        the string. For <code>MID()</code>, the second argument is the starting position of the substring you want
+        (beginning at 1), and the third argument indicates how many characters to return.
+    <pre class="plain"><code>mysql> set @date = '2015-07-21';
+
+mysql> select @date, left(@date,4) as year,
+    -> mid(@date,6,2) as month, right(@date,2) as day;
++------------+------+-------+------+
+| @date      | year | month | day  |
++------------+------+-------+------+
+| 2015-07-21 | 2015 | 07    | 21   |
++------------+------+-------+------+</code></pre>
+    </p>
+
+    <p>
+        The <code>SUBSTRING()</code> function takes a string and a starting position,
+        and returns everything to the right of the position. <code>MID()</code> acts the same
+        way if you omit its third argument.
+    <pre class="plain"><code>mysql> select @date, substring(@date,6), mid(@date,6);
++------------+--------------------+--------------+
+| @date      | substring(@date,6) | mid(@date,6) |
++------------+--------------------+--------------+
+| 2015-07-21 | 07-21              | 07-21        |
++------------+--------------------+--------------+</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="WorkingWithDatesAndTimes"><b>Working with Dates and Times</b></span>
+
+    <p>
+        The <i>CCYY-MM-DD</i> format that MySQL uses for <code>DATE</code> values follows
+        the ISO 8601 standard for representing dates. You cannot change this.
+        However, you can rewrite non-ISO input values into ISO format when storing
+        dates, and you can rewrite ISO values to other formats for display with the
+        <code>DATE_FORMAT()</code> function.
+    </p>
+
+    <p>
+        To convert non-ISO date formats into a proper <code>DATE</code> value, you can use the
+        <code>STR_TO_DATE()</code> function. This function allows you to specify the format of the input string using
+        format specifiers such as <code>%Y</code> for a four-digit year, <code>%M</code> for the full month name, and
+        <code>%d</code> for a two-digit day.
+        For example, to convert the string <code>May 13, 2007</code> into a <code>DATE</code> type, use the following:
+    <pre class="plain"><code>STR_TO_DATE('May 13, 2007', '%M %d, %Y')</code></pre>
+    </p>
+
+    <p>
+        As mentioned earlier, MySQL uses the ISO date format by default unless specified otherwise.
+        To display dates or times in a different format, you can use the <code>DATE_FORMAT()</code>
+        or <code>TIME_FORMAT()</code> functions.
+        <br><br>
+        The <code>DATE_FORMAT()</code> function takes two arguments: a <code>DATE</code>, <code>DATETIME</code>, or
+        <code>TIMESTAMP</code> value, and a format string that defines how the output should appear.
+        This format string uses the same type of specifiers as <code>STR_TO_DATE()</code>.
+    <pre class="plain"><code>mysql> select date_format(d, '%M %d, %Y') as date from date_val;
++-------------------+
+| date              |
++-------------------+
+| February 28, 1864 |
+| January 15, 1900  |
+| December 31, 1999 |
+| June 04, 2000     |
+| March 16, 2017    |
++-------------------+</code></pre>
+    </p>
+
+    <p>
+        The time-related format sequences are useful only when you pass
+        <code>DATE_FORMAT()</code> a value that has both date and time parts (a <code>DATETIME</code> or
+        <code>TIMESTAMP</code>).
+        The following statement displays <code>DATETIME</code> values from the <code>datetime_val</code> table using
+        formats that include the time of day:
+    <pre class="plain"><code>mysql> select dt,
+    -> date_format(dt, '%c/%e/%y %r') as format1,
+    -> date_format(dt, '%M %e, %Y %T') as format2
+    -> from datetime_val;
++---------------------+----------------------+----------------------------+
+| dt                  | format1              | format2                    |
++---------------------+----------------------+----------------------------+
+| 1970-01-01 00:00:00 | 1/1/70 12:00:00 AM   | January 1, 1970 00:00:00   |
+| 1999-12-31 09:00:00 | 12/31/99 09:00:00 AM | December 31, 1999 09:00:00 |
+| 2000-06-04 15:45:30 | 6/4/00 03:45:30 PM   | June 4, 2000 15:45:30      |
+| 2017-03-16 12:30:15 | 3/16/17 12:30:15 PM  | March 16, 2017 12:30:15    |
++---------------------+----------------------+----------------------------+</code></pre>
+    </p>
+
+    <p>
+        <code>TIME_FORMAT()</code> is similar to <code>DATE_FORMAT()</code>.
+        It works with <code>TIME</code>, <code>DATETIME</code>, or <code>TIMESTAMP</code>
+        values, but understands only time-related specifiers in the format string:
+    <pre class="plain"><code>mysql> select dt,
+-> time_format(dt, '%r') as '12-hour time',
+-> time_format(dt, '%T') as '24-hour time'
+-> from datetime_val;
++---------------------+--------------+--------------+
+| dt                  | 12-hour time | 24-hour time |
++---------------------+--------------+--------------+
+| 1970-01-01 00:00:00 | 12:00:00 AM  | 00:00:00     |
+| 1999-12-31 09:00:00 | 09:00:00 AM  | 09:00:00     |
+| 2000-06-04 15:45:30 | 03:45:30 PM  | 15:45:30     |
+| 2017-03-16 12:30:15 | 12:30:15 PM  | 12:30:15     |
++---------------------+--------------+--------------+</code></pre>
+    </p>
+
+    <p>
+        MySQL includes many functions for extracting date and time components. For
+        example, <code>DATE()</code> and <code>TIME()</code> extract the date and time components of temporal values:
+        <pre class="plain"><code>mysql> select dt, date(dt), time(dt) from datetime_val;
++---------------------+------------+----------+
+| dt                  | date(dt)   | time(dt) |
++---------------------+------------+----------+
+| 1970-01-01 00:00:00 | 1970-01-01 | 00:00:00 |
+| 1999-12-31 09:00:00 | 1999-12-31 | 09:00:00 |
+| 2000-06-04 15:45:30 | 2000-06-04 | 15:45:30 |
+| 2017-03-16 12:30:15 | 2017-03-16 | 12:30:15 |
++---------------------+------------+----------+</code></pre>
+    </p>
+
+    <p>
+        Here are some useful component-extraction functions:
+        <pre class="plain"><code>mysql> select dt, year(dt), dayofmonth(dt), hour(dt), second(dt)
+    -> from datetime_val;
++---------------------+----------+----------------+----------+------------+
+| dt                  | year(dt) | dayofmonth(dt) | hour(dt) | second(dt) |
++---------------------+----------+----------------+----------+------------+
+| 1970-01-01 00:00:00 |     1970 |              1 |        0 |          0 |
+| 1999-12-31 09:00:00 |     1999 |             31 |        9 |          0 |
+| 2000-06-04 15:45:30 |     2000 |              4 |       15 |         30 |
+| 2017-03-16 12:30:15 |     2017 |             16 |       12 |         15 |
++---------------------+----------+----------------+----------+------------+
+
+mysql> select d, dayofyear(d), dayname(d), left(dayname(d),3) 
+    -> from datetime_val;
++------------+--------------+------------+--------------------+
+| d          | dayofyear(d) | dayname(d) | left(dayname(d),3) |
++------------+--------------+------------+--------------------+
+| 1864-02-28 |           59 | Sunday     | Sun                |
+| 1900-01-15 |           15 | Monday     | Mon                |
+| 1999-12-31 |          365 | Friday     | Fri                |
+| 2000-06-04 |          156 | Sunday     | Sun                |
+| 2017-03-16 |           75 | Thursday   | Thu                |
++------------+--------------+------------+--------------------+</code></pre>
+    </p>
+
+    <p>
+        Consult the MySQL Reference Manual for a complete list.
+    </p>
+
+    <!--Differences Date and Time-->
+
+    <hr>
+
+    <!--
+    Important topics to cover: 
+    Indexing, More examples related to correlated subqueries, 
+    stored procedures, functions, sequences, backquote/backtick, DDL.
+
+    Maybe later!
+    -->
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
