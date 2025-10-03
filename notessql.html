@@ -36,6 +36,7 @@
         <li><a href="#WindowFunctions">Window functions</a></li>
         <li><a href="#ControlFlowFunctions">Control flow functions</a></li>
         <li><a href="#SQLViews">MySQL Views</a></li>
+        <li><a href="#WorkingWithStrings">Working with Strings</a></li>
     </ul>
     </p>
 
@@ -1156,7 +1157,7 @@ in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by</code>
 
     <p>
         You can solve the above problem, however, using a <code>JOIN</code>:
-        <pre class="plain"><code>mysql> create temporary table t
+    <pre class="plain"><code>mysql> create temporary table t
     -> select name, max(miles) as miles from driver_log group by name;
 
 mysql> select d.name, d.trav_date, d.miles as 'longest trip'
@@ -2762,7 +2763,7 @@ mysql> select score from testscore where abs(score-@mean) > @std*3;</code></pre>
     </p>
 
     <p>
-        The following table shows a marathon runner’s performance at each stage of a 
+        The following table shows a marathon runner’s performance at each stage of a
         26-kilometer run. The values in each row show the length of each stage in kilometers and
         how long the runner took to complete the stage.
     <pre class="plain"><code>mysql> select stage, km, t from marathon order by stage;
@@ -3274,6 +3275,30 @@ END</code></pre>
         the current database as follows:
     <pre class="plain"><code>SHOW FULL TABLES 
 WHERE table_type = 'VIEW';</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="WorkingWithStrings"><b>Working with Strings</b></span>
+
+    <p>
+        The <code>LENGTH()</code> function returns the length of a string (in bytes). For example,
+    <pre class="plain"><code>mysql> select length('abc');
++---------------+
+| length('abc') |
++---------------+
+|             3 |
++---------------+</code></pre>
+    </p>
+
+    <p>
+        A quoted string that includes the same quote character can produce
+        a syntax error. To handle this, you can either enclose a string containing
+        single quotes within double quotes, or escape the single quote with a backslash.
+    </p>
+
+    <p>
+
     </p>
 
 
