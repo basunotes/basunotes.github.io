@@ -55,6 +55,23 @@
 mysql> \. file_name</code></pre>
     </p>
 
+    <p>
+        You can add a one-line comment using <code>#</code>, or a multi-line comment using <code>/*</code> and
+        <code>*/</code>.
+    </p>
+
+    <p>
+        The <code>HELP</code> statment returns online information from
+        the MySQL Reference Manual. The syntax is as follows:
+    <pre class="plain"><code>HELP 'search_string'</code></pre>
+    </p>
+
+    <p>
+        The <code>HELP</code> statement searches the help tables for the given search string and displays the result of
+        the search.
+        The search string is not case-sensitive.
+    </p>
+
     <hr>
 
     <span id="QueryingData"><b>Querying data</b></span>
@@ -68,7 +85,8 @@ FROM table_name</code></pre>
 
     <p>
         For example, the following query selects the <code>CustomerID</code> and
-        <code>OrderDate</code> columns from the <code>Orders</code> table:
+        <code>OrderDate</code> columns from the <code>Orders</code> table in the
+        <code>w3schools</code> database:
     <pre class="plain"><code>mysql> select CustomerID, OrderDate from Orders;
 +------------+------------+
 | CustomerID | OrderDate  |
@@ -258,6 +276,11 @@ ORDER BY column1 [ASC | DESC], column2 [ASC | DESC], ...</code></pre>
     </p>
 
     <p>
+        Columns selected for output can be referred to in <code>ORDER BY</code>
+        clauses using column positions. Column positions are integers and begin with 1.
+    </p>
+
+    <p>
         You can use the <code>ORDER BY</code> clause to sort a result set by an expression.
         For example, the following query calculates the subtotal for each item and sorts the result set based on the
         subtotal:
@@ -289,7 +312,9 @@ ORDER BY column1 [ASC | DESC], column2 [ASC | DESC], ...</code></pre>
         The <code>FIELD()</code> function returns the index position of a value in
         a list of values. This function performs a case-insensitive search.
         <b>Note:</b> If the specified value is not found in the list of values, this function
-        will return <code>0</code>. If the value is <code>NULL</code>, this function will return <code>0</code>.
+        will return <code>0</code>. If the value is <code>NULL</code>, this function will return <code>0</code>,
+        regardless
+        of whether <code>NULL</code> is present in the list of values.
         The syntax is as follows:
     <pre class="plain"><code>FIELD(value, val1, val2, val3, ...)</code></pre>
     </p>
@@ -307,7 +332,7 @@ ORDER BY column1 [ASC | DESC], column2 [ASC | DESC], ...</code></pre>
     </p>
 
     <p>
-        Consider the <code>orders</code> table. Suppose that you want
+        Consider the <code>orders</code> table in the <code>classicmodels</code> database. Suppose that you want
         to sort the sales orders based on their statuses in the following order:
     <ul>
         <li>In Process</li>
@@ -676,7 +701,8 @@ WHERE condition;</code></pre>
         The <code>LIMIT</code> clause is used to specify the number of records
         to return. The following query selects the first three records
         from the <i>Customers</i> table:
-    <pre class="plain"><code>mysql> select * from Customers limit 3;
+    <pre
+        class="plain"><code>mysql> select * from Customers limit 3;
 +------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+
 | CustomerID | CustomerName                       | ContactName    | Address                        | City         | PostalCode | Country |
 +------------+------------------------------------+----------------+--------------------------------+--------------+------------+---------+
@@ -688,7 +714,8 @@ WHERE condition;</code></pre>
 
     <p>
         If you want to start at record 4, you can use <code>OFFSET</code>:
-    <pre class="plain"><code>mysql> select * from Customers limit 3 offset 3;
+    <pre
+        class="plain"><code>mysql> select * from Customers limit 3 offset 3;
 +------------+-------------------------+----------------------+-------------------+------------+------------+---------+
 | CustomerID | CustomerName            | ContactName          | Address           | City       | PostalCode | Country |
 +------------+-------------------------+----------------------+-------------------+------------+------------+---------+
@@ -696,6 +723,11 @@ WHERE condition;</code></pre>
 |          6 | Blauer See Delikatessen | Hanna Moos           | Forsterstr. 57    | Mannheim   | 68306      | Germany |
 |          7 | Blondel père et fils    | Frédérique Citeaux   | 24, place Kléber  | Strasbourg | 67000      | France  |
 +------------+-------------------------+----------------------+-------------------+------------+------------+---------+</code></pre>
+    </p>
+
+    <p>
+        You could also use a shorter syntax to achieve the same result:
+    <pre class="plain"><code>select * from Customers limit 3, 3;</code></pre>
     </p>
 
     <p>
@@ -1123,7 +1155,19 @@ in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by</code>
     <p>
 
     <p>
-        You can solve the above problem, however, using a <code>JOIN</code>.
+        You can solve the above problem, however, using a <code>JOIN</code>:
+        <pre class="plain"><code>mysql> create temporary table t
+    -> select name, max(miles) as miles from driver_log group by name;
+
+mysql> select d.name, d.trav_date, d.miles as 'longest trip'
+    -> from driver_log as d inner join t using (name, miles) order by name;
++-------+------------+--------------+
+| name  | trav_date  | longest trip |
++-------+------------+--------------+
+| Ben   | 2014-07-30 |          152 |
+| Henry | 2014-07-29 |          300 |
+| Suzi  | 2014-08-02 |          502 |
++-------+------------+--------------+</code></pre>
     </p>
 
     <p>
@@ -2718,8 +2762,8 @@ mysql> select score from testscore where abs(score-@mean) > @std*3;</code></pre>
     </p>
 
     <p>
-        The following table shows a marathon runner’s performance at each stage of a 26-
-        kilometer run. The values in each row show the length of each stage in kilometers and
+        The following table shows a marathon runner’s performance at each stage of a 
+        26-kilometer run. The values in each row show the length of each stage in kilometers and
         how long the runner took to complete the stage.
     <pre class="plain"><code>mysql> select stage, km, t from marathon order by stage;
 +-------+----+----------+
