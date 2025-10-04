@@ -3357,6 +3357,8 @@ WHERE table_type = 'VIEW';</code></pre>
         In addition, regular expressions have other capabilities and can perform matches that
         SQL patterns cannot. For example, regular expressions can contain character classes,
         which match any character in the class:
+    </p>
+
     <ul>
         <li>
             To write a character class, use square brackets and list the characters you want the
@@ -3373,7 +3375,6 @@ WHERE table_type = 'VIEW';</code></pre>
             <code>^</code> character. For example, <code>[^0-9]</code> matches anything but digits.
         </li>
     </ul>
-    </p>
 
     <p>
         You can break apart strings by using appropriate substring-extraction functions. For <code>LEFT()</code> and
@@ -3485,7 +3486,7 @@ mysql> select @date, left(@date,4) as year,
     <p>
         MySQL includes many functions for extracting date and time components. For
         example, <code>DATE()</code> and <code>TIME()</code> extract the date and time components of temporal values:
-        <pre class="plain"><code>mysql> select dt, date(dt), time(dt) from datetime_val;
+    <pre class="plain"><code>mysql> select dt, date(dt), time(dt) from datetime_val;
 +---------------------+------------+----------+
 | dt                  | date(dt)   | time(dt) |
 +---------------------+------------+----------+
@@ -3498,7 +3499,7 @@ mysql> select @date, left(@date,4) as year,
 
     <p>
         Here are some useful component-extraction functions:
-        <pre class="plain"><code>mysql> select dt, year(dt), dayofmonth(dt), hour(dt), second(dt)
+    <pre class="plain"><code>mysql> select dt, year(dt), dayofmonth(dt), hour(dt), second(dt)
     -> from datetime_val;
 +---------------------+----------+----------------+----------+------------+
 | dt                  | year(dt) | dayofmonth(dt) | hour(dt) | second(dt) |
@@ -3526,7 +3527,100 @@ mysql> select d, dayofyear(d), dayname(d), left(dayname(d),3)
         Consult the MySQL Reference Manual for a complete list.
     </p>
 
-    <!--Differences Date and Time-->
+    <p>
+        To calculate an interval in days between two date values, use the
+        <code>DATEDIFF()</code> function:
+    <pre class="plain"><code>mysql> set @d1 = '2010-01-01', @d2 = '2009-12-01';
+
+mysql> select datediff(@d1,@d2) as 'd1 - d2', datediff(@d2,@d1) as 'd2-d1';
++---------+-------+
+| d1 - d2 | d2-d1 |
++---------+-------+
+|      31 |   -31 |
++---------+-------+</code></pre>
+    </p>
+
+    <p>
+        <code>DATEDIFF()</code> also works with date-and-time values but ignores the
+        time part.
+    </p>
+
+    <p>
+        To calculate an interval between <code>TIME</code> values as another
+        <code>TIME</code> value, use the <code>TIMEDIFF()</code> function:
+    <pre class="plain"><code>mysql> set @t1 = '12:00:00', @t2 = '16:30:00';
+
+mysql> select timediff(@t1,@t2) as 't1 - t2', timediff(@t2,@t1) as 't2-t1';
++------------------+-----------------+
+| t1 - t2          | t2-t1           |
++------------------+-----------------+
+| -04:30:00.000000 | 04:30:00.000000 |
++------------------+-----------------+</code></pre>
+    </p>
+
+    <p>
+        To calculate intervals in seconds between pairs of time values,
+        convert them to seconds with <code>TIME_TO_SEC()</code> and take
+        the difference. To express the resulting interval as a <code>TIME</code>
+        value, pass it to <code>SEC_TO_TIME()</code>.
+    </p>
+
+    <p>
+        To calculate an interval in days between date or date-and-time values,
+        convert them to days with <code>TO_DAYS()</code> and take the difference.
+        For an interval in weeks, do the same thing and divide the result by seven.
+    </p>
+
+    <p>
+        To add a time to a time, use the <code>ADDTIME()</code> function:
+    <pre class="plain"><code>mysql> set @t1 = '12:00:00', @t2 = '15:30:00';
+
+mysql> select addtime(@t1,@t2);
++------------------+
+| addtime(@t1,@t2) |
++------------------+
+| 27:30:00         |
++------------------+</code></pre>
+    </p>
+
+    <p>
+        MySQL also provides <code>DATE_ADD()</code> and <code>DATE_SUB()</code>
+        functions for adding intervals to dates and subtracting intervals from
+        dates. Each function takes a date (or date-and-time) value <code>d</code>
+        and an interval. Here are a few examples:
+    </p>
+
+    <ul>
+        <li>
+            Determine the date three days from today:
+            <pre class="plain"><code>mysql> select curdate(), date_add(curdate(), interval 3 day);
++------------+-------------------------------------+
+| curdate()  | date_add(curdate(), interval 3 day) |
++------------+-------------------------------------+
+| 2025-10-04 | 2025-10-07                          |
++------------+-------------------------------------+</code></pre>
+        </li>
+        <li>
+            Find the date a week ago:
+            <pre class="plain"><code>mysql> select curdate(), date_sub(curdate(), interval 1 week);
++------------+--------------------------------------+
+| curdate()  | date_sub(curdate(), interval 1 week) |
++------------+--------------------------------------+
+| 2025-10-04 | 2025-09-27                           |
++------------+--------------------------------------+</code></pre>
+        </li>
+        <li>
+            For questions where you need to know both the date and the time, begin with a
+            <code>DATETIME</code> or <code>TIMESTAMP</code> value. To answer the question, “What time will it be in 60
+            hours?” do this:
+            <pre class="plain"><code>mysql> select now(), date_add(now(), interval 60 hour);
++---------------------+-----------------------------------+
+| now()               | date_add(now(), interval 60 hour) |
++---------------------+-----------------------------------+
+| 2025-10-04 13:41:12 | 2025-10-07 01:41:12               |
++---------------------+-----------------------------------+</code></pre>
+        </li>
+    </ul>
 
     <hr>
 
