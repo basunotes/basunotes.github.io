@@ -38,6 +38,7 @@
         <li><a href="#SQLViews">MySQL Views</a></li>
         <li><a href="#WorkingWithStrings">Working with Strings</a></li>
         <li><a href="#WorkingWithDatesAndTimes">Working with Dates and Times</a></li>
+        <li><a href="#StoredProcedures">Stored Procedures</a></li>
     </ul>
     </p>
 
@@ -3621,6 +3622,40 @@ mysql> select addtime(@t1,@t2);
 +---------------------+-----------------------------------+</code></pre>
         </li>
     </ul>
+
+    <hr>
+
+    <span id="StoredProcedures"><b>Stored Procedures</b></span>
+
+    <p>
+        Stored Procedures are nothing more than stored blocks of code.
+        In its simplest form here is what a stored procedure looks like:
+    <pre class="plain"><code>CREATE PROCEDURE show_version()
+SELECT VERSION() AS 'MySQL Version';</code></pre>
+    </p>
+
+    <p>
+        You call it by typing
+    <pre class="plain">CALL show_version()</pre>
+    </p>
+
+    <p>
+        When you want to execute multiple SQL statements, you use the semicolon to separate the statements.
+        However, a stored procedure could consist of multiple statements 
+        separated by a semicolon. To treat the entire stored procedure 
+        as a single statement, it is necessary to temporarily redefine the delimiter.
+    </p>
+
+    <p>
+        The following changes the delimiter to <code>//</code>:
+        <pre class="plain"><code>delimiter //
+select * from customers //
+select * from products //</code></pre>
+    </p>
+
+    <p>
+        <i>More details coming soon!</i>
+    </p>
 
     <hr>
 
