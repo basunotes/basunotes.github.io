@@ -473,8 +473,6 @@ WHERE condition;</code></pre>
         clause.
     </p>
 
-    <!--How to select distinct rows from a table?-->
-
     <p>
         The following comparison operators can be used in the <code>WHERE</code> clause:
         <br>
@@ -1056,8 +1054,6 @@ SELECT * FROM t1 LEFT JOIN t2 USING (n);</code></pre>
 ...</code></pre>
     </p>
 
-    <!--PDF Page 492 Maybe later! Statehood-->
-
     <hr>
 
     <span id="GroupBy"><b>Group By</b></span>
@@ -1553,9 +1549,94 @@ mysql> select name, avg(miles) as driver_avg from driver_log
         class="plain"><code>FROM -> JOINs -> WHERE -> GROUP BY -> HAVING -> SELECT -> DISTINCT -> ORDER BY -> LIMIT</code></pre>
     </p>
 
-    <!--More on GROUPING() function later!-->
+    <p>
+        To check whether <code>NULL</code> in the result set represents
+        subtotals or grand totals, use the <code>GROUPING()</code>
+        function. It returns <code>1</code> when <code>NULL</code> occurs
+        in a super-aggregate row; otherwise, it returns <code>0</code>.
+        You can use it in the <code>SELECT</code> list, <code>HAVING</code> clause, and, as of MySQL 8.0.12,
+        in the <code>ORDER BY</code> clause. 
+    </p>
 
-    <!--GROUP_CONCAT()-->
+    <p>
+       To see this, consider the following query:
+       <pre class="plain"><code>mysql> select 
+    ->     srcuser, 
+    ->     dstuser, 
+    ->     count(*) as message_count, 
+    ->     grouping(srcuser) as grp_srcuser,
+    ->     grouping(dstuser) as grp_dstuser
+    -> from 
+    ->     mail
+    -> group by 
+    ->     srcuser, 
+    ->     dstuser with rollup;
++---------+---------+---------------+-------------+-------------+
+| srcuser | dstuser | message_count | grp_srcuser | grp_dstuser |
++---------+---------+---------------+-------------+-------------+
+| barb    | barb    |             1 |           0 |           0 |
+| barb    | tricia  |             2 |           0 |           0 |
+| barb    | NULL    |             3 |           0 |           1 |
+| gene    | barb    |             2 |           0 |           0 |
+| gene    | gene    |             3 |           0 |           0 |
+| gene    | tricia  |             1 |           0 |           0 |
+| gene    | NULL    |             6 |           0 |           1 |
+| phil    | barb    |             1 |           0 |           0 |
+| phil    | phil    |             2 |           0 |           0 |
+| phil    | tricia  |             2 |           0 |           0 |
+| phil    | NULL    |             5 |           0 |           1 |
+| tricia  | gene    |             1 |           0 |           0 |
+| tricia  | phil    |             1 |           0 |           0 |
+| tricia  | NULL    |             2 |           0 |           1 |
+| NULL    | NULL    |            16 |           1 |           1 |
++---------+---------+---------------+-------------+-------------+</code></pre>
+    </p>
+
+    <p>
+        You can combine the <code>IF()</code> function with the 
+        <code>GROUPING()</code> function to substitute labels for the 
+        super-aggregate <code>NULL</code> values.
+    </p>
+
+    <p>
+        The MySQL <code>GROUP_CONCAT()</code> function is an aggregate 
+        function that concatenates strings from a group into a single 
+        string with various options. The syntax is as follows:
+        <pre class="plain"><code>GROUP_CONCAT(
+    DISTINCT expression
+    ORDER BY expression
+    SEPARATOR sep
+);</code></pre>
+    </p>
+
+    <p>
+        The following example demonstrates how the <code>GROUP_CONCAT()</code>
+        function works:
+        <pre class="plain"><code>mysql> create table t (
+    ->     v char
+    -> );
+
+mysql> insert into t(v) values('a'),('b'),('c'),('b');
+
+mysql> select 
+    ->     group_concat(distinct v
+    ->         order by v asc
+    ->         separator ';') as group_concat
+    -> from
+    ->     t;
++--------------+
+| group_concat |
++--------------+
+| a;b;c        |
++--------------+</code></pre>
+    </p>
+
+    <p>
+        The <code>DISTINCT</code> clause allows you to eliminate duplicate values in the group before concatenating them.
+        The <code>ORDER BY</code> clause allows you to sort the values in ascending or descending order before concatenating. 
+        If you do not specify a separator, the <code>GROUP_CONCAT</code> uses a comma  as the default separator.
+        The <code>GROUP_CONCAT</code> function ignores <code>NULL</code> values. It returns <code>NULL</code> if there are no matching rows or all arguments are <code>NULL</code> values.
+    </p>
 
     <hr>
 
@@ -1784,8 +1865,6 @@ mysql> select name, avg(miles) as driver_avg from driver_log
 |            298 | Vida Sport, Ltd          |
 +----------------+--------------------------+</code></pre>
     </p>
-
-    <!-- Platinum, Gold and Silver question -->
 
     <hr>
 
@@ -2324,8 +2403,6 @@ Query OK, 1 row affected</code></pre>
 +---------------+</code></pre>
     </p>
 
-    <!--More on GROUP_CONCAT() later!-->
-
     <hr>
 
     <span id="CommonTableExpressions"><b>Common table expressions</b></span>
@@ -2386,8 +2463,6 @@ where cte1.a = cte2.c;</code></pre>
 |    3 |    4 |
 +------+------+</code></pre>
     </p>
-
-    <!--More on legal and illegal statements related to the WITH clause later!-->
 
     <p>
         A recursive common table expression has a subquery that refers
@@ -2808,7 +2883,7 @@ mysql> select score from testscore where abs(score-@mean) > @std*3;</code></pre>
         then put the values in the desired order and apply the method to them.
     </p>
 
-    <!--Team losses and assigning ranks-->
+    <!--Assigning Ranks MySQL Cookbook-->
 
     <hr>
 
@@ -3017,9 +3092,169 @@ ROW_NUMBER()</code></pre>
 +------+---------+------------+--------+----------+----------+</code></pre>
     </p>
 
-    <!--Window Function Frame Specification-->
+    <p>
+        Let’s look at the details. The general syntax for calling a window function is as follows:
+    </p>
 
-    <!--MySQL Tutorial-->
+    <pre class="plain"><code>window_function_name(expression) OVER ( 
+   [partition_definition]
+   [order_definition]
+   [frame_definition]
+)</code></pre>
+
+    <p>
+        The <code>PARTITION BY</code> clause divides the result set into partitions (or groups) of rows.
+        Each partition is processed independently by the window function, and the function is reset when moving from one
+        partition to the next.
+        You can specify one or more expressions in the <code>PARTITION BY</code> clause, separated by commas.
+    </p>
+
+    <p>
+        The <code>ORDER BY</code> clause defines the order of rows within each partition.
+        You can sort by one or more expressions, separated by commas.
+        While all window functions support <code>ORDER BY</code>, it only affects order-sensitive functions (for
+        example, <code>LAG()</code>, <code>LEAD()</code>, <code>ROW_NUMBER()</code>, etc.).
+    </p>
+
+    <p>
+        A <em>frame</em> is a subset of rows within the current partition.
+        The <code>frame</code> clause specifies the range of rows used for each calculation.
+        The frame boundaries are defined using keywords such as:
+    </p>
+
+    <ul>
+        <li>
+            <code>UNBOUNDED PRECEDING</code> <br>
+            All rows in the partition before the current row.
+        </li>
+        <li>
+            <code>UNBOUNDED FOLLOWING</code> <br>
+            All rows in the partition after the current row.
+        </li>
+        <li>
+            <code>n PRECEDING</code> <br>
+            The <code>n</code> rows preceding the current row.
+        </li>
+        <li>
+            <code>n FOLLOWING</code> <br>
+            The <code>n</code> rows following the current row.
+        </li>
+        <li>
+            <code>CURRENT ROW</code> <br>
+            The current row itself.
+        </li>
+    </ul>
+
+    <p>
+        When specifying a frame, you define both a starting and an ending point.
+        If no frame is explicitly defined, the default behavior is as follows:
+    </p>
+
+    <ul>
+        <li>If there is no <code>ORDER BY</code> clause, the entire partition is used as the frame.</li>
+        <li>If an <code>ORDER BY</code> clause is present, the default frame is
+            <code>BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>.
+        </li>
+    </ul>
+
+    <p>
+        Let us look at an example. We create the following table in <code>classicmodels</code>
+        database and enter bunch of data into it:
+    <pre class="plain"><code>CREATE TABLE readings (
+    time TIME,
+    subject VARCHAR(10),
+    val INT
+);
+
+INSERT INTO readings (time, subject, val) VALUES
+('07:00:00', 'st113', 10),
+('07:15:00', 'st113', 9),
+('07:30:00', 'st113', 25),
+('07:45:00', 'st113', 20),
+('07:00:00', 'xh458', 0),
+('07:15:00', 'xh458', 10),
+('07:30:00', 'xh458', 5),
+('07:45:00', 'xh458', 30),
+('08:00:00', 'xh458', 25);
+</code></pre>
+    </p>
+
+    <p>
+        The following query demonstrates the use of moving frames to compute running totals within each group of
+        time-ordered <code>level</code> values, as well as rolling averages computed from the current row and the rows
+        that
+        immediately precede and follow it:
+    <pre class="plain"><code>mysql> select time, subject, val
+    ->        sum(val) over (partition by subject order by time
+    ->                       rows unbounded preceding)
+    ->           as running_total,
+    ->        avg(val) over (partition by subject order by time 
+    ->                       rows between 1 and 1 following)
+mysql> select
+    ->   time, subject, val,
+    ->   sum(val) over (partition by subject order by time
+    ->                  rows unbounded preceding)
+    ->     as running_total,
+    ->   avg(val) over (partition by subject order by time
+    ->                  rows between 1 preceding and 1 following)
+    ->     as running_average
+    -> from readings;
++----------+---------+------+---------------+-----------------+
+| time     | subject | val  | running_total | running_average |
++----------+---------+------+---------------+-----------------+
+| 07:00:00 | st113   |   10 |            10 |          9.5000 |
+| 07:15:00 | st113   |    9 |            19 |         14.6667 |
+| 07:30:00 | st113   |   25 |            44 |         18.0000 |
+| 07:45:00 | st113   |   20 |            64 |         22.5000 |
+| 07:00:00 | xh458   |    0 |             0 |          5.0000 |
+| 07:15:00 | xh458   |   10 |            10 |          5.0000 |
+| 07:30:00 | xh458   |    5 |            15 |         15.0000 |
+| 07:45:00 | xh458   |   30 |            45 |         20.0000 |
+| 08:00:00 | xh458   |   25 |            70 |         27.5000 |
++----------+---------+------+---------------+-----------------+</code></pre>
+    </p>
+
+    <p>
+        For the <code>running_average</code> column, there is no frame row preceding the first one or following the
+        last. In these
+        cases, <code>AVG()</code> computes the average of the rows that are available.
+    </p>
+
+    <p>
+        The following query demonstrates <code>FIRST_VALUE()</code>, <code>LAST_VALUE()</code>, and two instances of
+        <code>NTH_VALUE()</code>:
+    <pre class="plain"><code>mysql> select
+    ->   time, subject, val,
+    ->   first_value(val)  over w as 'first',
+    ->   last_value(val)   over w as 'last',
+    ->   nth_value(val, 2) over w as 'second',
+    ->   nth_value(val, 4) over w as 'fourth'
+    -> from readings
+    -> window w as (
+    ->   partition by subject order by time
+    ->   rows unbounded preceding
+    -> );
++----------+---------+------+-------+------+--------+--------+
+| time     | subject | val  | first | last | second | fourth |
++----------+---------+------+-------+------+--------+--------+
+| 07:00:00 | st113   |   10 |    10 |   10 |   NULL |   NULL |
+| 07:15:00 | st113   |    9 |    10 |    9 |      9 |   NULL |
+| 07:30:00 | st113   |   25 |    10 |   25 |      9 |   NULL |
+| 07:45:00 | st113   |   20 |    10 |   20 |      9 |     20 |
+| 07:00:00 | xh458   |    0 |     0 |    0 |   NULL |   NULL |
+| 07:15:00 | xh458   |   10 |     0 |   10 |     10 |   NULL |
+| 07:30:00 | xh458   |    5 |     0 |    5 |     10 |   NULL |
+| 07:45:00 | xh458   |   30 |     0 |   30 |     10 |     30 |
+| 08:00:00 | xh458   |   25 |     0 |   25 |     10 |     30 |
++----------+---------+------+-------+------+--------+--------+</code></pre>
+    </p>
+
+    <p>
+        Each function uses the rows in the current frame, which, per the window definition shown, extends from the first
+        partition row to the current row. For the <code>NTH_VALUE()</code> calls, the current frame does not always
+        include the
+        requested row; in such cases, the return value is <code>NULL</code>.
+    </p>
 
     <hr>
 
@@ -3641,14 +3876,14 @@ SELECT VERSION() AS 'MySQL Version';</code></pre>
 
     <p>
         When you want to execute multiple SQL statements, you use the semicolon to separate the statements.
-        However, a stored procedure could consist of multiple statements 
-        separated by a semicolon. To treat the entire stored procedure 
+        However, a stored procedure could consist of multiple statements
+        separated by a semicolon. To treat the entire stored procedure
         as a single statement, it is necessary to temporarily redefine the delimiter.
     </p>
 
     <p>
         The following changes the delimiter to <code>//</code>:
-        <pre class="plain"><code>delimiter //
+    <pre class="plain"><code>delimiter //
 select * from customers //
 select * from products //</code></pre>
     </p>
