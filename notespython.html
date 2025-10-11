@@ -40,6 +40,7 @@
         <li><a href="#ClassesOOP">Classes and OOP</a></li>
         <li><a href="#Iterators">Iterators</a></li>
         <li><a href="#Exceptions">Exceptions</a></li>
+        <li><a href="#AmazonWebServices">Amazon Web Services</a></li>
     </ul>
     </p>
 
@@ -1980,6 +1981,62 @@ TypeError: Only integers are allowed</code></pre>
     </p>
 
     <hr>
+
+    <span id="AmazonWebServices"><b>Amazon Web Services</b></span>
+
+    <p>
+        To create, configure, and manage AWS services, we will use Boto3,
+        the AWS SDK (Software Development Kit) for Python. The SDK
+        provides an object-oriented API as well as low-level access
+        to AWS services.
+    </p>
+
+    <p>
+        Let's use the Amazon Polly service to turn text into speech. To
+        do this, we first need to install <code>boto3</code>:
+    <pre class="plain"><code>pip install boto3</code></pre>
+    </p>
+
+    <p>
+        Log in to AWS and go to the IAM Dashboard. With IAM, you can
+        specify who can access which services and resources, and under what
+        conditions.
+    </p>
+
+    <p>
+        Create a user with the username <i>pollytest</i> and attach the policy
+        <i>AmazonPollyFullAccess</i> to the <i>pollytest</i> user. Then, create an
+        access key for the user to use in your local code.
+    </p>
+
+    <p>
+        The following code saves an MP3 audio file of the text converted to speech by the
+        Amazon Polly service:
+    <pre class="plain"><code>
+import boto3
+import csv
+
+with open('pollytest_accessKeys.csv', mode='r') as file:
+    csvFile = csv.reader(file)
+    for lines in csvFile:
+        access_key_id = lines[0]
+        secret_access_key = lines[1]
+
+polly = boto3.client('polly',
+                     region_name = 'us-east-1',
+                     aws_access_key_id = access_key_id,
+                     aws_secret_access_key = secret_access_key)
+
+result = polly.synthesize_speech(Text = 'This is a test!',
+                                 OutputFormat = 'mp3',
+                                 VoiceId = 'Kendra')
+
+audio = result['AudioStream'].read()
+
+with open('myfile.mp3', 'wb') as file:
+    file.write(audio)</code></pre>
+    </p>
+
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
