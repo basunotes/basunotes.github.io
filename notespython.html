@@ -1972,16 +1972,6 @@ TypeError: Only integers are allowed</code></pre>
 
     <hr>
 
-
-    <p>
-        <i>
-            More on Recursion, Dates, Math, JSON, Regular Expressions, PIP, User Input and
-            Virtual Environments later!
-        </i>
-    </p>
-
-    <hr>
-
     <span id="AmazonWebServices"><b>Amazon Web Services</b></span>
 
     <p>
@@ -2080,7 +2070,10 @@ for bucket in response['Buckets']:
     </p>
 
     <p>
-        To upload a file, simply use the following line of code:
+        To upload a file, simply use the following line of code. It uploads the
+        file <code>primenumbers.txt</code>, using the same name, to the bucket with the 
+        randomly generated name
+        <code>s3test96b8a029-e9ba-4601-86e5-38f313f5647f</code>:
     <pre
         class="plain"><code>s3_client.upload_file('primenumbers.txt', 's3test96b8a029-e9ba-4601-86e5-38f313f5647f', 'primenumbers.txt')</code></pre>
     </p>
@@ -2092,19 +2085,19 @@ for bucket in response['Buckets']:
 
     <p>
         We are now going to use Amazon Elastic Beanstalk to deploy a Python app.
-        Search for "Elastic Beanstalk" on AWS, then click on <strong>Create application</strong>.
-        Under <strong>Configure Environment</strong>, select <strong>Web server environment</strong> and name the
-        application <em>beanstalk_test</em>.
-        Choose <strong>Python</strong> as the platform, and under <strong>Application code</strong>, select
-        <strong>Sample application</strong>.
+        Search for "Elastic Beanstalk" on AWS, then click on <i>Create application</i>.
+        Under <i>Configure Environment</i>, select <i>Web server environment</i> and name the
+        application <i>beanstalk_test</i>.
+        Choose <i>Python</i> as the platform, and under <i>Application code</i>, select
+        <i>Sample application</i>.
         Leave the other settings as they are.
     <p>
 
     <p>
         In step 2, create a service role and then an EC2 instance profile role.
         You will be directed to another page. Just accept the default settings for now.
-        After creating the roles, refresh the page; the newly created roles will now appear under <strong>Service
-            role</strong> and <strong>EC2 instance profile</strong>.
+        After creating the roles, refresh the page; the newly created roles will now appear under <i>Service
+            role</i> and <i>EC2 instance profile</i>.
     </p>
 
     <p>
@@ -2118,14 +2111,21 @@ for bucket in response['Buckets']:
         You can create a simple application using Plotly Dash and then upload
         the main code file along with the <code>requirements.txt</code> file as a single ZIP file.
         Make sure the following two lines of code are included:
-            <pre class="plain"><code>application = app.server
+    <pre class="plain"><code>application = app.server
 
 if __name__ == '__main__':
     application.run(debug=True, port=5000)
 </code></pre>
     </p>
 
+    <hr>
 
+    <p>
+        <i>
+            More on Recursion, Dates, Math, JSON, Regular Expressions, PIP, User Input and
+            Virtual Environments later!
+        </i>
+    </p>
 
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
