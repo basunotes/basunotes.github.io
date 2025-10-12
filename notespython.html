@@ -40,6 +40,7 @@
         <li><a href="#ClassesOOP">Classes and OOP</a></li>
         <li><a href="#Iterators">Iterators</a></li>
         <li><a href="#Exceptions">Exceptions</a></li>
+        <li><a href="#Recursion">Recursion</a></li>
         <li><a href="#AmazonWebServices">Amazon Web Services</a></li>
     </ul>
     </p>
@@ -1972,6 +1973,104 @@ TypeError: Only integers are allowed</code></pre>
 
     <hr>
 
+
+    <span id="Recursion"><b>Recursion</b></span>
+
+    <p>
+        Recursion can be implemented in Python. A recursive function is
+        a function that calls itself. Consider the following
+        code:
+    <pre class="plain"><code>>>> def function():
+...     x = 10
+...     function()
+... </code></pre>
+    </p>
+
+    <p>
+        When <code>function()</code> executes for the first time, Python creates a namespace and assigns <code>x</code>
+        the value <code>10</code> in that namespace. Then <code>function()</code> calls itself recursively.
+        The second time <code>function()</code> runs, the interpreter creates a
+        new namespace and again assigns <code>10</code> to <code>x</code>.
+        These two instances of the name <code>x</code> are distinct from each
+        other and can coexist without clashing because they are in separate namespaces.
+    </p>
+
+    <p>
+        However, running <code>function()</code> as it stands produces an error, as the following traceback shows:
+    <pre class="plain"><code>>>> function()
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+  File "&lt;stdin&gt;", line 3, in function
+  File "&lt;stdin&gt;", line 3, in function
+  File "&lt;stdin&gt;", line 3, in function
+  [Previous line repeated 996 more times]
+RecursionError: maximum recursion depth exceeded</code></pre>
+    </p>
+
+    <p>
+        As written, <code>function()</code> would, in theory, go on forever,
+        calling itself over and over without any of the calls ever
+        returning. Python doesn’t allow that to happen. The interpreter limits the maximum number of times a function
+        can call itself recursively, and when it reaches that limit, it raises a
+        <code>RecursionError</code> exception. You can find out what Python’s recursion limit is with a function from
+        the <code>sys</code> module called <code>getrecursionlimit()</code>:
+    <pre class="plain"><code>>>> from sys import getrecursionlimit
+>>> getrecursionlimit()
+1000</code></pre>
+    </p>
+
+    <p>
+        You can change this value, but a function that calls itself recursively
+        must have a plan to eventually stop. Recursive functions typically
+        follow this pattern:
+    </p>
+
+    <ul>
+        <li>There are one or more base cases that are directly solvable without the need for further recursion.</li>
+        <li>Each recursive call moves the solution progressively closer to a base case.</li>
+    </ul>
+
+    <p>
+        Now consider the function <code>countdown()</code>, which takes a positive number
+        as an argument and prints the numbers from the specified argument down to zero:
+    <pre class="plain"><code>>>> def countdown(n):
+...     print(n)
+...     if n == 0:
+...         return
+...     else:
+...         countdown(n - 1)
+... 
+>>> countdown(3)
+3
+2
+1
+0</code></pre>
+    </p>
+
+    <p>
+        Notice how <code>countdown()</code> fits the paradigm for a recursive algorithm described above:
+    </p>
+
+    <ul>
+        <li>The base case occurs when <code>n</code> is zero, at which point recursion stops.</li>
+        <li>In the recursive call, the argument is one less than the current value of <code>n</code>, so each recursion
+            moves closer to the base case.</li>
+    </ul>
+
+    <p>
+        <b>Note:</b> For simplicity, <code>countdown()</code> doesn’t check its argument for validity.
+        If <code>n</code> is either a non-integer or negative, you’ll get a <code>RecursionError</code> exception
+        because the base case is never reached.
+    </p>
+
+    <p>
+        Recursive functions can be quite useful and can also get quite complicated. We might explore more
+        examples later.
+    </p>
+
+
+    <hr>
+
     <span id="AmazonWebServices"><b>Amazon Web Services</b></span>
 
     <p>
@@ -2071,7 +2170,7 @@ for bucket in response['Buckets']:
 
     <p>
         To upload a file, simply use the following line of code. It uploads the
-        file <code>primenumbers.txt</code>, using the same name, to the bucket with the 
+        file <code>primenumbers.txt</code>, using the same name, to the bucket with the
         randomly generated name
         <code>s3test96b8a029-e9ba-4601-86e5-38f313f5647f</code>:
     <pre
@@ -2122,7 +2221,7 @@ if __name__ == '__main__':
 
     <p>
         <i>
-            More on Recursion, Dates, Math, JSON, Regular Expressions, PIP, User Input and
+            More on Dates, Math, JSON, Regular Expressions, PIP, User Input and
             Virtual Environments later!
         </i>
     </p>
