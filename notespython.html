@@ -2006,7 +2006,7 @@ TypeError: Only integers are allowed</code></pre>
     <p>
         Create a user with the username <i>pollytest</i> and attach the policy
         <i>AmazonPollyFullAccess</i> to the <i>pollytest</i> user. Then, create an
-        access key for the user to use in your local code.
+        access key for the user to use in their local code.
     </p>
 
     <p>
@@ -2036,6 +2036,96 @@ audio = result['AudioStream'].read()
 with open('myfile.mp3', 'wb') as file:
     file.write(audio)</code></pre>
     </p>
+
+
+    <p>
+        Let us now use the Amazon Simple Storage Service (Amazon S3). We create a user with the
+        username <i>s3test</i> and attach the policy <i>AmazonS3FullAccess</i>.
+        Then, create an access key for the user to use in their local code.
+    </p>
+
+    <p>
+        In S3, all of our data is stored in so-called <i>buckets</i>.
+        Bucket names must be unique across the entire AWS platform.
+        To create a random name that is likely to be unique, we will use
+        the <code>uuid</code> module. This module allows us to generate
+        an identification number that will uniquely identify something. The chances
+        that two UUIDs are the same are almost zero.
+    <pre class="plain"><code></code>import uuid
+
+def create_bucket_name(bucket_prefix):
+    # The generated bucket name must be between 3 and 63 chars long
+    return ''.join([bucket_prefix, str(uuid.uuid4())])</pre>
+    </p>
+
+    <p>
+        Just like with Amazon Polly, we first need to create an S3 client:
+    <pre class="plain"><code>s3_client = boto3.client('s3',
+                 region_name='us-east-1',
+                 aws_access_key_id=access_key_id,
+                 aws_secret_access_key=secret_access_key)</code></pre>
+    </p>
+
+    <p>
+        Then, we create an S3 bucket. If no region is specified, the default is <code>us-east-1</code>:
+    <pre class="plain"><code>s3_client.create_bucket(Bucket=create_bucket_name('s3test'))</code></pre>
+    </p>
+
+    <p>
+        The following code returns a list of existing buckets:
+    <pre class="plain"><code>response = s3_client.list_buckets()
+
+for bucket in response['Buckets']:
+    print(f'  {bucket["Name"]}', type(response['Buckets']))</code></pre>
+    </p>
+
+    <p>
+        To upload a file, simply use the following line of code:
+    <pre
+        class="plain"><code>s3_client.upload_file('primenumbers.txt', 's3test96b8a029-e9ba-4601-86e5-38f313f5647f', 'primenumbers.txt')</code></pre>
+    </p>
+
+    <p>
+        When you refresh the web interface, the file will appear in the bucket.
+        We might go into all the <code>CRUD</code> operations later.
+    </p>
+
+    <p>
+        We are now going to use Amazon Elastic Beanstalk to deploy a Python app.
+        Search for "Elastic Beanstalk" on AWS, then click on <strong>Create application</strong>.
+        Under <strong>Configure Environment</strong>, select <strong>Web server environment</strong> and name the
+        application <em>beanstalk_test</em>.
+        Choose <strong>Python</strong> as the platform, and under <strong>Application code</strong>, select
+        <strong>Sample application</strong>.
+        Leave the other settings as they are.
+    <p>
+
+    <p>
+        In step 2, create a service role and then an EC2 instance profile role.
+        You will be directed to another page. Just accept the default settings for now.
+        After creating the roles, refresh the page; the newly created roles will now appear under <strong>Service
+            role</strong> and <strong>EC2 instance profile</strong>.
+    </p>
+
+    <p>
+        For now, you can accept the defaults in the remaining steps.
+        Finally, create the environment. This process may take a couple of minutes.
+        Once the environment has been successfully launched, you can click on the domain
+        to see the default web application.
+    </p>
+
+    <p>
+        You can create a simple application using Plotly Dash and then upload
+        the main code file along with the <code>requirements.txt</code> file as a single ZIP file.
+        Make sure the following two lines of code are included:
+            <pre class="plain"><code>application = app.server
+
+if __name__ == '__main__':
+    application.run(debug=True, port=5000)
+</code></pre>
+    </p>
+
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
