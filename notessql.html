@@ -18,6 +18,32 @@
     </p>
 
     <p>
+        Most of the information presented here has been taken verbatim from the following sources:
+    </p>
+
+    <ul>
+        <li>
+            <a href="https://www.oreilly.com/library/view/mysql-cookbook-3rd/9781449374112/" target="_blank">MySQL
+                Cookbook, 3rd Edition</a> by Paul DuBois
+        </li>
+        <li>
+            The <a href="https://www.mysqltutorial.org/" target="_blank">MySQL Tutorial</a> website
+        </li>
+        <li>
+            The official <a href="https://dev.mysql.com/doc/refman/8.4/en/tutorial.html" target="_blank">MySQL 8.4
+                Reference Manual</a>
+        </li>
+        <li>
+            The <a href="https://www.w3schools.com/MySQL/default.asp" target="_blank">MySQL Tutorial</a> on the
+            W3Schools website
+        </li>
+        <li>
+            <a href="https://www.oreilly.com/library/view/sql-for-data/9781492088776/" target="_blank">SQL for Data
+                Analysis</a> by Cathy Tanimura
+        </li>
+    </ul>
+
+    <p>
         These notes are broadly organized as follows:
     <ul>
         <li><a href="#GettingStarted">Getting Started with MySQL</a></li>
@@ -1555,12 +1581,12 @@ mysql> select name, avg(miles) as driver_avg from driver_log
         function. It returns <code>1</code> when <code>NULL</code> occurs
         in a super-aggregate row; otherwise, it returns <code>0</code>.
         You can use it in the <code>SELECT</code> list, <code>HAVING</code> clause, and, as of MySQL 8.0.12,
-        in the <code>ORDER BY</code> clause. 
+        in the <code>ORDER BY</code> clause.
     </p>
 
     <p>
-       To see this, consider the following query:
-       <pre class="plain"><code>mysql> select 
+        To see this, consider the following query:
+    <pre class="plain"><code>mysql> select 
     ->     srcuser, 
     ->     dstuser, 
     ->     count(*) as message_count, 
@@ -1593,16 +1619,16 @@ mysql> select name, avg(miles) as driver_avg from driver_log
     </p>
 
     <p>
-        You can combine the <code>IF()</code> function with the 
-        <code>GROUPING()</code> function to substitute labels for the 
+        You can combine the <code>IF()</code> function with the
+        <code>GROUPING()</code> function to substitute labels for the
         super-aggregate <code>NULL</code> values.
     </p>
 
     <p>
-        The MySQL <code>GROUP_CONCAT()</code> function is an aggregate 
-        function that concatenates strings from a group into a single 
+        The MySQL <code>GROUP_CONCAT()</code> function is an aggregate
+        function that concatenates strings from a group into a single
         string with various options. The syntax is as follows:
-        <pre class="plain"><code>GROUP_CONCAT(
+    <pre class="plain"><code>GROUP_CONCAT(
     DISTINCT expression
     ORDER BY expression
     SEPARATOR sep
@@ -1612,7 +1638,7 @@ mysql> select name, avg(miles) as driver_avg from driver_log
     <p>
         The following example demonstrates how the <code>GROUP_CONCAT()</code>
         function works:
-        <pre class="plain"><code>mysql> create table t (
+    <pre class="plain"><code>mysql> create table t (
     ->     v char
     -> );
 
@@ -1632,10 +1658,13 @@ mysql> select
     </p>
 
     <p>
-        The <code>DISTINCT</code> clause allows you to eliminate duplicate values in the group before concatenating them.
-        The <code>ORDER BY</code> clause allows you to sort the values in ascending or descending order before concatenating. 
-        If you do not specify a separator, the <code>GROUP_CONCAT</code> uses a comma  as the default separator.
-        The <code>GROUP_CONCAT</code> function ignores <code>NULL</code> values. It returns <code>NULL</code> if there are no matching rows or all arguments are <code>NULL</code> values.
+        The <code>DISTINCT</code> clause allows you to eliminate duplicate values in the group before concatenating
+        them.
+        The <code>ORDER BY</code> clause allows you to sort the values in ascending or descending order before
+        concatenating.
+        If you do not specify a separator, the <code>GROUP_CONCAT</code> uses a comma as the default separator.
+        The <code>GROUP_CONCAT</code> function ignores <code>NULL</code> values. It returns <code>NULL</code> if there
+        are no matching rows or all arguments are <code>NULL</code> values.
     </p>
 
     <hr>
