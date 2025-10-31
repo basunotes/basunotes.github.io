@@ -35,7 +35,8 @@
             The <a href="https://realpython.com/" target="_blank">Real Python</a> website
         </li>
         <li>
-            The <a href="https://fastapi.tiangolo.com/python-types/" target="_blank">tutorial</a> on Python types on the website of FastAPI
+            The <a href="https://fastapi.tiangolo.com/python-types/" target="_blank">tutorial</a> on Python types on the
+            website of FastAPI
         </li>
         <li>
             Relevant documentation and various YouTube videos
@@ -2093,11 +2094,63 @@ RecursionError: maximum recursion depth exceeded</code></pre>
 
     <hr>
 
-     <span id="TypeHints"><b>Type Hints</b></span>
+    <span id="TypeHints"><b>Type Hints</b></span>
 
-     <p>
+    <p>
+        Consider the following code written in VS Code:
 
-     </p>
+    <pre class="plain"><code>def get_full_name(first_name, last_name):
+    full_name = first_name.title() + " " + last_name.title()
+    return full_name
+
+
+print(get_full_name("john", "doe"))</code></pre>
+    </p>
+
+    <p>
+        If you want to call other methods besides <code>title</code> but forget the exact method name,
+        typing <code>first_name.</code> and waiting for your IDE to make suggestions won't work,
+        because it cannot infer the type of the parameter <code>first_name</code>.
+        However, if the same code is written with type hints, you'll not only get a list of available methods
+        but also benefit from error checking:
+    <pre class="plain"><code>def get_full_name(first_name: str, last_name: str) -> str:
+    full_name = first_name + " " + last_name.title()
+    return full_name</code></pre>
+    </p>
+
+    <p>
+        You can declare all the standard Python types, not only <code>str</code>.
+    </p>
+
+    <p>
+        There are some data structures that can contain other values, like <code>dict</code>, <code>list</code>,
+        <code>set</code> and <code>tuple</code>. And the internal
+        values can have their own type too.
+    </p>
+
+    <p>
+        These types that have internal types are called <i>generic</i> types. And it is possible to declare them, even
+        with their internal types.
+    </p>
+
+    <p>
+        To declare those types and the internal types, you can use the standard Python module <code>typing</code>. It
+        exists specifically to support these type hints.
+    </p>
+
+    <p>
+        The syntax using the <code>typing</code> module is compatible with all versions of Python from 3.6 onward,
+        including Python 3.9, 3.10, and later.
+        In newer versions, you do not need to import and use the <code>typing</code> module to declare type
+        annotations. For example:
+        <pre class="plain"><code>def process_items(items: list[str]):
+    for item in items:
+        print(item)</code></pre>
+    </p>
+
+    <p>
+        We will get into more detail later!
+    </p>
 
     <hr>
 
