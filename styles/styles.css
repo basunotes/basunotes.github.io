@@ -138,3 +138,16 @@ pre[class="plain"] {
 .token {
   background-color: #F0F0F0 !important;
 }
+
+mjx-container {
+  display: inline-flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+.MathJax {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
