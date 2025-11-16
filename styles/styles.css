@@ -139,6 +139,8 @@ pre[class="plain"] {
   background-color: #F0F0F0 !important;
 }
 
+/* Makes long math equations scrollable on mobile*/
+
 mjx-container {
   display: inline-flex;
   overflow-x: auto;
