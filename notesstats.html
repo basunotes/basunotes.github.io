@@ -21,8 +21,122 @@ When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
     <span><b>Notes on Statistics</b></span>
 
     <p>
-        Coming soon!
+        I will avoid rigor; the emphasis of these notes is on practical statistics.
+        However, it is sometimes helpful for me to state definitions in a more mathematically precise form—compared
+        with what is found in most non-mathematical sources—because it helps ease an “itchy” feeling.
     </p>
+
+    <p>
+        These notes are broadly organized as follows:
+    <ul>
+        <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
+        <li><a href="#HypothesisTesting">Hypothesis Testing</a></li>
+        <li><a href="#Ttests" target="_blank">T-tests</a></li>
+    </ul>
+    </p>
+
+    <hr>
+
+    <span id="CDFQuantile"><b>Distribution and quantile functions</b></span>
+
+    <p>
+        There are several definitions of a quantile for a dataset, and they are not necessarily equivalent.
+        This nuance is often overlooked. In many cases, the differences between these definitions are small,
+        but when sample values are far apart—such as in the long tail of a distribution—the differences can be
+        substantial. We will first focus on the more general, single mathematical notion of a quantile.
+    </p>
+
+    <p>
+        Suppose that \(X\) is a real-valued random variable. The <i>(cumulative) distribution function</i> (CDF) of
+        \(X\)
+        is the function \(F: \mathbb{R} \to [0, 1]\) defined by
+        \[F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}\]
+    </p>
+
+    <p>
+        For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x)=\mathbb{P}(X \le x) \ge
+            p\) is called a <i>quantile</i> of order \(p\) for the distribution.
+    </p>
+
+    <p>
+        The <i>quantile function</i> \(F^{-1}\) of \(X\) is defined by
+        \[F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)\]
+    </p>
+
+    <p>
+        In Python, you can compute quantiles and CDF values using the <code>scipy.stats</code> library, which provides
+        functions for various probability distributions. For example, for the normal distribution you have:
+    <pre class="plain"><code>import scipy.stats as stats
+
+mu = 0  
+sigma = 1 
+
+x = 1
+cdf_value = stats.norm.cdf(x, loc=mu, scale=sigma)
+
+p = 0.7
+quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
+    </p>
+
+    <hr>
+
+    <span id="HypothesisTesting"><b>Hypothesis Testing</b></span>
+
+    <!--https://www.geo.fu-berlin.de/en/v/soga-r/Basics-of-statistics/Hypothesis-Tests/Introduction-to-Hypothesis-Testing/Hypothesis-Formulation/index.html-->
+
+    <p>
+        A hypothesis test <i style="color: red;">Incomplete paragraph!</i>
+    </p>
+
+    <hr>
+
+    <span id="Ttests"><b>T-tests</b></span>
+
+    <p>
+        Our starting point for these tests will usually be a random sample
+        \( \mathbf{X} = (X_1, X_2, \dots, X_n) \)
+        from a normal distribution whose mean \(\mu\) and variance \(\sigma^2\) may or may not be known.
+    </p>
+
+    <p>
+        The basic <i>test statistics</i>, the sample mean \(M\) and the sample variance \(S^2\), are defined as
+        \[ M = \frac{1}{n} \sum_{i=1}^n X_i, \quad S^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - M)^2 \]
+    </p>
+
+    <p>
+        Both \(M\) and \(S^2\) are <i>unbiased</i> and <i>consistent</i> estimators of \(\mu\) and \(\sigma^2\),
+        respectively.
+    </p>
+
+    <p>
+        From these basic statistics, we can construct other test statistics that are quite
+        useful for hypothesis testing, namely:
+        \[Z = \frac{M - \mu}{\sigma / \sqrt{n}}, \quad T = \frac{M - \mu}{S / \sqrt{n}}, \quad V = \frac{n -
+        1}{\sigma^2} S^2 \]
+    </p>
+
+    <p>In the above:</p>
+
+    <ul>
+        <li>\(Z\) has the standard normal distribution.</li>
+        <li>\(T\) has the Student \(t\)-distribution with \(n - 1\) degrees of freedom.</li>
+        <li>\(V\) has the chi-square distribution with \(n - 1\) degrees of freedom.</li>
+        <li>\(Z\) and \(V\) are independent.</li>
+    </ul>
+
+    <p>
+        Let us now consider the <b>one-sample t-test</b>.
+        It is reasonable to use this test when you have a single sample of data,
+        you know the population mean you want to compare against, the population
+        standard deviation is unknown, and the data is approximately normally
+        distributed (especially for small samples).
+    </p>
+
+    <p>
+        We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile
+        of order \(p\) for the student \(t\) distribution with \(k\) degrees of freedom. <i style="color: red;">Incomplete paragraph!</i>
+    </p>
+
 
 </body>
 
