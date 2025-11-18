@@ -1,9 +1,3 @@
-<!--
-MathJax sample:
-When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
-\[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]
--->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,19 +15,46 @@ When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
     <span><b>Notes on Statistics</b></span>
 
     <p>
-        I will avoid rigor; the emphasis of these notes is on practical statistics.
-        However, it is sometimes helpful for me to state definitions in a more mathematically precise form—compared
-        with what is found in most non-mathematical sources—because it helps ease an “itchy” feeling.
+        I will avoid rigor; the emphasis of these notes is on practical statistics. However, it is sometimes helpful for
+        me to state definitions in a more mathematically precise form than what is found in most non-mathematical
+        sources, because it helps ease an itchy feeling.
     </p>
 
     <p>
+        Most of the information presented here has been taken verbatim from the following sources:
+    </p>
+
+    <ul>
+        <li>
+            Hartmann, K., Krois, J., & Rudolph, A. (2023). <em>Statistics and Geodata Analysis using R</em>.
+            <a href="https://www.geo.fu-berlin.de/soga-r" target="_blank">SOGA-R</a>
+        </li>
+        <li>
+            Rudolph, A., Krois, J., & Hartmann, K. (2023). <em>Statistics and Geodata Analysis using Python</em>.
+            <a href="https://www.geo.fu-berlin.de/soga-py" target="_blank">SOGA-Py</a>
+        </li>
+        <li>
+            The website Random. <a href="http://www.randomservices.org/random/"
+                target="_blank">http://www.randomservices.org/random/</a>
+        </li>
+        <li>
+            DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em> (4th ed.). Addison-Wesley.
+        </li>
+        <li>
+            Diez, D. M., Çetinkaya-Rundel, M., & Barr, C. D. (2019). <em>OpenIntro Statistics</em> (4th ed.). OpenIntro.
+        </li>
+    </ul>
+
+
+    <p>
         These notes are broadly organized as follows:
+    </p>
+
     <ul>
         <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
-        <li><a href="#HypothesisTesting">Hypothesis Testing</a></li>
+        <li><a href="#HypothesisFormulation">Hypothesis Formulation</a></li>
         <li><a href="#Ttests" target="_blank">T-tests</a></li>
     </ul>
-    </p>
 
     <hr>
 
@@ -80,12 +101,12 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
     <hr>
 
-    <span id="HypothesisTesting"><b>Hypothesis Testing</b></span>
+    <span id="HypothesisFormulation"><b>Hypothesis Formulation</b></span>
 
     <!--https://www.geo.fu-berlin.de/en/v/soga-r/Basics-of-statistics/Hypothesis-Tests/Introduction-to-Hypothesis-Testing/Hypothesis-Formulation/index.html-->
 
     <p>
-        A hypothesis test <i style="color: red;">Incomplete paragraph!</i>
+        <i style="color: red;">Incomplete!</i>
     </p>
 
     <hr>
@@ -134,7 +155,8 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
     <p>
         We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile
-        of order \(p\) for the student \(t\) distribution with \(k\) degrees of freedom. <i style="color: red;">Incomplete paragraph!</i>
+        of order \(p\) for the student \(t\) distribution with \(k\) degrees of freedom. <i
+            style="color: red;">Incomplete!</i>
     </p>
 
 
