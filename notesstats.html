@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +33,7 @@
             <a href="https://www.geo.fu-berlin.de/soga-py" target="_blank">SOGA-Py</a>
         </li>
         <li>
-            The website Random. 
+            The website Random.
             <a href="http://www.randomservices.org/random/" target="_blank">
                 http://www.randomservices.org/random/
             </a>
@@ -50,6 +51,7 @@
     <ul>
         <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
         <li><a href="#Hypotheses">Hypotheses</a></li>
+        <li><a href="#ErrorSignificance">Error and Significance Level</a></li>
         <li><a href="#Ttests" target="_blank">T-tests</a></li>
     </ul>
 
@@ -60,7 +62,7 @@
     <p>
         There are several definitions of a quantile for a dataset, and they are not necessarily equivalent.
         This nuance is often overlooked. In many cases, the differences between these definitions are small,
-        but when sample values are far apart—such as in the long tail of a distribution—the differences can be
+        but when sample values are far apart, such as in the long tail of a distribution, the differences can be
         substantial. We will first focus on the more general, single mathematical notion of a quantile.
     </p>
 
@@ -68,19 +70,19 @@
         Suppose that \(X\) is a real-valued random variable. The <i>(cumulative) distribution function</i> (CDF) of
         \(X\) is the function \(F: \mathbb{R} \to [0, 1]\) defined by
         \[
-            F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}
+        F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}
         \]
     </p>
 
     <p>
-        For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x) = \mathbb{P}(X \le x) \ge p\)
-        is called a <i>quantile</i> of order \(p\) for the distribution.
+        For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x)=\mathbb{P}(X \le x) \ge
+            p\) is called a <i>quantile</i> of order \(p\) for the distribution.
     </p>
 
     <p>
         The <i>quantile function</i> \(F^{-1}\) of \(X\) is defined by
         \[
-            F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)
+        F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)
         \]
     </p>
 
@@ -115,14 +117,14 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
         For example, if the hypothesis test concerns deciding whether a population mean \(\mu\)
         differs from a specified value \(\mu_0\), then the null hypothesis can be expressed as
         \[
-            H_0: \mu = \mu_0
+        H_0: \mu = \mu_0
         \]
     </p>
 
     <p>
         and the alternative hypothesis as
         \[
-            H_1: \mu \neq \mu_0\text{.}
+        H_1: \mu \neq \mu_0\text{.}
         \]
     </p>
 
@@ -132,73 +134,92 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
         If the hypothesis test is about deciding whether a population mean \(\mu\)
         is smaller than the specified value \(\mu_0\), the alternative hypothesis is expressed as
         \[
-            H_1: \mu < \mu_0\text{.}
-        \]
-    </p>
+        H_1: \mu < \mu_0\text{.} \] </p>
 
-    <p>Such a hypothesis test is called a <b>left-tailed test</b>.</p>
+            <p>Such a hypothesis test is called a <b>left-tailed test</b>.</p>
 
-    <p>
-        Analogously, we have the <b>right-tailed test</b>, which is about deciding whether a population mean
-        \(\mu\) is greater than the specified value \(\mu_0\).
-    </p>
+            <p>
+                Analogously, we have the <b>right-tailed test</b>, which is about deciding whether a population mean
+                \(\mu\) is greater than the specified value \(\mu_0\).
+            </p>
 
-    <p><i style="color: red;">Incomplete!</i></p>
+            <p>
+                We make the decision to reject the null hypothesis in favor of the alternative,
+                or to not reject the null hypothesis, based on the observed outcome, say \(\mathbf{x}\), of a random
+                experiment.
+                We identify an appropriate subset \(R\) of the sample space \(S\) and reject \(H_0\) if and
+                only if \(\mathbf{x} \in R\).
+                This set \(R\) is known as the <b>rejection region</b> or the <b>critical region</b>. However, we will that this 
+                critical region is often defined in terms of a <i>test statistic</i>, which maps \(S\) into another set \(T\). This allows
+                for siginificant data reduction.
+            </p>
 
-    <hr>
+            <hr>
 
-    <span id="Ttests"><b>T-tests</b></span>
+            <span id="ErrorSignificance"><b>Error and Significance Level</b></span>
 
-    <p>
-        Our starting point for these tests will usually be a random sample
-        \( \mathbf{X} = (X_1, X_2, \dots, X_n) \)
-        from a normal distribution whose mean \(\mu\) and variance \(\sigma^2\) may or may not be known.
-    </p>
+            <p></p>
 
-    <p>
-        The basic <i>test statistics</i>, the sample mean \(M\) and the sample variance \(S^2\), are defined as
-        \[
-            M = \frac{1}{n} \sum_{i=1}^n X_i, \quad
-            S^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - M)^2
-        \]
-    </p>
+            <p><i style="color: red;">Incomplete!</i></p>
 
-    <p>
-        Both \(M\) and \(S^2\) are <i>unbiased</i> and <i>consistent</i> estimators of \(\mu\) and \(\sigma^2\),
-        respectively.
-    </p>
+            <hr>
 
-    <p>
-        From these basic statistics, we can construct other test statistics that are quite useful for hypothesis 
-        testing, namely:
-        \[
-            Z = \frac{M - \mu}{\sigma / \sqrt{n}}, \quad
-            T = \frac{M - \mu}{S / \sqrt{n}}, \quad
-            V = \frac{n - 1}{\sigma^2} S^2
-        \]
-    </p>
+            <span id="Ttests"><b>T-tests</b></span>
 
-    <p>In the above:</p>
+            <p>
+                Our starting point for these tests will usually be a random sample
+                \( \mathbf{X} = (X_1, X_2, \dots, X_n) \)
+                from a normal distribution whose mean \(\mu\) and variance \(\sigma^2\) may or may not be known.
+            </p>
 
-    <ul>
-        <li>\(Z\) has the standard normal distribution.</li>
-        <li>\(T\) has the Student \(t\)-distribution with \(n - 1\) degrees of freedom.</li>
-        <li>\(V\) has the chi-square distribution with \(n - 1\) degrees of freedom.</li>
-        <li>\(Z\) and \(V\) are independent.</li>
-    </ul>
+            <p>
+                The basic <i>test statistics</i>, the sample mean \(M\) and the sample variance \(S^2\), are defined as
+                \[
+                M = \frac{1}{n} \sum_{i=1}^n X_i, \quad
+                S^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - M)^2
+                \]
+            </p>
 
-    <p>
-        Let us now consider the <b>one-sample t-test</b>. It is reasonable to use this test when you have a single
-        sample of data, you know the population mean you want to compare against, the population standard deviation is 
-        unknown, and the data is approximately normally distributed (especially for small samples).
-    </p>
+            <p>
+                Both \(M\) and \(S^2\) are <i>unbiased</i> and <i>consistent</i> estimators of \(\mu\) and \(\sigma^2\),
+                respectively.
+            </p>
 
-    <p>
-        We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile of order \(p\)
-        for the Student \(t\)-distribution with \(k\) degrees of freedom.
-    </p>
+            <p>
+                From these basic statistics, we can construct other test statistics that are quite useful for hypothesis
+                testing, namely:
+                \[
+                Z = \frac{M - \mu}{\sigma / \sqrt{n}}, \quad
+                T = \frac{M - \mu}{S / \sqrt{n}}, \quad
+                V = \frac{n - 1}{\sigma^2} S^2
+                \]
+            </p>
 
-    <p><i style="color: red;">Incomplete!</i></p>
+            <p>In the above:</p>
+
+            <ul>
+                <li>\(Z\) has the standard normal distribution.</li>
+                <li>\(T\) has the Student \(t\)-distribution with \(n - 1\) degrees of freedom.</li>
+                <li>\(V\) has the chi-square distribution with \(n - 1\) degrees of freedom.</li>
+                <li>\(Z\) and \(V\) are independent.</li>
+            </ul>
+
+            <p>
+                Let us now consider the <b>one-sample t-test</b>. It is reasonable to use this test when you have a
+                single
+                sample of data, you know the population mean you want to compare against, the population standard
+                deviation is
+                unknown, and the data is approximately normally distributed (especially for small samples).
+            </p>
+
+            <p>
+                We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile of order
+                \(p\)
+                for the Student \(t\)-distribution with \(k\) degrees of freedom.
+            </p>
+
+            <p><i style="color: red;">Incomplete!</i></p>
 
 </body>
+
 </html>
