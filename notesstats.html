@@ -146,8 +146,10 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
                 experiment.
                 We identify an appropriate subset \(R\) of the sample space \(S\) and reject \(H_0\) if and
                 only if \(\mathbf{x} \in R\).
-                This set \(R\) is known as the <b>rejection region</b> or the <b>critical region</b>. However, we will see that this 
-                critical region is often defined in terms of a <i>test statistic</i>, which maps \(S\) into another set \(T\). This allows
+                This set \(R\) is known as the <b>rejection region</b> or the <b>critical region</b>. However, we will
+                see that this
+                critical region is often defined in terms of a <i>test statistic</i>, which maps \(S\) into another set
+                \(T\). This allows
                 for siginificant data reduction.
             </p>
 
@@ -155,11 +157,34 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
             <span id="ErrorSignificance"><b>Error and Significance Level</b></span>
 
-            <p></p>
+            <p>
+                Conducting a hypothesis test always implies, that there is a chance of making an incorrect decision.
+                There are two types of errors, depending on which of the hypotheses is actually true.
+                A <b>type I error</b> occurs when a true null hypothesis is rejected (a <i>false positive</i>),
+                while a <b>type II error</b> occurs when a false null hypothesis is not rejected (a <i>false
+                    negative</i>).
+                Similarly, there are two ways to make a correct decision. The possibilities are summarized in the
+                following table:
+            </p>
+
+            <p>
+                \[
+                \begin{array}{|l|c|c|}
+                \hline
+                \textbf{Decision | State} & H_0 \text{ is true} & H_0 \text{ is false} \\
+                \hline
+                \text{Do not reject } H_0 & \text{Correct decision} & \text{Type II error} \\
+                \hline
+                \text{Reject } H_0 & \text{Type I error} & \text{Correct decision} \\
+                \hline
+                \end{array}
+                \]
+            </p>
 
             <p>
                 The probability of the type I error is commonly called the
                 significance level of the hypothesis test and is denoted by \(\alpha\).
+                Technically,
             </p>
 
             <p><i style="color: red;">Incomplete!</i></p>
