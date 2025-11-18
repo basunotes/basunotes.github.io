@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes on Statistics</title>
     <link rel="stylesheet" href="styles/styles.css">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
@@ -34,8 +32,10 @@
             <a href="https://www.geo.fu-berlin.de/soga-py" target="_blank">SOGA-Py</a>
         </li>
         <li>
-            The website Random. <a href="http://www.randomservices.org/random/"
-                target="_blank">http://www.randomservices.org/random/</a>
+            The website Random. 
+            <a href="http://www.randomservices.org/random/" target="_blank">
+                http://www.randomservices.org/random/
+            </a>
         </li>
         <li>
             DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em> (4th ed.). Addison-Wesley.
@@ -45,10 +45,7 @@
         </li>
     </ul>
 
-
-    <p>
-        These notes are broadly organized as follows:
-    </p>
+    <p>These notes are broadly organized as follows:</p>
 
     <ul>
         <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
@@ -69,24 +66,29 @@
 
     <p>
         Suppose that \(X\) is a real-valued random variable. The <i>(cumulative) distribution function</i> (CDF) of
-        \(X\)
-        is the function \(F: \mathbb{R} \to [0, 1]\) defined by
-        \[F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}\]
+        \(X\) is the function \(F: \mathbb{R} \to [0, 1]\) defined by
+        \[
+            F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}
+        \]
     </p>
 
     <p>
-        For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x)=\mathbb{P}(X \le x) \ge
-            p\) is called a <i>quantile</i> of order \(p\) for the distribution.
+        For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x) = \mathbb{P}(X \le x) \ge p\)
+        is called a <i>quantile</i> of order \(p\) for the distribution.
     </p>
 
     <p>
         The <i>quantile function</i> \(F^{-1}\) of \(X\) is defined by
-        \[F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)\]
+        \[
+            F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)
+        \]
     </p>
 
     <p>
         In Python, you can compute quantiles and CDF values using the <code>scipy.stats</code> library, which provides
         functions for various probability distributions. For example, for the normal distribution you have:
+    </p>
+
     <pre class="plain"><code>import scipy.stats as stats
 
 mu = 0  
@@ -97,17 +99,51 @@ cdf_value = stats.norm.cdf(x, loc=mu, scale=sigma)
 
 p = 0.7
 quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
-    </p>
 
     <hr>
 
     <span id="HypothesisFormulation"><b>Hypothesis Formulation</b></span>
 
-    <!--https://www.geo.fu-berlin.de/en/v/soga-r/Basics-of-statistics/Hypothesis-Tests/Introduction-to-Hypothesis-Testing/Hypothesis-Formulation/index.html-->
+    <p>
+        In statistical <i>hypothesis testing</i>, the goal is to determine whether there is sufficient
+        evidence to reject a presumed <i>null hypothesis</i> in favor of a conjectured <i>alternative hypothesis</i>.
+        The null hypothesis is usually denoted by \(H_0\), while the alternative hypothesis is usually
+        denoted by \(H_1\).
+    </p>
 
     <p>
-        <i style="color: red;">Incomplete!</i>
+        For example, if the hypothesis test concerns deciding whether a population mean \(\mu\)
+        differs from a specified value \(\mu_0\), then the null hypothesis can be expressed as
+        \[
+            H_0: \mu = \mu_0
+        \]
     </p>
+
+    <p>
+        and the alternative hypothesis as
+        \[
+            H_1: \mu \neq \mu_0\text{.}
+        \]
+    </p>
+
+    <p>Such a hypothesis test is called a <b>two-sided test</b>.</p>
+
+    <p>
+        If the hypothesis test is about deciding whether a population mean \(\mu\)
+        is smaller than the specified value \(\mu_0\), the alternative hypothesis is expressed as
+        \[
+            H_1: \mu < \mu_0\text{.}
+        \]
+    </p>
+
+    <p>Such a hypothesis test is called a <b>left-tailed test</b>.</p>
+
+    <p>
+        Analogously, we have the <b>right-tailed test</b>, which is about deciding whether a population mean
+        \(\mu\) is greater than the specified value \(\mu_0\).
+    </p>
+
+    <p><i style="color: red;">Incomplete!</i></p>
 
     <hr>
 
@@ -121,7 +157,10 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
     <p>
         The basic <i>test statistics</i>, the sample mean \(M\) and the sample variance \(S^2\), are defined as
-        \[ M = \frac{1}{n} \sum_{i=1}^n X_i, \quad S^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - M)^2 \]
+        \[
+            M = \frac{1}{n} \sum_{i=1}^n X_i, \quad
+            S^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - M)^2
+        \]
     </p>
 
     <p>
@@ -130,10 +169,13 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
     </p>
 
     <p>
-        From these basic statistics, we can construct other test statistics that are quite
-        useful for hypothesis testing, namely:
-        \[Z = \frac{M - \mu}{\sigma / \sqrt{n}}, \quad T = \frac{M - \mu}{S / \sqrt{n}}, \quad V = \frac{n -
-        1}{\sigma^2} S^2 \]
+        From these basic statistics, we can construct other test statistics that are quite useful for hypothesis 
+        testing, namely:
+        \[
+            Z = \frac{M - \mu}{\sigma / \sqrt{n}}, \quad
+            T = \frac{M - \mu}{S / \sqrt{n}}, \quad
+            V = \frac{n - 1}{\sigma^2} S^2
+        \]
     </p>
 
     <p>In the above:</p>
@@ -146,20 +188,17 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
     </ul>
 
     <p>
-        Let us now consider the <b>one-sample t-test</b>.
-        It is reasonable to use this test when you have a single sample of data,
-        you know the population mean you want to compare against, the population
-        standard deviation is unknown, and the data is approximately normally
-        distributed (especially for small samples).
+        Let us now consider the <b>one-sample t-test</b>. It is reasonable to use this test when you have a single
+        sample of data, you know the population mean you want to compare against, the population standard deviation is 
+        unknown, and the data is approximately normally distributed (especially for small samples).
     </p>
 
     <p>
-        We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile
-        of order \(p\) for the student \(t\) distribution with \(k\) degrees of freedom. <i
-            style="color: red;">Incomplete!</i>
+        We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile of order \(p\)
+        for the Student \(t\)-distribution with \(k\) degrees of freedom.
     </p>
 
+    <p><i style="color: red;">Incomplete!</i></p>
 
 </body>
-
 </html>
