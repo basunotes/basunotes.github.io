@@ -289,6 +289,42 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
             <span id="OnePopulationMeanKnownSigma"><b>Inference for One Population Mean with Known Sigma</b></span>
 
+            <p>
+                The simplest form of hypothesis test is the test for one population mean.
+                If the population standard deviation \(\sigma\) is known, a hypothesis test for one population mean is
+                called <b>one-mean \(\mathbf{z}\)-Test</b> or simply <b>\(\mathbf{z}\)-Test</b>.
+            </p>
+
+            <p>
+                To perform the \(z\)-test we follow the step-wise procedure shown below. First, we showcase the critical
+                value approach. Secondly, we repeat the analysis for the \(p\)-value approach.
+            </p>
+
+            <ol>
+                <li>State the null hypothesis \(H_0\) and the alternative hypothesis \(H_A\).</li>
+                <li>Decide on the significance level, \(\alpha\).</li>
+                <li>Compute the value of the test statistic.</li>
+                <li>Under the critical value approach, determine the critical value. <br>
+                    Under the p-value approach, determine the \(p\)-value.</li>
+                <li>
+                    Critical value approach: If the value of the test statistic falls in the rejection region, reject
+                    \(H_0\); otherwise, do not reject \(H_0\). <br>
+                    \(p\)-value approach: If \(p \leq \alpha\), reject \(H_0\); otherwise, do not reject \(H_0\).
+                </li>
+                <li>Interpret the result of the hypothesis test.</li>
+            </ol>
+
+            <p><i style="color: red;">Incomplete!</i></p>
+
+            <p>
+                The primary assumption that we made is that the underlying sampling distribution is normal. Of course,
+                in real statistical problems, we are unlikely to know much about the sampling distribution, let alone
+                whether or not it is normal. Suppose in fact that the underlying distribution is not normal. When the
+                sample size \(n\) is relatively large, the distribution of the sample mean will still be approximately
+                normal
+                by the central limit theorem, and thus our tests of the mean \(\mu\) should still be approximately
+                valid.
+            </p>
 
             <hr>
 
