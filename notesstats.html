@@ -49,6 +49,7 @@
         <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
         <li><a href="#Hypotheses">Hypotheses</a></li>
         <li><a href="#ErrorSignificance">Error and Significance Level</a></li>
+        <li><a href="#CriticalValuePValue">Critical Value and the p-Value</a></li>
         <li><a href="#Ttests" target="_blank">T-tests</a></li>
     </ul>
 
@@ -183,11 +184,60 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
             <p>
                 The probability of the type I error is commonly called the
-                significance level of the hypothesis test and is denoted by \(\alpha\).
-                Technically,
+                <b>significance level</b> of the hypothesis test and is denoted by \(\alpha\).
+                If \(H_0\) is a composite hypothesis, then it specifies a variety of 
+                different distributions and thus there is a set of type I probabilities. In this 
+                case, the significance level is the maximum probability of a type I error over 
+                this set of distributions.
             </p>
 
-            <p><i style="color: red;">Incomplete!</i></p>
+            <p>
+                The probability of type II error is denoted by \(\beta\). Generally, there is 
+                a tradeoff between type I and type II error probabilities. If we reduce the probability 
+                of a type I error, by making the rejection region smaller, we necessarily increase the 
+                probability of a type II error because the complementary region \(S \setminus R\) is larger.
+            </p>
+
+            <p>
+                If a hypothesis test is performed at a certain significance level \(\alpha\) and the null 
+                hypothesis is rejected, one may state that the test results are 
+                <b>statistically significant at the \(\alpha\) level</b>. If the null 
+                hypothesis is not rejected at the significance level \(\alpha\), one may state 
+                that the test results are <b>not statiscally significant at the \(\alpha\) level.</b>
+            </p>
+
+            <p><i>More on power of a test later!</i></p>
+
+            <hr>
+
+            <span id="CriticalValuePValue"><b>Critical Value and the p-Value</b></span>
+
+            <p>
+                Under the <b>critical value approach</b>, the test statistic, 
+                calculated on the basis of observed data, is compared to a certain critical value. 
+                If the test statistic is more <i>extreme</i> than the critical value, the null hypothesis 
+                rejected, otherwise it is not.
+            </p>
+
+            <p>
+                This critical value is computed based on the given signficance level \(\alpha\) and 
+                the type of probability distributions specified by \(H_0\).  
+            </p>
+
+            <p>
+                Let us consider the simpler case where \(H_0\) is not composite, and the distribution 
+                specified by it is just the bell-shaped normal distribution. The critical value divides the area under the probability distribution curve in rejection region(s) and non-rejection region.
+            </p>
+
+            <p>
+                In a two-sided test the null hypothesis is rejected, 
+                if the test statistic is either too small or too large. 
+                Thus, the rejection region for such a test consists of two parts: one on the left and one on the right.
+            </p>
+
+            <div class="img-div">
+                <img src="images/two_sided_critical_value.png" alt="two sided critical value">
+            </div>
 
             <hr>
 
