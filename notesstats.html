@@ -50,6 +50,7 @@
         <li><a href="#Hypotheses">Hypotheses</a></li>
         <li><a href="#ErrorSignificance">Error and Significance Level</a></li>
         <li><a href="#CriticalValuePValue">Critical Value and the p-Value</a></li>
+        <li><a href="#OnePopulationMeanKnownSigma">Inference for One Population Mean with Known Sigma</a></li>
         <li><a href="#Ttests" target="_blank">T-tests</a></li>
     </ul>
 
@@ -183,30 +184,30 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
             </p>
 
             <p>
-                The probability of the type I error is commonly called the
+                The probability of a type I error is commonly called the
                 <b>significance level</b> of the hypothesis test and is denoted by \(\alpha\).
                 If \(H_0\) is a composite hypothesis, then it specifies a variety of
-                different distributions and thus there is a set of type I probabilities. In this
+                different distributions, and thus there is a set of type I error probabilities. In this
                 case, the significance level is the maximum probability of a type I error over
                 this set of distributions.
             </p>
 
             <p>
-                The probability of type II error is denoted by \(\beta\). Generally, there is
+                The probability of a type II error is denoted by \(\beta\). Generally, there is
                 a tradeoff between type I and type II error probabilities. If we reduce the probability
-                of a type I error, by making the rejection region smaller, we necessarily increase the
-                probability of a type II error because the complementary region \(S \setminus R\) is larger.
+                of a type I error by making the rejection region smaller, we necessarily increase the
+                probability of a type II error because the complementary region \(S \setminus R\) becomes larger.
             </p>
 
             <p>
                 If a hypothesis test is performed at a certain significance level \(\alpha\) and the null
                 hypothesis is rejected, one may state that the test results are
                 <b>statistically significant at the \(\alpha\) level</b>. If the null
-                hypothesis is not rejected at the significance level \(\alpha\), one may state
-                that the test results are <b>not statiscally significant at the \(\alpha\) level.</b>
+                hypothesis is not rejected at significance level \(\alpha\), one may state
+                that the test results are <b>not statistically significant at the \(\alpha\) level.</b>
             </p>
 
-            <p><i>More on power of a test later!</i></p>
+            <p><i>More on the power of a test later!</i></p>
 
             <hr>
 
@@ -214,49 +215,80 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
             <p>
                 Under the <b>critical value approach</b>, the test statistic,
-                calculated on the basis of observed data, is compared to a certain critical value.
+                calculated based on the observed data, is compared to a certain critical value.
                 If the test statistic is more <i>extreme</i> than the critical value, the null hypothesis
-                rejected, otherwise it is not.
+                is rejected; otherwise, it is not.
             </p>
 
             <p>
-                This critical value is computed based on the given signficance level \(\alpha\) and
-                the type of probability distributions specified by \(H_0\).
+                This critical value is computed based on the given significance level \(\alpha\) and
+                the probability distribution specified by \(H_0\).
             </p>
 
             <p>
-                Let us consider the simpler case where \(H_0\) is not composite, and the distribution
-                specified by it is just the bell-shaped normal distribution. The critical value divides the area under
-                the probability distribution curve in rejection region(s) and non-rejection region.
+                Let us consider the simpler case in which \(H_0\) is not composite and the distribution
+                it specifies is a bell-shaped normal distribution. The critical value divides the area under
+                the probability distribution curve into the rejection region(s) and the non-rejection region.
             </p>
 
             <p>
-                In a two-sided test the null hypothesis is rejected,
+                In a two-sided test, the null hypothesis is rejected
                 if the test statistic is either too small or too large.
                 Thus, the rejection region for such a test consists of two parts: one on the left and one on the right.
             </p>
 
             <div class="img-div">
-                <img src="images/two_sided_critical_value.png" alt="two sided critical value">
+                <img src="images/two_sided_critical_value.png" alt="two-sided critical value">
             </div>
 
             <p>
-                For a left-tailed test the null hypothesis is rejected, if the test statistic is too small. Thus, the
-                rejection region for such a test consists of one part, which is left from the center.
+                For a left-tailed test, the null hypothesis is rejected if the test statistic is too small. Thus, the
+                rejection region for such a test consists of one part, which is to the left of the center.
             </p>
 
             <div class="img-div">
-                <img src="images/left_sided_critical_value.png" alt="two sided critical value">
+                <img src="images/left_sided_critical_value.png" alt="left-tailed critical value">
             </div>
 
             <p>
-                For a right-tailed test the null hypothesis is rejected, if the test statistic is too large. Thus, the
-                rejection region for such a test consists of one part, which is right from the center.
+                For a right-tailed test, the null hypothesis is rejected if the test statistic is too large. Thus, the
+                rejection region for such a test consists of one part, which is to the right of the center.
             </p>
 
             <div class="img-div">
-                <img src="images/right_sided_critical_value.png" alt="two sided critical value">
+                <img src="images/right_sided_critical_value.png" alt="right-tailed critical value">
             </div>
+
+            <p>
+                In most cases, we have a general procedure that allows us to
+                construct a test (that is, a rejection region \(R_{\alpha}\)) for any given
+                significance level \(\alpha \in (0,1)\). Typically, \(R_{\alpha}\) decreases (in the subset sense)
+                as \(\alpha\) decreases.
+            </p>
+
+            <p>
+                The <b>\(\mathbf{p}\)-value</b> of the observed value \(x\) is defined to be the smallest
+                \(\alpha\) for which \(x \in R_{\alpha}\), that is, the smallest significance level for which
+                \(H_0\) is rejected, given the observed value \(x\).
+            </p>
+
+            <p>
+                Let us denote this \(p\)-value by \(P(x)\). Knowing \(P(x)\) allows us to test \(H_0\) at
+                any significance level for the given data \(x\): if \(P(x) \leq \alpha\), then we
+                would reject \(H_0\) at significance level \(\alpha\); if \(P(x) > \alpha\), then we fail
+                to reject \(H_0\) at significance level \(\alpha\).
+            </p>
+
+            <p>
+                Informally, the p-value corresponds to the probability of observing sample data at least as extreme as
+                the actually obtained test statistic. Small p-values provide evidence against the null hypothesis. The
+                smaller (closer to 0) the p-value, the stronger the evidence against the null hypothesis.
+            </p>
+
+            <hr>
+
+            <span id="OnePopulationMeanKnownSigma"><b>Inference for One Population Mean with Known Sigma</b></span>
+
 
             <hr>
 
