@@ -314,15 +314,138 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
                 <li>Interpret the result of the hypothesis test.</li>
             </ol>
 
-            <p><i style="color: red;">Incomplete!</i></p>
+            <p>
+                We will work with the <i>students</i> dataset in Python:
+            </p>
+            <pre class="plain"><code>>>> import pandas as pd
+>>> import numpy as np
+>>> students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")</code></pre>
+
+            <p>
+                The <i>students</i> dataset contains 8,239 rows, each representing an individual student, and 16
+                columns, each corresponding to a variable or feature related to that student:
+            </p>
+            <pre class="plain"><code>>>> students.head(5)
+   stud.id                 name       gender  age  ...  score2  online.tutorial graduated  salary
+1   833917  Gonzales, Christina  Female   19  ...     NaN                0         0     NaN
+2   898539       Lozano, T'Hani  Female   19  ...     NaN                0         0     NaN
+3   379678       Williams, Hanh  Female   22  ...    46.0                0         0     NaN
+4   807564          Nem, Denzel    Male   19  ...     NaN                0         0     NaN
+5   383291      Powell, Heather  Female   21  ...     NaN                0         0     NaN
+
+[5 rows x 16 columns]</code></pre>
+
+            <p>
+                In this analysis, we will examine the average weight of students and compare it to the average weight of
+                European adults. It has been reported that the average body mass of the European adult population is
+                70.8 kg. Since the standard deviation is not known, we will assume it to be equal to the standard
+                deviation of the "weight" variable in the <i>students</i> dataset:
+            </p>
+            <pre class="plain"><code>>>> mu_0 = 70.8
+>>> sigma = np.std(students["weight"])
+>>> print(round(sigma, 2))
+8.63</code></pre>
+
+            <p>
+                Next, we will take a random sample of 14 students:
+            </p>
+            <pre class="plain"><code>>>> n = 14
+>>> sample_weights = students.sample(n, random_state=8)["weight"]
+>>> mean_sample = np.mean(sample_weights)
+>>> print(round(mean_sample, 2))
+69.82</code></pre>
+
+            <p>
+                The null hypothesis is \(H_0: \mu = 70.8\), and we have three possible alternative hypotheses:
+                \(H_{A_1}: \mu \neq 70.8\), \(H_{A_2}: \mu < 70.8\), and \(H_{A_3}: \mu> 70.8\).
+            </p>
+
+            <p>
+                Let the significance level be \(\alpha = 0.05\):
+            </p>
+            <pre class="plain"><code>>>> alpha = 0.05</code></pre>
+
+            <p>
+                The test statistic \(z\) is defined as \(z = \frac{\bar{x} - \mu_0}{\sigma / \sqrt{n}}\). Applying this
+                formula to our data, we have:
+            </p>
+            <pre class="plain"><code>>>> z = (mean_sample - mu_0) / (sigma / np.sqrt(n))
+>>> print(z)
+-0.42404547484536753</code></pre>
+
+            <p>
+                To calculate the critical values, we use the <code>norm.ppf()</code> function from the
+                <code>scipy</code> package. Since we are testing three alternative hypotheses (\(H_{A_1}\), \(H_{A_2}\),
+                and \(H_{A_3}\)), we need to calculate three corresponding critical values:
+                \(z_{A_1} = \pm z_{\alpha / 2}\), \(z_{A_2} = -z_\alpha\), and \(z_{A_3} = +z_\alpha\):
+            </p>
+            <pre class="plain"><code>>>> z_ha1 = norm.ppf(alpha / 2)
+>>> z_ha2 = norm.ppf(alpha)
+>>> z_ha3 = norm.ppf(1 - alpha)
+>>> print(z_ha1, z_ha2, z_ha3)
+-1.9599639845400545 -1.6448536269514729 1.6448536269514722</code></pre>
+
+            <p>
+                Does the test statistic fall in the rejection region for \(H_{A_1}\)?
+            </p>
+            <pre class="plain"><code>>>> print(z < z_ha1 or z > np.abs(z_ha1))
+False</code></pre>
+
+            <p>
+                At the 5% significance level, we fail to reject \(H_0\).
+            </p>
+
+            <p>
+                Does the test statistic fall in the rejection region for \(H_{A_2}\)?
+            </p>
+            <pre class="plain"><code>>>> print(z < z_ha2)
+False</code></pre>
+
+            <p>
+                Again, at the 5% significance level, we fail to reject \(H_0\).
+            </p>
+
+            <p>
+                Does the test statistic fall in the rejection region for \(H_{A_3}\)?
+            </p>
+            <pre class="plain"><code>>>> print(z > z_ha3)
+False</code></pre>
+
+            <p>
+                Once more, at the 5% significance level, we fail to reject \(H_0\).
+            </p>
+
+            <p>
+                Under the \(p\)-value approach, we still require the test statistic \(z\),
+                which we have already calculated. To calculate the \(p\)-value using Python, we apply the
+                <code>norm.cdf()</code> function from the scipy package to compute the probability of occurrence for the
+                test statistic based on the standard normal distribution. Since we are testing three alternative
+                hypotheses (\(H_{A_1}\), \(H_{A_2}\), and \(H_{A_3}\)), we need to calculate three \(p\)-values as well:
+            </p>
+
+            <pre class="plain"><code>>>> lower = norm.cdf(z)
+>>> upper = 1 - norm.cdf(np.abs(z))
+>>> p_value_1 = lower + upper
+>>> p_value_2 = norm.cdf(z)
+>>> p_value_3 = 1 - norm.cdf(z)
+>>> print(p_value_1, p_value_2, p_value_3)
+0.6715326491107156 0.3357663245553578 0.6642336754446422</code></pre>
+
+            <p>
+                Again, at the 5% significance level, we fail to reject \(H_0\), since:
+            </p>
+
+            <pre class="plain"><code>>>> print(p_value_1 <= alpha, p_value_2 <= alpha, p_value_3 <= alpha)
+False False False</code></pre>
+
 
             <p>
                 The primary assumption that we made is that the underlying sampling distribution is normal. Of course,
                 in real statistical problems, we are unlikely to know much about the sampling distribution, let alone
                 whether or not it is normal. Suppose in fact that the underlying distribution is not normal. When the
                 sample size \(n\) is relatively large, the distribution of the sample mean will still be approximately
-                normal
-                by the central limit theorem, and thus our tests of the mean \(\mu\) should still be approximately
+                normal by the central limit theorem, and thus our tests of the mean \(\mu\) should still be
+                approximately
                 valid.
             </p>
 
