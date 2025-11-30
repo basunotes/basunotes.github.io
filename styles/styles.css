@@ -162,7 +162,7 @@ mjx-container {
 
 .img-div img {
   overflow-x: auto;
-  width: 100%;
+  width: 100vh;
   height: auto;
   object-fit: contain;
   display: block;
