@@ -170,19 +170,27 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
                 following table:
             </p>
 
-            <p>
-                \[
-                \begin{array}{|l|c|c|}
-                \hline
-                \textbf{Decision | State} & H_0 \text{ is true} & H_0 \text{ is false} \\
-                \hline
-                \text{Do not reject } H_0 & \text{Correct decision} & \text{Type II error} \\
-                \hline
-                \text{Reject } H_0 & \text{Type I error} & \text{Correct decision} \\
-                \hline
-                \end{array}
-                \]
-            </p>
+            <div class="scrollable" style="font-size: smaller;">
+                <div>
+                    <table>
+                            <tr>
+                                <td><b>Decision / State</b></td>
+                                <td>\(H_0\) is true</td>
+                                <td>\(H_0\) is false</td>
+                            </tr>
+                            <tr>
+                                <td>Do not reject \(H_0\)</td>
+                                <td>Correct decision</td>
+                                <td>Type II error</td>
+                            </tr>
+                            <tr>
+                                <td>Reject \(H_0\)</td>
+                                <td>Type I error</td>
+                                <td>Correct decision</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
 
             <p>
                 The probability of a type I error is commonly called the
