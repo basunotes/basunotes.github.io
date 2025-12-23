@@ -52,6 +52,8 @@
         <li><a href="#CriticalValuePValue">Critical Value and the p-Value</a></li>
         <li><a href="#OnePopulationMeanKnownSigma">Inference for One Population Mean with Known Sigma</a></li>
         <li><a href="#OnePopulationMeanUnknownSigma">Inference for One Population Mean with Unknown Sigma</a></li>
+        <li><a href="#TwoPopulationMeansEqualSD">Inference for Two Independent Population Means with Equal Standard
+                Deviations</a></li>
         <li><a href="#Ttests" target="_blank">T-tests</a></li>
     </ul>
 
@@ -173,21 +175,21 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
             <div class="scrollable" style="font-size: smaller;">
                 <div>
                     <table>
-                            <tr>
-                                <td><b>Decision / State</b></td>
-                                <td>\(H_0\) is true</td>
-                                <td>\(H_0\) is false</td>
-                            </tr>
-                            <tr>
-                                <td>Do not reject \(H_0\)</td>
-                                <td>Correct decision</td>
-                                <td>Type II error</td>
-                            </tr>
-                            <tr>
-                                <td>Reject \(H_0\)</td>
-                                <td>Type I error</td>
-                                <td>Correct decision</td>
-                            </tr>
+                        <tr>
+                            <td><b>Decision / State</b></td>
+                            <td>\(H_0\) is true</td>
+                            <td>\(H_0\) is false</td>
+                        </tr>
+                        <tr>
+                            <td>Do not reject \(H_0\)</td>
+                            <td>Correct decision</td>
+                            <td>Type II error</td>
+                        </tr>
+                        <tr>
+                            <td>Reject \(H_0\)</td>
+                            <td>Type I error</td>
+                            <td>Correct decision</td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -461,6 +463,136 @@ False False False</code></pre>
             <hr>
 
             <span id="OnePopulationMeanUnknownSigma"><b>Inference for One Population Mean with Unknown Sigma</b></span>
+
+            <p>
+                A hypothesis test for a population mean, when the population standard deviation \(\sigma\) is unknown,
+                is conducted in the same way as if the population standard deviation were known. However, we need to
+                consider the sample standard deviation \(s\) in addition, and the test statistic, denoted by \(t\), is
+                defined as follows: \[t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}\text{.}\]
+            </p>
+
+            <p>
+                This test statistic is called the Student's \(t\)-distribution with \(n-1\) degrees of freedom.
+            </p>
+
+            <p>
+                We will again consider the <i>students</i> data set. We will examine the average
+                weight of a random sample of students and compare it to the average weight of European adults.
+                We will not showcase the critical value approach. For the p-value approach, we will use the
+                <code>stats.ttest_1samp()</code> function from the <code>scipy</code> package.
+            </p>
+
+            <p>
+                We set the population mean accordingly: \(μ_0=70.8\). Further, we take a random sample
+                (<code>sample_weights</code>) with
+                a sample size of \(n=9\). The sample consists of the weights in kg of 9 randomly picked students from
+                the
+                students data set.
+            </p>
+
+            <pre class="plain"><code>>>> import pandas as pd
+>>> import numpy as np
+>>> students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+>>> mu_0 = 70.8
+>>> n = 9
+>>> sample_weights = students.sample(n, random_state = 9)["weight"]</code></pre>
+
+            <p>
+                The following code performs a one-sample t-test. The test is two-sided, and the result
+                includes the t-statistic, p-value, and degrees of freedom.
+            </p>
+
+            <pre
+                class="plain"><code>>>> from scipy import stats
+>>> test_result = stats.ttest_1samp(sample_weights,
+...                                 mu_0,
+...                                 alternative = "two-sided")
+>>> 
+>>> 
+>>> test_result
+TtestResult(statistic=np.float64(1.1620080498483334), pvalue=np.float64(0.2787240885983498), df=np.int64(8))</code></pre>
+
+            <p>
+                We fail to reject the null hypothesis at the \(0.05\) significance level, since the p-value is greater
+                than \(0.05\).
+            </p>
+
+            <hr>
+
+            <span id="TwoPopulationMeansEqualSD"><b>Inference for Two Independent Population Means with Equal Standard
+                    Deviations</b></span>
+
+            <p>
+                So far, we have focused on hypothesis tests for one population mean. However, in many applications, we
+                want to compare the means of two or more populations. Therefore, we first need to distinguish between
+                samples from two independent populations and samples from populations that are not independent, which
+                are called paired samples.
+            </p>
+
+            <p>
+                We assume that the standard deviations of the two populations are equal but unknown. If, however, the
+                population standard deviation
+                \(\sigma\) were known, the test statistic could be written as follows:
+                \[
+                z = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}
+                {\sigma \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}}
+                \]
+            </p>
+
+            <p>
+                In most real-world applications, \(\sigma\) is unknown and must therefore be estimated. A natural
+                approach is to use the sample variances
+                \(s_1^2\) and \(s_2^2\) as estimates of \(\sigma^2\). By pooling these variances and weighting them
+                according to their respective sample sizes,
+                we obtain the following estimate of \(\sigma\):
+                \[
+                s_{p} = \sqrt{\frac{(n_{1} - 1)s_{1}^{2} + (n_{2} - 1)s_{2}^{2}}{n_{1} + n_{2} - 2}}.
+                \]
+            </p>
+
+            <p>
+                The quantity \(s_p\) is called the <em>pooled sample standard deviation</em>, where the subscript \(p\)
+                denotes pooling.
+            </p>
+
+            <p>
+                Replacing \(\sigma\) in the test statistic with its estimate \(s_p\) yields:
+                \[
+                t = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}{s_{p} \sqrt{\frac{1}{n_{1}} +
+                \frac{1}{n_{2}}}}
+                \]
+            </p>
+
+            <p>
+                The denominator of this expression, \(s_p \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}\), is an estimator of
+                the standard deviation of \(\bar{x}_{1} - \bar{x}_{2}\), which can be written as \(s_{\bar{x}_{1} -
+                \bar{x}_{2}}\).
+            </p>
+
+            <p>
+                Note that the test statistic \(t\) follows a <em>t-distribution</em> with degrees of freedom given by:
+                \[
+                \text{df} = n_{1} + n_{2} - 2.
+                \]
+            </p>
+
+            <p>
+                A \(100(1 - \alpha)\%\) confidence interval for \(\mu_{1} - \mu_{2}\) is given by:
+                \[
+                (\bar{x}_{1} - \bar{x}_{2}) \pm t \cdot s_{p} \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}
+                \]
+            </p>
+
+            <p>
+                Here, the value of \(t\) is obtained from the <em>t-distribution</em> corresponding to the desired
+                confidence level and
+                \(n_{1} + n_{2} - 2\) degrees of freedom.
+            </p>
+
+            <p>
+                Python
+            </p>
+
 
             <p><i style="color: red;">Incomplete!</i></p>
 
