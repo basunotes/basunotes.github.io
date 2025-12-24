@@ -53,6 +53,7 @@
         <li><a href="#OnePopulationMeanKnownSigma">Inference for One Population Mean with Known Sigma</a></li>
         <li><a href="#OnePopulationMeanUnknownSigma">Inference for One Population Mean with Unknown Sigma</a></li>
         <li><a href="#TwoPopulationMeansEqualSD">Inference for Two Independent Population Means with Equal Standard Deviations</a></li>
+        <li><a href="#TwoPopulationMeansUnequalSD">Inference for Two Independent Population Means with Unequal Standard Deviations</a></li>
     </ul>
 
     <hr>
@@ -588,9 +589,147 @@ TtestResult(statistic=np.float64(1.1620080498483334), pvalue=np.float64(0.278724
             </p>
 
             <p>
-                Python
+                Python allows us to conduct a <i>pooled t-test</i> using the <code>ttest_ind_from_stats()</code>
+                over the <code>stats</code> module from the <code>scipy</code> package.
             </p>
 
+            <p>
+                We will again load the <code>students</code> data set:
+            </p>
+
+            <pre class="plain"><code>>>> import pandas as pd
+>>> import numpy as np
+>>> 
+>>> students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")</code></pre>
+
+            <p>
+                We will examine the mean annual salary (in Euros) of graduates to determine whether
+                there are statistically significant differences between male and female students. The key question is
+                whether gender influences the mean salary of graduates.
+            </p>
+
+            <p>
+                In order to do this we need to first prepare the data. The following code speaks for itself:
+            </p>
+
+            <pre class="plain"><code>>>> graduated_students = students.loc[students.graduated == 1]
+>>> males_graduated = graduated_students.loc[students.gender == "Male"]
+>>> females_graduated = graduated_students.loc[students.gender == "Female"]
+>>> 
+>>> n = 50
+>>> 
+>>> sample_males = males_graduated.sample(n, random_state = 9)["salary"]
+>>> sample_females = females_graduated.sample(n, random_state = 9)["salary"]
+>>> print(np.mean(sample_males))
+47262.417382791995
+>>> print(np.mean(sample_females))
+35825.54641661087</code></pre>
+
+            <p>
+                We test the normaility assumption by plotting a normal probability plot,
+                often referred to as <a href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot" target="_blank">Q-Q
+                    plot</a>.
+                If the variable is normally distributed, the normal probability plot should be roughly linear.
+            </p>
+
+            <p>
+                We will switch to VS Code to write the following code and display the graph.
+            </p>
+
+            <pre class="plain"><code># Rest of the code
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+plt.figure(figsize=(12,5))
+
+ax = plt.subplot(1, 2, 1)
+qq = stats.probplot(sample_males, dist="norm", plot = plt)
+ax.set_title("Q-Q plot for males (sample)")
+ax.set_ylabel("Sample quantiles")
+
+ax = plt.subplot(1, 2, 2)
+qq = stats.probplot(sample_females, dist="norm", plot = plt)
+ax.set_title("Q-Q plot for females (sample)")
+ax.set_ylabel("Sample quantiles")
+
+plt.show(block=True)</code></pre>
+
+            <div class="img-div">
+                <img src="images/qq_plot_male_female_salary.png" alt="two-sided critical value">
+            </div>
+
+            <p>
+                We see that the sample data is somehow noisy, but it is still roughly normally distributed. The
+                deviations from the straight line in the upper and lower parts suggest, that the probability
+                distribution is slightly skewed.
+            </p>
+
+            <p>
+                Further, we check if the standard deviations of the two populations are roughly equal. As a rule of
+                thumb, the condition of equal population standard deviations is met, if the ratio of the larger to the
+                smaller sample standard deviation is less than 2 (<a
+                    href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
+                    target="_blank">Weiss, 2010</a>). Let us assume, that the data of the
+                students data set is a good approximation for the population.
+            </p>
+
+            <pre class="plain"><code>>>> print(np.std(sample_males, ddof = 1))
+9576.164209488374
+>>> print(np.std(sample_females, ddof = 1))
+7200.9719569940535
+>>> print(np.std(sample_males, ddof = 1) / np.std(sample_females, ddof = 1))
+1.3298432859729967</code></pre>
+
+            <p>
+                The ratio is approximately \(1.33\) and thus, we conclude that the equal population standard deviations
+                criterion is fulfilled. A simple visualization technique for evaluating the spread of a variable is to
+                use a box plot.
+            </p>
+
+            <pre class="plain"><code># Rest of the code
+
+import seaborn as sns
+
+plt.figure(figsize=(11,5))
+
+sample_df = pd.melt(pd.DataFrame({'male': sample_males.values,
+                                  'female': sample_females.values}))
+sample_df.columns = ["Gender", "Annual salary in EUR"]
+
+sns.boxplot(x='Gender', y='Annual salary in EUR', data=sample_df).set(title='Sample data')
+
+plt.show(block=True)</code></pre>
+
+            <div class="img-div">
+                <img src="images/box_plot_male_female_salary.png" alt="two-sided critical value">
+            </div>
+
+            <p>
+                We now conduct the pooled t-test using an already available Python package.
+            </p>
+
+            <pre
+                class="plain"><code>>>> from scipy import stats
+>>> 
+>>> test_result = stats.ttest_ind(sample_males, sample_females, 
+...                               equal_var = True, 
+...                               alternative = "greater")
+>>>
+>>> test_result
+TtestResult(statistic=np.float64(6.7496330142831065), pvalue=np.float64(5.25205313471519e-10), df=np.float64(98.0))</code></pre>
+
+            <p>
+                We may conclude that at the 1% significance level, the data provides very strong evidence to conclude
+                that the average salary of male graduates is higher than the average salary of female graduates.
+            </p>
+
+            <hr>
+
+            <span id="TwoPopulationMeansUnequalSD"><b>Inference for Two Independent Population Means with Unequal Standard Deviations</b></span>
+
+            <p>
+                
+            </p>
 
             <p><i style="color: red;">Incomplete!</i></p>
 
