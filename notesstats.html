@@ -52,8 +52,10 @@
         <li><a href="#CriticalValuePValue">Critical Value and the p-Value</a></li>
         <li><a href="#OnePopulationMeanKnownSigma">Inference for One Population Mean with Known Sigma</a></li>
         <li><a href="#OnePopulationMeanUnknownSigma">Inference for One Population Mean with Unknown Sigma</a></li>
-        <li><a href="#TwoPopulationMeansEqualSD">Inference for Two Independent Population Means with Equal Standard Deviations</a></li>
-        <li><a href="#TwoPopulationMeansUnequalSD">Inference for Two Independent Population Means with Unequal Standard Deviations</a></li>
+        <li><a href="#TwoPopulationMeansEqualSD">Inference for Two Independent Population Means with Equal Standard
+                Deviations</a></li>
+        <li><a href="#TwoPopulationMeansUnequalSD">Inference for Two Independent Population Means with Unequal Standard
+                Deviations</a></li>
     </ul>
 
     <hr>
@@ -725,10 +727,160 @@ TtestResult(statistic=np.float64(6.7496330142831065), pvalue=np.float64(5.252053
 
             <hr>
 
-            <span id="TwoPopulationMeansUnequalSD"><b>Inference for Two Independent Population Means with Unequal Standard Deviations</b></span>
+            <span id="TwoPopulationMeansUnequalSD"><b>Inference for Two Independent Population Means with Unequal
+                    Standard Deviations</b></span>
 
             <p>
-                
+                In cases where we want to test for two population means and the standard deviations are different
+                between the
+                two populations, the so-called non-pooled t-test, or
+                <a href="https://en.wikipedia.org/wiki/Welch's_t-test" target="_blank">Welch’s t-test</a>, is applied.
+            </p>
+
+            <p>
+                The non-pooled t-test is very similar to the pooled t-test, except for the test statistic \(t\) and the
+                calculation of the degrees of freedom (\(df\)). The test statistic does not use \(s_p\), the pooled
+                standard
+                deviation, and is written as:
+                \[
+                t = \frac{\bar{x}_{1} - \bar{x}_{2}}
+                {\sqrt{\frac{s^{2}_{1}}{n_{1}} + \frac{s^{2}_{2}}{n_{2}} }}
+                \]
+            </p>
+
+            <p>
+                The denominator of the equation above is the estimator of the standard deviation of
+                \(\bar{x}_1 - \bar{x}_2\), denoted \(s_{\bar{x}_1-\bar{x}_2}\).
+            </p>
+
+            <p>
+                The test statistic \(t\) has a t-distribution, and the degrees of freedom (df) are given by
+                \[
+                df=\frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}\right)^2}
+                {\frac{\left(\frac{s_1^2}{n_1}\right)^2}{n_1-1}
+                +\frac{\left(\frac{s_2^2}{n_2}\right)^2}{n_2-1}} \text{.}
+                \]
+            </p>
+
+            <p>
+                The non-pooled t-test is robust to moderate violations of the normal population assumption, but it is
+                less
+                robust to outliers (<a
+                    href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
+                    target="_blank">Weiss, 2010</a>).
+            </p>
+            <p>
+                The \(100(1-\alpha)\%\) confidence interval for \(\mu_1 - \mu_2\) is given by
+            </p>
+
+            <p>
+                \[
+                (\bar{x}_1 - \bar{x}_2)\; \pm\; t^{\ast}
+                \cdot
+                \sqrt{\frac{s_1^{2}}{n_1} + \frac{s_2^{2}}{n_2}}
+                \]
+            </p>
+
+            <p>
+                where the value of t is obtained from the t-distribution for the given confidence level. The degrees of
+                freedom (df) and obtained using the equation above.
+            </p>
+
+            <p>
+                In order to illustrate the non-pooled t-test, we examine the mean annual salary (in euros) of female
+                graduates with respect to their major field of study. Specifically, we want to investigate whether there
+                is a statistically significant difference in the mean salaries of two populations: female students
+                majoring in Political Science and female students majoring in Social Sciences.
+            </p>
+
+            <p>
+                The following example, written in VS Code, speaks for itself:
+            </p>
+
+            <pre class="plain"><code>female_graduated_students = students.loc[(students.graduated == 1) & (students.gender == "Female")]
+political_sc = female_graduated_students.loc[female_graduated_students.major == "Political Science"]
+social_sc = female_graduated_students.loc[female_graduated_students.major == "Social Sciences"]
+
+n = 50
+
+sample_polt_sc = political_sc.sample(n, random_state = 9)["salary"]
+sample_social_sc = social_sc.sample(n, random_state = 9)["salary"]</code></pre>
+
+            <p>
+                We check whether the data are normally distributed by plotting a Q–Q plot, as we did before:
+            </p>
+
+            <pre class="plain"><code>plt.figure(figsize=(12,5))
+
+ax = plt.subplot(1, 2, 1)
+qq = stats.probplot(sample_polt_sc, dist="norm", plot = plt)
+ax.set_title("Q-Q plot for female graduates of \nPolitical Science (sample data)")
+ax.set_ylabel("Sample quantiles")
+
+ax = plt.subplot(1, 2, 2)
+qq = stats.probplot(sample_social_sc, dist="norm", plot = plt)
+ax.set_title("Q-Q plot for female graduates of \nSocial Sciences (sample data)")
+ax.set_ylabel("Sample quantiles")
+
+plt.show(block=True)</code></pre>
+
+            <div class="img-div">
+                <img src="images/qq_plot_political_social_salary.png" alt="Q-Q plots for sample data">
+            </div>
+
+            <p>
+                The data from both samples fall mostly along a straight line. Therefore, we assume that the data in the
+                students dataset provide a reasonable approximation to the population. We can then visually assess whether the
+                standard deviations of the two populations differ by plotting a box plot.
+            </p>
+
+            <pre class="plain"><code>sample_polt_sc = political_sc.sample(n, random_state = 9)
+sample_social_sc = social_sc.sample(n, random_state = 9)
+
+plt.figure(figsize=(11,5))
+
+df = pd.DataFrame({'salary' : np.concatenate([sample_social_sc["salary"].values, sample_polt_sc["salary"].values]),
+                   'major'  : np.concatenate([sample_social_sc["major"].values, sample_polt_sc["major"].values])},
+                  columns = ['salary', 'major'])
+
+sns.boxplot(
+    data=df,
+    x="salary",
+    y="major"
+).set(
+    title='Population data',
+    xlabel='Annual salary in EUR',
+    ylabel=''
+)
+
+plt.show(block=True)</code></pre>
+
+            <div class="img-div">
+                <img src="images/box_plot_political_social_salary.png" alt="Box plots for sample data">
+            </div>
+
+            <p>
+                Based on the graphical evaluation, we conclude that the data are roughly normally distributed and that
+                the standard deviations differ from each other.
+            </p>
+
+            <p>
+                We now conduct the non-pooled t-test using an existing Python package.
+            </p>
+
+            <pre class="plain"><code>>>> from scipy import stats
+>>>
+>>> test_result = stats.ttest_ind(sample_polt_sc["salary"], sample_social_sc["salary"], equal_var = False)
+>>>
+>>> print("t-value:", round(test_result.statistic, 5))
+t-value: 2.62318
+>>> print("p-value:", round(test_result.pvalue, 5))
+p-value: 0.01025</code></pre>
+
+            <p>
+                Again, we may conclude that, at the 5% significance level, the data provide strong evidence that
+                the average annual salary of female graduates in Political Science differs from the average annual salary of
+                female graduates in Social Sciences.
             </p>
 
             <p><i style="color: red;">Incomplete!</i></p>
