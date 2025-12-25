@@ -57,6 +57,7 @@
         <li><a href="#TwoPopulationMeansUnequalSD">Inference for Two Independent Population Means with Unequal Standard
                 Deviations</a></li>
         <li><a href="#TwoPopulationMeansPairedSamples">Inferences for Two Population Means Using Paired Samples</a></li>
+        <li><a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a></li>
     </ul>
 
     <hr>
@@ -892,7 +893,201 @@ p-value: 0.01025</code></pre>
                     Samples</b></span>
 
             <p>
+                Let us now turn to a hypothesis-testing procedure for the difference between two population means when
+                the samples are dependent. If, for example, two data values are collected from the same source (or
+                element), these are called paired or matched samples.
+            </p>
 
+            <p>
+                These procedures are often applied in Before–After–Control–Impact (BACI) analysis. Imagine you are asked
+                to evaluate the effectiveness of a filtering system in removing air pollutants released by a factory.
+                One population consists of air-quality measurements taken before the filtering system is implemented or
+                renewed, and the other population consists of measurements taken after installing the new filter system.
+                In this case, you are dealing with paired samples because both data sets are collected from the same
+                source, i.e., the factory.
+            </p>
+
+            <p>
+                In paired samples, the difference between the data values of the two samples is denoted by \(d\),
+                often called the paired difference. Note that the sample size \(n\) for each sample is equal. The mean
+                of
+                the paired differences is denoted by \(\bar{d}\):
+                \[
+                \bar{d} = \frac{\sum d}{n}
+                \]
+            </p>
+
+            <p>
+                The standard deviation of the paired differences, \(s_d\), is calculated as:
+                \[
+                s_d = \sqrt{\frac{\sum d^{2} - \frac{(\sum d)^{2}}{n}}{n - 1}}
+                \]
+            </p>
+
+            <p>
+                Suppose that the paired-difference variable \(d\) is normally distributed. Then the paired t-statistic
+                is
+                expressed as:
+                \[
+                t = \frac{\bar{d} - (\mu_{1} - \mu_{2})}{\frac{s_d}{\sqrt{n}}}
+                \]
+            </p>
+
+            <p>
+                This simplifies to \(t = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}}\) when \(\mu_{1} - \mu_{2} = 0\).
+                The test statistic \(t\) for paired samples follows a t-distribution with \(n - 1\) degrees of freedom.
+            </p>
+
+            <p>
+                The 100(1 − \(\alpha\))% confidence interval for \(\mu_d\) is:
+                \[
+                \bar{d} \pm t \times \frac{s_d}{\sqrt{n}}
+                \]
+                where the value of \(t\) is obtained from the t-distribution for the given confidence level and
+                \(n - 1\) degrees of freedom.
+            </p>
+
+            <p>
+                To demonstrate the paired t-test for dependent samples, we will investigate whether an online
+                statistics learning tutorial helps students improve their grades.
+            </p>
+
+            <p>
+                There are two research questions of interest:
+            </p>
+
+            <p>
+                1. We want to examine whether the group of students who attended the online statistics tutorial
+                performed better on the second exam compared to the first exam.<br>
+                2. We also want to test how the group of students who did not attend the tutorial performed on
+                both exams.
+            </p>
+
+            <p>
+                The following code loads the data and selects the relevant sample.
+            </p>
+
+            <pre class="plain"><code>import pandas as pd
+import numpy as np
+
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+n = 65
+
+subset = students.loc[students["online.tutorial"] == 1]
+
+sample = subset.sample(n, random_state = 9)[["score1", "score2"]]</code></pre>
+
+            <p>
+                Next, we compute the paired differences, \(d\), and visualize them:
+            </p>
+
+            <pre class="plain"><code>import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(9,6))
+
+d = sample["score1"] - sample["score2"]
+
+data = pd.DataFrame({'index' : np.arange(1, 66),
+                     'Paired differences'  : d},
+                    columns = ['index', 'Paired differences'])
+
+sns.barplot(data = data, x = "index", y = "Paired differences", color = "darkgrey")
+plt.axhline(y = 0, color = "orangered")
+
+ax = plt.gca()
+ax.get_xaxis().set_visible(False)
+
+plt.show(block=True)</code></pre>
+
+            <div class="img-div">
+                <img src="images/paired_differences.png" alt="Paired differences plot">
+            </div>
+
+            <p>
+                The plot looks as expected: some students performed better on the first exam than on the second,
+                and others performed better on the second exam.
+                To check the normality assumption, we rely on a visual inspection using a Q–Q plot.
+            </p>
+
+            <pre class="plain"><code>import scipy.stats as stats
+
+plt.figure(figsize=(12,5))
+fig, ax = plt.subplots()
+
+qq = stats.probplot(d, dist="norm", plot = plt)
+ax.set_title("Q–Q plot for differences in exam scores")
+ax.set_ylabel("Sample quantiles")</code></pre>
+
+            <div class="img-div">
+                <img src="images/qq_plot_paired_differences.png" alt="Q–Q plot of paired differences">
+            </div>
+
+            <p>
+                The pattern is somewhat noisy, but the points generally follow the reference line,
+                suggesting that the paired differences are approximately normally distributed.
+            </p>
+
+            <p>
+                We now conduct the paired t-test using a Python package.
+            </p>
+
+            <pre class="plain"><code>>>> from scipy import stats
+>>> 
+>>> test_result = stats.ttest_rel(sample["score1"], sample["score2"], alternative = "less")
+>>> 
+>>> print("t-value:", round(test_result.statistic, 5))
+t-value: -1.84743
+>>> print("p-value:", round(test_result.pvalue, 5))
+p-value: 0.03465</code></pre>
+
+            <p>
+                At the 5% significance level, the data provide sufficient evidence to conclude that
+                students’ exam scores improve after taking the online statistics tutorial.
+            </p>
+
+            <p>
+                There is still one research question to be answered: What if there are other reasons
+                for better grades on the second exam? What if the second exam was easier? What if the
+                students simply improved over the semester because of a great lecturer? We test this
+                hypothesis by conducting a paired t-test specifically for those students who did not
+                take the online statistics tutorial.
+            </p>
+
+            <pre class="plain"><code>>>> sample = students.loc[students["online.tutorial"] == 0].dropna().sample(n, random_state = 10)[["score1", "score2"]]
+>>> 
+>>> test_result = stats.ttest_rel(sample["score1"], sample["score2"], alternative = "less")
+>>> 
+>>> print("t-value:", round(test_result.statistic, 5))
+t-value: 0.68109
+>>> print("p-value:", round(test_result.pvalue, 5))
+p-value: 0.75086</code></pre>
+
+            <p>
+                The p-value is greater than the significance level of 0.05, so we do not reject \(H_0\).
+                The test is not statistically significant and therefore does not provide sufficient
+                evidence against the null hypothesis.
+            </p>
+
+            <p>
+                At the 5% significance level, the data do not provide sufficient evidence to conclude
+                that the exam grades of students who did not attend the online tutorial improved.
+            </p>
+
+            <!--
+            I may add these exercises later: 
+            https://www.geo.fu-berlin.de/en/v/soga-py/Basics-of-statistics/Hypothesis-Tests/Hypothesis-Tests-for-Two-Population-Means/Hypothesis-Tests-for-Two-Population-Means-Exercises/index.html
+            -->
+
+            <hr>
+
+            <span id="InferencesOnePopulationSD"><b>Inferences for One Population Standard Deviation</b></span>
+
+            <p>
+                So far, we have discussed methods of inferential statistics that focus on making inferences
+                about one or more population means. We will now consider methods of
+                inferential statistics that focus on inferences for population variances (or standard deviations).
             </p>
 
             <p><i style="color: red;">Incomplete!</i></p>
