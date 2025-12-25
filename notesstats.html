@@ -1090,6 +1090,45 @@ p-value: 0.75086</code></pre>
                 inferential statistics that focus on inferences for population variances (or standard deviations).
             </p>
 
+            <p>
+                The test statistic for a hypothesis test concerning the population standard deviation, with the null
+                hypothesis \(H_0: \sigma = \sigma_0\), for a normally distributed variable is calculated as:
+                \[
+                \chi^{2} = \frac{(n - 1) s^{2}}{\sigma^{2}_{0}} \text{.}
+                \]
+            </p>
+
+            <p>
+                This statistic follows a chi-square distribution, which is why it is denoted by the symbol \(\chi^2\),
+                with \(n - 1\) degrees of freedom.
+            </p>
+
+            <p>
+                The \(100(1-\alpha)\%\) confidence interval for \(\sigma\) is given by:
+                \[\sqrt { \frac {n - 1} {\chi^2_{\alpha / 2}}} \le \sigma \le \sqrt { \frac{n - 1} {\chi^2_{1 - \alpha /
+                2}} }\text{,}\]
+            </p>
+
+            <p>
+                where \(n\) is the sample size of the sample data.
+            </p>
+
+            <p>
+                It is important to note that the chi-square test for standard deviation is not robust to violations of
+                the normality assumption. If the data is not normally distributed, the results of the test may be
+                unreliable (<a href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
+                    target="_blank">Weiss, 2010</a>).
+            </p>
+
+            <p>
+                In order to showcase the one standard deviation \(\chi^2\)-test, we examine the spread of the height in
+                cm of
+                female students and compare it to the spread of the height of all students (our population). We want to
+                test whether the standard deviation of the height of female students is significantly smaller than the
+                standard deviation of the height of all students.
+            </p>
+
+
             <p><i style="color: red;">Incomplete!</i></p>
 
             <hr>
