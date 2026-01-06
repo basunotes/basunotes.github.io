@@ -58,6 +58,8 @@
                 Deviations</a></li>
         <li><a href="#TwoPopulationMeansPairedSamples">Inferences for Two Population Means Using Paired Samples</a></li>
         <li><a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a></li>
+        <li><a href="#InferencesTwoPopulationSD">Inferences for Two Population Standard Deviations</a></li>
+        <li><a href="#ChiSquareGoodnessofFitTest">Chi-Square Goodness-of-Fit Test</a></li>
     </ul>
 
     <hr>
@@ -1128,10 +1130,236 @@ p-value: 0.75086</code></pre>
                 standard deviation of the height of all students.
             </p>
 
+            <p>
+                The following code speaks for itself:
+            </p>
 
-            <p><i style="color: red;">Incomplete!</i></p>
+            <pre class="plain"><code>import pandas as pd
+import numpy as np
 
-            <hr>
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+sigma_0 = np.std(students["height"], ddof = 1)
+
+n = 30
+
+female_students = students.loc[students.gender == "Female"]
+
+female_height_sample = female_students.sample(n, random_state = 12)["height"]
+
+sample_sd = np.std(female_height_sample, ddof = 1)</code></pre>
+
+            <p>
+                We check the normality assumption by plotting a Q–Q plot:
+            </p>
+
+            <pre class="plain"><code>import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+plt.figure(figsize=(12,5))
+fig, ax = plt.subplots()
+
+qq = stats.probplot(female_height_sample, dist="norm", plot = plt)
+ax.set_title("Q–Q plot for the heights of\nsampled female students")
+ax.set_ylabel("Sample quantiles")
+
+plt.show(block=True)</code></pre>
+
+
+            <div class="img-div">
+                <img src="images/qq_plot_female_weight.png" alt="two-sided critical value">
+            </div>
+
+            <p>
+                As we can see, the data falls roughly along a straight line. Based on this graphical evaluation,
+                we conclude that the variable of interest is approximately normally distributed.
+            </p>
+
+            <p>
+                We now conduct the one–standard-deviation \(\chi^2\) test from scratch in Python.
+                The null hypothesis is \(H_0: \sigma = \sigma_0\), and the alternative hypothesis is
+                \(H_1: \sigma < \sigma_0\). We choose a significance level of \(\alpha=0.05\). </p>
+
+                    <pre class="plain"><code>from scipy.stats import chi2
+
+chi_squared_value = ((n - 1) / (sigma_0**2)) * sample_sd**2
+print(chi_squared_value)
+
+df = n - 1
+
+p = chi2.cdf(chi_squared_value, df = df)
+print(p)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>20.44603451476297
+0.12147734513377556</code></pre>
+
+                    <p>
+                        As we can see, the p-value is greater than the specified significance level of 0.05.
+                        Therefore, at the 5% significance level, the data does not provide sufficient evidence
+                        that the standard deviation of the heights of female students is smaller than the population
+                        standard deviation.
+                    </p>
+
+                    <hr>
+
+                    <span id="InferencesTwoPopulationSD"><b>Inferences for Two Population Standard Deviations</b></span>
+
+                    <p>
+                        In this section, we discuss hypothesis tests for two population standard deviations. In other
+                        words, we present methods of inference for the standard deviations of one variable from two
+                        different populations. These methods are based on the
+                        <a href="https://en.wikipedia.org/wiki/F-distribution" target="_blank">F-distribution</a>,
+                        named in honour of
+                        <a href="https://en.wikipedia.org/wiki/Ronald_Fisher" target="_blank">Sir Ronald Aylmer
+                            Fisher</a>.
+                    </p>
+
+                    <p>
+                        The \(F\)-distribution is a right-skewed probability distribution with two shape parameters,
+                        \(v_1\) and \(v_2\), called the degrees of freedom for the numerator (\(v_1\)) and the
+                        denominator (\(v_2\)).
+                        \[df = (v_1, v_2)\]
+                    </p>
+
+                    <p>
+                        To perform a hypothesis test for two population standard deviations, we calculate the value
+                        corresponding to a specified area under an \(F\)-curve.
+                    </p>
+
+                    <p>
+                        The hypothesis-testing procedure for two standard deviations is called the
+                        two-standard-deviations \(F\)-test.
+                    </p>
+
+                    <p>
+                        The test statistic for a hypothesis test involving a normally distributed variable and
+                        independent samples of sizes \(n_1\) and \(n_2\) is given by
+                        \[F = \frac {s_{1}^{2} / \sigma_{1}^{2}} {s_{2}^{2} / \sigma_{2}^{2}} \text{,}\]
+                    </p>
+
+                    <p>
+                        with \(df = (n_1 - 1, n_2 - 1)\).
+                    </p>
+
+                    <p>
+                        If \(H_0: \sigma_1 = \sigma_2\) is true, then the equation simplifies to
+                        \[F = \frac {s_{1}^{2}} {s_{2}^{2}} \text{.}\]
+                    </p>
+
+                    <p>
+                        To illustrate the two-standard-deviations \(F\)-test, we once again examine the height
+                        variable in the students data set. We want to investigate whether the standard deviation of
+                        the height of female students (\(\sigma_1\)) is statistically different from the standard
+                        deviation of
+                        the height of male students (\(\sigma_2\)).
+                    </p>
+
+                    <p>
+                        The following code speaks for itself:
+                    </p>
+
+                    <pre class="plain"><code>import pandas as pd
+import numpy as np
+
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+n = 25
+
+females_sample_height = students.loc[students.gender == "Female"].sample(n, random_state = 8)["height"]
+males_sample_height = students.loc[students.gender == "Male"].sample(n, random_state = 8)["height"]
+
+sample_std_females = np.std(females_sample_height, ddof = 1)
+sample_std_males = np.std(males_sample_height, ddof = 1)</code></pre>
+
+                    <p>
+                        We check the normality assumption by plotting a Q-Q plot.
+                    </p>
+
+                    <pre class="plain"><code>import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+plt.figure(figsize=(12,5))
+
+ax = plt.subplot(1, 2, 1)
+qq = stats.probplot(females_sample_height, dist="norm", plot = plt)
+ax.set_title("Q-Q plot for heights of\n sampled female students")
+ax.set_ylabel("Sample quantiles")
+
+ax = plt.subplot(1, 2, 2)
+qq = stats.probplot(males_sample_height, dist="norm", plot = plt)
+ax.set_title("Q-Q plot for heights of\n sampled male students")
+ax.set_ylabel("Sample quantiles")
+
+plt.show(block=True)</code></pre>
+
+
+                    <div class="img-div">
+                        <img src="images/qq_plot_male_female_height.png" alt="two-sided critical value">
+                    </div>
+
+                    <p>
+                        The data of both samples falls roughly onto a straight line. Based on the graphical evaluation
+                        approach we conclude that the data is normally distributed.
+                    </p>
+
+                    <p>
+                        We now conduct the two standard deviations \(F\)-test. The null hypothesis is \(H_0: \sigma_1 =
+                        \sigma_2\), and the alternative hypothesis is
+                        \(H_1: \sigma_1 \neq \sigma_2\). This formulation results in a two-sided hypothesis test.
+                        We choose a significance level of \(\alpha=0.05\).
+                    </p>
+
+                    <pre class="plain"><code>from scipy.stats import f
+
+F_statistic = (sample_std_males**2) / (sample_std_females ** 2)
+print(F_statistic)
+
+df_1 = df_2 = n - 1
+
+p_value = f.cdf(F_statistic, df_1, df_2)
+print(p_value)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>1.3901443625510146
+0.7872008348344762</code></pre>
+
+                    <p>
+                        The p-value is greater than the specified significance level of 0.05. At the 5% significance
+                        level the data does not provide sufficient evidence to conclude, that the standard deviations of
+                        the heights of female and male students differ significantly from each other.
+                    </p>
+
+                    <p><i>More on Bartlett’s test and Levene’s test later!</i></p>
+
+                    <hr>
+
+                    <span id="ChiSquareGoodnessofFitTest"><b>Chi-Square Goodness-of-Fit Test</b></span>
+
+                    <p>
+                        The \(\chi^2\)-goodness-of-fit test is used to perform hypothesis tests on the distribution
+                        of a qualitative (categorical) variable or on a discrete quantitative variable that has only
+                        finitely many possible values.
+                    </p>
+
+                    <p>
+                        The basic idea of the \(\chi^2\)-goodness-of-fit test is to compare frequencies. We compare a
+                        sample’s observed frequencies with the corresponding expected frequencies.
+                    </p>
+
+                    <p>
+                        To illustrate the \(\chi^2\)-goodness-of-fit test, we examine whether religions are equally
+                        distributed among students compared with the distribution of religions in the population of the
+                        European Union. The data at the continental level are provided in the report
+                        “Discrimination in the EU in 2012”
+                        (<a href="https://health.ec.europa.eu/publications/discrimination-eu-2012_en" target="_blank">European Union: European Commission, Special Eurobarometer 393, p. 233</a>).
+                    </p>
+
+                    <p><i style="color: red;">Incomplete!</i></p>
+
+                    <hr>
 
 </body>
 
