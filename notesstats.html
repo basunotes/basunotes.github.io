@@ -60,6 +60,7 @@
         <li><a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a></li>
         <li><a href="#InferencesTwoPopulationSD">Inferences for Two Population Standard Deviations</a></li>
         <li><a href="#ChiSquareGoodnessofFitTest">Chi-Square Goodness-of-Fit Test</a></li>
+        <li><a href="#ChiSquareIndependenceTest">The Chi-Square Independence Test</a></li>
     </ul>
 
     <hr>
@@ -1359,6 +1360,16 @@ print(p_value)</code></pre>
                     </p>
 
                     <p>
+                        The \(\chi^2\) test statistic for a goodness-of-fit test is given by:
+                        \[\chi^{2} = \sum \frac{(O - E)^{2}}{E}\]
+                    </p>
+
+                    <p>
+                        Where \(O\) represents the observed frequencies and \(E\) represents the expected frequencies.
+                        If the null hypothesis is true, the test statistic \(\chi^2\) follows a chi-square distribution.
+                    </p>
+
+                    <p>
                         The report provides data for eight categories of how people described themselves:
                     </p>
 
@@ -1372,6 +1383,310 @@ print(p_value)</code></pre>
                         <li>3% as Other religion/None stated</li>
                         <li>2% as Muslim</li>
                     </ul>
+
+                    <p>
+                        We plot the data as a pie chart for better understanding:
+                    </p>
+
+                    <pre class="plain"><code>import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+data = [48, 16, 12, 8, 7, 4, 3, 2]
+religions = ["Catholic", "Non believer/\nAgnostic", "Protestant", 
+             "Orthodox", "Atheist", "Other Christian",
+             "Other religion/None stated", "Muslim"]
+
+data = pd.Series(data, index = religions)
+
+data.plot.pie(colors = sns.color_palette("Set3", 8))
+
+plt.show(block=True)</code></pre>
+
+                    <div class="img-div">
+                        <img src="images/pie_chart_religion_distribution.png" alt="Pie chart of religion distribution">
+                    </div>
+
+                    <p>
+                        First, we want to know which categories are available in the <i>students</i> data set for the
+                        column <code>religion</code>. Therefore, we apply the <code>unique()</code> method, which
+                        returns
+                        the levels (categories) of a variable:
+                    </p>
+
+                    <pre class="plain"><code>import pandas as pd
+import numpy as np
+
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+print(students["religion"].unique())</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>['Muslim' 'Other' 'Protestant' 'Catholic' 'Orthodox']</code></pre>
+
+                    <p>
+                        In the <i>students</i> data set there are only 5 categories compared to the 8 categories
+                        above. Therefore, we need to combine some of the original categories:
+                    </p>
+
+                    <pre class="plain"><code>data_raw = [48, 2, 8, (16 + 7 + 4 + 3), 12]
+religions = ["Catholic", "Muslim", "Orthodox", "Other", "Protestant"]
+
+data = pd.Series(data_raw, index = religions, name = "relative_frequency") / 100
+
+print(data.to_frame())</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>            relative_frequency
+Catholic                  0.48
+Muslim                    0.02
+Orthodox                  0.08
+Other                     0.30
+Protestant                0.12</code></pre>
+
+                    <p>
+                        Now we take a random sample based on the <i>students</i> data set. The sample size is \(n =
+                        256\).
+                        Afterwards, we count the number of students in each religion category using the
+                        <code>groupby()</code> function. Recall that this quantity corresponds to the observed
+                        frequencies.
+                    </p>
+
+                    <pre class="plain"><code>n = 256
+
+sample = students.sample(n, random_state = 8).groupby(["religion"])
+
+print(sample.size().to_frame("Observed Frequencies"))</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>            Observed Frequencies
+religion                         
+Catholic                      80
+Muslim                        12
+Orthodox                      21
+Other                        104
+Protestant                    39</code></pre>
+
+                    <p>
+                        Let's combine both pieces of information into a nice-looking table by converting them into a
+                        <code>pandas</code> <code>DataFrame</code> object:
+                    </p>
+
+                    <pre class="plain"><code>df = pd.DataFrame({'relative frequencies' : data,
+                   'observed frequencies' : sample.size()})
+
+print(df)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>            relative frequencies  observed frequencies
+Catholic                    0.48                    80
+Muslim                      0.02                    12
+Orthodox                    0.08                    21
+Other                       0.30                   104
+Protestant                  0.12                    39</code></pre>
+
+                    <p>
+                        In the next step, we calculate the expected frequencies and add this information as a separate
+                        column to our existing DataFrame <code>df</code> using \(E = n \times p\).
+                    </p>
+
+                    <pre class="plain"><code>df["expected frequencies"] = df["relative frequencies"] * 256
+
+print(df)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>            relative frequencies  observed frequencies  expected frequencies
+Catholic                    0.48                    80                122.88
+Muslim                      0.02                    12                  5.12
+Orthodox                    0.08                    21                 20.48
+Other                       0.30                   104                 76.80
+Protestant                  0.12                    39                 30.72</code></pre>
+
+                    <p>
+                        Once we know the expected frequencies, we must check two assumptions:
+                    </p>
+
+                    <p>
+                        • All expected frequencies must be at least 1.<br>
+                        • At most 20&nbsp;% of the expected frequencies should be less than 5.
+                    </p>
+
+                    <p>
+                        We can confirm that both assumptions are fulfilled by inspecting the table.
+                    </p>
+
+                    <p>
+                        In order to conduct a χ² goodness-of-fit test in Python using the <code>stats</code> module from
+                        the
+                        <code>scipy</code> package, we apply the <code>chisquare()</code> function. We only have to
+                        provide the
+                        observed and expected frequencies, which we pass as column selections from our DataFrame.
+                    </p>
+
+                    <pre class="plain"><code>from scipy import stats
+
+test_result = stats.chisquare(df["observed frequencies"], df["expected frequencies"])
+
+print(test_result)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre
+                        class="plain"><code>Power_divergenceResult(statistic=np.float64(36.086588541666664), pvalue=np.float64(2.777403262517103e-07))</code></pre>
+
+                    <p>
+                        At the 1&nbsp;% significance level, the data provide very strong evidence to conclude that the
+                        religion distribution among students differs from the religion distribution in the population
+                        of the European Union.
+                    </p>
+
+                    <hr>
+
+                    <span id="ChiSquareIndependenceTest"><b>The Chi-Square Independence Test</b></span>
+
+                    <p>
+                        The \(\chi^2\) independence test is an inferential method used to determine whether an
+                        association
+                        exists between two variables. As with other hypothesis tests, the null hypothesis states that
+                        the two
+                        variables are not associated, whereas the alternative hypothesis states that the two variables
+                        are associated.
+                    </p>
+
+                    <p>
+                        Recall that statistically dependent variables are called associated variables, while variables
+                        that are not associated
+                        are called statistically independent variables. Also recall the concept of
+                        <a href="https://en.wikipedia.org/wiki/Contingency_table" target="_blank">contingency tables</a>
+                        (also known as two-way tables, cross-tabulation tables, or cross tabs).
+                    </p>
+
+                    <p>
+                        The basic idea behind the \(\chi^2\) independence test is to compare the observed frequencies in
+                        a
+                        contingency table with the expected frequencies, assuming that the null hypothesis of
+                        non-association is true. The expected frequency for each cell of a contingency table is given by
+                        \[
+                        E = \frac{R \times C}{n}
+                        \]
+                    </p>
+
+                    <p>
+                        where \(R\) is the row total, \(C\) is the column total, and \(n\) is the sample size.
+                    </p>
+
+                    <p>
+                        Once we know the expected frequencies, we must check two assumptions:
+                    </p>
+
+                    <p>
+                        • All expected frequencies must be at least 1.<br>
+                        • At most 20&nbsp;% of the expected frequencies may be less than 5.
+                    </p>
+
+                    <p>
+                        We can confirm that both assumptions are satisfied by inspecting the table.
+                    </p>
+
+                    <p>
+                        The comparison is based on the \(\chi^2\) test statistic for the observed and expected
+                        frequencies.
+                        The \(\chi^2\) test statistic follows the \(\chi^2\) distribution and is given by:
+                        \[
+                        \chi^{2}= \sum \frac{(O - E)^{2}}{E}
+                        \]
+                    </p>
+
+                    <p>
+                        where \(O\) represents the observed frequency and \(E\) represents the expected frequency.
+                        Note that \(\frac{(O - E)^2}{E}\) is calculated for each cell and then summed.
+                    </p>
+
+                    <p>
+                        The number of degrees of freedom is given by:
+                        \[
+                        df = (r - 1) \times (c - 1)
+                        \]
+                    </p>
+
+                    <p>
+                        where \(r\) and \(c\) are the numbers of possible values for the two variables under
+                        consideration.
+                    </p>
+
+                    <p>
+                        If the null hypothesis is true, the observed and expected frequencies are roughly equal,
+                        resulting in
+                        a small value of the \(\chi^2\) test statistic, which supports \(H_0\). However, if the value of
+                        the
+                        \(\chi^2\) test statistic is large, the data provide evidence against \(H_0\).
+                    </p>
+
+                    <p>
+                        We want to examine whether there is an association between the variables <i>gender</i> and
+                        <i>major</i>.
+                        In other words, we want to know whether male students favor different fields of study compared
+                        to female students.
+                    </p>
+
+                    <pre class="plain"><code>import pandas as pd
+import numpy as np
+
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+n = 865
+
+sample = students.sample(n, random_state = 8)
+
+observed_frequencies_table = pd.crosstab(sample.major, sample.gender, margins=False)
+
+print(observed_frequencies_table)</code></pre>
+
+                    <p>
+                        Output:
+                    </p>
+
+                    <pre class="plain"><code>gender                      Female  Male
+major                                   
+Biology                        102    66
+Economics and Finance           53    82
+Environmental Sciences          63    88
+Mathematics and Statistics      33    93
+Political Science              111    61
+Social Sciences                 78    35</code></pre>
+
+
+                    <p>
+                        To conduct a \(\chi^2\) independence test in Python using the <code>stats</code> module from
+                        SciPy, we apply the <code>chi2_contingency()</code> function. We only need to provide a
+                        contingency
+                        table of the observed frequencies as either a pandas DataFrame or a NumPy array.
+                    </p>
+
+                    <pre class="plain"><code>from scipy.stats import chi2_contingency
+
+test_result = chi2_contingency(observed_frequencies_table)
+
+print(test_result)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre class="plain"><code>Chi2ContingencyResult(statistic=np.float64(77.31526633939146), pvalue=np.float64(3.056046255717623e-15), dof=5, expected_freq=array([[85.4566474 , 82.5433526 ],
+       [68.67052023, 66.32947977],
+       [76.80924855, 74.19075145],
+       [64.09248555, 61.90751445],
+       [87.49132948, 84.50867052],
+       [57.47976879, 55.52023121]]))</code></pre>
+
+                    <p>
+                        We may conclude that, at the 5&nbsp;% significance level, the data provide very strong evidence
+                        of an association between gender and major field of study.
+                    </p>
 
 
                     <p><i style="color: red;">Incomplete!</i></p>
