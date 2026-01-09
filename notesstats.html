@@ -63,6 +63,7 @@
         <li><a href="#ChiSquareIndependenceTest">The Chi-Square Independence Test</a></li>
         <li><a href="#InferencesSlope">Inferences About the Slope</a></li>
         <li><a href="#InferencesLinearCorrelationCoefficient">Inferences About the Linear Correlation Coefficient</a></li>
+        <li><a href="#LinearRegression">Linear Regression</a></li>
     </ul>
 
     <hr>
@@ -1797,22 +1798,123 @@ print(test_result)</code></pre>
 
                     <p>
                         The p-value is smaller than the specified significance level of 0.01; therefore, we reject
-                        \(H_0\). At the 1% significance level, the data provide very strong evidence that height is a good
+                        \(H_0\). At the 1% significance level, the data provide very strong evidence that height is a
+                        good
                         predictor of students’ weight.
                     </p>
 
                     <hr>
 
-                    <span id="InferencesLinearCorrelationCoefficient"><b>Inferences About the Linear Correlation Coefficient</b></span>
+                    <span id="InferencesLinearCorrelationCoefficient"><b>Inferences About the Linear Correlation
+                            Coefficient</b></span>
 
                     <p>
-                        
+                        In order to test whether two variables are linearly correlated, or in other words, whether there
+                        is a linear
+                        relationship between them, we may apply the so-called correlation <em>t</em>-test. The
+                        population linear correlation
+                        coefficient, \(\rho\), measures the linear correlation between two variables in the same manner
+                        as the sample linear
+                        correlation coefficient, \(r\), measures the linear correlation between two variables in a
+                        sample of paired
+                        observations. Both \(\rho\) and \(r\) describe the strength of the linear relationship between
+                        two variables;
+                        however, \(r\) is an estimate of \(\rho\) obtained from sample data.
                     </p>
 
+                    <p>
+                        The linear correlation coefficient of two variables lies between \(-1\) and \(1\). If \(\rho =
+                        0\), the variables
+                        are linearly uncorrelated; thus, there is no linear relationship between them. If \(\rho \neq
+                        0\), the variables are
+                        linearly correlated. If \(\rho > 0\), the variables are positively linearly correlated, whereas
+                        if \(\rho < 0\), they are negatively linearly correlated. </p>
 
-                    <p><i style="color: red;">Incomplete!</i></p>
+                            <p>
+                                A commonly used statistic to quantify the linear relationship between quantitative
+                                variables is the Pearson
+                                product–moment correlation coefficient. It is given by \[ r = \frac{\sum_{i=1}^{n} (x_i
+                                - \bar{x})(y_i - \bar{y})}
+                                {\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n} (y_i - \bar{y})^2}} =
+                                \frac{s_{xy}}{s_x s_y} \]
+                            </p>
 
-                    <hr>
+                            <p>
+                                where \(s_{xy}\) is the covariance of \(x\) and \(y\), and \(s_x\) and \(s_y\) are the
+                                standard deviations of \(x\)
+                                and \(y\), respectively.
+                            </p>
+
+                            <p>
+                                Since the sample linear correlation coefficient \(r\) is an estimate of the population
+                                linear correlation
+                                coefficient \(\rho\), we may use \(r\) to perform a hypothesis test for \(\rho\). The
+                                test statistic for a
+                                correlation test follows a <em>t</em>-distribution with \(n - 2\) degrees of freedom and
+                                can be written as \[ t =
+                                \frac{r\sqrt{n - 2}}{\sqrt{1 - r^2}}. \]
+                            </p>
+
+
+                            <p>
+                                In order to showcase the correlation t-test, we examine the relationship between the
+                                variable <code>score1</code> and <code>score2</code>, which show the result of two
+                                mandatory statistics exams. The
+                                question is whether a linear relationship exists between the grades of two consecutive
+                                statistics exams.
+                            </p>
+
+                            <p>
+                                The null hypothesis states that there is no linear relationship between the grades of
+                                two consecutive
+                                statistics exams, \(H_0: r = 0\). Recall that the formulation of the alternative
+                                hypothesis dictates
+                                whether a two-sided, left-tailed, or right-tailed hypothesis test is applied. The
+                                alternative
+                                hypothesis \(H_A: r \neq 0\) results in a two-sided hypothesis test.
+                            </p>
+
+                            <p>
+                                In order to conduct a correlation <em>t</em>-test in Python using the <code>stats</code>
+                                module from the
+                                <code>scipy</code> package, we apply the <code>pearsonr()</code> function. We only need
+                                to provide our
+                                data separately as NumPy arrays. Furthermore, the test method can be specified using the
+                                <code>alternative</code> argument. Because the default is already set to two-sided, no
+                                adjustment is required.
+                            </p>
+
+                            <pre class="plain"><code>import pandas as pd
+import numpy as np
+from scipy.stats import pearsonr
+
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+n = 50
+
+sample = students[["score1", "score2"]].dropna().sample(n, random_state = 9)
+
+test_result = pearsonr(sample["score1"], sample["score2"])
+print(test_result)
+</code></pre>
+
+                            <p>Output:</p>
+
+                            <pre
+                                class="plain"><code>PearsonRResult(statistic=np.float64(0.8738759767952877), pvalue=np.float64(1.2019492648237161e-16))</code></pre>
+
+                            <p>
+                                At the 1 % significance level, the data provides very strong evidence to conclude, that
+                                the exam grades of students are linearly correlated.
+                            </p>
+
+                            <hr>
+
+                            <span id="LinearRegression"><b>Linear Regression</b></span>
+
+                            <p><i>Coming soon!</i></p>
+
+                            <hr>
 
 </body>
 
