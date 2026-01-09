@@ -62,6 +62,7 @@
         <li><a href="#ChiSquareGoodnessofFitTest">Chi-Square Goodness-of-Fit Test</a></li>
         <li><a href="#ChiSquareIndependenceTest">The Chi-Square Independence Test</a></li>
         <li><a href="#InferencesSlope">Inferences About the Slope</a></li>
+        <li><a href="#InferencesLinearCorrelationCoefficient">Inferences About the Linear Correlation Coefficient</a></li>
     </ul>
 
     <hr>
@@ -1693,9 +1694,123 @@ print(test_result)</code></pre>
 
                     <span id="InferencesSlope"><b>Inferences About the Slope</b></span>
 
-                    
+                    <p>
+                        The linear model is given by the equation
+                        \[
+                        y = \alpha + \beta x + \epsilon
+                        \]
+                    </p>
 
-                    <p><i>Details will be added soon!</i></p>
+                    <p>
+                        where \(\alpha\) is the intercept, \(\beta\) is the regression coefficient, and \(\epsilon\) is
+                        the error term.
+                        The best regression line is found by applying the <a
+                            href="https://en.wikipedia.org/wiki/Ordinary_least_squares" target="_blank">ordinary least
+                            squares method</a>, which minimizes
+                        the
+                        sum of squared errors (SSE). This means minimizing the squared difference between the measured
+                        response variable \(y\) and the model prediction \(\hat{y}\), which is given by
+                        \[
+                        \mathrm{SSE} = \sum_{i=1}^{n} \epsilon_i^2 = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+                        \]
+                    </p>
+
+                    <p>
+                        We will go into more detail when we discuss linear regression.
+                    </p>
+
+                    <p>
+                        The regression t-test is applied to test whether the slope \(\beta\) of the population
+                        regression line is equal to \(0\). Based on this test, we may decide whether \(x\) is a useful
+                        (linear) predictor of \(y\).
+                    </p>
+
+                    <p>
+                        The test statistic follows a t-distribution with \(df = n - 2\) degrees of freedom and
+                        can be written as
+                        \[
+                        t = \frac{\beta}{s_b} = \frac{\beta}{\dfrac{s_e}{\sqrt{\sum (x - \bar{x})^2}}}
+                        \]
+                        where \(\beta\) corresponds to the sample regression coefficient and \(s_e\) to the residual
+                        standard error (also known as the standard error of the estimate), given by
+                        \[
+                        s_e = \sqrt{\frac{\mathrm{SSE}}{n - 2}} \text{.}
+                        \]
+                    </p>
+
+                    <p>
+                        The \(100(1 - \alpha)\%\) confidence interval for \(\beta\) is given by
+                        \[
+                        \beta \pm t_{\alpha/2} \times \frac{s_e}{\sqrt{\sum (x - \bar{x})^2}} \text{.}
+                        \]
+                    </p>
+
+                    <p>
+                        The value of \(t_{\alpha/2}\) is obtained from the t-distribution for the given
+                        confidence level and \(n - 2\) degrees of freedom.
+                    </p>
+
+                    <p>
+                        In order to illustrate the regression t-test, we examine the relationship between two variables:
+                        students’ height as the predictor variable and students’ weight as the response variable. The
+                        question is whether height is a useful predictor of students’ weight.
+                    </p>
+
+                    <p>
+                        The null hypothesis states that there is no linear relationship between the height and the
+                        weight of
+                        the individuals in the students data set, \(H_0: \beta = 0\), meaning that the predictor
+                        variable is
+                        not useful for making predictions. The alternative hypothesis states that there is a linear
+                        relationship, \(H_A: \beta \neq 0\), meaning that the predictor variable is useful for making
+                        predictions.
+                    </p>
+
+
+                    <p>
+                        In order to conduct a regression t-test in Python using the <code>stats</code> module
+                        from the <code>scipy</code> package, we apply the <code>linregress()</code> function. We only
+                        need to provide our data separately as NumPy arrays. Furthermore, the test method can be
+                        specified using
+                        the <code>alternative</code> argument. Because the default is already set to two-sided, no
+                        adjustment is required.
+                    </p>
+
+                    <pre class="plain"><code>import pandas as pd
+import numpy as np
+from scipy.stats import linregress
+
+students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+
+n = 12
+
+sample = students.sample(n, random_state = 9)[["height", "weight"]]
+
+test_result = linregress(sample["height"], sample["weight"])
+
+print(test_result)</code></pre>
+
+                    <p>Output:</p>
+
+                    <pre
+                        class="plain"><code>LinregressResult(slope=np.float64(0.7477660695468915), intercept=np.float64(-54.99202318229716), rvalue=np.float64(0.940268246582142), pvalue=np.float64(5.414310239986541e-06), stderr=np.float64(0.08561453550612985), intercept_stderr=np.float64(15.028988955403905))</code></pre>
+
+                    <p>
+                        The p-value is smaller than the specified significance level of 0.01; therefore, we reject
+                        \(H_0\). At the 1% significance level, the data provide very strong evidence that height is a good
+                        predictor of students’ weight.
+                    </p>
+
+                    <hr>
+
+                    <span id="InferencesLinearCorrelationCoefficient"><b>Inferences About the Linear Correlation Coefficient</b></span>
+
+                    <p>
+                        
+                    </p>
+
+
+                    <p><i style="color: red;">Incomplete!</i></p>
 
                     <hr>
 
