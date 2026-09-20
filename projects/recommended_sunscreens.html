@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -11,14 +12,1008 @@
 </head>
 
 <body>
-    <span><b>The Most Recommended Sunscreens on Reddit</b></span>
+    <main>
 
-    <br><br>
-    <i>(To be continued!)</i>
-    
+        <article>
+
+            <header>
+                <h1>The Most Frequently Mentioned Sunscreens on Reddit</h1>
+
+                <p>
+                    I was interested in buying a good sunscreen, so I went to Reddit to do my research. Usually, when I
+                    am interested in buying a product, Reddit is one of the first places I look for reviews.
+                </p>
+
+                <p>
+                    YouTube can also be quite helpful for getting a good overview of the top products on the market and
+                    some useful background information, especially when you have no idea what you should be looking for
+                    in the first
+                    place.
+                    I remember when I used to read blogs and random forums to find useful information, but those days
+                    are
+                    basically over.
+                    The younger generation seems to do a lot of their research on TikTok, which is still quite an alien
+                    social media platform to me.
+                </p>
+
+                <p>
+                    Despite there being so much information out there, if you don't have some basic
+                    knowledge, you can
+                    quickly get overwhelmed by the seemingly contradictory opinions on literally every single brand and
+                    product. Even
+                    after reading several Reddit posts and hundreds of comments, I still could not decide on a single
+                    sunscreen.
+                </p>
+
+                <p>
+                    There always seems to be a mixture of very positive and very negative
+                    opinions about almost every popular sunscreen. One person would call a
+                    product their holy grail, while the next person would say that the same
+                    product was too greasy, caused irritation, or simply did not work for them. It's worth keeping in
+                    mind that some people may be impatient, inconsistent in their routines, or simply
+                    misidentify the cause of their actual problems. Ultimately, maybe to a
+                    fault, I do believe
+                    that many mainstream sunscreen products can provide good protection when used correctly, although
+                    the formulation, level of protection, amount applied, and reapplication still matter.
+                </p>
+
+                <p>
+                    Nonetheless, I still wanted to have a broad overview of the most frequently mentioned sunscreens on
+                    Reddit.
+                    This is where knowing how to code can be quite useful.
+                    Instead of continuing to read individual comments manually, I decided to
+                    analyze several thousand Reddit comments to find out which sunscreen brands
+                    and products were discussed most frequently and whether they were mentioned positively or
+                    negatively.
+                </p>
+
+                <p>
+                    I got the Reddit data via their API. Luckily, I already had API credentials before Reddit tightened
+                    its API access and approval requirements in 2026.
+                    The data used in the project covers a little over one year, from 2 August 2025 to 5 August
+                    2026, and comes from beauty- and
+                    skincare-related subreddits.
+                </p>
+
+                <p>
+                    After analyzing the collected data and doing more research on the ingredients,
+                    I ultimately decided to buy the Beauty of Joseon Relief Sun Aqua-Fresh, a Korean sunscreen. It's
+                    alright, I guess.
+                    Korean sunscreens seem to be quite popular nowadays, and some popular products can go out of
+                    stock pretty quickly. So please stop hoarding.
+                </p>
+
+                <p>
+                    The project went through several iterations. Some approaches worked, some
+                    turned out to be unnecessarily complicated, and some had to be redesigned
+                    completely. The steps mentioned below are not the actual steps I took to get the finalized, clean
+                    dataset for analysis.
+                    These are the steps that, in hindsight, I would take if I were to start the project again.
+                </p>
+
+            </header>
+
+            <section>
+                <h2>TL;DR Version of What I Did</h2>
+
+                <p>
+                    I collected Reddit posts containing terms related to sunscreen from various beauty- and
+                    skincare-related subreddits
+                    and then collected the comments underneath these posts, all via the API. For every single comment, I
+                    reconstructed its
+                    conversation chain. In the end, I collected around 48,000 comments. I used an LLM to extract the
+                    relevant information,
+                    as using strict regex would have been unnecessarily complicated and prone to errors. Frankly, it
+                    would also have been impractical.
+                </p>
+
+                <p>
+                    The LLM extracted sunscreen brands, product names, and sentiment from the
+                    unstructured comments. I then cleaned and normalized the company and product
+                    names, filtered out uncertain results, and linked every retained sunscreen
+                    mention back to its original Reddit conversation.
+                </p>
+
+                <p>The final analytical dataset contained:</p>
+
+                <ul>
+                    <li>8,706 sunscreen mentions</li>
+                    <li>8,678 mentions with a resolved company</li>
+                    <li>5,369 mentions with a confidently resolved product</li>
+                    <li>757 Reddit posts</li>
+                    <li>6,587 Reddit comments</li>
+                    <li>430 normalized brand/company identities</li>
+                    <li>940 normalized company-product combinations</li>
+                </ul>
+
+                <p>
+                    I then analyzed the final data with Pandas to find the most frequently
+                    mentioned brands and products and compare their positive and negative
+                    sentiment.
+                </p>
+            </section>
+
+            <section>
+                <h2>Overview of the Main Stages</h2>
+
+                <p>At a high level, the project went through the following stages:</p>
+
+                <ul>
+                    <li>Collect relevant posts and comments from beauty and skincare subreddits via the Reddit API.</li>
+
+                    <li>Store the raw Reddit data with fields such as IDs, parent IDs, text, URLs, and content type.
+                    </li>
+
+                    <li>Reconstruct the full conversation chain for each target comment, from the original post through
+                        the parent comments to the final comment.</li>
+
+                    <li>Create a small manually reviewed evaluation dataset and run a smoke test to verify the complete
+                        LLM processing workflow.</li>
+
+                    <li>Process the comments with the OpenAI Batch API and extract the sunscreen company, product name,
+                        sentiment, and resolution status.</li>
+
+                    <li>Combine the Batch results into a dataset containing 19,743 extracted sunscreen mentions, with
+                        one
+                        row for each identified sunscreen mention.</li>
+
+                    <li>Normalize company and product names so that spelling differences, aliases, and alternative
+                        product names are mapped to consistent names.</li>
+
+                    <li>Filter the results based on extraction and normalization confidence, keeping only sufficiently
+                        reliable mentions.</li>
+
+                    <li>Create the final cleaned dataset containing 8,706 sunscreen mentions while preserving the
+                        original Reddit conversation context for each result.</li>
+
+                    <li>Analyze the final dataset with Pandas at the company, product, and sentiment levels.</li>
+
+                    <li>Use the results to identify the most frequently mentioned sunscreen brands and products and
+                        compare
+                        their positive, negative, mixed, and unclear sentiment.</li>
+                </ul>
+
+                <p>
+                    The most important design decision was to preserve the original Reddit context throughout the
+                    pipeline. Even after normalization and filtering, every final result could still be traced back to
+                    the
+                    original Reddit post and comment.
+                </p>
+            </section>
+
+            <p>
+                Now let us go through the steps in a bit more detail.
+            </p>
+
+            <section>
+                <h2>Extract raw data through the Reddit API</h2>
+
+                <p>
+                    The first step was getting the raw posts and comments.
+                    Reddit provides an API through which posts, comments, and their relationships
+                    can be retrieved. API access has become more restrictive over time, but I
+                    already had the credentials required for the project.
+                </p>
+
+                <p>
+                    A Reddit comment by itself is often not enough to understand what is being
+                    discussed.
+                    Imagine that a comment simply says "I don't like it at all." From this comment alone, we
+                    cannot determine what it refers to. The actual conversation could look like:
+                </p>
+
+                <p>
+                    For example, a Reddit post might ask, "What sunscreen are you currently using?" A comment could
+                    reply,
+                    "I've been using the Skin Aqua Super Moisture UV Gel," followed by another reply saying,
+                    "I don't like it at all."
+                </p>
+
+                <p>
+                    The final comment only makes sense when we know its parent.
+                    For this reason, I reconstructed the complete conversation chain for every target comment, starting
+                    with
+                    the original post, followed by the oldest parent comment, any intermediate parent comments, the
+                    direct
+                    parent, and finally the target comment.
+                </p>
+
+                <p>I preserved only the fields that would later be useful for further processing:</p>
+
+                <ul>
+                    <li><code>id</code></li>
+                    <li><code>parent_id</code></li>
+                    <li><code>title</code> for posts only</li>
+                    <li><code>body</code></li>
+                    <li><code>url</code></li>
+                    <li><code>type</code>, indicating whether the item was a post or comment</li>
+                </ul>
+
+
+            </section>
+
+            <section>
+                <h2>Define exactly what the LLM should extract</h2>
+
+                <p>
+                    The Reddit comments are unstructured text.
+                    What I ultimately needed, however, was structured data that could be analyzed
+                    with Pandas. The basic idea was therefore to use an LLM to extract sunscreen mentions
+                    from a Reddit conversation. I wanted the model to output structured data in the form of JSON so
+                    that deterministic post-processing could be performed.
+                </p>
+
+                <p>For every sunscreen mention, I asked the model to return:</p>
+
+                <ul>
+                    <li><code>mention_text</code>, that is, the exact text from the Reddit comment that referred to the
+                        sunscreen being extracted</li>
+                    <li><code>company</code></li>
+                    <li><code>product_name</code></li>
+                    <li><code>sentiment</code></li>
+                    <li><code>resolution_status</code></li>
+                </ul>
+
+                <p>
+                    The <code>sentiment</code> could be positive, negative, mixed, or unclear.
+                    The <code>resolution_status</code> could be exact, probable, ambiguous, or unresolved.
+                </p>
+
+                <p>
+                    This distinction is important.
+                    I did not want the model to invent a precise product just because a sunscreen
+                    appeared to be identifiable. I wanted the model to explicitly tell me when the
+                    identification was uncertain. For example, consider the comment
+                    "I've been using La Roche-Posay Anthelios and I love it, but I don't like their other sunscreen."
+                    A possible structured response would be:
+                </p>
+
+                <pre class="plain"><code>{
+  "sunscreens": [
+    {
+      "mention_text": "La Roche-Posay Anthelios",
+      "company": "La Roche-Posay",
+      "product_name": "Anthelios",
+      "sentiment": "positive",
+      "resolution_status": "probable"
+    },
+    {
+      "mention_text": "their other sunscreen",
+      "company": "La Roche-Posay",
+      "product_name": null,
+      "sentiment": "negative",
+      "resolution_status": "ambiguous"
+    }
+  ]
+}</code></pre>
+
+                <p>
+                    The second mention is still useful information, but it should not be treated
+                    as if the exact product were known.
+                </p>
+            </section>
+
+            <section>
+                <h2>Create a small evaluation dataset before processing everything</h2>
+
+                <p>
+                    One mistake I wanted to avoid was processing thousands of comments
+                    before knowing whether the prompt or the code actually worked. Working with a smaller dataset
+                    is less costly and requires less time for debugging.
+                    So I first created a small manually reviewed evaluation dataset.
+                    For these comments, I knew approximately what the correct output should be.
+                    I could then send them through the same extraction process and inspect the
+                    results. This allowed me to improve:
+                </p>
+
+                <ul>
+                    <li>the extraction instructions</li>
+                    <li>the structured output schema</li>
+                    <li>handling of conversation context</li>
+                    <li>handling of uncertain products</li>
+                    <li>sentiment classification</li>
+                </ul>
+
+                <p>
+                    I also ran a single-request smoke test first to make sure the following steps worked without
+                    producing any
+                    errors:
+                </p>
+
+                <ul>
+                    <li>Create the JSONL file</li>
+                    <li>Upload the file</li>
+                    <li>Create the Batch job</li>
+                    <li>Wait for processing</li>
+                    <li>Download the output</li>
+                    <li>Parse the result</li>
+                </ul>
+
+                <p>
+                    Only once this worked did I move on to the larger dataset.
+                </p>
+            </section>
+
+            <section>
+                <h2>Generate the complete extraction Batch</h2>
+
+                <p>
+                    After validating the extraction logic, I generated one LLM request per Reddit comment. There were
+                    48,628 comments to process, and the complete JSONL file was around 182 MB. This was uncomfortably
+                    close to the Batch API limits at the time: 50,000 requests and a 200 MB file size. So, rather than
+                    submitting one very large job, I split the file into two equal parts of 24,314 requests each, and
+                    both parts were processed separately.
+                </p>
+
+                <p>
+                    This also made the pipeline easier to manage. If one job failed, I
+                    would not have to repeat the entire extraction.
+                </p>
+
+                <p>
+                    I used the Batch API because this was offline processing. I did not need an immediate response for
+                    each comment, and batch processing was 50% cheaper than sending the same requests
+                    synchronously.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Parse the LLM output</h2>
+
+                <p>
+                    Once the Batch jobs had completed, I downloaded the resulting JSONL files and
+                    converted the structured model responses into a normal tabular dataset.
+                </p>
+
+                <p>
+                    One problem appeared here.
+                    My first parser assumed that the model response text would always be found at
+                    something similar to <code>response["body"]["output"][0]["content"][0]</code>. That assumption was
+                    wrong.
+                    The Responses API can return several output items, and the generated text
+                    does not necessarily occupy the first element.
+                </p>
+
+                <p>
+                    The corrected parser instead searched through the output and its content items until it found
+                    an item with <code>type == "output_text"</code>.
+                    This was a small implementation detail, but an important lesson: do not build
+                    a parser around the assumption that an API's nested response will always
+                    contain the desired element at a fixed array position.
+                </p>
+
+                <p>
+                    After parsing both batches and combining them, I had
+                    19,743 sunscreen mention rows with the following resolution statuses:
+                </p>
+
+                <table style="font-size: smaller;">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Mentions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Exact</td>
+                            <td>8,616</td>
+                        </tr>
+                        <tr>
+                            <td>Probable</td>
+                            <td>1,742</td>
+                        </tr>
+                        <tr>
+                            <td>Ambiguous</td>
+                            <td>7,018</td>
+                        </tr>
+                        <tr>
+                            <td>Unresolved</td>
+                            <td>2,367</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Note that one row represents one sunscreen mention, not one Reddit comment.
+                    A comment mentioning three sunscreens could therefore generate three rows.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Attach the original conversation to every mention</h2>
+
+                <p>
+                    At this point, I had the extracted sunscreen information, but I did not want
+                    to lose where it came from.
+                    So I joined every extracted mention back to the Reddit comment and its
+                    conversation chain.
+                    The resulting dataset contained the following fields:
+                </p>
+
+                <ul>
+                    <li><code>post_id</code></li>
+                    <li><code>comment_id</code></li>
+                    <li><code>conversation</code></li>
+                    <li><code>mention_text</code></li>
+                    <li><code>company</code></li>
+                    <li><code>product_name</code></li>
+                    <li><code>sentiment</code></li>
+                    <li><code>resolution_status</code></li>
+                </ul>
+
+                <p>
+                    The <code>conversation</code> column contained the complete nested Reddit
+                    context. The resulting dataset became one of the main source datasets and was saved as a JSONL file.
+                    Using JSONL rather than CSV was useful here because the conversation itself
+                    is a nested structure.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Normalize company and product names</h2>
+
+                <p>
+                    It would have been nice if the above-mentioned dataset had been the final transformed dataset
+                    that we could use directly for analysis, but after looking at the extracted values, I realized
+                    that there was still quite a bit of cleaning left to do.
+                </p>
+
+                <p>
+                    One of the main problems was that company and product names were not written consistently.
+                    For example, the same brand could appear as <code>Biore</code>, <code>Bioré</code>,
+                    <code>BIORE</code>, or <code>biore</code>. If these values were counted directly, they would
+                    all be treated as different companies even though they refer to the same brand.
+                </p>
+
+                <p>
+                    Product names were even more difficult. People often use shortened names, incomplete
+                    names, or informal ways of referring to a product. For example, a sunscreen might be
+                    mentioned using names such as <code>Biore Aqua Rich</code>, <code>Watery Essence</code>,
+                    <code>Aqua Rich Essence</code>, <code>Biore UV</code>, or simply
+                    <code>the Biore sunscreen</code>, depending on the surrounding context.
+                </p>
+
+                <p>
+                    So before doing any meaningful analysis, I needed to normalize the extracted company and
+                    product names. In other words, I needed to map the different variations back to one consistent
+                    company name and, where possible, one consistent product name.
+                </p>
+
+                <p>
+                    This turned out to be one of the more difficult parts of the project because simple string
+                    cleaning was not enough. Some differences were only spelling variations, while others required
+                    understanding whether two slightly different names actually referred to the same product or to
+                    different versions of a product.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>First normalization pass</h2>
+
+                <p>
+                    Rather than sending all 19,743 extracted sunscreen mentions through another LLM individually,
+                    I first grouped repeated combinations of the extracted company and product names.
+                </p>
+
+                <p>
+                    This was useful because the same raw combination often appeared many times in the dataset.
+                    For example, if <code>Biore + Aqua Rich</code> appeared 100 times, it only needed to be
+                    normalized once. The resulting mapping could then be applied back to all 100 original mentions.
+                </p>
+
+                <p>
+                    After grouping the repeated company and product combinations, I ended up with roughly
+                    7,058 normalization requests, which was much smaller than processing all
+                    19,743 rows again individually.
+                </p>
+
+                <p>
+                    For each combination, the LLM was asked to return a more consistent company and product name,
+                    together with a status describing how confidently the mapping could be made.
+                </p>
+
+                <p>
+                    The output contained <code>canonical_company</code>, <code>canonical_product_name</code>, and
+                    <code>normalization_status</code>.
+                    The <code>canonical_company</code> and <code>canonical_product_name</code> were meant to be
+                    the cleaned and standardized names that could later be used for grouping and analysis.
+                </p>
+
+                <p>The normalization status could be exact, probable, ambiguous, or unresolved.</p>
+
+                <p>
+                    For the analytical dataset, I decided to retain only
+                    exact and probable results.
+                </p>
+
+                <p>
+                    I deliberately kept probable results because people often use shortened or
+                    incomplete product names. Keeping only exact matches would have removed a lot of useful data
+                    even when the intended product was still reasonably clear.
+                </p>
+
+                <p>
+                    This first pass improved the data considerably, but it did not completely solve the problem.
+                    Company names were still fragmented in some cases, and product names were still much more
+                    inconsistent than I wanted for the final analysis.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Normalize company names separately</h2>
+
+                <p>
+                    Even after the first normalization pass, I still found several variations of the same company or
+                    brand
+                    name. Since company and brand names are much easier to standardize than product names, I decided to
+                    handle
+                    them separately first.
+                </p>
+
+                <p>
+                    I created a mechanical company key by applying the same sequence of text-cleaning steps to every
+                    company name:
+                </p>
+
+                <ul>
+                    <li>remove leading and trailing whitespace</li>
+                    <li>apply Unicode normalization</li>
+                    <li>remove accents</li>
+                    <li>convert to lowercase</li>
+                    <li>remove spaces and punctuation</li>
+                </ul>
+
+                <p>
+                    For example, Bioré, Biore, and BIORE would all become <code>biore</code>.
+                </p>
+
+                <p>
+                    This allowed obvious spelling and formatting variations to be grouped together. The key itself
+                    was only used internally for matching and was never used as the final company name shown in the
+                    analysis.
+                </p>
+
+                <p>
+                    However, this mechanical step could only solve simple variations. Some extracted company names
+                    were aliases, shortened forms, product lines, or, in some cases, not actually company names at all.
+                    So I performed another research-based normalization step for the remaining company identities.
+                </p>
+
+                <p>
+                    For each company key, the model was asked to determine whether the extracted name was already
+                    correct, needed to be corrected, was an alias for another company, was not actually a company,
+                    or could not be resolved.
+                </p>
+
+                <p>
+                    Each company mapping was classified as <code>confirmed</code> if the name was already correct,
+                    <code>corrected</code> if it needed to be changed, <code>alias</code> if it referred to another
+                    known
+                    company name, <code>not_company</code> if the extracted value was not actually a company, or
+                    <code>unresolved</code> if the identity could not be determined reliably. Each result also received
+                    a
+                    <code>high</code>, <code>medium</code>, or <code>low</code> confidence level.
+                </p>
+
+                <p>
+                    High-confidence confirmed, corrected, and alias results could then be used to create the final
+                    company mapping.
+                </p>
+
+                <p>
+                    For the few important cases where the automated result was still incorrect or misleading, I
+                    manually corrected the mapping. This gave me one consistent company name that could be used
+                    throughout the rest of the analysis.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Product normalization was more difficult</h2>
+
+                <p>
+                    Products cannot simply be normalized globally.
+                    Two different companies could potentially use similar product names, so
+                    product identity had to be evaluated together with the company.
+                </p>
+
+                <p>
+                    The first version of my product-normalization job used one company per LLM
+                    request.
+                </p>
+
+                <p>This looked reasonable until I inspected the companies with the most product candidates.</p>
+
+                <table style="font-size: smaller;">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Candidate product names</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bioré</td>
+                            <td>177</td>
+                        </tr>
+                        <tr>
+                            <td>Skin Aqua</td>
+                            <td>141</td>
+                        </tr>
+                        <tr>
+                            <td>SHINGMULNARA</td>
+                            <td>131</td>
+                        </tr>
+                        <tr>
+                            <td>La Roche-Posay</td>
+                            <td>125</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Sending 177 product candidates in one request was unnecessarily large and
+                    difficult for the model.
+                    So I changed the design and split each company into chunks containing at
+                    most 40 product candidates.
+                </p>
+
+                <p>This resulted in:</p>
+
+                <ul>
+                    <li>3,330 company-product candidates</li>
+                    <li>492 Batch requests</li>
+                    <li>488 successful requests</li>
+                    <li>4 failed requests</li>
+                    <li>3,299 returned product mappings</li>
+                </ul>
+
+                <p>
+                    The four failed requests represented only 31 product candidates. At that point, I made an important
+                    project decision:
+                    not to try to achieve perfect normalization. The goal was analysis, not the construction of a
+                    commercial-grade product
+                    catalog. I therefore ignored those failed mappings and only accepted researched product mappings
+                    when the confidence
+                    was high and the status was confirmed, corrected, or alias.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Return to the original mention-level dataset</h2>
+
+                <p>
+                    It would have been easy to continue working only
+                    with the aggregated
+                    normalization tables, but then I would have lost the connection between a normalized product and the
+                    actual Reddit comments mentioning it. So, for the final dataset, I returned to the original
+                    mention-level data
+                    and joined all the normalization results back onto each individual mention.
+                </p>
+
+                <p>
+                    I then applied two confidence filters. First, the original LLM extraction had to be
+                    exact or probable, which gave 10,358 mentions. The first normalization pass also
+                    had to be exact or probable.
+                    After applying both filters, the analytical core contained 8,706 mentions.
+                </p>
+
+                <ul>
+                    <li>8,678 had a resolved company</li>
+                    <li>5,369 had a high-confidence resolved product</li>
+                </ul>
+
+                <p>
+                    This was intentional. A mention can still be useful for company-level
+                    analysis even when the exact product cannot be determined confidently.
+                </p>
+
+            </section>
+
+            <section>
+                <h2>Perform one final mechanical cleanup</h2>
+
+                <p>
+                    Even after all the normalization work, I found a few differences that were purely cosmetic.
+                    For example, <code>Biore UV Aqua Rich Watery Essence</code> and
+                    <code>Bioré UV Aqua Rich Watery Essence</code> were clearly the same product. So I created
+                    one final mechanical key from the already-normalized product names by ignoring capitalization,
+                    accents, spaces, and punctuation.
+                </p>
+
+                <p>
+                    This detected only 11 duplicate groups. I merged these formatting-only
+                    duplicates and deliberately stopped there. I did not use fuzzy matching to automatically
+                    merge similar product names because two similar-looking names could represent genuinely
+                    different formulations.
+                </p>
+
+                <p>
+                    This created the final master dataset, with each row representing one sunscreen mention.
+                    The most important analytical columns are:
+                </p>
+
+                <ul>
+                    <li><code>post_id</code></li>
+                    <li><code>comment_id</code></li>
+                    <li><code>conversation</code></li>
+                    <li><code>mention_text</code></li>
+                    <li><code>sentiment</code></li>
+                    <li><code>analysis_company</code></li>
+                    <li><code>analysis_product_clean</code></li>
+                </ul>
+
+            </section>
+
+            <section>
+                <h2>Analyze the final data with Pandas</h2>
+
+                <p>
+                    Once the data was clean enough, the actual analysis was pretty straightforward. I only had
+                    to apply simple group-by operations using Pandas. For company sentiment, for example:
+                </p>
+
+                <pre class="plain"><code>company_sentiment = (
+    df
+    .groupby("analysis_company")["sentiment"]
+    .value_counts()
+    .unstack(fill_value=0)
+)</code></pre>
+                <p>From there, I calculated:</p>
+
+                <ul>
+                    <li>number of mentions</li>
+                    <li>positive mentions</li>
+                    <li>negative mentions</li>
+                    <li>mixed mentions</li>
+                    <li>unclear mentions</li>
+                    <li>positive percentage</li>
+                    <li>negative percentage</li>
+                </ul>
+
+                <p>
+                    I performed the same analysis at the product level.
+                    I also used a minimum number of mentions when comparing sentiment
+                    percentages. Otherwise, a product with two positive comments could appear to
+                    be 100% positive, which would be misleading.
+                </p>
+
+                <p>As mentioned earlier, the finished analytical dataset contained:</p>
+
+                <ul>
+                    <li>8,706 retained sunscreen mentions</li>
+                    <li>8,678 mentions with a resolved company</li>
+                    <li>5,369 mentions with a confidently resolved product</li>
+                    <li>757 unique Reddit posts</li>
+                    <li>6,587 unique Reddit comments</li>
+                    <li>430 normalized brand/company identities</li>
+                    <li>940 normalized company-product combinations</li>
+                </ul>
+
+                <p>Overall sentiment was:</p>
+
+                <table style="font-size: smaller;">
+                    <thead>
+                        <tr>
+                            <th>Sentiment</th>
+                            <th>Mentions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Positive</td>
+                            <td>4,875</td>
+                        </tr>
+                        <tr>
+                            <td>Negative</td>
+                            <td>1,110</td>
+                        </tr>
+                        <tr>
+                            <td>Mixed</td>
+                            <td>766</td>
+                        </tr>
+                        <tr>
+                            <td>Unclear</td>
+                            <td>1,955</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    So the majority of retained sunscreen mentions in the final dataset
+                    were positive, although there was substantial variation between individual
+                    products.
+                </p>
+            </section>
+
+            <section>
+                <h2>What did the data show?</h2>
+
+                <p>The ten most frequently mentioned brands were:</p>
+
+                <table style="font-size: smaller;">
+                    <thead>
+                        <tr>
+                            <th>Brand</th>
+                            <th>Mentions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bioré</td>
+                            <td>830</td>
+                        </tr>
+                        <tr>
+                            <td>Skin Aqua</td>
+                            <td>646</td>
+                        </tr>
+                        <tr>
+                            <td>SKIN1004</td>
+                            <td>491</td>
+                        </tr>
+                        <tr>
+                            <td>Beauty of Joseon</td>
+                            <td>435</td>
+                        </tr>
+                        <tr>
+                            <td>ANESSA</td>
+                            <td>378</td>
+                        </tr>
+                        <tr>
+                            <td>SHINGMULNARA</td>
+                            <td>308</td>
+                        </tr>
+                        <tr>
+                            <td>La Roche-Posay</td>
+                            <td>306</td>
+                        </tr>
+                        <tr>
+                            <td>CANMAKE</td>
+                            <td>273</td>
+                        </tr>
+                        <tr>
+                            <td>haruharu wonder</td>
+                            <td>271</td>
+                        </tr>
+                        <tr>
+                            <td>Round Lab</td>
+                            <td>247</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <figure>
+                    <img src="../images/most_mentioned_sunscreen_companies.png"
+                        alt="Horizontal bar chart showing the most frequently mentioned sunscreen brands on Reddit">
+
+                    <figcaption style="font-size: smaller;">
+                        Figure 1. Most frequently mentioned sunscreen brands in the final
+                        Reddit dataset. Bioré and Skin Aqua were mentioned considerably more often
+                        than most other brands.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    At the product level, the most frequently mentioned product was
+                    Bioré UV Aqua Rich Watery Essence SPF50+ PA++++, with
+                    292 mentions.
+                </p>
+
+                <p>
+                    Other frequently mentioned sunscreens included products from Beauty of
+                    Joseon, SKIN1004, CANMAKE, haruharu wonder, House of HUR, and numbuzin.
+                </p>
+
+                <figure style="font-size: smaller;">
+                    <img src="../images/most_mentioned_sunscreen_products.png"
+                        alt="Horizontal bar chart showing the most frequently mentioned individual sunscreen products on Reddit">
+
+                    <figcaption>
+                        Figure 2. Most frequently mentioned individual sunscreen products. The
+                        Bioré UV Aqua Rich Watery Essence was the single most frequently mentioned
+                        product in the final dataset.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    One particularly interesting result was that
+                    mention frequency and sentiment were not necessarily the same thing.
+                </p>
+
+                <p>
+                    The Bioré Watery Essence was the most frequently mentioned product, but the sentiment
+                    around it was relatively divided: 45.2% positive and 21.2% negative.
+                </p>
+
+                <p>By comparison:</p>
+
+                <table style="font-size: smaller;">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Positive</th>
+                            <th>Negative</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Isntree Hyaluronic Acid Watery Sun Gel</td>
+                            <td>76.1%</td>
+                            <td>3.0%</td>
+                        </tr>
+                        <tr>
+                            <td>NIVEA UV Water Gel SPF50</td>
+                            <td>76.0%</td>
+                            <td>8.0%</td>
+                        </tr>
+                        <tr>
+                            <td>CANMAKE Mermaid Skin Gel UV</td>
+                            <td>60.1%</td>
+                            <td>8.0%</td>
+                        </tr>
+                        <tr>
+                            <td>SKIN1004 Hyalu-Cica Water-Fit Sun Serum</td>
+                            <td>57.4%</td>
+                            <td>8.3%</td>
+                        </tr>
+                        <tr>
+                            <td>Beauty of Joseon Relief Sun Aqua-Fresh</td>
+                            <td>62.4%</td>
+                            <td>9.4%</td>
+                        </tr>
+                        <tr>
+                            <td>Bioré UV Aqua Rich Watery Essence</td>
+                            <td>45.2%</td>
+                            <td>21.2%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <figure>
+                    <img src="../images/sunscreen_product_sentiment.png"
+                        alt="Bar chart comparing positive and negative mentions of frequently mentioned sunscreen products">
+
+                    <figcaption style="font-size: smaller;">
+                        Figure 3. Positive and negative mention counts for selected frequently mentioned
+                        sunscreens.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    I therefore prefer describing the result as identifying the
+                    most frequently mentioned and most positively discussed products,
+                    rather than saying that Reddit objectively considers one sunscreen the best.
+                    The data does not support that stronger claim.
+                </p>
+
+            </section>
+
+            <section>
+
+                <h2>Final thoughts</h2>
+
+                <p>
+
+                </p>
+
+            </section>
+
+        </article>
+
+
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+
 </body>
 
 </html>

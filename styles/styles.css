@@ -168,3 +168,8 @@ mjx-container {
   display: block;
   margin: 0 auto;     
 }
+
+figure img {
+    width: 80%;
+    height: auto;
+}
