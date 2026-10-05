@@ -11,101 +11,122 @@
 
 <body>
 
-    <span><b>Notes on Statistics</b></span>
+    <div class="page-layout">
 
-    <p>
-        I will avoid rigor; the emphasis of these notes is on practical statistics. However, it is sometimes helpful for
-        me to state definitions in a more mathematically precise form than what is found in most non-mathematical
-        sources, because it helps ease an itchy feeling.
-    </p>
+        <aside class="sidebar">
+            <nav class="sidebar-nav" aria-label="Table of contents">
+                <p class="sidebar-title">Contents</p>
 
-    <p>
-        Most of the information presented here has been taken verbatim from the following sources:
-    </p>
+                <ul>
+                    <li><a href="#intro">Introduction</a></li>
+                    <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
+                    <li><a href="#Hypotheses">Hypotheses</a></li>
+                    <li><a href="#ErrorSignificance">Error and Significance Level</a></li>
+                    <li><a href="#CriticalValuePValue">Critical Value and the p-Value</a></li>
+                    <li><a href="#OnePopulationMeanKnownSigma">Inference for One Population Mean with Known Sigma</a>
+                    </li>
+                    <li><a href="#OnePopulationMeanUnknownSigma">Inference for One Population Mean with Unknown
+                            Sigma</a></li>
+                    <li><a href="#TwoPopulationMeansEqualSD">Inference for Two Independent Population Means with Equal
+                            Standard Deviations</a></li>
+                    <li><a href="#TwoPopulationMeansUnequalSD">Inference for Two Independent Population Means with
+                            Unequal Standard Deviations</a></li>
+                    <li><a href="#TwoPopulationMeansPairedSamples">Inferences for Two Population Means Using Paired
+                            Samples</a></li>
+                    <li><a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a></li>
+                    <li><a href="#InferencesTwoPopulationSD">Inferences for Two Population Standard Deviations</a></li>
+                    <li><a href="#ChiSquareGoodnessofFitTest">Chi-Square Goodness-of-Fit Test</a></li>
+                    <li><a href="#ChiSquareIndependenceTest">The Chi-Square Independence Test</a></li>
+                    <li><a href="#InferencesSlope">Inferences About the Slope</a></li>
+                    <li><a href="#InferencesLinearCorrelationCoefficient">Inferences About the Linear Correlation
+                            Coefficient</a></li>
+                    <li><a href="#LinearRegression">Linear Regression</a></li>
+                    <li><a href="#PolynomialRegression">Polynomial Regression</a></li>
+                    <li><a href="#LogisticRegression">Logistic Regression</a></li>
+                </ul>
+            </nav>
+        </aside>
 
-    <ul>
-        <li>
-            Hartmann, K., Krois, J., & Rudolph, A. (2023). <em>Statistics and Geodata Analysis using R</em>.
-            <a href="https://www.geo.fu-berlin.de/soga-r" target="_blank">SOGA-R</a>
-        </li>
-        <li>
-            Rudolph, A., Krois, J., & Hartmann, K. (2023). <em>Statistics and Geodata Analysis using Python</em>.
-            <a href="https://www.geo.fu-berlin.de/soga-py" target="_blank">SOGA-Py</a>
-        </li>
-        <li>
-            The website <a href="http://www.randomservices.org/random/" target="_blank">Random</a>
-        </li>
-        <li>
-            DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em> (4th ed.). Addison-Wesley.
-        </li>
-        <li>
-            Diez, D. M., Çetinkaya-Rundel, M., & Barr, C. D. (2019). <em>OpenIntro Statistics</em> (4th ed.). OpenIntro.
-        </li>
-    </ul>
+        <main>
+            <article>
 
-    <p>These notes are broadly organized as follows:</p>
+                <span id="intro"><b>Notes on Statistics</b></span>
 
-    <ul>
-        <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
-        <li><a href="#Hypotheses">Hypotheses</a></li>
-        <li><a href="#ErrorSignificance">Error and Significance Level</a></li>
-        <li><a href="#CriticalValuePValue">Critical Value and the p-Value</a></li>
-        <li><a href="#OnePopulationMeanKnownSigma">Inference for One Population Mean with Known Sigma</a></li>
-        <li><a href="#OnePopulationMeanUnknownSigma">Inference for One Population Mean with Unknown Sigma</a></li>
-        <li><a href="#TwoPopulationMeansEqualSD">Inference for Two Independent Population Means with Equal Standard
-                Deviations</a></li>
-        <li><a href="#TwoPopulationMeansUnequalSD">Inference for Two Independent Population Means with Unequal Standard
-                Deviations</a></li>
-        <li><a href="#TwoPopulationMeansPairedSamples">Inferences for Two Population Means Using Paired Samples</a></li>
-        <li><a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a></li>
-        <li><a href="#InferencesTwoPopulationSD">Inferences for Two Population Standard Deviations</a></li>
-        <li><a href="#ChiSquareGoodnessofFitTest">Chi-Square Goodness-of-Fit Test</a></li>
-        <li><a href="#ChiSquareIndependenceTest">The Chi-Square Independence Test</a></li>
-        <li><a href="#InferencesSlope">Inferences About the Slope</a></li>
-        <li><a href="#InferencesLinearCorrelationCoefficient">Inferences About the Linear Correlation Coefficient</a>
-        </li>
-        <li><a href="#LinearRegression">Linear Regression</a></li>
-        <li><a href="#PolynomialRegression">Polynomial Regression</a></li>
-        <li><a href="#LogisticRegression">Logistic Regression</a></li>
-    </ul>
+                <p>
+                    I will avoid rigor; the emphasis of these notes is on practical statistics. However, it is sometimes
+                    helpful for
+                    me to state definitions in a more mathematically precise form than what is found in most
+                    non-mathematical
+                    sources, because it helps ease an itchy feeling.
+                </p>
 
-    <hr>
+                <p>
+                    Most of the information presented here has been taken verbatim from the following sources:
+                </p>
 
-    <span id="CDFQuantile"><b>Distribution and quantile functions</b></span>
+                <ul>
+                    <li>
+                        Hartmann, K., Krois, J., & Rudolph, A. (2023). <em>Statistics and Geodata Analysis using R</em>.
+                        <a href="https://www.geo.fu-berlin.de/soga-r" target="_blank">SOGA-R</a>
+                    </li>
+                    <li>
+                        Rudolph, A., Krois, J., & Hartmann, K. (2023). <em>Statistics and Geodata Analysis using
+                            Python</em>.
+                        <a href="https://www.geo.fu-berlin.de/soga-py" target="_blank">SOGA-Py</a>
+                    </li>
+                    <li>
+                        The website <a href="http://www.randomservices.org/random/" target="_blank">Random</a>
+                    </li>
+                    <li>
+                        DeGroot, M. H., & Schervish, M. J. (2012). <em>Probability and Statistics</em> (4th ed.).
+                        Addison-Wesley.
+                    </li>
+                    <li>
+                        Diez, D. M., Çetinkaya-Rundel, M., & Barr, C. D. (2019). <em>OpenIntro Statistics</em> (4th
+                        ed.). OpenIntro.
+                    </li>
+                </ul>
 
-    <p>
-        There are several definitions of a quantile for a dataset, and they are not necessarily equivalent.
-        This nuance is often overlooked. In many cases, the differences between these definitions are small,
-        but when sample values are far apart, such as in the long tail of a distribution, the differences can be
-        substantial. We will first focus on the more general, single mathematical notion of a quantile.
-    </p>
+                <hr>
 
-    <p>
-        Suppose that \(X\) is a real-valued random variable. The <i>(cumulative) distribution function</i> (CDF) of
-        \(X\) is the function \(F: \mathbb{R} \to [0, 1]\) defined by
-        \[
-        F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}
-        \]
-    </p>
+                <span id="CDFQuantile"><b>Distribution and quantile functions</b></span>
 
-    <p>
-        For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x)=\mathbb{P}(X \le x) \ge
-            p\) is called a <i>quantile</i> of order \(p\) for the distribution.
-    </p>
+                <p>
+                    There are several definitions of a quantile for a dataset, and they are not necessarily equivalent.
+                    This nuance is often overlooked. In many cases, the differences between these definitions are small,
+                    but when sample values are far apart, such as in the long tail of a distribution, the differences
+                    can be
+                    substantial. We will first focus on the more general, single mathematical notion of a quantile.
+                </p>
 
-    <p>
-        The <i>quantile function</i> \(F^{-1}\) of \(X\) is defined by
-        \[
-        F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)
-        \]
-    </p>
+                <p>
+                    Suppose that \(X\) is a real-valued random variable. The <i>(cumulative) distribution function</i>
+                    (CDF) of
+                    \(X\) is the function \(F: \mathbb{R} \to [0, 1]\) defined by
+                    \[
+                    F(x) = \mathbb{P}(X \le x), \quad x \in \mathbb{R}
+                    \]
+                </p>
 
-    <p>
-        In Python, you can compute quantiles and CDF values using the <code>scipy.stats</code> library, which provides
-        functions for various probability distributions. For example, for the normal distribution you have:
-    </p>
+                <p>
+                    For \(p \in (0,1)\), any value \(x\) satisfying \(\mathbb{P}(X < x) \le p\) and \(F(x)=\mathbb{P}(X
+                        \le x) \ge p\) is called a <i>quantile</i> of order \(p\) for the distribution.
+                </p>
 
-    <pre class="plain"><code>import scipy.stats as stats
+                <p>
+                    The <i>quantile function</i> \(F^{-1}\) of \(X\) is defined by
+                    \[
+                    F^{-1}(p) = \min\{x \in \mathbb{R}: F(x) \ge p\}, \quad p \in (0, 1)
+                    \]
+                </p>
+
+                <p>
+                    In Python, you can compute quantiles and CDF values using the <code>scipy.stats</code> library,
+                    which provides
+                    functions for various probability distributions. For example, for the normal distribution you have:
+                </p>
+
+                <pre class="plain"><code>import scipy.stats as stats
 
 mu = 0  
 sigma = 1 
@@ -116,239 +137,262 @@ cdf_value = stats.norm.cdf(x, loc=mu, scale=sigma)
 p = 0.7
 quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
-    <hr>
+                <hr>
 
-    <span id="Hypotheses"><b>Hypotheses</b></span>
+                <span id="Hypotheses"><b>Hypotheses</b></span>
 
-    <p>
-        In statistical <i>hypothesis testing</i>, the goal is to determine whether there is sufficient
-        evidence to reject a presumed <i>null hypothesis</i> in favor of a conjectured <i>alternative hypothesis</i>.
-        The null hypothesis is usually denoted by \(H_0\), while the alternative hypothesis is usually
-        denoted by \(H_1\).
-    </p>
+                <p>
+                    In statistical <i>hypothesis testing</i>, the goal is to determine whether there is sufficient
+                    evidence to reject a presumed <i>null hypothesis</i> in favor of a conjectured <i>alternative
+                        hypothesis</i>.
+                    The null hypothesis is usually denoted by \(H_0\), while the alternative hypothesis is usually
+                    denoted by \(H_1\).
+                </p>
 
-    <p>
-        For example, if the hypothesis test concerns deciding whether a population mean \(\mu\)
-        differs from a specified value \(\mu_0\), then the null hypothesis can be expressed as
-        \[
-        H_0: \mu = \mu_0
-        \]
-    </p>
+                <p>
+                    For example, if the hypothesis test concerns deciding whether a population mean \(\mu\)
+                    differs from a specified value \(\mu_0\), then the null hypothesis can be expressed as
+                    \[
+                    H_0: \mu = \mu_0
+                    \]
+                </p>
 
-    <p>
-        and the alternative hypothesis as
-        \[
-        H_1: \mu \neq \mu_0\text{.}
-        \]
-    </p>
+                <p>
+                    and the alternative hypothesis as
+                    \[
+                    H_1: \mu \neq \mu_0\text{.}
+                    \]
+                </p>
 
-    <p>Such a hypothesis test is called a <b>two-sided test</b>.</p>
+                <p>Such a hypothesis test is called a <b>two-sided test</b>.</p>
 
-    <p>
-        If the hypothesis test is about deciding whether a population mean \(\mu\)
-        is smaller than the specified value \(\mu_0\), the alternative hypothesis is expressed as
-        \[
-        H_1: \mu < \mu_0\text{.} \] </p>
+                <p>
+                    If the hypothesis test is about deciding whether a population mean \(\mu\)
+                    is smaller than the specified value \(\mu_0\), the alternative hypothesis is expressed as
+                    \[
+                    H_1: \mu < \mu_0\text{.} \] </p>
 
-            <p>Such a hypothesis test is called a <b>left-tailed test</b>.</p>
+                        <p>Such a hypothesis test is called a <b>left-tailed test</b>.</p>
 
-            <p>
-                Analogously, we have the <b>right-tailed test</b>, which is about deciding whether a population mean
-                \(\mu\) is greater than the specified value \(\mu_0\).
-            </p>
+                        <p>
+                            Analogously, we have the <b>right-tailed test</b>, which is about deciding whether a
+                            population mean
+                            \(\mu\) is greater than the specified value \(\mu_0\).
+                        </p>
 
-            <p>
-                We make the decision to reject the null hypothesis in favor of the alternative,
-                or to not reject the null hypothesis, based on the observed outcome, say \(\mathbf{x}\), of a random
-                experiment.
-                We identify an appropriate subset \(R\) of the sample space \(S\) and reject \(H_0\) if and
-                only if \(\mathbf{x} \in R\).
-                This set \(R\) is known as the <b>rejection region</b> or the <b>critical region</b>. However, we will
-                see that this
-                critical region is often defined in terms of a <i>test statistic</i>, which maps \(S\) into another set
-                \(T\). This allows
-                for siginificant data reduction.
-            </p>
+                        <p>
+                            We make the decision to reject the null hypothesis in favor of the alternative,
+                            or to not reject the null hypothesis, based on the observed outcome, say \(\mathbf{x}\), of
+                            a random
+                            experiment.
+                            We identify an appropriate subset \(R\) of the sample space \(S\) and reject \(H_0\) if and
+                            only if \(\mathbf{x} \in R\).
+                            This set \(R\) is known as the <b>rejection region</b> or the <b>critical region</b>.
+                            However, we will
+                            see that this
+                            critical region is often defined in terms of a <i>test statistic</i>, which maps \(S\) into
+                            another set
+                            \(T\). This allows
+                            for siginificant data reduction.
+                        </p>
 
-            <hr>
+                        <hr>
 
-            <span id="ErrorSignificance"><b>Error and Significance Level</b></span>
+                        <span id="ErrorSignificance"><b>Error and Significance Level</b></span>
 
-            <p>
-                Conducting a hypothesis test always implies, that there is a chance of making an incorrect decision.
-                There are two types of errors, depending on which of the hypotheses is actually true.
-                A <b>type I error</b> occurs when a true null hypothesis is rejected (a <i>false positive</i>),
-                while a <b>type II error</b> occurs when a false null hypothesis is not rejected (a <i>false
-                    negative</i>).
-                Similarly, there are two ways to make a correct decision. The possibilities are summarized in the
-                following table:
-            </p>
+                        <p>
+                            Conducting a hypothesis test always implies, that there is a chance of making an incorrect
+                            decision.
+                            There are two types of errors, depending on which of the hypotheses is actually true.
+                            A <b>type I error</b> occurs when a true null hypothesis is rejected (a <i>false
+                                positive</i>),
+                            while a <b>type II error</b> occurs when a false null hypothesis is not rejected (a <i>false
+                                negative</i>).
+                            Similarly, there are two ways to make a correct decision. The possibilities are summarized
+                            in the
+                            following table:
+                        </p>
 
-            <div class="scrollable" style="font-size: smaller;">
-                <div>
-                    <table>
-                        <tr>
-                            <td><b>Decision / State</b></td>
-                            <td>\(H_0\) is true</td>
-                            <td>\(H_0\) is false</td>
-                        </tr>
-                        <tr>
-                            <td>Do not reject \(H_0\)</td>
-                            <td>Correct decision</td>
-                            <td>Type II error</td>
-                        </tr>
-                        <tr>
-                            <td>Reject \(H_0\)</td>
-                            <td>Type I error</td>
-                            <td>Correct decision</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+                        <div class="scrollable" style="font-size: smaller;">
+                            <div>
+                                <table>
+                                    <tr>
+                                        <td><b>Decision / State</b></td>
+                                        <td>\(H_0\) is true</td>
+                                        <td>\(H_0\) is false</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Do not reject \(H_0\)</td>
+                                        <td>Correct decision</td>
+                                        <td>Type II error</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Reject \(H_0\)</td>
+                                        <td>Type I error</td>
+                                        <td>Correct decision</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
 
-            <p>
-                The probability of a type I error is commonly called the
-                <b>significance level</b> of the hypothesis test and is denoted by \(\alpha\).
-                If \(H_0\) is a composite hypothesis, then it specifies a variety of
-                different distributions, and thus there is a set of type I error probabilities. In this
-                case, the significance level is the maximum probability of a type I error over
-                this set of distributions.
-            </p>
+                        <p>
+                            The probability of a type I error is commonly called the
+                            <b>significance level</b> of the hypothesis test and is denoted by \(\alpha\).
+                            If \(H_0\) is a composite hypothesis, then it specifies a variety of
+                            different distributions, and thus there is a set of type I error probabilities. In this
+                            case, the significance level is the maximum probability of a type I error over
+                            this set of distributions.
+                        </p>
 
-            <p>
-                The probability of a type II error is denoted by \(\beta\). Generally, there is
-                a tradeoff between type I and type II error probabilities. If we reduce the probability
-                of a type I error by making the rejection region smaller, we necessarily increase the
-                probability of a type II error because the complementary region \(S \setminus R\) becomes larger.
-            </p>
+                        <p>
+                            The probability of a type II error is denoted by \(\beta\). Generally, there is
+                            a tradeoff between type I and type II error probabilities. If we reduce the probability
+                            of a type I error by making the rejection region smaller, we necessarily increase the
+                            probability of a type II error because the complementary region \(S \setminus R\) becomes
+                            larger.
+                        </p>
 
-            <p>
-                If a hypothesis test is performed at a certain significance level \(\alpha\) and the null
-                hypothesis is rejected, one may state that the test results are
-                <b>statistically significant at the \(\alpha\) level</b>. If the null
-                hypothesis is not rejected at significance level \(\alpha\), one may state
-                that the test results are <b>not statistically significant at the \(\alpha\) level.</b>
-            </p>
+                        <p>
+                            If a hypothesis test is performed at a certain significance level \(\alpha\) and the null
+                            hypothesis is rejected, one may state that the test results are
+                            <b>statistically significant at the \(\alpha\) level</b>. If the null
+                            hypothesis is not rejected at significance level \(\alpha\), one may state
+                            that the test results are <b>not statistically significant at the \(\alpha\) level.</b>
+                        </p>
 
-            <p><i>More on the power of a test later!</i></p>
+                        <p><i>More on the power of a test later!</i></p>
 
-            <hr>
+                        <hr>
 
-            <span id="CriticalValuePValue"><b>Critical Value and the p-Value</b></span>
+                        <span id="CriticalValuePValue"><b>Critical Value and the p-Value</b></span>
 
-            <p>
-                Under the <b>critical value approach</b>, the test statistic,
-                calculated based on the observed data, is compared to a certain critical value.
-                If the test statistic is more <i>extreme</i> than the critical value, the null hypothesis
-                is rejected; otherwise, it is not.
-            </p>
+                        <p>
+                            Under the <b>critical value approach</b>, the test statistic,
+                            calculated based on the observed data, is compared to a certain critical value.
+                            If the test statistic is more <i>extreme</i> than the critical value, the null hypothesis
+                            is rejected; otherwise, it is not.
+                        </p>
 
-            <p>
-                This critical value is computed based on the given significance level \(\alpha\) and
-                the probability distribution specified by \(H_0\).
-            </p>
+                        <p>
+                            This critical value is computed based on the given significance level \(\alpha\) and
+                            the probability distribution specified by \(H_0\).
+                        </p>
 
-            <p>
-                Let us consider the simpler case in which \(H_0\) is not composite and the distribution
-                it specifies is a bell-shaped normal distribution. The critical value divides the area under
-                the probability distribution curve into the rejection region(s) and the non-rejection region.
-            </p>
+                        <p>
+                            Let us consider the simpler case in which \(H_0\) is not composite and the distribution
+                            it specifies is a bell-shaped normal distribution. The critical value divides the area under
+                            the probability distribution curve into the rejection region(s) and the non-rejection
+                            region.
+                        </p>
 
-            <p>
-                In a two-sided test, the null hypothesis is rejected
-                if the test statistic is either too small or too large.
-                Thus, the rejection region for such a test consists of two parts: one on the left and one on the right.
-            </p>
+                        <p>
+                            In a two-sided test, the null hypothesis is rejected
+                            if the test statistic is either too small or too large.
+                            Thus, the rejection region for such a test consists of two parts: one on the left and one on
+                            the right.
+                        </p>
 
-            <div class="img-div">
-                <img src="images/two_sided_critical_value.png" alt="two-sided critical value">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/two_sided_critical_value.png" alt="two-sided critical value">
+                        </div>
 
-            <p>
-                For a left-tailed test, the null hypothesis is rejected if the test statistic is too small. Thus, the
-                rejection region for such a test consists of one part, which is to the left of the center.
-            </p>
+                        <p>
+                            For a left-tailed test, the null hypothesis is rejected if the test statistic is too small.
+                            Thus, the
+                            rejection region for such a test consists of one part, which is to the left of the center.
+                        </p>
 
-            <div class="img-div">
-                <img src="images/left_sided_critical_value.png" alt="left-tailed critical value">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/left_sided_critical_value.png" alt="left-tailed critical value">
+                        </div>
 
-            <p>
-                For a right-tailed test, the null hypothesis is rejected if the test statistic is too large. Thus, the
-                rejection region for such a test consists of one part, which is to the right of the center.
-            </p>
+                        <p>
+                            For a right-tailed test, the null hypothesis is rejected if the test statistic is too large.
+                            Thus, the
+                            rejection region for such a test consists of one part, which is to the right of the center.
+                        </p>
 
-            <div class="img-div">
-                <img src="images/right_sided_critical_value.png" alt="right-tailed critical value">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/right_sided_critical_value.png" alt="right-tailed critical value">
+                        </div>
 
-            <p>
-                In most cases, we have a general procedure that allows us to
-                construct a test (that is, a rejection region \(R_{\alpha}\)) for any given
-                significance level \(\alpha \in (0,1)\). Typically, \(R_{\alpha}\) decreases (in the subset sense)
-                as \(\alpha\) decreases.
-            </p>
+                        <p>
+                            In most cases, we have a general procedure that allows us to
+                            construct a test (that is, a rejection region \(R_{\alpha}\)) for any given
+                            significance level \(\alpha \in (0,1)\). Typically, \(R_{\alpha}\) decreases (in the subset
+                            sense)
+                            as \(\alpha\) decreases.
+                        </p>
 
-            <p>
-                The <b>\(\mathbf{p}\)-value</b> of the observed value \(x\) is defined to be the smallest
-                \(\alpha\) for which \(x \in R_{\alpha}\), that is, the smallest significance level for which
-                \(H_0\) is rejected, given the observed value \(x\).
-            </p>
+                        <p>
+                            The <b>\(\mathbf{p}\)-value</b> of the observed value \(x\) is defined to be the smallest
+                            \(\alpha\) for which \(x \in R_{\alpha}\), that is, the smallest significance level for
+                            which
+                            \(H_0\) is rejected, given the observed value \(x\).
+                        </p>
 
-            <p>
-                Let us denote this \(p\)-value by \(P(x)\). Knowing \(P(x)\) allows us to test \(H_0\) at
-                any significance level for the given data \(x\): if \(P(x) \leq \alpha\), then we
-                would reject \(H_0\) at significance level \(\alpha\); if \(P(x) > \alpha\), then we fail
-                to reject \(H_0\) at significance level \(\alpha\).
-            </p>
+                        <p>
+                            Let us denote this \(p\)-value by \(P(x)\). Knowing \(P(x)\) allows us to test \(H_0\) at
+                            any significance level for the given data \(x\): if \(P(x) \leq \alpha\), then we
+                            would reject \(H_0\) at significance level \(\alpha\); if \(P(x) > \alpha\), then we fail
+                            to reject \(H_0\) at significance level \(\alpha\).
+                        </p>
 
-            <p>
-                Informally, the p-value corresponds to the probability of observing sample data at least as extreme as
-                the actually obtained test statistic. Small p-values provide evidence against the null hypothesis. The
-                smaller (closer to 0) the p-value, the stronger the evidence against the null hypothesis.
-            </p>
+                        <p>
+                            Informally, the p-value corresponds to the probability of observing sample data at least as
+                            extreme as
+                            the actually obtained test statistic. Small p-values provide evidence against the null
+                            hypothesis. The
+                            smaller (closer to 0) the p-value, the stronger the evidence against the null hypothesis.
+                        </p>
 
-            <hr>
+                        <hr>
 
-            <span id="OnePopulationMeanKnownSigma"><b>Inference for One Population Mean with Known Sigma</b></span>
+                        <span id="OnePopulationMeanKnownSigma"><b>Inference for One Population Mean with Known
+                                Sigma</b></span>
 
-            <p>
-                The simplest form of hypothesis test is the test for one population mean.
-                If the population standard deviation \(\sigma\) is known, a hypothesis test for one population mean is
-                called <b>one-mean \(\mathbf{z}\)-Test</b> or simply <b>\(\mathbf{z}\)-Test</b>.
-            </p>
+                        <p>
+                            The simplest form of hypothesis test is the test for one population mean.
+                            If the population standard deviation \(\sigma\) is known, a hypothesis test for one
+                            population mean is
+                            called <b>one-mean \(\mathbf{z}\)-Test</b> or simply <b>\(\mathbf{z}\)-Test</b>.
+                        </p>
 
-            <p>
-                To perform the \(z\)-test we follow the step-wise procedure shown below. First, we showcase the critical
-                value approach. Secondly, we repeat the analysis for the \(p\)-value approach.
-            </p>
+                        <p>
+                            To perform the \(z\)-test we follow the step-wise procedure shown below. First, we showcase
+                            the critical
+                            value approach. Secondly, we repeat the analysis for the \(p\)-value approach.
+                        </p>
 
-            <ol>
-                <li>State the null hypothesis \(H_0\) and the alternative hypothesis \(H_A\).</li>
-                <li>Decide on the significance level, \(\alpha\).</li>
-                <li>Compute the value of the test statistic.</li>
-                <li>Under the critical value approach, determine the critical value. <br>
-                    Under the p-value approach, determine the \(p\)-value.</li>
-                <li>
-                    Critical value approach: If the value of the test statistic falls in the rejection region, reject
-                    \(H_0\); otherwise, do not reject \(H_0\). <br>
-                    \(p\)-value approach: If \(p \leq \alpha\), reject \(H_0\); otherwise, do not reject \(H_0\).
-                </li>
-                <li>Interpret the result of the hypothesis test.</li>
-            </ol>
+                        <ol>
+                            <li>State the null hypothesis \(H_0\) and the alternative hypothesis \(H_A\).</li>
+                            <li>Decide on the significance level, \(\alpha\).</li>
+                            <li>Compute the value of the test statistic.</li>
+                            <li>Under the critical value approach, determine the critical value. <br>
+                                Under the p-value approach, determine the \(p\)-value.</li>
+                            <li>
+                                Critical value approach: If the value of the test statistic falls in the rejection
+                                region, reject
+                                \(H_0\); otherwise, do not reject \(H_0\). <br>
+                                \(p\)-value approach: If \(p \leq \alpha\), reject \(H_0\); otherwise, do not reject
+                                \(H_0\).
+                            </li>
+                            <li>Interpret the result of the hypothesis test.</li>
+                        </ol>
 
-            <p>
-                We will work with the <i>students</i> dataset in Python:
-            </p>
-            <pre class="plain"><code>>>> import pandas as pd
+                        <p>
+                            We will work with the <i>students</i> dataset in Python:
+                        </p>
+                        <pre class="plain"><code>>>> import pandas as pd
 >>> import numpy as np
 >>> students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")</code></pre>
 
-            <p>
-                The <i>students</i> dataset contains 8,239 rows, each representing an individual student, and 16
-                columns, each corresponding to a variable or feature related to that student:
-            </p>
-            <pre class="plain"><code>>>> students.head(5)
+                        <p>
+                            The <i>students</i> dataset contains 8,239 rows, each representing an individual student,
+                            and 16
+                            columns, each corresponding to a variable or feature related to that student:
+                        </p>
+                        <pre class="plain"><code>>>> students.head(5)
    stud.id                 name       gender  age  ...  score2  online.tutorial graduated  salary
 1   833917  Gonzales, Christina  Female   19  ...     NaN                0         0     NaN
 2   898539       Lozano, T'Hani  Female   19  ...     NaN                0         0     NaN
@@ -358,95 +402,104 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
 
 [5 rows x 16 columns]</code></pre>
 
-            <p>
-                In this analysis, we will examine the average weight of students and compare it to the average weight of
-                European adults. It has been reported that the average body mass of the European adult population is
-                70.8 kg. Since the standard deviation is not known, we will assume it to be equal to the standard
-                deviation of the "weight" variable in the <i>students</i> dataset:
-            </p>
-            <pre class="plain"><code>>>> mu_0 = 70.8
+                        <p>
+                            In this analysis, we will examine the average weight of students and compare it to the
+                            average weight of
+                            European adults. It has been reported that the average body mass of the European adult
+                            population is
+                            70.8 kg. Since the standard deviation is not known, we will assume it to be equal to the
+                            standard
+                            deviation of the "weight" variable in the <i>students</i> dataset:
+                        </p>
+                        <pre class="plain"><code>>>> mu_0 = 70.8
 >>> sigma = np.std(students["weight"])
 >>> print(round(sigma, 2))
 8.63</code></pre>
 
-            <p>
-                Next, we will take a random sample of 14 students:
-            </p>
-            <pre class="plain"><code>>>> n = 14
+                        <p>
+                            Next, we will take a random sample of 14 students:
+                        </p>
+                        <pre class="plain"><code>>>> n = 14
 >>> sample_weights = students.sample(n, random_state=8)["weight"]
 >>> mean_sample = np.mean(sample_weights)
 >>> print(round(mean_sample, 2))
 69.82</code></pre>
 
-            <p>
-                The null hypothesis is \(H_0: \mu = 70.8\), and we have three possible alternative hypotheses:
-                \(H_{A_1}: \mu \neq 70.8\), \(H_{A_2}: \mu < 70.8\), and \(H_{A_3}: \mu> 70.8\).
-            </p>
+                        <p>
+                            The null hypothesis is \(H_0: \mu = 70.8\), and we have three possible alternative
+                            hypotheses:
+                            \(H_{A_1}: \mu \neq 70.8\), \(H_{A_2}: \mu < 70.8\), and \(H_{A_3}: \mu> 70.8\).
+                        </p>
 
-            <p>
-                Let the significance level be \(\alpha = 0.05\):
-            </p>
-            <pre class="plain"><code>>>> alpha = 0.05</code></pre>
+                        <p>
+                            Let the significance level be \(\alpha = 0.05\):
+                        </p>
+                        <pre class="plain"><code>>>> alpha = 0.05</code></pre>
 
-            <p>
-                The test statistic \(z\) is defined as \(z = \frac{\bar{x} - \mu_0}{\sigma / \sqrt{n}}\). Applying this
-                formula to our data, we have:
-            </p>
-            <pre class="plain"><code>>>> z = (mean_sample - mu_0) / (sigma / np.sqrt(n))
+                        <p>
+                            The test statistic \(z\) is defined as \(z = \frac{\bar{x} - \mu_0}{\sigma / \sqrt{n}}\).
+                            Applying this
+                            formula to our data, we have:
+                        </p>
+                        <pre class="plain"><code>>>> z = (mean_sample - mu_0) / (sigma / np.sqrt(n))
 >>> print(z)
 -0.42404547484536753</code></pre>
 
-            <p>
-                To calculate the critical values, we use the <code>norm.ppf()</code> function from the
-                <code>scipy</code> package. Since we are testing three alternative hypotheses (\(H_{A_1}\), \(H_{A_2}\),
-                and \(H_{A_3}\)), we need to calculate three corresponding critical values:
-                \(z_{A_1} = \pm z_{\alpha / 2}\), \(z_{A_2} = -z_\alpha\), and \(z_{A_3} = +z_\alpha\):
-            </p>
-            <pre class="plain"><code>>>> z_ha1 = norm.ppf(alpha / 2)
+                        <p>
+                            To calculate the critical values, we use the <code>norm.ppf()</code> function from the
+                            <code>scipy</code> package. Since we are testing three alternative hypotheses (\(H_{A_1}\),
+                            \(H_{A_2}\),
+                            and \(H_{A_3}\)), we need to calculate three corresponding critical values:
+                            \(z_{A_1} = \pm z_{\alpha / 2}\), \(z_{A_2} = -z_\alpha\), and \(z_{A_3} = +z_\alpha\):
+                        </p>
+                        <pre class="plain"><code>>>> z_ha1 = norm.ppf(alpha / 2)
 >>> z_ha2 = norm.ppf(alpha)
 >>> z_ha3 = norm.ppf(1 - alpha)
 >>> print(z_ha1, z_ha2, z_ha3)
 -1.9599639845400545 -1.6448536269514729 1.6448536269514722</code></pre>
 
-            <p>
-                Does the test statistic fall in the rejection region for \(H_{A_1}\)?
-            </p>
-            <pre class="plain"><code>>>> print(z < z_ha1 or z > np.abs(z_ha1))
+                        <p>
+                            Does the test statistic fall in the rejection region for \(H_{A_1}\)?
+                        </p>
+                        <pre class="plain"><code>>>> print(z < z_ha1 or z > np.abs(z_ha1))
 False</code></pre>
 
-            <p>
-                At the 5% significance level, we fail to reject \(H_0\).
-            </p>
+                        <p>
+                            At the 5% significance level, we fail to reject \(H_0\).
+                        </p>
 
-            <p>
-                Does the test statistic fall in the rejection region for \(H_{A_2}\)?
-            </p>
-            <pre class="plain"><code>>>> print(z < z_ha2)
+                        <p>
+                            Does the test statistic fall in the rejection region for \(H_{A_2}\)?
+                        </p>
+                        <pre class="plain"><code>>>> print(z < z_ha2)
 False</code></pre>
 
-            <p>
-                Again, at the 5% significance level, we fail to reject \(H_0\).
-            </p>
+                        <p>
+                            Again, at the 5% significance level, we fail to reject \(H_0\).
+                        </p>
 
-            <p>
-                Does the test statistic fall in the rejection region for \(H_{A_3}\)?
-            </p>
-            <pre class="plain"><code>>>> print(z > z_ha3)
+                        <p>
+                            Does the test statistic fall in the rejection region for \(H_{A_3}\)?
+                        </p>
+                        <pre class="plain"><code>>>> print(z > z_ha3)
 False</code></pre>
 
-            <p>
-                Once more, at the 5% significance level, we fail to reject \(H_0\).
-            </p>
+                        <p>
+                            Once more, at the 5% significance level, we fail to reject \(H_0\).
+                        </p>
 
-            <p>
-                Under the \(p\)-value approach, we still require the test statistic \(z\),
-                which we have already calculated. To calculate the \(p\)-value using Python, we apply the
-                <code>norm.cdf()</code> function from the scipy package to compute the probability of occurrence for the
-                test statistic based on the standard normal distribution. Since we are testing three alternative
-                hypotheses (\(H_{A_1}\), \(H_{A_2}\), and \(H_{A_3}\)), we need to calculate three \(p\)-values as well:
-            </p>
+                        <p>
+                            Under the \(p\)-value approach, we still require the test statistic \(z\),
+                            which we have already calculated. To calculate the \(p\)-value using Python, we apply the
+                            <code>norm.cdf()</code> function from the scipy package to compute the probability of
+                            occurrence for the
+                            test statistic based on the standard normal distribution. Since we are testing three
+                            alternative
+                            hypotheses (\(H_{A_1}\), \(H_{A_2}\), and \(H_{A_3}\)), we need to calculate three
+                            \(p\)-values as well:
+                        </p>
 
-            <pre class="plain"><code>>>> lower = norm.cdf(z)
+                        <pre class="plain"><code>>>> lower = norm.cdf(z)
 >>> upper = 1 - norm.cdf(np.abs(z))
 >>> p_value_1 = lower + upper
 >>> p_value_2 = norm.cdf(z)
@@ -454,68 +507,79 @@ False</code></pre>
 >>> print(p_value_1, p_value_2, p_value_3)
 0.6715326491107156 0.3357663245553578 0.6642336754446422</code></pre>
 
-            <p>
-                Again, at the 5% significance level, we fail to reject \(H_0\), since:
-            </p>
+                        <p>
+                            Again, at the 5% significance level, we fail to reject \(H_0\), since:
+                        </p>
 
-            <pre class="plain"><code>>>> print(p_value_1 <= alpha, p_value_2 <= alpha, p_value_3 <= alpha)
+                        <pre class="plain"><code>>>> print(p_value_1 <= alpha, p_value_2 <= alpha, p_value_3 <= alpha)
 False False False</code></pre>
 
 
-            <p>
-                The primary assumption that we made is that the underlying sampling distribution is normal. Of course,
-                in real statistical problems, we are unlikely to know much about the sampling distribution, let alone
-                whether or not it is normal. Suppose in fact that the underlying distribution is not normal. When the
-                sample size \(n\) is relatively large, the distribution of the sample mean will still be approximately
-                normal by the central limit theorem, and thus our tests of the mean \(\mu\) should still be
-                approximately
-                valid.
-            </p>
+                        <p>
+                            The primary assumption that we made is that the underlying sampling distribution is normal.
+                            Of course,
+                            in real statistical problems, we are unlikely to know much about the sampling distribution,
+                            let alone
+                            whether or not it is normal. Suppose in fact that the underlying distribution is not normal.
+                            When the
+                            sample size \(n\) is relatively large, the distribution of the sample mean will still be
+                            approximately
+                            normal by the central limit theorem, and thus our tests of the mean \(\mu\) should still be
+                            approximately
+                            valid.
+                        </p>
 
-            <hr>
+                        <hr>
 
-            <span id="OnePopulationMeanUnknownSigma"><b>Inference for One Population Mean with Unknown Sigma</b></span>
+                        <span id="OnePopulationMeanUnknownSigma"><b>Inference for One Population Mean with Unknown
+                                Sigma</b></span>
 
-            <p>
-                A hypothesis test for a population mean, when the population standard deviation \(\sigma\) is unknown,
-                is conducted in the same way as if the population standard deviation were known. However, we need to
-                consider the sample standard deviation \(s\) in addition, and the test statistic, denoted by \(t\), is
-                defined as follows: \[t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}\text{.}\]
-            </p>
+                        <p>
+                            A hypothesis test for a population mean, when the population standard deviation \(\sigma\)
+                            is unknown,
+                            is conducted in the same way as if the population standard deviation were known. However, we
+                            need to
+                            consider the sample standard deviation \(s\) in addition, and the test statistic, denoted by
+                            \(t\), is
+                            defined as follows: \[t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}\text{.}\]
+                        </p>
 
-            <p>
-                This test statistic is called the Student's \(t\)-distribution with \(n-1\) degrees of freedom.
-            </p>
+                        <p>
+                            This test statistic is called the Student's \(t\)-distribution with \(n-1\) degrees of
+                            freedom.
+                        </p>
 
-            <p>
-                We will again consider the <i>students</i> data set. We will examine the average
-                weight of a random sample of students and compare it to the average weight of European adults.
-                We will not showcase the critical value approach. For the p-value approach, we will use the
-                <code>stats.ttest_1samp()</code> function from the <code>scipy</code> package.
-            </p>
+                        <p>
+                            We will again consider the <i>students</i> data set. We will examine the average
+                            weight of a random sample of students and compare it to the average weight of European
+                            adults.
+                            We will not showcase the critical value approach. For the p-value approach, we will use the
+                            <code>stats.ttest_1samp()</code> function from the <code>scipy</code> package.
+                        </p>
 
-            <p>
-                We set the population mean accordingly: \(μ_0=70.8\). Further, we take a random sample
-                (<code>sample_weights</code>) with
-                a sample size of \(n=9\). The sample consists of the weights in kg of 9 randomly picked students from
-                the
-                students data set.
-            </p>
+                        <p>
+                            We set the population mean accordingly: \(μ_0=70.8\). Further, we take a random sample
+                            (<code>sample_weights</code>) with
+                            a sample size of \(n=9\). The sample consists of the weights in kg of 9 randomly picked
+                            students from
+                            the
+                            students data set.
+                        </p>
 
-            <pre class="plain"><code>>>> import pandas as pd
+                        <pre class="plain"><code>>>> import pandas as pd
 >>> import numpy as np
 >>> students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
 >>> mu_0 = 70.8
 >>> n = 9
 >>> sample_weights = students.sample(n, random_state = 9)["weight"]</code></pre>
 
-            <p>
-                The following code performs a one-sample t-test. The test is two-sided, and the result
-                includes the t-statistic, p-value, and degrees of freedom.
-            </p>
+                        <p>
+                            The following code performs a one-sample t-test. The test is two-sided, and the result
+                            includes the t-statistic, p-value, and degrees of freedom.
+                        </p>
 
-            <pre
-                class="plain"><code>>>> from scipy import stats
+                        <pre
+                            class="plain"><code>>>> from scipy import stats
 >>> test_result = stats.ttest_1samp(sample_weights,
 ...                                 mu_0,
 ...                                 alternative = "two-sided")
@@ -524,108 +588,123 @@ False False False</code></pre>
 >>> test_result
 TtestResult(statistic=np.float64(1.1620080498483334), pvalue=np.float64(0.2787240885983498), df=np.int64(8))</code></pre>
 
-            <p>
-                We fail to reject the null hypothesis at the \(0.05\) significance level, since the p-value is greater
-                than \(0.05\).
-            </p>
+                        <p>
+                            We fail to reject the null hypothesis at the \(0.05\) significance level, since the p-value
+                            is greater
+                            than \(0.05\).
+                        </p>
 
-            <hr>
+                        <hr>
 
-            <span id="TwoPopulationMeansEqualSD"><b>Inference for Two Independent Population Means with Equal Standard
-                    Deviations</b></span>
+                        <span id="TwoPopulationMeansEqualSD"><b>Inference for Two Independent Population Means with
+                                Equal Standard
+                                Deviations</b></span>
 
-            <p>
-                So far, we have focused on hypothesis tests for one population mean. However, in many applications, we
-                want to compare the means of two or more populations. Therefore, we first need to distinguish between
-                samples from two independent populations and samples from populations that are not independent, which
-                are called paired samples.
-            </p>
+                        <p>
+                            So far, we have focused on hypothesis tests for one population mean. However, in many
+                            applications, we
+                            want to compare the means of two or more populations. Therefore, we first need to
+                            distinguish between
+                            samples from two independent populations and samples from populations that are not
+                            independent, which
+                            are called paired samples.
+                        </p>
 
-            <p>
-                We assume that the standard deviations of the two populations are equal but unknown. If, however, the
-                population standard deviation
-                \(\sigma\) were known, the test statistic could be written as follows:
-                \[
-                z = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}
-                {\sigma \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}}
-                \]
-            </p>
+                        <p>
+                            We assume that the standard deviations of the two populations are equal but unknown. If,
+                            however, the
+                            population standard deviation
+                            \(\sigma\) were known, the test statistic could be written as follows:
+                            \[
+                            z = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}
+                            {\sigma \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}}
+                            \]
+                        </p>
 
-            <p>
-                In most real-world applications, \(\sigma\) is unknown and must therefore be estimated. A natural
-                approach is to use the sample variances
-                \(s_1^2\) and \(s_2^2\) as estimates of \(\sigma^2\). By pooling these variances and weighting them
-                according to their respective sample sizes,
-                we obtain the following estimate of \(\sigma\):
-                \[
-                s_{p} = \sqrt{\frac{(n_{1} - 1)s_{1}^{2} + (n_{2} - 1)s_{2}^{2}}{n_{1} + n_{2} - 2}}.
-                \]
-            </p>
+                        <p>
+                            In most real-world applications, \(\sigma\) is unknown and must therefore be estimated. A
+                            natural
+                            approach is to use the sample variances
+                            \(s_1^2\) and \(s_2^2\) as estimates of \(\sigma^2\). By pooling these variances and
+                            weighting them
+                            according to their respective sample sizes,
+                            we obtain the following estimate of \(\sigma\):
+                            \[
+                            s_{p} = \sqrt{\frac{(n_{1} - 1)s_{1}^{2} + (n_{2} - 1)s_{2}^{2}}{n_{1} + n_{2} - 2}}.
+                            \]
+                        </p>
 
-            <p>
-                The quantity \(s_p\) is called the <em>pooled sample standard deviation</em>, where the subscript \(p\)
-                denotes pooling.
-            </p>
+                        <p>
+                            The quantity \(s_p\) is called the <em>pooled sample standard deviation</em>, where the
+                            subscript \(p\)
+                            denotes pooling.
+                        </p>
 
-            <p>
-                Replacing \(\sigma\) in the test statistic with its estimate \(s_p\) yields:
-                \[
-                t = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}{s_{p} \sqrt{\frac{1}{n_{1}} +
-                \frac{1}{n_{2}}}}
-                \]
-            </p>
+                        <p>
+                            Replacing \(\sigma\) in the test statistic with its estimate \(s_p\) yields:
+                            \[
+                            t = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}{s_{p} \sqrt{\frac{1}{n_{1}} +
+                            \frac{1}{n_{2}}}}
+                            \]
+                        </p>
 
-            <p>
-                The denominator of this expression, \(s_p \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}\), is an estimator of
-                the standard deviation of \(\bar{x}_{1} - \bar{x}_{2}\), which can be written as \(s_{\bar{x}_{1} -
-                \bar{x}_{2}}\).
-            </p>
+                        <p>
+                            The denominator of this expression, \(s_p \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}\), is an
+                            estimator of
+                            the standard deviation of \(\bar{x}_{1} - \bar{x}_{2}\), which can be written as
+                            \(s_{\bar{x}_{1} -
+                            \bar{x}_{2}}\).
+                        </p>
 
-            <p>
-                Note that the test statistic \(t\) follows a <em>t-distribution</em> with degrees of freedom given by:
-                \[
-                \text{df} = n_{1} + n_{2} - 2.
-                \]
-            </p>
+                        <p>
+                            Note that the test statistic \(t\) follows a <em>t-distribution</em> with degrees of freedom
+                            given by:
+                            \[
+                            \text{df} = n_{1} + n_{2} - 2.
+                            \]
+                        </p>
 
-            <p>
-                A \(100(1 - \alpha)\%\) confidence interval for \(\mu_{1} - \mu_{2}\) is given by:
-                \[
-                (\bar{x}_{1} - \bar{x}_{2}) \pm t \cdot s_{p} \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}
-                \]
-            </p>
+                        <p>
+                            A \(100(1 - \alpha)\%\) confidence interval for \(\mu_{1} - \mu_{2}\) is given by:
+                            \[
+                            (\bar{x}_{1} - \bar{x}_{2}) \pm t \cdot s_{p} \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}
+                            \]
+                        </p>
 
-            <p>
-                Here, the value of \(t\) is obtained from the <em>t-distribution</em> corresponding to the desired
-                confidence level and
-                \(n_{1} + n_{2} - 2\) degrees of freedom.
-            </p>
+                        <p>
+                            Here, the value of \(t\) is obtained from the <em>t-distribution</em> corresponding to the
+                            desired
+                            confidence level and
+                            \(n_{1} + n_{2} - 2\) degrees of freedom.
+                        </p>
 
-            <p>
-                Python allows us to conduct a <i>pooled t-test</i> using the <code>ttest_ind_from_stats()</code>
-                over the <code>stats</code> module from the <code>scipy</code> package.
-            </p>
+                        <p>
+                            Python allows us to conduct a <i>pooled t-test</i> using the
+                            <code>ttest_ind_from_stats()</code>
+                            over the <code>stats</code> module from the <code>scipy</code> package.
+                        </p>
 
-            <p>
-                We will again load the <code>students</code> data set:
-            </p>
+                        <p>
+                            We will again load the <code>students</code> data set:
+                        </p>
 
-            <pre class="plain"><code>>>> import pandas as pd
+                        <pre class="plain"><code>>>> import pandas as pd
 >>> import numpy as np
 >>> 
 >>> students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")</code></pre>
 
-            <p>
-                We will examine the mean annual salary (in Euros) of graduates to determine whether
-                there are statistically significant differences between male and female students. The key question is
-                whether gender influences the mean salary of graduates.
-            </p>
+                        <p>
+                            We will examine the mean annual salary (in Euros) of graduates to determine whether
+                            there are statistically significant differences between male and female students. The key
+                            question is
+                            whether gender influences the mean salary of graduates.
+                        </p>
 
-            <p>
-                In order to do this we need to first prepare the data. The following code speaks for itself:
-            </p>
+                        <p>
+                            In order to do this we need to first prepare the data. The following code speaks for itself:
+                        </p>
 
-            <pre class="plain"><code>>>> graduated_students = students.loc[students.graduated == 1]
+                        <pre class="plain"><code>>>> graduated_students = students.loc[students.graduated == 1]
 >>> males_graduated = graduated_students.loc[students.gender == "Male"]
 >>> females_graduated = graduated_students.loc[students.gender == "Female"]
 >>> 
@@ -638,18 +717,20 @@ TtestResult(statistic=np.float64(1.1620080498483334), pvalue=np.float64(0.278724
 >>> print(np.mean(sample_females))
 35825.54641661087</code></pre>
 
-            <p>
-                We test the normaility assumption by plotting a normal probability plot,
-                often referred to as <a href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot" target="_blank">Q-Q
-                    plot</a>.
-                If the variable is normally distributed, the normal probability plot should be roughly linear.
-            </p>
+                        <p>
+                            We test the normaility assumption by plotting a normal probability plot,
+                            often referred to as <a href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot"
+                                target="_blank">Q-Q
+                                plot</a>.
+                            If the variable is normally distributed, the normal probability plot should be roughly
+                            linear.
+                        </p>
 
-            <p>
-                We will switch to VS Code to write the following code and display the graph.
-            </p>
+                        <p>
+                            We will switch to VS Code to write the following code and display the graph.
+                        </p>
 
-            <pre class="plain"><code># Rest of the code
+                        <pre class="plain"><code># Rest of the code
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 
@@ -667,39 +748,44 @@ ax.set_ylabel("Sample quantiles")
 
 plt.show(block=True)</code></pre>
 
-            <div class="img-div">
-                <img src="images/qq_plot_male_female_salary.png" alt="two-sided critical value">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/qq_plot_male_female_salary.png" alt="two-sided critical value">
+                        </div>
 
-            <p>
-                We see that the sample data is somehow noisy, but it is still roughly normally distributed. The
-                deviations from the straight line in the upper and lower parts suggest, that the probability
-                distribution is slightly skewed.
-            </p>
+                        <p>
+                            We see that the sample data is somehow noisy, but it is still roughly normally distributed.
+                            The
+                            deviations from the straight line in the upper and lower parts suggest, that the probability
+                            distribution is slightly skewed.
+                        </p>
 
-            <p>
-                Further, we check if the standard deviations of the two populations are roughly equal. As a rule of
-                thumb, the condition of equal population standard deviations is met, if the ratio of the larger to the
-                smaller sample standard deviation is less than 2 (<a
-                    href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
-                    target="_blank">Weiss, 2010</a>). Let us assume, that the data of the
-                students data set is a good approximation for the population.
-            </p>
+                        <p>
+                            Further, we check if the standard deviations of the two populations are roughly equal. As a
+                            rule of
+                            thumb, the condition of equal population standard deviations is met, if the ratio of the
+                            larger to the
+                            smaller sample standard deviation is less than 2 (<a
+                                href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
+                                target="_blank">Weiss, 2010</a>). Let us assume, that the data of the
+                            students data set is a good approximation for the population.
+                        </p>
 
-            <pre class="plain"><code>>>> print(np.std(sample_males, ddof = 1))
+                        <pre class="plain"><code>>>> print(np.std(sample_males, ddof = 1))
 9576.164209488374
 >>> print(np.std(sample_females, ddof = 1))
 7200.9719569940535
 >>> print(np.std(sample_males, ddof = 1) / np.std(sample_females, ddof = 1))
 1.3298432859729967</code></pre>
 
-            <p>
-                The ratio is approximately \(1.33\) and thus, we conclude that the equal population standard deviations
-                criterion is fulfilled. A simple visualization technique for evaluating the spread of a variable is to
-                use a box plot.
-            </p>
+                        <p>
+                            The ratio is approximately \(1.33\) and thus, we conclude that the equal population standard
+                            deviations
+                            criterion is fulfilled. A simple visualization technique for evaluating the spread of a
+                            variable is to
+                            use a box plot.
+                        </p>
 
-            <pre class="plain"><code># Rest of the code
+                        <pre class="plain"><code># Rest of the code
 
 import seaborn as sns
 
@@ -713,16 +799,16 @@ sns.boxplot(x='Gender', y='Annual salary in EUR', data=sample_df).set(title='Sam
 
 plt.show(block=True)</code></pre>
 
-            <div class="img-div">
-                <img src="images/box_plot_male_female_salary.png" alt="two-sided critical value">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/box_plot_male_female_salary.png" alt="two-sided critical value">
+                        </div>
 
-            <p>
-                We now conduct the pooled t-test using an already available Python package.
-            </p>
+                        <p>
+                            We now conduct the pooled t-test using an already available Python package.
+                        </p>
 
-            <pre
-                class="plain"><code>>>> from scipy import stats
+                        <pre
+                            class="plain"><code>>>> from scipy import stats
 >>> 
 >>> test_result = stats.ttest_ind(sample_males, sample_females, 
 ...                               equal_var = True, 
@@ -731,84 +817,96 @@ plt.show(block=True)</code></pre>
 >>> test_result
 TtestResult(statistic=np.float64(6.7496330142831065), pvalue=np.float64(5.25205313471519e-10), df=np.float64(98.0))</code></pre>
 
-            <p>
-                We may conclude that at the 1% significance level, the data provides very strong evidence to conclude
-                that the average salary of male graduates is higher than the average salary of female graduates.
-            </p>
+                        <p>
+                            We may conclude that at the 1% significance level, the data provides very strong evidence to
+                            conclude
+                            that the average salary of male graduates is higher than the average salary of female
+                            graduates.
+                        </p>
 
-            <hr>
+                        <hr>
 
-            <span id="TwoPopulationMeansUnequalSD"><b>Inference for Two Independent Population Means with Unequal
-                    Standard Deviations</b></span>
+                        <span id="TwoPopulationMeansUnequalSD"><b>Inference for Two Independent Population Means with
+                                Unequal
+                                Standard Deviations</b></span>
 
-            <p>
-                In cases where we want to test for two population means and the standard deviations are different
-                between the
-                two populations, the so-called non-pooled t-test, or
-                <a href="https://en.wikipedia.org/wiki/Welch's_t-test" target="_blank">Welch’s t-test</a>, is applied.
-            </p>
+                        <p>
+                            In cases where we want to test for two population means and the standard deviations are
+                            different
+                            between the
+                            two populations, the so-called non-pooled t-test, or
+                            <a href="https://en.wikipedia.org/wiki/Welch's_t-test" target="_blank">Welch’s t-test</a>,
+                            is applied.
+                        </p>
 
-            <p>
-                The non-pooled t-test is very similar to the pooled t-test, except for the test statistic \(t\) and the
-                calculation of the degrees of freedom (\(df\)). The test statistic does not use \(s_p\), the pooled
-                standard
-                deviation, and is written as:
-                \[
-                t = \frac{\bar{x}_{1} - \bar{x}_{2}}
-                {\sqrt{\frac{s^{2}_{1}}{n_{1}} + \frac{s^{2}_{2}}{n_{2}} }}
-                \]
-            </p>
+                        <p>
+                            The non-pooled t-test is very similar to the pooled t-test, except for the test statistic
+                            \(t\) and the
+                            calculation of the degrees of freedom (\(df\)). The test statistic does not use \(s_p\), the
+                            pooled
+                            standard
+                            deviation, and is written as:
+                            \[
+                            t = \frac{\bar{x}_{1} - \bar{x}_{2}}
+                            {\sqrt{\frac{s^{2}_{1}}{n_{1}} + \frac{s^{2}_{2}}{n_{2}} }}
+                            \]
+                        </p>
 
-            <p>
-                The denominator of the equation above is the estimator of the standard deviation of
-                \(\bar{x}_1 - \bar{x}_2\), denoted \(s_{\bar{x}_1-\bar{x}_2}\).
-            </p>
+                        <p>
+                            The denominator of the equation above is the estimator of the standard deviation of
+                            \(\bar{x}_1 - \bar{x}_2\), denoted \(s_{\bar{x}_1-\bar{x}_2}\).
+                        </p>
 
-            <p>
-                The test statistic \(t\) has a t-distribution, and the degrees of freedom (df) are given by
-                \[
-                df=\frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}\right)^2}
-                {\frac{\left(\frac{s_1^2}{n_1}\right)^2}{n_1-1}
-                +\frac{\left(\frac{s_2^2}{n_2}\right)^2}{n_2-1}} \text{.}
-                \]
-            </p>
+                        <p>
+                            The test statistic \(t\) has a t-distribution, and the degrees of freedom (df) are given by
+                            \[
+                            df=\frac{\left(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2}\right)^2}
+                            {\frac{\left(\frac{s_1^2}{n_1}\right)^2}{n_1-1}
+                            +\frac{\left(\frac{s_2^2}{n_2}\right)^2}{n_2-1}} \text{.}
+                            \]
+                        </p>
 
-            <p>
-                The non-pooled t-test is robust to moderate violations of the normal population assumption, but it is
-                less
-                robust to outliers (<a
-                    href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
-                    target="_blank">Weiss, 2010</a>).
-            </p>
-            <p>
-                The \(100(1-\alpha)\%\) confidence interval for \(\mu_1 - \mu_2\) is given by
-            </p>
+                        <p>
+                            The non-pooled t-test is robust to moderate violations of the normal population assumption,
+                            but it is
+                            less
+                            robust to outliers (<a
+                                href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
+                                target="_blank">Weiss, 2010</a>).
+                        </p>
+                        <p>
+                            The \(100(1-\alpha)\%\) confidence interval for \(\mu_1 - \mu_2\) is given by
+                        </p>
 
-            <p>
-                \[
-                (\bar{x}_1 - \bar{x}_2)\; \pm\; t^{\ast}
-                \cdot
-                \sqrt{\frac{s_1^{2}}{n_1} + \frac{s_2^{2}}{n_2}}
-                \]
-            </p>
+                        <p>
+                            \[
+                            (\bar{x}_1 - \bar{x}_2)\; \pm\; t^{\ast}
+                            \cdot
+                            \sqrt{\frac{s_1^{2}}{n_1} + \frac{s_2^{2}}{n_2}}
+                            \]
+                        </p>
 
-            <p>
-                where the value of t is obtained from the t-distribution for the given confidence level. The degrees of
-                freedom (df) and obtained using the equation above.
-            </p>
+                        <p>
+                            where the value of t is obtained from the t-distribution for the given confidence level. The
+                            degrees of
+                            freedom (df) and obtained using the equation above.
+                        </p>
 
-            <p>
-                In order to illustrate the non-pooled t-test, we examine the mean annual salary (in euros) of female
-                graduates with respect to their major field of study. Specifically, we want to investigate whether there
-                is a statistically significant difference in the mean salaries of two populations: female students
-                majoring in Political Science and female students majoring in Social Sciences.
-            </p>
+                        <p>
+                            In order to illustrate the non-pooled t-test, we examine the mean annual salary (in euros)
+                            of female
+                            graduates with respect to their major field of study. Specifically, we want to investigate
+                            whether there
+                            is a statistically significant difference in the mean salaries of two populations: female
+                            students
+                            majoring in Political Science and female students majoring in Social Sciences.
+                        </p>
 
-            <p>
-                The following example, written in VS Code, speaks for itself:
-            </p>
+                        <p>
+                            The following example, written in VS Code, speaks for itself:
+                        </p>
 
-            <pre class="plain"><code>female_graduated_students = students.loc[(students.graduated == 1) & (students.gender == "Female")]
+                        <pre class="plain"><code>female_graduated_students = students.loc[(students.graduated == 1) & (students.gender == "Female")]
 political_sc = female_graduated_students.loc[female_graduated_students.major == "Political Science"]
 social_sc = female_graduated_students.loc[female_graduated_students.major == "Social Sciences"]
 
@@ -817,11 +915,11 @@ n = 50
 sample_polt_sc = political_sc.sample(n, random_state = 9)["salary"]
 sample_social_sc = social_sc.sample(n, random_state = 9)["salary"]</code></pre>
 
-            <p>
-                We check whether the data are normally distributed by plotting a Q–Q plot, as we did before:
-            </p>
+                        <p>
+                            We check whether the data are normally distributed by plotting a Q–Q plot, as we did before:
+                        </p>
 
-            <pre class="plain"><code>plt.figure(figsize=(12,5))
+                        <pre class="plain"><code>plt.figure(figsize=(12,5))
 
 ax = plt.subplot(1, 2, 1)
 qq = stats.probplot(sample_polt_sc, dist="norm", plot = plt)
@@ -835,18 +933,20 @@ ax.set_ylabel("Sample quantiles")
 
 plt.show(block=True)</code></pre>
 
-            <div class="img-div">
-                <img src="images/qq_plot_political_social_salary.png" alt="Q-Q plots for sample data">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/qq_plot_political_social_salary.png" alt="Q-Q plots for sample data">
+                        </div>
 
-            <p>
-                The data from both samples fall mostly along a straight line. Therefore, we assume that the data in the
-                students dataset provide a reasonable approximation to the population. We can then visually assess
-                whether the
-                standard deviations of the two populations differ by plotting a box plot.
-            </p>
+                        <p>
+                            The data from both samples fall mostly along a straight line. Therefore, we assume that the
+                            data in the
+                            students dataset provide a reasonable approximation to the population. We can then visually
+                            assess
+                            whether the
+                            standard deviations of the two populations differ by plotting a box plot.
+                        </p>
 
-            <pre class="plain"><code>sample_polt_sc = political_sc.sample(n, random_state = 9)
+                        <pre class="plain"><code>sample_polt_sc = political_sc.sample(n, random_state = 9)
 sample_social_sc = social_sc.sample(n, random_state = 9)
 
 plt.figure(figsize=(11,5))
@@ -867,20 +967,21 @@ sns.boxplot(
 
 plt.show(block=True)</code></pre>
 
-            <div class="img-div">
-                <img src="images/box_plot_political_social_salary.png" alt="Box plots for sample data">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/box_plot_political_social_salary.png" alt="Box plots for sample data">
+                        </div>
 
-            <p>
-                Based on the graphical evaluation, we conclude that the data are roughly normally distributed and that
-                the standard deviations differ from each other.
-            </p>
+                        <p>
+                            Based on the graphical evaluation, we conclude that the data are roughly normally
+                            distributed and that
+                            the standard deviations differ from each other.
+                        </p>
 
-            <p>
-                We now conduct the non-pooled t-test using an existing Python package.
-            </p>
+                        <p>
+                            We now conduct the non-pooled t-test using an existing Python package.
+                        </p>
 
-            <pre class="plain"><code>>>> from scipy import stats
+                        <pre class="plain"><code>>>> from scipy import stats
 >>>
 >>> test_result = stats.ttest_ind(sample_polt_sc["salary"], sample_social_sc["salary"], equal_var = False)
 >>>
@@ -889,94 +990,112 @@ t-value: 2.62318
 >>> print("p-value:", round(test_result.pvalue, 5))
 p-value: 0.01025</code></pre>
 
-            <p>
-                Again, we may conclude that, at the 5% significance level, the data provide strong evidence that
-                the average annual salary of female graduates in Political Science differs from the average annual
-                salary of
-                female graduates in Social Sciences.
-            </p>
+                        <p>
+                            Again, we may conclude that, at the 5% significance level, the data provide strong evidence
+                            that
+                            the average annual salary of female graduates in Political Science differs from the average
+                            annual
+                            salary of
+                            female graduates in Social Sciences.
+                        </p>
 
-            <hr>
+                        <hr>
 
-            <span id="TwoPopulationMeansPairedSamples"><b>Inferences for Two Population Means Using Paired
-                    Samples</b></span>
+                        <span id="TwoPopulationMeansPairedSamples"><b>Inferences for Two Population Means Using Paired
+                                Samples</b></span>
 
-            <p>
-                Let us now turn to a hypothesis-testing procedure for the difference between two population means when
-                the samples are dependent. If, for example, two data values are collected from the same source (or
-                element), these are called paired or matched samples.
-            </p>
+                        <p>
+                            Let us now turn to a hypothesis-testing procedure for the difference between two population
+                            means when
+                            the samples are dependent. If, for example, two data values are collected from the same
+                            source (or
+                            element), these are called paired or matched samples.
+                        </p>
 
-            <p>
-                These procedures are often applied in Before–After–Control–Impact (BACI) analysis. Imagine you are asked
-                to evaluate the effectiveness of a filtering system in removing air pollutants released by a factory.
-                One population consists of air-quality measurements taken before the filtering system is implemented or
-                renewed, and the other population consists of measurements taken after installing the new filter system.
-                In this case, you are dealing with paired samples because both data sets are collected from the same
-                source, i.e., the factory.
-            </p>
+                        <p>
+                            These procedures are often applied in Before–After–Control–Impact (BACI) analysis. Imagine
+                            you are asked
+                            to evaluate the effectiveness of a filtering system in removing air pollutants released by a
+                            factory.
+                            One population consists of air-quality measurements taken before the filtering system is
+                            implemented or
+                            renewed, and the other population consists of measurements taken after installing the new
+                            filter system.
+                            In this case, you are dealing with paired samples because both data sets are collected from
+                            the same
+                            source, i.e., the factory.
+                        </p>
 
-            <p>
-                In paired samples, the difference between the data values of the two samples is denoted by \(d\),
-                often called the paired difference. Note that the sample size \(n\) for each sample is equal. The mean
-                of
-                the paired differences is denoted by \(\bar{d}\):
-                \[
-                \bar{d} = \frac{\sum d}{n}
-                \]
-            </p>
+                        <p>
+                            In paired samples, the difference between the data values of the two samples is denoted by
+                            \(d\),
+                            often called the paired difference. Note that the sample size \(n\) for each sample is
+                            equal. The mean
+                            of
+                            the paired differences is denoted by \(\bar{d}\):
+                            \[
+                            \bar{d} = \frac{\sum d}{n}
+                            \]
+                        </p>
 
-            <p>
-                The standard deviation of the paired differences, \(s_d\), is calculated as:
-                \[
-                s_d = \sqrt{\frac{\sum d^{2} - \frac{(\sum d)^{2}}{n}}{n - 1}}
-                \]
-            </p>
+                        <p>
+                            The standard deviation of the paired differences, \(s_d\), is calculated as:
+                            \[
+                            s_d = \sqrt{\frac{\sum d^{2} - \frac{(\sum d)^{2}}{n}}{n - 1}}
+                            \]
+                        </p>
 
-            <p>
-                Suppose that the paired-difference variable \(d\) is normally distributed. Then the paired t-statistic
-                is
-                expressed as:
-                \[
-                t = \frac{\bar{d} - (\mu_{1} - \mu_{2})}{\frac{s_d}{\sqrt{n}}}
-                \]
-            </p>
+                        <p>
+                            Suppose that the paired-difference variable \(d\) is normally distributed. Then the paired
+                            t-statistic
+                            is
+                            expressed as:
+                            \[
+                            t = \frac{\bar{d} - (\mu_{1} - \mu_{2})}{\frac{s_d}{\sqrt{n}}}
+                            \]
+                        </p>
 
-            <p>
-                This simplifies to \(t = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}}\) when \(\mu_{1} - \mu_{2} = 0\).
-                The test statistic \(t\) for paired samples follows a t-distribution with \(n - 1\) degrees of freedom.
-            </p>
+                        <p>
+                            This simplifies to \(t = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}}\) when \(\mu_{1} - \mu_{2} =
+                            0\).
+                            The test statistic \(t\) for paired samples follows a t-distribution with \(n - 1\) degrees
+                            of freedom.
+                        </p>
 
-            <p>
-                The 100(1 − \(\alpha\))% confidence interval for \(\mu_d\) is:
-                \[
-                \bar{d} \pm t \times \frac{s_d}{\sqrt{n}}
-                \]
-                where the value of \(t\) is obtained from the t-distribution for the given confidence level and
-                \(n - 1\) degrees of freedom.
-            </p>
+                        <p>
+                            The 100(1 − \(\alpha\))% confidence interval for \(\mu_d\) is:
+                            \[
+                            \bar{d} \pm t \times \frac{s_d}{\sqrt{n}}
+                            \]
+                            where the value of \(t\) is obtained from the t-distribution for the given confidence level
+                            and
+                            \(n - 1\) degrees of freedom.
+                        </p>
 
-            <p>
-                To demonstrate the paired t-test for dependent samples, we will investigate whether an online
-                statistics learning tutorial helps students improve their grades.
-            </p>
+                        <p>
+                            To demonstrate the paired t-test for dependent samples, we will investigate whether an
+                            online
+                            statistics learning tutorial helps students improve their grades.
+                        </p>
 
-            <p>
-                There are two research questions of interest:
-            </p>
+                        <p>
+                            There are two research questions of interest:
+                        </p>
 
-            <p>
-                1. We want to examine whether the group of students who attended the online statistics tutorial
-                performed better on the second exam compared to the first exam.<br>
-                2. We also want to test how the group of students who did not attend the tutorial performed on
-                both exams.
-            </p>
+                        <p>
+                            1. We want to examine whether the group of students who attended the online statistics
+                            tutorial
+                            performed better on the second exam compared to the first exam.<br>
+                            2. We also want to test how the group of students who did not attend the tutorial performed
+                            on
+                            both exams.
+                        </p>
 
-            <p>
-                The following code loads the data and selects the relevant sample.
-            </p>
+                        <p>
+                            The following code loads the data and selects the relevant sample.
+                        </p>
 
-            <pre class="plain"><code>import pandas as pd
+                        <pre class="plain"><code>import pandas as pd
 import numpy as np
 
 students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
@@ -987,11 +1106,11 @@ subset = students.loc[students["online.tutorial"] == 1]
 
 sample = subset.sample(n, random_state = 9)[["score1", "score2"]]</code></pre>
 
-            <p>
-                Next, we compute the paired differences, \(d\), and visualize them:
-            </p>
+                        <p>
+                            Next, we compute the paired differences, \(d\), and visualize them:
+                        </p>
 
-            <pre class="plain"><code>import matplotlib.pyplot as plt
+                        <pre class="plain"><code>import matplotlib.pyplot as plt
 import seaborn as sns
 
 plt.figure(figsize=(9,6))
@@ -1010,17 +1129,18 @@ ax.get_xaxis().set_visible(False)
 
 plt.show(block=True)</code></pre>
 
-            <div class="img-div">
-                <img src="images/paired_differences.png" alt="Paired differences plot">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/paired_differences.png" alt="Paired differences plot">
+                        </div>
 
-            <p>
-                The plot looks as expected: some students performed better on the first exam than on the second,
-                and others performed better on the second exam.
-                To check the normality assumption, we rely on a visual inspection using a Q–Q plot.
-            </p>
+                        <p>
+                            The plot looks as expected: some students performed better on the first exam than on the
+                            second,
+                            and others performed better on the second exam.
+                            To check the normality assumption, we rely on a visual inspection using a Q–Q plot.
+                        </p>
 
-            <pre class="plain"><code>import scipy.stats as stats
+                        <pre class="plain"><code>import scipy.stats as stats
 
 plt.figure(figsize=(12,5))
 fig, ax = plt.subplots()
@@ -1029,20 +1149,20 @@ qq = stats.probplot(d, dist="norm", plot = plt)
 ax.set_title("Q–Q plot for differences in exam scores")
 ax.set_ylabel("Sample quantiles")</code></pre>
 
-            <div class="img-div">
-                <img src="images/qq_plot_paired_differences.png" alt="Q–Q plot of paired differences">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/qq_plot_paired_differences.png" alt="Q–Q plot of paired differences">
+                        </div>
 
-            <p>
-                The pattern is somewhat noisy, but the points generally follow the reference line,
-                suggesting that the paired differences are approximately normally distributed.
-            </p>
+                        <p>
+                            The pattern is somewhat noisy, but the points generally follow the reference line,
+                            suggesting that the paired differences are approximately normally distributed.
+                        </p>
 
-            <p>
-                We now conduct the paired t-test using a Python package.
-            </p>
+                        <p>
+                            We now conduct the paired t-test using a Python package.
+                        </p>
 
-            <pre class="plain"><code>>>> from scipy import stats
+                        <pre class="plain"><code>>>> from scipy import stats
 >>> 
 >>> test_result = stats.ttest_rel(sample["score1"], sample["score2"], alternative = "less")
 >>> 
@@ -1051,20 +1171,20 @@ t-value: -1.84743
 >>> print("p-value:", round(test_result.pvalue, 5))
 p-value: 0.03465</code></pre>
 
-            <p>
-                At the 5% significance level, the data provide sufficient evidence to conclude that
-                students’ exam scores improve after taking the online statistics tutorial.
-            </p>
+                        <p>
+                            At the 5% significance level, the data provide sufficient evidence to conclude that
+                            students’ exam scores improve after taking the online statistics tutorial.
+                        </p>
 
-            <p>
-                There is still one research question to be answered: What if there are other reasons
-                for better grades on the second exam? What if the second exam was easier? What if the
-                students simply improved over the semester because of a great lecturer? We test this
-                hypothesis by conducting a paired t-test specifically for those students who did not
-                take the online statistics tutorial.
-            </p>
+                        <p>
+                            There is still one research question to be answered: What if there are other reasons
+                            for better grades on the second exam? What if the second exam was easier? What if the
+                            students simply improved over the semester because of a great lecturer? We test this
+                            hypothesis by conducting a paired t-test specifically for those students who did not
+                            take the online statistics tutorial.
+                        </p>
 
-            <pre class="plain"><code>>>> sample = students.loc[students["online.tutorial"] == 0].dropna().sample(n, random_state = 10)[["score1", "score2"]]
+                        <pre class="plain"><code>>>> sample = students.loc[students["online.tutorial"] == 0].dropna().sample(n, random_state = 10)[["score1", "score2"]]
 >>> 
 >>> test_result = stats.ttest_rel(sample["score1"], sample["score2"], alternative = "less")
 >>> 
@@ -1073,75 +1193,86 @@ t-value: 0.68109
 >>> print("p-value:", round(test_result.pvalue, 5))
 p-value: 0.75086</code></pre>
 
-            <p>
-                The p-value is greater than the significance level of 0.05, so we do not reject \(H_0\).
-                The test is not statistically significant and therefore does not provide sufficient
-                evidence against the null hypothesis.
-            </p>
+                        <p>
+                            The p-value is greater than the significance level of 0.05, so we do not reject \(H_0\).
+                            The test is not statistically significant and therefore does not provide sufficient
+                            evidence against the null hypothesis.
+                        </p>
 
-            <p>
-                At the 5% significance level, the data do not provide sufficient evidence to conclude
-                that the exam grades of students who did not attend the online tutorial improved.
-            </p>
+                        <p>
+                            At the 5% significance level, the data do not provide sufficient evidence to conclude
+                            that the exam grades of students who did not attend the online tutorial improved.
+                        </p>
 
-            <!--
+                        <!--
             I may add these exercises later: 
             https://www.geo.fu-berlin.de/en/v/soga-py/Basics-of-statistics/Hypothesis-Tests/Hypothesis-Tests-for-Two-Population-Means/Hypothesis-Tests-for-Two-Population-Means-Exercises/index.html
             -->
 
-            <hr>
+                        <hr>
 
-            <span id="InferencesOnePopulationSD"><b>Inferences for One Population Standard Deviation</b></span>
+                        <span id="InferencesOnePopulationSD"><b>Inferences for One Population Standard
+                                Deviation</b></span>
 
-            <p>
-                So far, we have discussed methods of inferential statistics that focus on making inferences
-                about one or more population means. We will now consider methods of
-                inferential statistics that focus on inferences for population variances (or standard deviations).
-            </p>
+                        <p>
+                            So far, we have discussed methods of inferential statistics that focus on making inferences
+                            about one or more population means. We will now consider methods of
+                            inferential statistics that focus on inferences for population variances (or standard
+                            deviations).
+                        </p>
 
-            <p>
-                The test statistic for a hypothesis test concerning the population standard deviation, with the null
-                hypothesis \(H_0: \sigma = \sigma_0\), for a normally distributed variable is calculated as:
-                \[
-                \chi^{2} = \frac{(n - 1) s^{2}}{\sigma^{2}_{0}} \text{.}
-                \]
-            </p>
+                        <p>
+                            The test statistic for a hypothesis test concerning the population standard deviation, with
+                            the null
+                            hypothesis \(H_0: \sigma = \sigma_0\), for a normally distributed variable is calculated as:
+                            \[
+                            \chi^{2} = \frac{(n - 1) s^{2}}{\sigma^{2}_{0}} \text{.}
+                            \]
+                        </p>
 
-            <p>
-                This statistic follows a chi-square distribution, which is why it is denoted by the symbol \(\chi^2\),
-                with \(n - 1\) degrees of freedom.
-            </p>
+                        <p>
+                            This statistic follows a chi-square distribution, which is why it is denoted by the symbol
+                            \(\chi^2\),
+                            with \(n - 1\) degrees of freedom.
+                        </p>
 
-            <p>
-                The \(100(1-\alpha)\%\) confidence interval for \(\sigma\) is given by:
-                \[\sqrt { \frac {n - 1} {\chi^2_{\alpha / 2}}} \le \sigma \le \sqrt { \frac{n - 1} {\chi^2_{1 - \alpha /
-                2}} }\text{,}\]
-            </p>
+                        <p>
+                            The \(100(1-\alpha)\%\) confidence interval for \(\sigma\) is given by:
+                            \[\sqrt { \frac {n - 1} {\chi^2_{\alpha / 2}}} \le \sigma \le \sqrt { \frac{n - 1}
+                            {\chi^2_{1 - \alpha /
+                            2}} }\text{,}\]
+                        </p>
 
-            <p>
-                where \(n\) is the sample size of the sample data.
-            </p>
+                        <p>
+                            where \(n\) is the sample size of the sample data.
+                        </p>
 
-            <p>
-                It is important to note that the chi-square test for standard deviation is not robust to violations of
-                the normality assumption. If the data is not normally distributed, the results of the test may be
-                unreliable (<a href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
-                    target="_blank">Weiss, 2010</a>).
-            </p>
+                        <p>
+                            It is important to note that the chi-square test for standard deviation is not robust to
+                            violations of
+                            the normality assumption. If the data is not normally distributed, the results of the test
+                            may be
+                            unreliable (<a
+                                href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
+                                target="_blank">Weiss, 2010</a>).
+                        </p>
 
-            <p>
-                In order to showcase the one standard deviation \(\chi^2\)-test, we examine the spread of the height in
-                cm of
-                female students and compare it to the spread of the height of all students (our population). We want to
-                test whether the standard deviation of the height of female students is significantly smaller than the
-                standard deviation of the height of all students.
-            </p>
+                        <p>
+                            In order to showcase the one standard deviation \(\chi^2\)-test, we examine the spread of
+                            the height in
+                            cm of
+                            female students and compare it to the spread of the height of all students (our population).
+                            We want to
+                            test whether the standard deviation of the height of female students is significantly
+                            smaller than the
+                            standard deviation of the height of all students.
+                        </p>
 
-            <p>
-                The following code speaks for itself:
-            </p>
+                        <p>
+                            The following code speaks for itself:
+                        </p>
 
-            <pre class="plain"><code>import pandas as pd
+                        <pre class="plain"><code>import pandas as pd
 import numpy as np
 
 students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
@@ -1156,11 +1287,11 @@ female_height_sample = female_students.sample(n, random_state = 12)["height"]
 
 sample_sd = np.std(female_height_sample, ddof = 1)</code></pre>
 
-            <p>
-                We check the normality assumption by plotting a Q–Q plot:
-            </p>
+                        <p>
+                            We check the normality assumption by plotting a Q–Q plot:
+                        </p>
 
-            <pre class="plain"><code>import matplotlib.pyplot as plt
+                        <pre class="plain"><code>import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 plt.figure(figsize=(12,5))
@@ -1173,21 +1304,22 @@ ax.set_ylabel("Sample quantiles")
 plt.show(block=True)</code></pre>
 
 
-            <div class="img-div">
-                <img src="images/qq_plot_female_weight.png" alt="two-sided critical value">
-            </div>
+                        <div class="img-div">
+                            <img src="../images/qq_plot_female_weight.png" alt="two-sided critical value">
+                        </div>
 
-            <p>
-                As we can see, the data falls roughly along a straight line. Based on this graphical evaluation,
-                we conclude that the variable of interest is approximately normally distributed.
-            </p>
+                        <p>
+                            As we can see, the data falls roughly along a straight line. Based on this graphical
+                            evaluation,
+                            we conclude that the variable of interest is approximately normally distributed.
+                        </p>
 
-            <p>
-                We now conduct the one–standard-deviation \(\chi^2\) test from scratch in Python.
-                The null hypothesis is \(H_0: \sigma = \sigma_0\), and the alternative hypothesis is
-                \(H_1: \sigma < \sigma_0\). We choose a significance level of \(\alpha=0.05\). </p>
+                        <p>
+                            We now conduct the one–standard-deviation \(\chi^2\) test from scratch in Python.
+                            The null hypothesis is \(H_0: \sigma = \sigma_0\), and the alternative hypothesis is
+                            \(H_1: \sigma < \sigma_0\). We choose a significance level of \(\alpha=0.05\). </p>
 
-                    <pre class="plain"><code>from scipy.stats import chi2
+                                <pre class="plain"><code>from scipy.stats import chi2
 
 chi_squared_value = ((n - 1) / (sigma_0**2)) * sample_sd**2
 print(chi_squared_value)
@@ -1197,77 +1329,91 @@ df = n - 1
 p = chi2.cdf(chi_squared_value, df = df)
 print(p)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>20.44603451476297
+                                <pre class="plain"><code>20.44603451476297
 0.12147734513377556</code></pre>
 
-                    <p>
-                        As we can see, the p-value is greater than the specified significance level of 0.05.
-                        Therefore, at the 5% significance level, the data does not provide sufficient evidence
-                        that the standard deviation of the heights of female students is smaller than the population
-                        standard deviation.
-                    </p>
+                                <p>
+                                    As we can see, the p-value is greater than the specified significance level of 0.05.
+                                    Therefore, at the 5% significance level, the data does not provide sufficient
+                                    evidence
+                                    that the standard deviation of the heights of female students is smaller than the
+                                    population
+                                    standard deviation.
+                                </p>
 
-                    <hr>
+                                <hr>
 
-                    <span id="InferencesTwoPopulationSD"><b>Inferences for Two Population Standard Deviations</b></span>
+                                <span id="InferencesTwoPopulationSD"><b>Inferences for Two Population Standard
+                                        Deviations</b></span>
 
-                    <p>
-                        In this section, we discuss hypothesis tests for two population standard deviations. In other
-                        words, we present methods of inference for the standard deviations of one variable from two
-                        different populations. These methods are based on the
-                        <a href="https://en.wikipedia.org/wiki/F-distribution" target="_blank">F-distribution</a>,
-                        named in honour of
-                        <a href="https://en.wikipedia.org/wiki/Ronald_Fisher" target="_blank">Sir Ronald Aylmer
-                            Fisher</a>.
-                    </p>
+                                <p>
+                                    In this section, we discuss hypothesis tests for two population standard deviations.
+                                    In other
+                                    words, we present methods of inference for the standard deviations of one variable
+                                    from two
+                                    different populations. These methods are based on the
+                                    <a href="https://en.wikipedia.org/wiki/F-distribution"
+                                        target="_blank">F-distribution</a>,
+                                    named in honour of
+                                    <a href="https://en.wikipedia.org/wiki/Ronald_Fisher" target="_blank">Sir Ronald
+                                        Aylmer
+                                        Fisher</a>.
+                                </p>
 
-                    <p>
-                        The \(F\)-distribution is a right-skewed probability distribution with two shape parameters,
-                        \(v_1\) and \(v_2\), called the degrees of freedom for the numerator (\(v_1\)) and the
-                        denominator (\(v_2\)).
-                        \[df = (v_1, v_2)\]
-                    </p>
+                                <p>
+                                    The \(F\)-distribution is a right-skewed probability distribution with two shape
+                                    parameters,
+                                    \(v_1\) and \(v_2\), called the degrees of freedom for the numerator (\(v_1\)) and
+                                    the
+                                    denominator (\(v_2\)).
+                                    \[df = (v_1, v_2)\]
+                                </p>
 
-                    <p>
-                        To perform a hypothesis test for two population standard deviations, we calculate the value
-                        corresponding to a specified area under an \(F\)-curve.
-                    </p>
+                                <p>
+                                    To perform a hypothesis test for two population standard deviations, we calculate
+                                    the value
+                                    corresponding to a specified area under an \(F\)-curve.
+                                </p>
 
-                    <p>
-                        The hypothesis-testing procedure for two standard deviations is called the
-                        two-standard-deviations \(F\)-test.
-                    </p>
+                                <p>
+                                    The hypothesis-testing procedure for two standard deviations is called the
+                                    two-standard-deviations \(F\)-test.
+                                </p>
 
-                    <p>
-                        The test statistic for a hypothesis test involving a normally distributed variable and
-                        independent samples of sizes \(n_1\) and \(n_2\) is given by
-                        \[F = \frac {s_{1}^{2} / \sigma_{1}^{2}} {s_{2}^{2} / \sigma_{2}^{2}} \text{,}\]
-                    </p>
+                                <p>
+                                    The test statistic for a hypothesis test involving a normally distributed variable
+                                    and
+                                    independent samples of sizes \(n_1\) and \(n_2\) is given by
+                                    \[F = \frac {s_{1}^{2} / \sigma_{1}^{2}} {s_{2}^{2} / \sigma_{2}^{2}} \text{,}\]
+                                </p>
 
-                    <p>
-                        with \(df = (n_1 - 1, n_2 - 1)\).
-                    </p>
+                                <p>
+                                    with \(df = (n_1 - 1, n_2 - 1)\).
+                                </p>
 
-                    <p>
-                        If \(H_0: \sigma_1 = \sigma_2\) is true, then the equation simplifies to
-                        \[F = \frac {s_{1}^{2}} {s_{2}^{2}} \text{.}\]
-                    </p>
+                                <p>
+                                    If \(H_0: \sigma_1 = \sigma_2\) is true, then the equation simplifies to
+                                    \[F = \frac {s_{1}^{2}} {s_{2}^{2}} \text{.}\]
+                                </p>
 
-                    <p>
-                        To illustrate the two-standard-deviations \(F\)-test, we once again examine the height
-                        variable in the students data set. We want to investigate whether the standard deviation of
-                        the height of female students (\(\sigma_1\)) is statistically different from the standard
-                        deviation of
-                        the height of male students (\(\sigma_2\)).
-                    </p>
+                                <p>
+                                    To illustrate the two-standard-deviations \(F\)-test, we once again examine the
+                                    height
+                                    variable in the students data set. We want to investigate whether the standard
+                                    deviation of
+                                    the height of female students (\(\sigma_1\)) is statistically different from the
+                                    standard
+                                    deviation of
+                                    the height of male students (\(\sigma_2\)).
+                                </p>
 
-                    <p>
-                        The following code speaks for itself:
-                    </p>
+                                <p>
+                                    The following code speaks for itself:
+                                </p>
 
-                    <pre class="plain"><code>import pandas as pd
+                                <pre class="plain"><code>import pandas as pd
 import numpy as np
 
 students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
@@ -1280,11 +1426,11 @@ males_sample_height = students.loc[students.gender == "Male"].sample(n, random_s
 sample_std_females = np.std(females_sample_height, ddof = 1)
 sample_std_males = np.std(males_sample_height, ddof = 1)</code></pre>
 
-                    <p>
-                        We check the normality assumption by plotting a Q-Q plot.
-                    </p>
+                                <p>
+                                    We check the normality assumption by plotting a Q-Q plot.
+                                </p>
 
-                    <pre class="plain"><code>import matplotlib.pyplot as plt
+                                <pre class="plain"><code>import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 plt.figure(figsize=(12,5))
@@ -1302,23 +1448,26 @@ ax.set_ylabel("Sample quantiles")
 plt.show(block=True)</code></pre>
 
 
-                    <div class="img-div">
-                        <img src="images/qq_plot_male_female_height.png" alt="two-sided critical value">
-                    </div>
+                                <div class="img-div">
+                                    <img src="../images/qq_plot_male_female_height.png" alt="two-sided critical value">
+                                </div>
 
-                    <p>
-                        The data of both samples falls roughly onto a straight line. Based on the graphical evaluation
-                        approach we conclude that the data is normally distributed.
-                    </p>
+                                <p>
+                                    The data of both samples falls roughly onto a straight line. Based on the graphical
+                                    evaluation
+                                    approach we conclude that the data is normally distributed.
+                                </p>
 
-                    <p>
-                        We now conduct the two standard deviations \(F\)-test. The null hypothesis is \(H_0: \sigma_1 =
-                        \sigma_2\), and the alternative hypothesis is
-                        \(H_1: \sigma_1 \neq \sigma_2\). This formulation results in a two-sided hypothesis test.
-                        We choose a significance level of \(\alpha=0.05\).
-                    </p>
+                                <p>
+                                    We now conduct the two standard deviations \(F\)-test. The null hypothesis is \(H_0:
+                                    \sigma_1 =
+                                    \sigma_2\), and the alternative hypothesis is
+                                    \(H_1: \sigma_1 \neq \sigma_2\). This formulation results in a two-sided hypothesis
+                                    test.
+                                    We choose a significance level of \(\alpha=0.05\).
+                                </p>
 
-                    <pre class="plain"><code>from scipy.stats import f
+                                <pre class="plain"><code>from scipy.stats import f
 
 F_statistic = (sample_std_males**2) / (sample_std_females ** 2)
 print(F_statistic)
@@ -1328,73 +1477,83 @@ df_1 = df_2 = n - 1
 p_value = f.cdf(F_statistic, df_1, df_2)
 print(p_value)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>1.3901443625510146
+                                <pre class="plain"><code>1.3901443625510146
 0.7872008348344762</code></pre>
 
-                    <p>
-                        The p-value is greater than the specified significance level of 0.05. At the 5% significance
-                        level the data does not provide sufficient evidence to conclude, that the standard deviations of
-                        the heights of female and male students differ significantly from each other.
-                    </p>
+                                <p>
+                                    The p-value is greater than the specified significance level of 0.05. At the 5%
+                                    significance
+                                    level the data does not provide sufficient evidence to conclude, that the standard
+                                    deviations of
+                                    the heights of female and male students differ significantly from each other.
+                                </p>
 
-                    <p><i>More on Bartlett’s test and Levene’s test later!</i></p>
+                                <p><i>More on Bartlett’s test and Levene’s test later!</i></p>
 
-                    <hr>
+                                <hr>
 
-                    <span id="ChiSquareGoodnessofFitTest"><b>Chi-Square Goodness-of-Fit Test</b></span>
+                                <span id="ChiSquareGoodnessofFitTest"><b>Chi-Square Goodness-of-Fit Test</b></span>
 
-                    <p>
-                        The \(\chi^2\)-goodness-of-fit test is used to perform hypothesis tests on the distribution
-                        of a qualitative (categorical) variable or on a discrete quantitative variable that has only
-                        finitely many possible values.
-                    </p>
+                                <p>
+                                    The \(\chi^2\)-goodness-of-fit test is used to perform hypothesis tests on the
+                                    distribution
+                                    of a qualitative (categorical) variable or on a discrete quantitative variable that
+                                    has only
+                                    finitely many possible values.
+                                </p>
 
-                    <p>
-                        The basic idea of the \(\chi^2\)-goodness-of-fit test is to compare frequencies. We compare a
-                        sample’s observed frequencies with the corresponding expected frequencies.
-                    </p>
+                                <p>
+                                    The basic idea of the \(\chi^2\)-goodness-of-fit test is to compare frequencies. We
+                                    compare a
+                                    sample’s observed frequencies with the corresponding expected frequencies.
+                                </p>
 
-                    <p>
-                        To illustrate the \(\chi^2\)-goodness-of-fit test, we examine whether religions are equally
-                        distributed among students compared with the distribution of religions in the population of the
-                        European Union. The data at the continental level are provided in the report
-                        “Discrimination in the EU in 2012”
-                        (<a href="https://health.ec.europa.eu/publications/discrimination-eu-2012_en"
-                            target="_blank">European Union: European Commission, Special Eurobarometer 393, p. 233</a>).
-                    </p>
+                                <p>
+                                    To illustrate the \(\chi^2\)-goodness-of-fit test, we examine whether religions are
+                                    equally
+                                    distributed among students compared with the distribution of religions in the
+                                    population of the
+                                    European Union. The data at the continental level are provided in the report
+                                    “Discrimination in the EU in 2012”
+                                    (<a href="https://health.ec.europa.eu/publications/discrimination-eu-2012_en"
+                                        target="_blank">European Union: European Commission, Special Eurobarometer 393,
+                                        p. 233</a>).
+                                </p>
 
-                    <p>
-                        The \(\chi^2\) test statistic for a goodness-of-fit test is given by:
-                        \[\chi^{2} = \sum \frac{(O - E)^{2}}{E}\]
-                    </p>
+                                <p>
+                                    The \(\chi^2\) test statistic for a goodness-of-fit test is given by:
+                                    \[\chi^{2} = \sum \frac{(O - E)^{2}}{E}\]
+                                </p>
 
-                    <p>
-                        Where \(O\) represents the observed frequencies and \(E\) represents the expected frequencies.
-                        If the null hypothesis is true, the test statistic \(\chi^2\) follows a chi-square distribution.
-                    </p>
+                                <p>
+                                    Where \(O\) represents the observed frequencies and \(E\) represents the expected
+                                    frequencies.
+                                    If the null hypothesis is true, the test statistic \(\chi^2\) follows a chi-square
+                                    distribution.
+                                </p>
 
-                    <p>
-                        The report provides data for eight categories of how people described themselves:
-                    </p>
+                                <p>
+                                    The report provides data for eight categories of how people described themselves:
+                                </p>
 
-                    <ul>
-                        <li>48% as Catholic</li>
-                        <li>16% as Non-believers/Agnostic</li>
-                        <li>12% as Protestant</li>
-                        <li>8% as Orthodox</li>
-                        <li>7% as Atheist</li>
-                        <li>4% as Other Christian</li>
-                        <li>3% as Other religion/None stated</li>
-                        <li>2% as Muslim</li>
-                    </ul>
+                                <ul>
+                                    <li>48% as Catholic</li>
+                                    <li>16% as Non-believers/Agnostic</li>
+                                    <li>12% as Protestant</li>
+                                    <li>8% as Orthodox</li>
+                                    <li>7% as Atheist</li>
+                                    <li>4% as Other Christian</li>
+                                    <li>3% as Other religion/None stated</li>
+                                    <li>2% as Muslim</li>
+                                </ul>
 
-                    <p>
-                        We plot the data as a pie chart for better understanding:
-                    </p>
+                                <p>
+                                    We plot the data as a pie chart for better understanding:
+                                </p>
 
-                    <pre class="plain"><code>import pandas as pd
+                                <pre class="plain"><code>import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -1409,66 +1568,73 @@ data.plot.pie(colors = sns.color_palette("Set3", 8))
 
 plt.show(block=True)</code></pre>
 
-                    <div class="img-div">
-                        <img src="images/pie_chart_religion_distribution.png" alt="Pie chart of religion distribution">
-                    </div>
+                                <div class="img-div">
+                                    <img src="../images/pie_chart_religion_distribution.png"
+                                        alt="Pie chart of religion distribution">
+                                </div>
 
-                    <p>
-                        First, we want to know which categories are available in the <i>students</i> data set for the
-                        column <code>religion</code>. Therefore, we apply the <code>unique()</code> method, which
-                        returns
-                        the levels (categories) of a variable:
-                    </p>
+                                <p>
+                                    First, we want to know which categories are available in the <i>students</i> data
+                                    set for the
+                                    column <code>religion</code>. Therefore, we apply the <code>unique()</code> method,
+                                    which
+                                    returns
+                                    the levels (categories) of a variable:
+                                </p>
 
-                    <pre class="plain"><code>import pandas as pd
+                                <pre class="plain"><code>import pandas as pd
 import numpy as np
 
 students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
 
 print(students["religion"].unique())</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>['Muslim' 'Other' 'Protestant' 'Catholic' 'Orthodox']</code></pre>
+                                <pre
+                                    class="plain"><code>['Muslim' 'Other' 'Protestant' 'Catholic' 'Orthodox']</code></pre>
 
-                    <p>
-                        In the <i>students</i> data set there are only 5 categories compared to the 8 categories
-                        above. Therefore, we need to combine some of the original categories:
-                    </p>
+                                <p>
+                                    In the <i>students</i> data set there are only 5 categories compared to the 8
+                                    categories
+                                    above. Therefore, we need to combine some of the original categories:
+                                </p>
 
-                    <pre class="plain"><code>data_raw = [48, 2, 8, (16 + 7 + 4 + 3), 12]
+                                <pre class="plain"><code>data_raw = [48, 2, 8, (16 + 7 + 4 + 3), 12]
 religions = ["Catholic", "Muslim", "Orthodox", "Other", "Protestant"]
 
 data = pd.Series(data_raw, index = religions, name = "relative_frequency") / 100
 
 print(data.to_frame())</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>            relative_frequency
+                                <pre class="plain"><code>            relative_frequency
 Catholic                  0.48
 Muslim                    0.02
 Orthodox                  0.08
 Other                     0.30
 Protestant                0.12</code></pre>
 
-                    <p>
-                        Now we take a random sample based on the <i>students</i> data set. The sample size is \(n =
-                        256\).
-                        Afterwards, we count the number of students in each religion category using the
-                        <code>groupby()</code> function. Recall that this quantity corresponds to the observed
-                        frequencies.
-                    </p>
+                                <p>
+                                    Now we take a random sample based on the <i>students</i> data set. The sample size
+                                    is \(n =
+                                    256\).
+                                    Afterwards, we count the number of students in each religion category using the
+                                    <code>groupby()</code> function. Recall that this quantity corresponds to the
+                                    observed
+                                    frequencies.
+                                </p>
 
-                    <pre class="plain"><code>n = 256
+                                <pre class="plain"><code>n = 256
 
 sample = students.sample(n, random_state = 8).groupby(["religion"])
 
 print(sample.size().to_frame("Observed Frequencies"))</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>            Observed Frequencies
+                                <pre class="plain"><code>            Observed Frequencies
 religion                         
 Catholic                      80
 Muslim                        12
@@ -1476,171 +1642,193 @@ Orthodox                      21
 Other                        104
 Protestant                    39</code></pre>
 
-                    <p>
-                        Let's combine both pieces of information into a nice-looking table by converting them into a
-                        <code>pandas</code> <code>DataFrame</code> object:
-                    </p>
+                                <p>
+                                    Let's combine both pieces of information into a nice-looking table by converting
+                                    them into a
+                                    <code>pandas</code> <code>DataFrame</code> object:
+                                </p>
 
-                    <pre class="plain"><code>df = pd.DataFrame({'relative frequencies' : data,
+                                <pre class="plain"><code>df = pd.DataFrame({'relative frequencies' : data,
                    'observed frequencies' : sample.size()})
 
 print(df)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>            relative frequencies  observed frequencies
+                                <pre class="plain"><code>            relative frequencies  observed frequencies
 Catholic                    0.48                    80
 Muslim                      0.02                    12
 Orthodox                    0.08                    21
 Other                       0.30                   104
 Protestant                  0.12                    39</code></pre>
 
-                    <p>
-                        In the next step, we calculate the expected frequencies and add this information as a separate
-                        column to our existing DataFrame <code>df</code> using \(E = n \times p\).
-                    </p>
+                                <p>
+                                    In the next step, we calculate the expected frequencies and add this information as
+                                    a separate
+                                    column to our existing DataFrame <code>df</code> using \(E = n \times p\).
+                                </p>
 
-                    <pre class="plain"><code>df["expected frequencies"] = df["relative frequencies"] * 256
+                                <pre class="plain"><code>df["expected frequencies"] = df["relative frequencies"] * 256
 
 print(df)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>            relative frequencies  observed frequencies  expected frequencies
+                                <pre class="plain"><code>            relative frequencies  observed frequencies  expected frequencies
 Catholic                    0.48                    80                122.88
 Muslim                      0.02                    12                  5.12
 Orthodox                    0.08                    21                 20.48
 Other                       0.30                   104                 76.80
 Protestant                  0.12                    39                 30.72</code></pre>
 
-                    <p>
-                        Once we know the expected frequencies, we must check two assumptions:
-                    </p>
+                                <p>
+                                    Once we know the expected frequencies, we must check two assumptions:
+                                </p>
 
-                    <p>
-                        • All expected frequencies must be at least 1.<br>
-                        • At most 20&nbsp;% of the expected frequencies should be less than 5.
-                    </p>
+                                <p>
+                                    • All expected frequencies must be at least 1.<br>
+                                    • At most 20&nbsp;% of the expected frequencies should be less than 5.
+                                </p>
 
-                    <p>
-                        We can confirm that both assumptions are fulfilled by inspecting the table.
-                    </p>
+                                <p>
+                                    We can confirm that both assumptions are fulfilled by inspecting the table.
+                                </p>
 
-                    <p>
-                        In order to conduct a χ² goodness-of-fit test in Python using the <code>stats</code> module from
-                        the
-                        <code>scipy</code> package, we apply the <code>chisquare()</code> function. We only have to
-                        provide the
-                        observed and expected frequencies, which we pass as column selections from our DataFrame.
-                    </p>
+                                <p>
+                                    In order to conduct a χ² goodness-of-fit test in Python using the <code>stats</code>
+                                    module from
+                                    the
+                                    <code>scipy</code> package, we apply the <code>chisquare()</code> function. We only
+                                    have to
+                                    provide the
+                                    observed and expected frequencies, which we pass as column selections from our
+                                    DataFrame.
+                                </p>
 
-                    <pre class="plain"><code>from scipy import stats
+                                <pre class="plain"><code>from scipy import stats
 
 test_result = stats.chisquare(df["observed frequencies"], df["expected frequencies"])
 
 print(test_result)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre
-                        class="plain"><code>Power_divergenceResult(statistic=np.float64(36.086588541666664), pvalue=np.float64(2.777403262517103e-07))</code></pre>
+                                <pre
+                                    class="plain"><code>Power_divergenceResult(statistic=np.float64(36.086588541666664), pvalue=np.float64(2.777403262517103e-07))</code></pre>
 
-                    <p>
-                        At the 1&nbsp;% significance level, the data provide very strong evidence to conclude that the
-                        religion distribution among students differs from the religion distribution in the population
-                        of the European Union.
-                    </p>
+                                <p>
+                                    At the 1&nbsp;% significance level, the data provide very strong evidence to
+                                    conclude that the
+                                    religion distribution among students differs from the religion distribution in the
+                                    population
+                                    of the European Union.
+                                </p>
 
-                    <hr>
+                                <hr>
 
-                    <span id="ChiSquareIndependenceTest"><b>The Chi-Square Independence Test</b></span>
+                                <span id="ChiSquareIndependenceTest"><b>The Chi-Square Independence Test</b></span>
 
-                    <p>
-                        The \(\chi^2\) independence test is an inferential method used to determine whether an
-                        association
-                        exists between two variables. As with other hypothesis tests, the null hypothesis states that
-                        the two
-                        variables are not associated, whereas the alternative hypothesis states that the two variables
-                        are associated.
-                    </p>
+                                <p>
+                                    The \(\chi^2\) independence test is an inferential method used to determine whether
+                                    an
+                                    association
+                                    exists between two variables. As with other hypothesis tests, the null hypothesis
+                                    states that
+                                    the two
+                                    variables are not associated, whereas the alternative hypothesis states that the two
+                                    variables
+                                    are associated.
+                                </p>
 
-                    <p>
-                        Recall that statistically dependent variables are called associated variables, while variables
-                        that are not associated
-                        are called statistically independent variables. Also recall the concept of
-                        <a href="https://en.wikipedia.org/wiki/Contingency_table" target="_blank">contingency tables</a>
-                        (also known as two-way tables, cross-tabulation tables, or cross tabs).
-                    </p>
+                                <p>
+                                    Recall that statistically dependent variables are called associated variables, while
+                                    variables
+                                    that are not associated
+                                    are called statistically independent variables. Also recall the concept of
+                                    <a href="https://en.wikipedia.org/wiki/Contingency_table"
+                                        target="_blank">contingency tables</a>
+                                    (also known as two-way tables, cross-tabulation tables, or cross tabs).
+                                </p>
 
-                    <p>
-                        The basic idea behind the \(\chi^2\) independence test is to compare the observed frequencies in
-                        a
-                        contingency table with the expected frequencies, assuming that the null hypothesis of
-                        non-association is true. The expected frequency for each cell of a contingency table is given by
-                        \[
-                        E = \frac{R \times C}{n}
-                        \]
-                    </p>
+                                <p>
+                                    The basic idea behind the \(\chi^2\) independence test is to compare the observed
+                                    frequencies in
+                                    a
+                                    contingency table with the expected frequencies, assuming that the null hypothesis
+                                    of
+                                    non-association is true. The expected frequency for each cell of a contingency table
+                                    is given by
+                                    \[
+                                    E = \frac{R \times C}{n}
+                                    \]
+                                </p>
 
-                    <p>
-                        where \(R\) is the row total, \(C\) is the column total, and \(n\) is the sample size.
-                    </p>
+                                <p>
+                                    where \(R\) is the row total, \(C\) is the column total, and \(n\) is the sample
+                                    size.
+                                </p>
 
-                    <p>
-                        Once we know the expected frequencies, we must check two assumptions:
-                    </p>
+                                <p>
+                                    Once we know the expected frequencies, we must check two assumptions:
+                                </p>
 
-                    <p>
-                        • All expected frequencies must be at least 1.<br>
-                        • At most 20&nbsp;% of the expected frequencies may be less than 5.
-                    </p>
+                                <p>
+                                    • All expected frequencies must be at least 1.<br>
+                                    • At most 20&nbsp;% of the expected frequencies may be less than 5.
+                                </p>
 
-                    <p>
-                        We can confirm that both assumptions are satisfied by inspecting the table.
-                    </p>
+                                <p>
+                                    We can confirm that both assumptions are satisfied by inspecting the table.
+                                </p>
 
-                    <p>
-                        The comparison is based on the \(\chi^2\) test statistic for the observed and expected
-                        frequencies.
-                        The \(\chi^2\) test statistic follows the \(\chi^2\) distribution and is given by:
-                        \[
-                        \chi^{2}= \sum \frac{(O - E)^{2}}{E}
-                        \]
-                    </p>
+                                <p>
+                                    The comparison is based on the \(\chi^2\) test statistic for the observed and
+                                    expected
+                                    frequencies.
+                                    The \(\chi^2\) test statistic follows the \(\chi^2\) distribution and is given by:
+                                    \[
+                                    \chi^{2}= \sum \frac{(O - E)^{2}}{E}
+                                    \]
+                                </p>
 
-                    <p>
-                        where \(O\) represents the observed frequency and \(E\) represents the expected frequency.
-                        Note that \(\frac{(O - E)^2}{E}\) is calculated for each cell and then summed.
-                    </p>
+                                <p>
+                                    where \(O\) represents the observed frequency and \(E\) represents the expected
+                                    frequency.
+                                    Note that \(\frac{(O - E)^2}{E}\) is calculated for each cell and then summed.
+                                </p>
 
-                    <p>
-                        The number of degrees of freedom is given by:
-                        \[
-                        df = (r - 1) \times (c - 1)
-                        \]
-                    </p>
+                                <p>
+                                    The number of degrees of freedom is given by:
+                                    \[
+                                    df = (r - 1) \times (c - 1)
+                                    \]
+                                </p>
 
-                    <p>
-                        where \(r\) and \(c\) are the numbers of possible values for the two variables under
-                        consideration.
-                    </p>
+                                <p>
+                                    where \(r\) and \(c\) are the numbers of possible values for the two variables under
+                                    consideration.
+                                </p>
 
-                    <p>
-                        If the null hypothesis is true, the observed and expected frequencies are roughly equal,
-                        resulting in
-                        a small value of the \(\chi^2\) test statistic, which supports \(H_0\). However, if the value of
-                        the
-                        \(\chi^2\) test statistic is large, the data provide evidence against \(H_0\).
-                    </p>
+                                <p>
+                                    If the null hypothesis is true, the observed and expected frequencies are roughly
+                                    equal,
+                                    resulting in
+                                    a small value of the \(\chi^2\) test statistic, which supports \(H_0\). However, if
+                                    the value of
+                                    the
+                                    \(\chi^2\) test statistic is large, the data provide evidence against \(H_0\).
+                                </p>
 
-                    <p>
-                        We want to examine whether there is an association between the variables <i>gender</i> and
-                        <i>major</i>.
-                        In other words, we want to know whether male students favor different fields of study compared
-                        to female students.
-                    </p>
+                                <p>
+                                    We want to examine whether there is an association between the variables
+                                    <i>gender</i> and
+                                    <i>major</i>.
+                                    In other words, we want to know whether male students favor different fields of
+                                    study compared
+                                    to female students.
+                                </p>
 
-                    <pre class="plain"><code>import pandas as pd
+                                <pre class="plain"><code>import pandas as pd
 import numpy as np
 
 students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
@@ -1653,11 +1841,11 @@ observed_frequencies_table = pd.crosstab(sample.major, sample.gender, margins=Fa
 
 print(observed_frequencies_table)</code></pre>
 
-                    <p>
-                        Output:
-                    </p>
+                                <p>
+                                    Output:
+                                </p>
 
-                    <pre class="plain"><code>gender                      Female  Male
+                                <pre class="plain"><code>gender                      Female  Male
 major                                   
 Biology                        102    66
 Economics and Finance           53    82
@@ -1667,120 +1855,140 @@ Political Science              111    61
 Social Sciences                 78    35</code></pre>
 
 
-                    <p>
-                        To conduct a \(\chi^2\) independence test in Python using the <code>stats</code> module from
-                        SciPy, we apply the <code>chi2_contingency()</code> function. We only need to provide a
-                        contingency
-                        table of the observed frequencies as either a pandas DataFrame or a NumPy array.
-                    </p>
+                                <p>
+                                    To conduct a \(\chi^2\) independence test in Python using the <code>stats</code>
+                                    module from
+                                    SciPy, we apply the <code>chi2_contingency()</code> function. We only need to
+                                    provide a
+                                    contingency
+                                    table of the observed frequencies as either a pandas DataFrame or a NumPy array.
+                                </p>
 
-                    <pre class="plain"><code>from scipy.stats import chi2_contingency
+                                <pre class="plain"><code>from scipy.stats import chi2_contingency
 
 test_result = chi2_contingency(observed_frequencies_table)
 
 print(test_result)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre class="plain"><code>Chi2ContingencyResult(statistic=np.float64(77.31526633939146), pvalue=np.float64(3.056046255717623e-15), dof=5, expected_freq=array([[85.4566474 , 82.5433526 ],
+                                <pre class="plain"><code>Chi2ContingencyResult(statistic=np.float64(77.31526633939146), pvalue=np.float64(3.056046255717623e-15), dof=5, expected_freq=array([[85.4566474 , 82.5433526 ],
        [68.67052023, 66.32947977],
        [76.80924855, 74.19075145],
        [64.09248555, 61.90751445],
        [87.49132948, 84.50867052],
        [57.47976879, 55.52023121]]))</code></pre>
 
-                    <p>
-                        We may conclude that, at the 5&nbsp;% significance level, the data provide very strong evidence
-                        of an association between gender and major field of study.
-                    </p>
+                                <p>
+                                    We may conclude that, at the 5&nbsp;% significance level, the data provide very
+                                    strong evidence
+                                    of an association between gender and major field of study.
+                                </p>
 
-                    <hr>
+                                <hr>
 
-                    <span id="InferencesSlope"><b>Inferences About the Slope</b></span>
+                                <span id="InferencesSlope"><b>Inferences About the Slope</b></span>
 
-                    <p>
-                        The linear model is given by the equation
-                        \[
-                        y = \alpha + \beta x + \epsilon
-                        \]
-                    </p>
+                                <p>
+                                    The linear model is given by the equation
+                                    \[
+                                    y = \alpha + \beta x + \epsilon
+                                    \]
+                                </p>
 
-                    <p>
-                        where \(\alpha\) is the intercept, \(\beta\) is the regression coefficient, and \(\epsilon\) is
-                        the error term.
-                        The best regression line is found by applying the <a
-                            href="https://en.wikipedia.org/wiki/Ordinary_least_squares" target="_blank">ordinary least
-                            squares method</a>, which minimizes
-                        the
-                        sum of squared errors (SSE). This means minimizing the squared difference between the measured
-                        response variable \(y\) and the model prediction \(\hat{y}\), which is given by
-                        \[
-                        \mathrm{SSE} = \sum_{i=1}^{n} \epsilon_i^2 = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
-                        \]
-                    </p>
+                                <p>
+                                    where \(\alpha\) is the intercept, \(\beta\) is the regression coefficient, and
+                                    \(\epsilon\) is
+                                    the error term.
+                                    The best regression line is found by applying the <a
+                                        href="https://en.wikipedia.org/wiki/Ordinary_least_squares"
+                                        target="_blank">ordinary least
+                                        squares method</a>, which minimizes
+                                    the
+                                    sum of squared errors (SSE). This means minimizing the squared difference between
+                                    the measured
+                                    response variable \(y\) and the model prediction \(\hat{y}\), which is given by
+                                    \[
+                                    \mathrm{SSE} = \sum_{i=1}^{n} \epsilon_i^2 = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+                                    \]
+                                </p>
 
-                    <p>
-                        We will go into more detail when we discuss linear regression.
-                    </p>
+                                <p>
+                                    We will go into more detail when we discuss linear regression.
+                                </p>
 
-                    <p>
-                        The regression t-test is applied to test whether the slope \(\beta\) of the population
-                        regression line is equal to \(0\). Based on this test, we may decide whether \(x\) is a useful
-                        (linear) predictor of \(y\).
-                    </p>
+                                <p>
+                                    The regression t-test is applied to test whether the slope \(\beta\) of the
+                                    population
+                                    regression line is equal to \(0\). Based on this test, we may decide whether \(x\)
+                                    is a useful
+                                    (linear) predictor of \(y\).
+                                </p>
 
-                    <p>
-                        The test statistic follows a t-distribution with \(df = n - 2\) degrees of freedom and
-                        can be written as
-                        \[
-                        t = \frac{\beta}{s_b} = \frac{\beta}{\dfrac{s_e}{\sqrt{\sum (x - \bar{x})^2}}}
-                        \]
-                        where \(\beta\) corresponds to the sample regression coefficient and \(s_e\) to the residual
-                        standard error (also known as the standard error of the estimate), given by
-                        \[
-                        s_e = \sqrt{\frac{\mathrm{SSE}}{n - 2}} \text{.}
-                        \]
-                    </p>
+                                <p>
+                                    The test statistic follows a t-distribution with \(df = n - 2\) degrees of freedom
+                                    and
+                                    can be written as
+                                    \[
+                                    t = \frac{\beta}{s_b} = \frac{\beta}{\dfrac{s_e}{\sqrt{\sum (x - \bar{x})^2}}}
+                                    \]
+                                    where \(\beta\) corresponds to the sample regression coefficient and \(s_e\) to the
+                                    residual
+                                    standard error (also known as the standard error of the estimate), given by
+                                    \[
+                                    s_e = \sqrt{\frac{\mathrm{SSE}}{n - 2}} \text{.}
+                                    \]
+                                </p>
 
-                    <p>
-                        The \(100(1 - \alpha)\%\) confidence interval for \(\beta\) is given by
-                        \[
-                        \beta \pm t_{\alpha/2} \times \frac{s_e}{\sqrt{\sum (x - \bar{x})^2}} \text{.}
-                        \]
-                    </p>
+                                <p>
+                                    The \(100(1 - \alpha)\%\) confidence interval for \(\beta\) is given by
+                                    \[
+                                    \beta \pm t_{\alpha/2} \times \frac{s_e}{\sqrt{\sum (x - \bar{x})^2}} \text{.}
+                                    \]
+                                </p>
 
-                    <p>
-                        The value of \(t_{\alpha/2}\) is obtained from the t-distribution for the given
-                        confidence level and \(n - 2\) degrees of freedom.
-                    </p>
+                                <p>
+                                    The value of \(t_{\alpha/2}\) is obtained from the t-distribution for the given
+                                    confidence level and \(n - 2\) degrees of freedom.
+                                </p>
 
-                    <p>
-                        In order to illustrate the regression t-test, we examine the relationship between two variables:
-                        students’ height as the predictor variable and students’ weight as the response variable. The
-                        question is whether height is a useful predictor of students’ weight.
-                    </p>
+                                <p>
+                                    In order to illustrate the regression t-test, we examine the relationship between
+                                    two variables:
+                                    students’ height as the predictor variable and students’ weight as the response
+                                    variable. The
+                                    question is whether height is a useful predictor of students’ weight.
+                                </p>
 
-                    <p>
-                        The null hypothesis states that there is no linear relationship between the height and the
-                        weight of
-                        the individuals in the students data set, \(H_0: \beta = 0\), meaning that the predictor
-                        variable is
-                        not useful for making predictions. The alternative hypothesis states that there is a linear
-                        relationship, \(H_A: \beta \neq 0\), meaning that the predictor variable is useful for making
-                        predictions.
-                    </p>
+                                <p>
+                                    The null hypothesis states that there is no linear relationship between the height
+                                    and the
+                                    weight of
+                                    the individuals in the students data set, \(H_0: \beta = 0\), meaning that the
+                                    predictor
+                                    variable is
+                                    not useful for making predictions. The alternative hypothesis states that there is a
+                                    linear
+                                    relationship, \(H_A: \beta \neq 0\), meaning that the predictor variable is useful
+                                    for making
+                                    predictions.
+                                </p>
 
 
-                    <p>
-                        In order to conduct a regression t-test in Python using the <code>stats</code> module
-                        from the <code>scipy</code> package, we apply the <code>linregress()</code> function. We only
-                        need to provide our data separately as NumPy arrays. Furthermore, the test method can be
-                        specified using
-                        the <code>alternative</code> argument. Because the default is already set to two-sided, no
-                        adjustment is required.
-                    </p>
+                                <p>
+                                    In order to conduct a regression t-test in Python using the <code>stats</code>
+                                    module
+                                    from the <code>scipy</code> package, we apply the <code>linregress()</code>
+                                    function. We only
+                                    need to provide our data separately as NumPy arrays. Furthermore, the test method
+                                    can be
+                                    specified using
+                                    the <code>alternative</code> argument. Because the default is already set to
+                                    two-sided, no
+                                    adjustment is required.
+                                </p>
 
-                    <pre class="plain"><code>import pandas as pd
+                                <pre class="plain"><code>import pandas as pd
 import numpy as np
 from scipy.stats import linregress
 
@@ -1794,100 +2002,128 @@ test_result = linregress(sample["height"], sample["weight"])
 
 print(test_result)</code></pre>
 
-                    <p>Output:</p>
+                                <p>Output:</p>
 
-                    <pre
-                        class="plain"><code>LinregressResult(slope=np.float64(0.7477660695468915), intercept=np.float64(-54.99202318229716), rvalue=np.float64(0.940268246582142), pvalue=np.float64(5.414310239986541e-06), stderr=np.float64(0.08561453550612985), intercept_stderr=np.float64(15.028988955403905))</code></pre>
+                                <pre
+                                    class="plain"><code>LinregressResult(slope=np.float64(0.7477660695468915), intercept=np.float64(-54.99202318229716), rvalue=np.float64(0.940268246582142), pvalue=np.float64(5.414310239986541e-06), stderr=np.float64(0.08561453550612985), intercept_stderr=np.float64(15.028988955403905))</code></pre>
 
-                    <p>
-                        The p-value is smaller than the specified significance level of 0.01; therefore, we reject
-                        \(H_0\). At the 1% significance level, the data provide very strong evidence that height is a
-                        good
-                        predictor of students’ weight.
-                    </p>
+                                <p>
+                                    The p-value is smaller than the specified significance level of 0.01; therefore, we
+                                    reject
+                                    \(H_0\). At the 1% significance level, the data provide very strong evidence that
+                                    height is a
+                                    good
+                                    predictor of students’ weight.
+                                </p>
 
-                    <hr>
+                                <hr>
 
-                    <span id="InferencesLinearCorrelationCoefficient"><b>Inferences About the Linear Correlation
-                            Coefficient</b></span>
+                                <span id="InferencesLinearCorrelationCoefficient"><b>Inferences About the Linear
+                                        Correlation
+                                        Coefficient</b></span>
 
-                    <p>
-                        In order to test whether two variables are linearly correlated, or in other words, whether there
-                        is a linear
-                        relationship between them, we may apply the so-called correlation <em>t</em>-test. The
-                        population linear correlation
-                        coefficient, \(\rho\), measures the linear correlation between two variables in the same manner
-                        as the sample linear
-                        correlation coefficient, \(r\), measures the linear correlation between two variables in a
-                        sample of paired
-                        observations. Both \(\rho\) and \(r\) describe the strength of the linear relationship between
-                        two variables;
-                        however, \(r\) is an estimate of \(\rho\) obtained from sample data.
-                    </p>
+                                <p>
+                                    In order to test whether two variables are linearly correlated, or in other words,
+                                    whether there
+                                    is a linear
+                                    relationship between them, we may apply the so-called correlation <em>t</em>-test.
+                                    The
+                                    population linear correlation
+                                    coefficient, \(\rho\), measures the linear correlation between two variables in the
+                                    same manner
+                                    as the sample linear
+                                    correlation coefficient, \(r\), measures the linear correlation between two
+                                    variables in a
+                                    sample of paired
+                                    observations. Both \(\rho\) and \(r\) describe the strength of the linear
+                                    relationship between
+                                    two variables;
+                                    however, \(r\) is an estimate of \(\rho\) obtained from sample data.
+                                </p>
 
-                    <p>
-                        The linear correlation coefficient of two variables lies between \(-1\) and \(1\). If \(\rho =
-                        0\), the variables
-                        are linearly uncorrelated; thus, there is no linear relationship between them. If \(\rho \neq
-                        0\), the variables are
-                        linearly correlated. If \(\rho > 0\), the variables are positively linearly correlated, whereas
-                        if \(\rho < 0\), they are negatively linearly correlated. </p>
+                                <p>
+                                    The linear correlation coefficient of two variables lies between \(-1\) and \(1\).
+                                    If \(\rho =
+                                    0\), the variables
+                                    are linearly uncorrelated; thus, there is no linear relationship between them. If
+                                    \(\rho \neq
+                                    0\), the variables are
+                                    linearly correlated. If \(\rho > 0\), the variables are positively linearly
+                                    correlated, whereas
+                                    if \(\rho < 0\), they are negatively linearly correlated. </p>
 
-                            <p>
-                                A commonly used statistic to quantify the linear relationship between quantitative
-                                variables is the Pearson
-                                product–moment correlation coefficient. It is given by \[ r = \frac{\sum_{i=1}^{n} (x_i
-                                - \bar{x})(y_i - \bar{y})}
-                                {\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n} (y_i - \bar{y})^2}} =
-                                \frac{s_{xy}}{s_x s_y} \]
-                            </p>
+                                        <p>
+                                            A commonly used statistic to quantify the linear relationship between
+                                            quantitative
+                                            variables is the Pearson
+                                            product–moment correlation coefficient. It is given by \[ r =
+                                            \frac{\sum_{i=1}^{n} (x_i
+                                            - \bar{x})(y_i - \bar{y})}
+                                            {\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n} (y_i -
+                                            \bar{y})^2}} =
+                                            \frac{s_{xy}}{s_x s_y} \]
+                                        </p>
 
-                            <p>
-                                where \(s_{xy}\) is the covariance of \(x\) and \(y\), and \(s_x\) and \(s_y\) are the
-                                standard deviations of \(x\)
-                                and \(y\), respectively.
-                            </p>
+                                        <p>
+                                            where \(s_{xy}\) is the covariance of \(x\) and \(y\), and \(s_x\) and
+                                            \(s_y\) are the
+                                            standard deviations of \(x\)
+                                            and \(y\), respectively.
+                                        </p>
 
-                            <p>
-                                Since the sample linear correlation coefficient \(r\) is an estimate of the population
-                                linear correlation
-                                coefficient \(\rho\), we may use \(r\) to perform a hypothesis test for \(\rho\). The
-                                test statistic for a
-                                correlation test follows a <em>t</em>-distribution with \(n - 2\) degrees of freedom and
-                                can be written as \[ t =
-                                \frac{r\sqrt{n - 2}}{\sqrt{1 - r^2}}. \]
-                            </p>
+                                        <p>
+                                            Since the sample linear correlation coefficient \(r\) is an estimate of the
+                                            population
+                                            linear correlation
+                                            coefficient \(\rho\), we may use \(r\) to perform a hypothesis test for
+                                            \(\rho\). The
+                                            test statistic for a
+                                            correlation test follows a <em>t</em>-distribution with \(n - 2\) degrees of
+                                            freedom and
+                                            can be written as \[ t =
+                                            \frac{r\sqrt{n - 2}}{\sqrt{1 - r^2}}. \]
+                                        </p>
 
 
-                            <p>
-                                In order to showcase the correlation t-test, we examine the relationship between the
-                                variable <code>score1</code> and <code>score2</code>, which show the result of two
-                                mandatory statistics exams. The
-                                question is whether a linear relationship exists between the grades of two consecutive
-                                statistics exams.
-                            </p>
+                                        <p>
+                                            In order to showcase the correlation t-test, we examine the relationship
+                                            between the
+                                            variable <code>score1</code> and <code>score2</code>, which show the result
+                                            of two
+                                            mandatory statistics exams. The
+                                            question is whether a linear relationship exists between the grades of two
+                                            consecutive
+                                            statistics exams.
+                                        </p>
 
-                            <p>
-                                The null hypothesis states that there is no linear relationship between the grades of
-                                two consecutive
-                                statistics exams, \(H_0: r = 0\). Recall that the formulation of the alternative
-                                hypothesis dictates
-                                whether a two-sided, left-tailed, or right-tailed hypothesis test is applied. The
-                                alternative
-                                hypothesis \(H_A: r \neq 0\) results in a two-sided hypothesis test.
-                            </p>
+                                        <p>
+                                            The null hypothesis states that there is no linear relationship between the
+                                            grades of
+                                            two consecutive
+                                            statistics exams, \(H_0: r = 0\). Recall that the formulation of the
+                                            alternative
+                                            hypothesis dictates
+                                            whether a two-sided, left-tailed, or right-tailed hypothesis test is
+                                            applied. The
+                                            alternative
+                                            hypothesis \(H_A: r \neq 0\) results in a two-sided hypothesis test.
+                                        </p>
 
-                            <p>
-                                In order to conduct a correlation <em>t</em>-test in Python using the <code>stats</code>
-                                module from the
-                                <code>scipy</code> package, we apply the <code>pearsonr()</code> function. We only need
-                                to provide our
-                                data separately as NumPy arrays. Furthermore, the test method can be specified using the
-                                <code>alternative</code> argument. Because the default is already set to two-sided, no
-                                adjustment is required.
-                            </p>
+                                        <p>
+                                            In order to conduct a correlation <em>t</em>-test in Python using the
+                                            <code>stats</code>
+                                            module from the
+                                            <code>scipy</code> package, we apply the <code>pearsonr()</code> function.
+                                            We only need
+                                            to provide our
+                                            data separately as NumPy arrays. Furthermore, the test method can be
+                                            specified using the
+                                            <code>alternative</code> argument. Because the default is already set to
+                                            two-sided, no
+                                            adjustment is required.
+                                        </p>
 
-                            <pre class="plain"><code>import pandas as pd
+                                        <pre class="plain"><code>import pandas as pd
 import numpy as np
 from scipy.stats import pearsonr
 
@@ -1901,45 +2137,53 @@ test_result = pearsonr(sample["score1"], sample["score2"])
 print(test_result)
 </code></pre>
 
-                            <p>Output:</p>
+                                        <p>Output:</p>
 
-                            <pre
-                                class="plain"><code>PearsonRResult(statistic=np.float64(0.8738759767952877), pvalue=np.float64(1.2019492648237161e-16))</code></pre>
+                                        <pre
+                                            class="plain"><code>PearsonRResult(statistic=np.float64(0.8738759767952877), pvalue=np.float64(1.2019492648237161e-16))</code></pre>
 
-                            <p>
-                                At the 1 % significance level, the data provides very strong evidence to conclude, that
-                                the exam grades of students are linearly correlated.
-                            </p>
+                                        <p>
+                                            At the 1 % significance level, the data provides very strong evidence to
+                                            conclude, that
+                                            the exam grades of students are linearly correlated.
+                                        </p>
 
-                            <hr>
+                                        <hr>
 
-                            <span id="LinearRegression"><b>Linear Regression</b></span>
+                                        <span id="LinearRegression"><b>Linear Regression</b></span>
 
-                            <p>
-                                Regression analysis is a statistical process for estimating the relationships
-                                between two or more variables. The relationship is modeled as
-                                \( y \sim x \) or \( y = f(x) \).
-                                Both model descriptions indicate that the variable \( y \) is a function of \( x \).
-                                Therefore the variable \( y \) is denoted as the response or dependent variable,
-                                whereas the variable \( x \) is denoted as the predictor or independent variable.
-                            </p>
+                                        <p>
+                                            Regression analysis is a statistical process for estimating the
+                                            relationships
+                                            between two or more variables. The relationship is modeled as
+                                            \( y \sim x \) or \( y = f(x) \).
+                                            Both model descriptions indicate that the variable \( y \) is a function of
+                                            \( x \).
+                                            Therefore the variable \( y \) is denoted as the response or dependent
+                                            variable,
+                                            whereas the variable \( x \) is denoted as the predictor or independent
+                                            variable.
+                                        </p>
 
-                            <p><i>This section will be completed later!</i></p>
+                                        <p><i>This section will be completed later!</i></p>
 
-                            <hr>
+                                        <hr>
 
-                            <span id="PolynomialRegression"><b>Polynomial Regression</b></span>
+                                        <span id="PolynomialRegression"><b>Polynomial Regression</b></span>
 
-                            <p><i>This section will be completed later!</i></p>
+                                        <p><i>This section will be completed later!</i></p>
 
-                            <hr>
+                                        <hr>
 
-                            <span id="LogisticRegression"><b>Logistic Regression</b></span>
+                                        <span id="LogisticRegression"><b>Logistic Regression</b></span>
 
-                            <p><i>This section will be completed later!</i></p>
+                                        <p><i>This section will be completed later!</i></p>
 
-                            <hr>
+                                        <hr>
+            </article>
+        </main>
 
+    </div>
 </body>
 
 </html>

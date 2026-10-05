@@ -248,7 +248,8 @@ main {
 
 
 /* Prevent anchor-linked headings from sitting directly against the top of the viewport */
-article h2 {
+article h2,
+article span[id] {
     scroll-margin-top: 2rem;
 }
 
