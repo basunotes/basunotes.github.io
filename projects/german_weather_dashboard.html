@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet" />
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <main>
+
+        <h1>(Berlin) Weather Dashboard</h1>
+
+        <p>
+            I wanted to build a simple weather dashboard that shows the current weather in Berlin together with an
+            hourly and multi-day forecast.
+            The application retrieves weather data from Bright Sky, which provides weather information based on data
+            from the German Weather Service (DWD).
+            The backend is written in Python with Flask and processes the raw weather data into current conditions,
+            hourly forecasts, an 8-day forecast, and chart data for temperature, precipitation probability, and wind
+            speed.
+        </p>
+
+        <p>
+            The frontend is built with HTML, CSS, and JavaScript and updates dynamically through a Flask API.
+            Weather data is cached to reduce unnecessary API requests, and previously cached data can be used as a
+            fallback if the external weather service is temporarily unavailable.
+        </p>
+
+        <p>
+            The application runs in Docker on an AWS EC2 instance, with Gunicorn serving the Flask application and Nginx
+            acting as a reverse proxy.
+            The source code is stored in a private GitHub repository, and changes pushed to the main branch are deployed
+            automatically to EC2 through GitHub Actions using a self-hosted runner.
+        </p>
+
+        <a href="http://3.69.150.188/" target="_blank">Link to dashboard</a>
+
+        <p>
+            The dashboard is currently served over HTTP, so your browser may show a security warning.
+            This warning is harmless here, as the dashboard does not collect any sensitive or personal data.
+        </p>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+
+</body>
+
+</html>
