@@ -273,3 +273,47 @@ article span[id] {
         padding-right: 0;
     }
 }
+
+.intro-with-pick {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.intro-text p:first-child {
+    margin-top: 0;
+}
+
+.my-pick {
+    margin: 0;
+    text-align: center;
+}
+
+.my-pick img {
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.my-pick figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+
+    .intro-with-pick {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .my-pick img {
+        max-width: 180px;
+    }
+}
