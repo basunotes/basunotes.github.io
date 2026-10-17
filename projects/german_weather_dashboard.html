@@ -16,11 +16,22 @@
 
         <h1>(Berlin) Weather Dashboard</h1>
 
+        <a href="http://3.69.150.188/" target="_blank">Link to dashboard</a>
+
+        <p style="font-style: italic; font-size: small; color: red;">
+            The dashboard is currently served over HTTP, so your browser may show a security warning.
+            This warning is harmless here, as the dashboard does not collect any sensitive or personal data.
+        </p>
+
         <p>
             I wanted to build a simple weather dashboard that shows the current weather in Berlin together with an
             hourly and multi-day forecast.
             The application retrieves weather data from Bright Sky, which provides weather information based on data
             from the German Weather Service (DWD).
+            There are other weather APIs that may provide more accurate or more detailed forecasts, but maximum forecast
+            accuracy was not the main priority of this project.
+            The main focus was on building the application itself, processing weather data, creating the frontend, and
+            deploying the dashboard as a complete web application.
             The backend is written in Python with Flask and processes the raw weather data into current conditions,
             hourly forecasts, an 8-day forecast, and chart data for temperature, precipitation probability, and wind
             speed.
@@ -29,7 +40,9 @@
         <p>
             The frontend is built with HTML, CSS, and JavaScript and updates dynamically through a Flask API.
             Weather data is cached to reduce unnecessary API requests, and previously cached data can be used as a
-            fallback if the external weather service is temporarily unavailable.
+            fallback if the external weather service is temporarily unavailable. There is sometimes a mismatch between
+            the weather icons and the actual weather conditions. I have not bothered to upload a better or more complete
+            set of weather icons for this project.
         </p>
 
         <p>
@@ -37,13 +50,6 @@
             acting as a reverse proxy.
             The source code is stored in a private GitHub repository, and changes pushed to the main branch are deployed
             automatically to EC2 through GitHub Actions using a self-hosted runner.
-        </p>
-
-        <a href="http://3.69.150.188/" target="_blank">Link to dashboard</a>
-
-        <p>
-            The dashboard is currently served over HTTP, so your browser may show a security warning.
-            This warning is harmless here, as the dashboard does not collect any sensitive or personal data.
         </p>
 
     </main>
