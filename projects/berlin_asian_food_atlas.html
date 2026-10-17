@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berlin's Asian Food Atlas</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet" />
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <main>
+
+        <h1>Berlin's Asian Food Atlas</h1>
+
+        <p>
+            I wanted to build an interactive dashboard that makes it easier to explore Asian restaurants across
+            Berlin. The dashboard shows restaurants by postal-code area and lets users explore different cuisines,
+            search for individual restaurants, and see which streets and areas have the most restaurant entries.
+            I also added an interactive map of Berlin with postal-code boundaries and labels for all 12 Bezirke.
+        </p>
+
+        <p>
+            The restaurant dataset contains almost 1,500 entries and combines restaurant information with Berlin
+            postal-code and Bezirk data. One challenge was that the data was not always complete or consistent.
+            Some entries had missing street names or incomplete address information, some cuisine classifications
+            were too broad, and some restaurants had uncertain operating statuses. Postal codes also needed careful
+            handling because a single postal code can cover parts of more than one Bezirk.
+        </p>
+
+        <p>
+            I reviewed the problematic restaurant entries and made corrections to addresses, cuisine classifications,
+            and Bezirk assignments in a central JSON file. I kept the original verification information, including
+            research sources and timestamps, so that changes remain traceable. Restaurants classified as likely
+            operating are kept separate from those whose status remains unverified. Entries identified as permanently
+            closed, temporarily closed, or relocated are excluded from the current restaurant listings without being
+            removed from the source dataset.
+        </p>
+
+        <p>
+            The backend is written in Python with Flask. It reads the editable restaurant dataset and creates the
+            dashboard data, including restaurant counts for each postal code, cuisine summaries, and street rankings.
+            The data-processing code also checks for duplicate restaurant IDs, missing cuisine classifications,
+            invalid postcodes, and inconsistent Bezirk assignments. A separate audit script helps identify remaining
+            data-quality issues.
+        </p>
+
+        <p>
+            The frontend is built with HTML, CSS, and JavaScript, using Leaflet to display the interactive map.
+            I added a yellow-to-red color scale to the postal-code areas so that areas with more Asian restaurants
+            are shown in stronger reddish shades. A horizontal legend explains the restaurant counts. Users can
+            click a postal code to explore local restaurant information or use the Berlin-wide Cuisine Explorer to
+            filter by cuisine and search across restaurant names, streets, postcodes, and Bezirke.
+        </p>
+
+        <p>
+            The application runs in Docker on an AWS EC2 instance, with Gunicorn serving the Flask application and
+            Nginx acting as a reverse proxy. The source code is stored in a private GitHub repository, and changes
+            pushed to the main branch are deployed automatically to EC2 through GitHub Actions using a self-hosted
+            runner. This also makes it possible to update restaurant information locally and publish the changes
+            without manually copying files to the server.
+        </p>
+
+        <a href="http://3.79.193.218/" target="_blank">Link to dashboard</a>
+
+        <p>
+            The dashboard is currently served over HTTP rather than HTTPS, so the connection is not encrypted.
+            The website is intended for browsing restaurant information and does not require users to enter
+            personal information.
+        </p>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+
+</body>
+
+</html>
