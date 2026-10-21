@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Berlin's 2026 Abgeordnetenhaus Election</title>
+        <link rel="stylesheet" href="../styles/styles.css" />
+    </head>
+
+    <body>
+        <main>
+            <h1>Berlin's 2026 Abgeordnetenhaus Election</h1>
+
+            <a href="berlin_2026_election_dashboard" target="_blank" rel="noopener noreferrer"> Link to dashboard </a>
+
+            <p>
+                I wanted to build an interactive dashboard to explore the results of Berlin's September 20, 2026
+                Abgeordnetenhaus election. The dashboard shows how the different political parties performed across
+                Berlin and allows users to examine voting patterns at different geographic levels. In addition to the
+                official election results, I wanted to explore how voting preferences differed across demographic
+                groups, including age, gender, education, economic circumstances, and religious affiliation.
+            </p>
+
+            <p>
+                The processed geographic dataset contains 1,572 postal-vote-linked voting-area groups covering Berlin's
+                12 Bezirke. I combined the
+                <a
+                    href="https://www.statistik-berlin-brandenburg.de/abgeordnetenhauswahlen-bvv-berlin/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >official election results</a
+                >
+                with
+                <a
+                    href="https://daten.berlin.de/datensaetze/geometrien-der-wahlbezirke-fur-die-wahl-zum-20-abgeordnetenhaus-von-berlin-und-bvv-2026"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >electoral-district boundaries</a
+                >
+                to create an interactive map showing the distribution of votes across the city. The dataset includes
+                results for 17 political parties, with vote counts and percentages calculated using the total number of
+                valid votes in each area. The displayed geographic areas are processed and aggregated from the original
+                electoral-district data.
+            </p>
+
+            <p>
+                The dashboard allows users to switch between the 12 Bezirke and the individual voting areas. They can
+                select a political party to see its geographic distribution or display the leading party in each area.
+                Clicking a Bezirk or voting area updates the results table, while hovering over the map displays the
+                relevant election results. The map also includes the boundaries and names of all 12 Bezirke.
+            </p>
+
+            <p>
+                I also wanted to examine how different groups of voters supported the political parties. For this part
+                of the project, I collected and processed published election survey estimates from
+                <a
+                    href="https://www.tagesschau.de/multimedia/bilder/wahl/electionalbum-ts-ltw26be-126.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >ARD/infratest dimap</a
+                >
+                and the
+                <a
+                    href="https://www.kas.de/de/monitor-wahl-und-sozialforschung/detail/-/content/wahlanalyse-der-abgeordnetenhauswahl-in-berlin-am-20-september-2026"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Konrad-Adenauer-Stiftung election analysis</a
+                >, which reports findings from infratest dimap and Forschungsgruppe Wahlen. The resulting dataset
+                contains 197 estimates across six demographic dimensions: age, gender, age combined with gender,
+                education, self-assessed economic situation, and religion. Users can select two groups and compare their
+                estimated party vote shares using interactive charts.
+            </p>
+
+            <p>
+                One important distinction is that the geographic election results and demographic voting estimates come
+                from different types of data. The map is based on recorded votes aggregated into geographic areas,
+                whereas the demographic comparisons are based on Berlin-wide election surveys. These survey estimates
+                cannot be used to determine how particular demographic groups voted within an individual Bezirk or
+                voting area. They are also subject to sampling uncertainty and differences in the categories reported by
+                each source.
+            </p>
+
+            <p>
+                I prepared and validated the datasets using Python and Jupyter Notebook, including checks of electoral
+                identifiers, geographic assignments, vote totals, and party percentages. The geographic boundaries were
+                processed and converted into a format suitable for displaying the results in a web browser. I also
+                combined the demographic survey data into a consistent structure for comparison in the dashboard.
+            </p>
+
+            <p>
+                I developed the dashboard with the assistance of ChatGPT, using HTML, CSS, and JavaScript. The
+                interactive map uses SVG rather than an external mapping library or background map tiles. The election
+                and survey data are loaded automatically from preprocessed files, so the dashboard does not require a
+                Python backend or database. It can be hosted as a static website.
+            </p>
+
+            <p>
+                The project is intended as an exploratory visualization of Berlin's 2026 election results. It provides a
+                way to compare parties across different parts of the city and examine broader demographic voting
+                patterns. However, geographic differences should not be interpreted as evidence of how individual
+                residents voted, and the survey estimates should be understood within the limitations of their
+                respective sources.
+            </p>
+
+            <h2>Data sources</h2>
+
+            <ul>
+                <li>
+                    <a
+                        href="https://www.statistik-berlin-brandenburg.de/abgeordnetenhauswahlen-bvv-berlin/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Amt für Statistik Berlin-Brandenburg — 2026 election results </a
+                    >: official results and downloadable voting-district spreadsheets.
+                </li>
+                <li>
+                    <a
+                        href="https://daten.berlin.de/datensaetze/geometrien-der-wahlbezirke-fur-die-wahl-zum-20-abgeordnetenhaus-von-berlin-und-bvv-2026"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Berlin Open Data — electoral-district geometries (2026) </a
+                    >: geographic boundary files and dataset metadata.
+                </li>
+                <li>
+                    <a
+                        href="https://www.tagesschau.de/multimedia/bilder/wahl/electionalbum-ts-ltw26be-126.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ARD / Tagesschau — vote shares by age </a
+                    >: published election-survey charts from infratest dimap.
+                </li>
+                <li>
+                    <a
+                        href="https://www.tagesschau.de/multimedia/bilder/wahl/electionalbum-ts-ltw26be-114.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ARD / Tagesschau — vote shares by gender </a
+                    >: published election-survey charts from infratest dimap.
+                </li>
+                <li>
+                    <a
+                        href="https://www.kas.de/de/monitor-wahl-und-sozialforschung/detail/-/content/wahlanalyse-der-abgeordnetenhauswahl-in-berlin-am-20-september-2026"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Konrad-Adenauer-Stiftung — Berlin election analysis (PDF download) </a
+                    >: source tables for age by gender, education, self-assessed economic situation, and religion,
+                    including figures from infratest dimap and Forschungsgruppe Wahlen.
+                </li>
+            </ul>
+
+            <p>
+                The election results and boundary datasets are available to download. The survey links provide published
+                graphics or aggregated tables, not individual respondents' microdata. The demographic estimates are
+                Berlin-wide, should not be interpreted as Bezirk-level measurements, and do not establish causal
+                relationships. Reported categories differ across the underlying surveys.
+            </p>
+        </main>
+    </body>
+</html>

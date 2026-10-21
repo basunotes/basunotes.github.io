@@ -1,0 +1,1061 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+:root {
+    color-scheme: light;
+    --text: #1c2229;
+    --muted: #606a75;
+    --border: #e3e7ea;
+    --surface: #fff;
+    --background: #fff;
+    --subtle: #f5f7f8;
+}
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: Verdana, Helvetica, sans-serif;
+    line-height: 1.55;
+}
+button,
+select {
+    font: inherit;
+}
+.page-container {
+    max-width: 1370px;
+    margin: 0 auto;
+    padding: 56px 35px 90px;
+}
+.page-intro {
+    margin-bottom: 58px;
+}
+.page-intro h1 {
+    max-width: 1000px;
+    margin: 0 0 18px;
+    font-size: clamp(31px, 4.1vw, 51px);
+    line-height: 1.17;
+    letter-spacing: -1.7px;
+}
+.page-intro p {
+    max-width: 880px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.72;
+}
+.section-heading h2 {
+    font-size: 28px;
+    letter-spacing: -0.6px;
+    line-height: 1.2;
+    margin: 0 0 6px;
+}
+.section-heading p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+.explorer-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px;
+    margin: 24px 0 20px;
+}
+.field {
+    min-width: 210px;
+    flex: 0 1 250px;
+}
+.field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.field select {
+    width: 100%;
+    border: 1px solid #cbd2d8;
+    border-radius: 6px;
+    background: #fff;
+    padding: 10px 12px;
+    color: var(--text);
+    min-height: 44px;
+}
+.plain-button {
+    border: 1px solid #cbd2d8;
+    border-radius: 6px;
+    padding: 10px 16px;
+    color: var(--text);
+    background: #fff;
+    min-height: 44px;
+    cursor: pointer;
+}
+.plain-button:hover,
+.zoom-buttons button:hover {
+    background: #eef2f4;
+}
+button:focus-visible,
+select:focus-visible,
+.map-region:focus-visible {
+    outline: 3px solid #2772c5;
+    outline-offset: 2px;
+}
+.explorer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(310px, 1fr);
+    gap: 18px;
+    align-items: stretch;
+}
+.map-card,
+.results-card {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    padding: 19px;
+    min-width: 0;
+}
+.card-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 15px;
+}
+.card-kicker {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: #75808b;
+}
+.map-small-note {
+    color: #78848d;
+    font-size: 12px;
+}
+.map-viewport {
+    position: relative;
+    height: 570px;
+    background: #f4f7f9;
+    overflow: hidden;
+    border: 1px solid #edf0f2;
+    border-radius: 5px;
+}
+#electionSvg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    cursor: grab;
+}
+#electionSvg.dragging {
+    cursor: grabbing;
+}
+.map-region {
+    cursor: pointer;
+    vector-effect: non-scaling-stroke;
+    transition: fill 0.12s linear;
+}
+.map-region.is-active {
+    stroke: #121821 !important;
+    stroke-width: 2 !important;
+}
+.map-region.is-hovered {
+    stroke: #1c2833 !important;
+    stroke-width: 1.3 !important;
+}
+.map-tooltip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    pointer-events: none;
+    width: max-content;
+    max-width: min(240px, 75%);
+    padding: 11px 13px;
+    border: 1px solid #dde2e6;
+    border-radius: 7px;
+    background: #fff;
+    box-shadow: 0 8px 28px #1c293527;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.map-tooltip strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+.map-tooltip .muted {
+    color: #607080;
+}
+.zoom-buttons {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    display: grid;
+    gap: 4px;
+    z-index: 3;
+}
+.zoom-buttons button {
+    background: #fff;
+    border: 1px solid #d7dee3;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px #00000010;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    font-size: 21px;
+    line-height: 1;
+}
+.zoom-buttons button:last-child {
+    font-size: 18px;
+}
+.map-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 12px;
+    color: #56616b;
+    margin-top: 16px;
+}
+.legend-gradient {
+    flex: 1;
+    min-width: 90px;
+    max-width: 240px;
+    height: 12px;
+    border-radius: 2px;
+    background: #eee;
+}
+.legend-label {
+    font-size: 12px;
+}
+.legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+}
+.legend-entry {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 6px;
+}
+.map-note,
+.data-source,
+.results-footnote {
+    font-size: 12px;
+    color: #6d7780;
+    line-height: 1.6;
+}
+.map-note {
+    margin: 12px 0 4px;
+}
+.status {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: #61717c;
+}
+.status.error {
+    color: #a3232c;
+}
+.results-pill {
+    background: #edf2f6;
+    color: #485b69;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 15px;
+}
+.results-card h3 {
+    font-size: 25px;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    margin: 8px 0 5px;
+    overflow-wrap: anywhere;
+}
+.results-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 20px;
+}
+.results-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin-bottom: 19px;
+}
+.metric {
+    background: var(--subtle);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.metric span {
+    font-size: 11px;
+    color: var(--muted);
+}
+.metric strong {
+    font-size: 17px;
+}
+.results-table-wrap {
+    width: 100%;
+    max-height: 555px;
+    overflow: auto;
+}
+.results-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: white;
+}
+.results-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+}
+.results-table th {
+    text-align: right;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6a7780;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--border);
+}
+.results-table th:first-child {
+    text-align: left;
+}
+.results-table td {
+    padding: 13px 4px;
+    border-bottom: 1px solid #eef0f2;
+    font-size: 13px;
+    text-align: right;
+    white-space: nowrap;
+}
+.results-table td:first-child {
+    text-align: left;
+}
+.results-table tr.is-chosen {
+    background: #f3f6fa;
+}
+.party-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.party-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: none;
+}
+.party-share {
+    font-weight: 700;
+}
+.share-underbar {
+    width: 55px;
+    height: 4px;
+    border-radius: 2px;
+    background: #e8ebef;
+    margin: 5px 0 0 auto;
+    overflow: hidden;
+}
+.share-underbar span {
+    height: 100%;
+    display: block;
+    border-radius: inherit;
+}
+.results-footnote {
+    margin: 20px 0 0;
+}
+.data-source {
+    margin: 12px 0 0;
+}
+@media (max-width: 970px) {
+    .page-container {
+        padding: 38px 22px 65px;
+    }
+    .explorer-grid {
+        grid-template-columns: 1fr;
+    }
+    .map-viewport {
+        height: 535px;
+    }
+}
+@media (max-width: 590px) {
+    .page-container {
+        padding: 30px 16px 52px;
+    }
+    .page-intro {
+        margin-bottom: 38px;
+    }
+    .page-intro h1 {
+        letter-spacing: -0.85px;
+    }
+    .page-intro p {
+        font-size: 15px;
+    }
+    .field {
+        flex: 1 1 100%;
+    }
+    .plain-button {
+        width: 100%;
+    }
+    .map-card,
+    .results-card {
+        padding: 13px;
+    }
+    .map-viewport {
+        height: 390px;
+    }
+    .results-card h3 {
+        font-size: 22px;
+    }
+}
+
+/* ---------------------------------------------------
+   Berlin map: two distinct geographic interaction modes
+   --------------------------------------------------- */
+
+/* Voting-area mode: visible but fine grey precinct lines. */
+.map-voting-area {
+    stroke: #8494a6;
+    stroke-width: 0.65;
+    stroke-opacity: 0.7;
+    stroke-linejoin: round;
+}
+.map-voting-area.is-hovered {
+    stroke: #263849 !important;
+    stroke-width: 1.6 !important;
+    stroke-opacity: 1;
+}
+.map-voting-area.is-active {
+    stroke: #111c2a !important;
+    stroke-width: 2.3 !important;
+    stroke-opacity: 1;
+}
+
+/* Bezirk mode: only 12 actual polygons can be clicked. */
+.map-bezirk {
+    stroke: #3b4e60;
+    stroke-width: 1.2;
+    stroke-opacity: 0.95;
+    stroke-linejoin: round;
+}
+.map-bezirk.is-hovered {
+    stroke: #172838 !important;
+    stroke-width: 2.8 !important;
+}
+.map-bezirk.is-active {
+    stroke: #0d1825 !important;
+    stroke-width: 3.5 !important;
+}
+
+/* Persistent administrative boundary overlay in area mode. */
+.bezirk-outline-layer,
+.bezirk-label-layer {
+    pointer-events: none;
+}
+.bezirk-outline {
+    stroke: #263b4d;
+    stroke-width: 1.2;
+    stroke-opacity: 0.92;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+/* Permanent names of all 12 Bezirke. Labels never intercept clicks. */
+.bezirk-label {
+    font-family: Verdana, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+    fill: #1d2b39;
+    stroke: rgba(255, 255, 255, 0.95);
+    stroke-width: 4.2px;
+    stroke-linejoin: round;
+    paint-order: stroke fill;
+    user-select: none;
+}
+
+@media (max-width: 590px) {
+    .bezirk-label {
+        font-size: 26px;
+        stroke-width: 5px;
+    }
+}
+
+/* ---------------------------------------------------
+   Step 4 — Berlin-wide voter-group survey explorer
+   --------------------------------------------------- */
+.voter-explorer {
+    margin-top: 68px;
+}
+.voter-explorer .section-heading p {
+    max-width: 950px;
+}
+.voter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 24px 0 20px;
+}
+.voter-tab {
+    border: 1px solid #d6dfe5;
+    background: #fff;
+    color: #334351;
+    border-radius: 6px;
+    padding: 10px 15px;
+    cursor: pointer;
+    min-height: 42px;
+    font-size: 13px;
+    font-weight: 650;
+}
+.voter-tab:hover {
+    background: #f1f5f7;
+}
+.voter-tab.is-selected {
+    background: #243648;
+    border-color: #243648;
+    color: white;
+}
+.voter-tab:focus-visible {
+    outline: 3px solid #2772c5;
+    outline-offset: 3px;
+}
+.voter-comparison-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    max-width: 610px;
+    margin-bottom: 20px;
+}
+.voter-comparison-controls .field {
+    min-width: 0;
+    flex: unset;
+}
+.voter-chart-card,
+.voter-context-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 22px;
+    min-width: 0;
+}
+.voter-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(275px, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+.voter-chart-card h3,
+.voter-context-card h3 {
+    font-size: 23px;
+    line-height: 1.3;
+    margin: 0 0 7px;
+    letter-spacing: -0.5px;
+}
+.voter-chart-description {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 18px;
+}
+.voter-counter {
+    font-size: 12px;
+    color: #6e7c85;
+}
+.voter-legend {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 6px;
+    margin: 0 0 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eef0f3;
+    font-size: 12px;
+    color: #465665;
+}
+.voter-legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.voter-legend-swatch {
+    display: inline-block;
+    background: #40576d;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex: none;
+}
+.voter-legend-swatch.is-pale {
+    opacity: 0.42;
+}
+.voter-delta-key {
+    color: var(--muted);
+}
+.voter-party-row {
+    display: grid;
+    grid-template-columns: 102px minmax(0, 1fr) 55px;
+    gap: 12px;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 1px solid #edf0f2;
+}
+.voter-party-row:last-child {
+    border-bottom: 0;
+}
+.voter-party-name {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.voter-party-name i {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+}
+.voter-bars {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+.voter-bar-line {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr) 37px;
+    gap: 7px;
+    align-items: center;
+}
+.voter-bar-letter {
+    font-size: 10px;
+    color: #566471;
+}
+.voter-bar-track {
+    width: 100%;
+    height: 12px;
+    background: #f1f3f5;
+    overflow: hidden;
+    border-radius: 2px;
+}
+.voter-bar-fill {
+    display: block;
+    height: 100%;
+    min-width: 0;
+    border-radius: 2px;
+}
+.voter-bar-line.is-b .voter-bar-fill {
+    opacity: 0.42;
+}
+.voter-bar-value {
+    text-align: right;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: #374653;
+}
+.voter-party-gap {
+    justify-self: end;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.voter-party-gap small {
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 10px;
+}
+.voter-insight {
+    margin-top: 19px;
+    padding: 16px;
+    background: #f5f7f9;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.65;
+}
+.voter-insight p {
+    margin: 0;
+}
+.voter-method {
+    font-size: 13px;
+    color: #586773;
+    line-height: 1.7;
+    margin: 18px 0;
+}
+.voter-source {
+    padding-top: 17px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    gap: 5px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.voter-source-heading {
+    font-weight: 700;
+    color: #374b5c;
+}
+.voter-source a {
+    color: #1b5b93;
+    text-decoration: underline;
+    width: fit-content;
+}
+.voter-explorer > .data-source {
+    margin-top: 16px;
+}
+@media (max-width: 970px) {
+    .voter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 590px) {
+    .voter-explorer {
+        margin-top: 46px;
+    }
+    .voter-comparison-controls {
+        grid-template-columns: 1fr;
+    }
+    .voter-chart-card,
+    .voter-context-card {
+        padding: 15px 12px;
+    }
+    .voter-party-row {
+        grid-template-columns: 78px minmax(0, 1fr) 45px;
+        gap: 6px;
+    }
+    .voter-party-name {
+        font-size: 10px;
+        gap: 5px;
+    }
+    .voter-party-name i {
+        width: 7px;
+        height: 7px;
+    }
+    .voter-bar-line {
+        grid-template-columns: 10px minmax(0, 1fr) 31px;
+        gap: 4px;
+    }
+    .voter-bar-value {
+        font-size: 10px;
+    }
+    .voter-party-gap {
+        font-size: 11px;
+    }
+    .voter-tab {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: 10px 8px;
+    }
+}
+
+/* ----------------------------------------
+   Square corners
+---------------------------------------- */
+
+.field select,
+.plain-button,
+.map-card,
+.results-card,
+.map-viewport,
+.map-tooltip,
+.zoom-buttons button,
+.legend-gradient,
+.legend-swatch,
+.results-pill,
+.metric,
+.share-underbar,
+.voter-tab,
+.voter-chart-card,
+.voter-context-card,
+.voter-legend-swatch,
+.voter-bar-track,
+.voter-bar-fill,
+.voter-insight {
+    border-radius: 0;
+}
+
+/* ----------------------------------------
+   Typography — JetBrains Mono
+---------------------------------------- */
+
+body,
+button,
+input,
+select,
+textarea,
+.bezirk-label,
+.map-tooltip {
+    font-family: "JetBrains Mono", monospace;
+}
+
+/* --------------------------------------------------
+   Food Atlas-style dropdowns
+   The original selects remain in the DOM for the
+   existing election-map and voter-group JavaScript.
+   After enhancement, only the custom controls are shown.
+-------------------------------------------------- */
+
+/* Hide the native element only after JavaScript enhances it. */
+.field select.atlas-native-select {
+    display: none !important;
+}
+
+.atlas-dropdown {
+    position: relative;
+    width: 100%;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.atlas-dropdown.is-open {
+    z-index: 30;
+}
+
+.atlas-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #cdd3d8;
+    border-radius: 0;
+    background: #ffffff;
+    color: #343a40;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.atlas-dropdown-trigger:hover,
+.atlas-dropdown.is-open .atlas-dropdown-trigger {
+    border-color: #9da8b1;
+    background: #f7f8f9;
+}
+
+.atlas-dropdown-trigger:focus-visible,
+.atlas-dropdown-option:focus-visible {
+    outline: 2px solid #566473;
+    outline-offset: 2px;
+}
+
+.atlas-dropdown-current {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.atlas-dropdown-arrow {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
+}
+
+.atlas-dropdown.is-open .atlas-dropdown-arrow {
+    transform: rotate(225deg) translateY(-1px);
+}
+
+.atlas-dropdown-menu {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 3px);
+    left: 0;
+    right: 0;
+    max-height: 270px;
+    overflow-y: auto;
+    border: 1px solid #cdd3d8;
+    border-radius: 0;
+    background: #ffffff;
+    box-shadow: 0 5px 14px rgb(0 0 0 / 9%);
+}
+
+.atlas-dropdown-menu[hidden] {
+    display: none;
+}
+
+.atlas-dropdown-option {
+    display: block;
+    width: 100%;
+    padding: 11px 13px;
+    border: 0;
+    border-radius: 0;
+    background: #ffffff;
+    color: #343a40;
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.atlas-dropdown-option:hover,
+.atlas-dropdown-option:focus-visible,
+.atlas-dropdown-option.is-selected {
+    background: #e8ebed;
+    color: #343a40;
+}
+
+.atlas-dropdown-option:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* --------------------------------------------------
+   SVG outline overlay — always above geographic borders
+   (Bezirk labels remain above the overlay)
+-------------------------------------------------- */
+
+.map-highlight-layer {
+    pointer-events: none;
+}
+
+.map-highlight-hover,
+.map-highlight-selected {
+    fill: none;
+    stroke: #ffffff;
+    stroke-opacity: 1;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.map-highlight-hover {
+    stroke-width: 1.5px;
+}
+
+.map-highlight-selected {
+    stroke-width: 2px;
+}
+
+/* SVG keyboard focus follows the actual map shape via the overlay. */
+.map-region:focus,
+.map-region:focus-visible {
+    outline: none;
+}
+
+/* --------------------------------------------------
+   Final editorial polish
+   -------------------------------------------------- */
+
+/* More compact heading above the interactive map */
+.page-container {
+    padding-top: 42px;
+    padding-bottom: 72px;
+}
+.page-intro {
+    margin-bottom: 38px;
+}
+.page-intro h1 {
+    max-width: 1100px;
+    font-size: clamp(29px, 3.6vw, 45px);
+    letter-spacing: -0.9px;
+}
+.section-heading h2 {
+    font-size: clamp(22px, 2.5vw, 27px);
+}
+
+/* A soft fill without fading Bezirk lines, labels, or white interaction strokes */
+.map-bezirk,
+.map-voting-area {
+    fill-opacity: 0.82;
+}
+
+/* Custom menus must remain single, square-cornered controls. */
+.atlas-dropdown,
+.atlas-dropdown-trigger,
+.atlas-dropdown-menu,
+.atlas-dropdown-option {
+    border-radius: 0;
+}
+
+/* The explanatory sidebar was moved to the separate project page. */
+.voter-grid {
+    display: block;
+}
+.voter-chart-card {
+    width: 100%;
+}
+.voter-context-card[hidden] {
+    display: none !important;
+}
+
+/* Keep load announcements accessible without showing an extra paragraph.
+   Critical loading errors remain visibly displayed. */
+.status:not(.error) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+.status.error {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+}
+
+/* Link to the longer project article, separated from the interactive content. */
+.dashboard-footer {
+    margin-top: 44px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+}
+.dashboard-footer a {
+    color: #485965;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.dashboard-footer a:hover {
+    color: #1c2229;
+}
+.dashboard-footer a:focus-visible {
+    outline: 2px solid #566473;
+    outline-offset: 3px;
+}
+
+/* Non-map controls retain clear but neutral keyboard focus. */
+button:focus-visible,
+select:focus-visible,
+.voter-tab:focus-visible {
+    outline-color: #566473;
+}
+
+@media (max-width: 590px) {
+    .page-container {
+        padding-top: 26px;
+        padding-bottom: 48px;
+    }
+    .page-intro {
+        margin-bottom: 30px;
+    }
+    .page-intro h1 {
+        font-size: clamp(27px, 7.1vw, 36px);
+        letter-spacing: -0.6px;
+    }
+    .dashboard-footer {
+        margin-top: 30px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .map-region {
+        transition: none;
+    }
+}

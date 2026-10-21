@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+            name="description"
+            content="Explore Berlin's 2026 Abgeordnetenhaus election results by electoral area and borough."
+        />
+        <title>2026 Berlin State Election</title>
+        <link rel="stylesheet" href="berlin_2026_election_dashboard_styles.css" />
+        <script src="data/berlin_2026_election_areas.js" defer></script>
+        <script src="data/berlin_2026_voter_groups.js" defer></script>
+        <script src="berlin_2026_election_dashboard_script.js" defer></script>
+    </head>
+    <body>
+        <main class="page-container">
+            <section class="page-intro" aria-labelledby="page-title">
+                <h1 id="page-title">How did Berlin vote in the 2026 state election?</h1>
+            </section>
+
+            <section class="election-explorer" aria-labelledby="explorer-title">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="explorer-title">Explore the results</h2>
+                    </div>
+                </div>
+
+                <div class="explorer-controls">
+                    <div class="field">
+                        <label for="mapMode">Map geography</label>
+                        <select id="mapMode">
+                            <option value="bezirk">Bezirke (12 boroughs)</option>
+                            <option value="area">Voting areas (1,572)</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="partySelect">Color map by</label>
+                        <select id="partySelect">
+                            <option value="winner">Leading party</option>
+                            <option value="die_linke">Die Linke</option>
+                            <option value="cdu">CDU</option>
+                            <option value="spd">SPD</option>
+                            <option value="gruene">GRÜNE</option>
+                            <option value="afd">AfD</option>
+                            <!--
+                            <option value="bsw">BSW</option>
+                            <option value="fdp">FDP</option>
+                            <option value="tierschutzpartei">Tierschutzpartei</option>
+                            <option value="die_partei">Die PARTEI</option>
+                            <option value="volt">Volt</option>
+                            <option value="die_urbane">Die Urbane.</option>
+                            <option value="dkp">DKP</option>
+                            <option value="oedp">ÖDP</option>
+                            <option value="heimat">HEIMAT</option>
+                            <option value="b_star">B*</option>
+                            <option value="sgp">SGP</option>
+                            <option value="pdf">PdF</option>
+                          -->
+                        </select>
+                    </div>
+                    <button id="resetSelection" class="plain-button" type="button">Show Berlin total</button>
+                </div>
+
+                <div class="explorer-grid">
+                    <div class="map-card">
+                        <div class="card-topline">
+                            <span class="card-kicker">BERLIN · ELECTION MAP</span>
+                            <span class="map-small-note" id="mapRegionCount">Loading…</span>
+                        </div>
+
+                        <div
+                            id="mapViewport"
+                            class="map-viewport"
+                            aria-label="Interactive map of Berlin's 2026 election results"
+                        >
+                            <svg
+                                id="electionSvg"
+                                role="img"
+                                aria-label="Berlin voting-area polygons; click an area for results"
+                            ></svg>
+                            <div id="mapTooltip" class="map-tooltip" role="status" hidden></div>
+                            <div class="zoom-buttons" aria-label="Map zoom controls">
+                                <button type="button" id="zoomIn" aria-label="Zoom in">+</button>
+                                <button type="button" id="zoomOut" aria-label="Zoom out">−</button>
+                                <button type="button" id="resetZoom" aria-label="Reset map view" title="Reset zoom">
+                                    ⤢
+                                </button>
+                            </div>
+                        </div>
+                        <div id="mapLegend" class="map-legend" aria-label="Map color legend"></div>
+                        <p id="mapStatus" class="status" role="status">Loading election data automatically…</p>
+                    </div>
+
+                    <aside class="results-card" aria-labelledby="resultsTitle">
+                        <div class="card-topline">
+                            <span class="card-kicker">RESULTS</span>
+                            <span class="results-pill" id="resultsLevel">Berlin total</span>
+                        </div>
+                        <h3 id="resultsTitle">Berlin overall</h3>
+                        <p id="resultsSubtitle" class="results-subtitle">Across all voting areas in the dataset</p>
+                        <div class="results-metrics">
+                            <div class="metric"><span>Valid votes</span><strong id="validVotes">—</strong></div>
+                            <div class="metric"><span>Leading party</span><strong id="leadingParty">—</strong></div>
+                        </div>
+                        <div class="results-table-wrap">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Party</th>
+                                        <th scope="col">Share</th>
+                                        <th scope="col">Votes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partyRows"></tbody>
+                            </table>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- Berlin-wide survey estimates, separate from the geographic results -->
+            <section class="voter-explorer" aria-labelledby="voterExplorerTitle">
+                <div class="section-heading">
+                    <h2 id="voterExplorerTitle">How different groups voted</h2>
+                </div>
+
+                <div class="voter-tabs" id="voterDimensionTabs" role="group" aria-label="Choose voter characteristic">
+                    <button type="button" class="voter-tab is-selected" data-dimension="age" aria-pressed="true">
+                        Age
+                    </button>
+                    <button type="button" class="voter-tab" data-dimension="gender" aria-pressed="false">Gender</button>
+                    <button type="button" class="voter-tab" data-dimension="age_gender" aria-pressed="false">
+                        Age &amp; gender
+                    </button>
+                    <button type="button" class="voter-tab" data-dimension="education" aria-pressed="false">
+                        Education
+                    </button>
+                    <button type="button" class="voter-tab" data-dimension="economic_situation" aria-pressed="false">
+                        Economic situation
+                    </button>
+                    <button type="button" class="voter-tab" data-dimension="religion" aria-pressed="false">
+                        Religion
+                    </button>
+                </div>
+
+                <div class="voter-comparison-controls">
+                    <div class="field">
+                        <label for="voterGroupA">Group A</label>
+                        <select id="voterGroupA"></select>
+                    </div>
+                    <div class="field">
+                        <label for="voterGroupB">Group B</label>
+                        <select id="voterGroupB"></select>
+                    </div>
+                </div>
+
+                <div class="voter-grid">
+                    <article class="voter-chart-card" aria-labelledby="voterChartTitle">
+                        <div class="card-topline">
+                            <span class="card-kicker">VOTER GROUPS · BERLIN-WIDE</span>
+                            <span class="voter-counter" id="voterPartyCount"></span>
+                        </div>
+                        <h3 id="voterChartTitle">Age — party vote shares</h3>
+                        <div class="voter-legend">
+                            <span><i class="voter-legend-swatch"></i> A: <strong id="voterLabelA"></strong></span>
+                            <span
+                                ><i class="voter-legend-swatch is-pale"></i> B: <strong id="voterLabelB"></strong
+                            ></span>
+                            <span class="voter-delta-key">Difference in percentage points (pp)</span>
+                        </div>
+                        <div id="voterChartRows" class="voter-chart-rows" aria-live="polite"></div>
+                    </article>
+
+                    <!-- Keep the elements below for the existing JavaScript, but leave
+             methodology and analysis explanations on the project page. -->
+                    <aside class="voter-context-card" aria-labelledby="voterContextTitle" hidden>
+                        <div class="card-topline"><span class="card-kicker">ANALYSIS &amp; SOURCE</span></div>
+                        <h3 id="voterContextTitle">Comparison notes</h3>
+                        <div id="voterInsight" class="voter-insight" aria-live="polite"></div>
+                        <p class="voter-method" id="voterMethod"></p>
+                        <div class="voter-source">
+                            <span class="voter-source-heading">Survey source</span>
+                            <span id="voterSourceName"></span>
+                            <a id="voterSourceLink" href="#" target="_blank" rel="noopener noreferrer"
+                                >View source ↗</a
+                            >
+                        </div>
+                    </aside>
+                </div>
+                <p id="voterStatus" class="status" role="status">Loading voter-group data…</p>
+            </section>
+
+            <footer class="dashboard-footer">
+                <a href="berlin_2026_election">Sources and methodology</a>
+            </footer>
+        </main>
+    </body>
+</html>
