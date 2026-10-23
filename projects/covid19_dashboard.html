@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resurrected Coronavirus Dashboard</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+</head>
+
+<body>
+    <main>
+
+        <h1>Resurrected Coronavirus Dashboard</h1>
+
+        <a href="https://covid19-dashboard-v2.onrender.com/" target="_blank" rel="noopener noreferrer">Link to dashboard</a>
+
+        <p>
+            I originally built this COVID-19 dashboard several years ago, during the pandemic. It was one of my older
+            Python projects, and for a long time I had left it untouched. When I decided to revisit it, the application
+            was in pretty rough shape. Parts of the code depended on old libraries, the layout did not work properly
+            on different screen sizes, and several map interactions and charts needed attention. The project had also
+            grown into a large piece of code that I no longer wanted to maintain in its original form.
+        </p>
+
+        <p>
+            I decided to see whether I could bring it back to life with the help of ChatGPT. I don't think I would
+            have managed to resurrect this dashboard without it, at least not without spending an unreasonable amount
+            of time trying to understand and repair all the old code myself. Rather than starting from scratch, I used
+            ChatGPT to help me inspect the existing application, break the code into smaller Python modules, reorganize
+            the JavaScript and CSS, and gradually fix the things that had stopped working. It was very much an iterative
+            process: I tested the application locally, found problems, and worked through them one by one.
+        </p>
+
+        <p>
+            The aim was to preserve the character of the original dashboard rather than turn it into something
+            completely different. It still provides interactive maps of Germany and its federal states, together with
+            historical information about COVID-19 cases, deaths, trends, intensive care, and vaccinations. The map views
+            were rebuilt around separate geographic files, the statistics and charts were made more responsive, and the
+            hover tooltips and metric switches were repaired. The final interface keeps the map on the left and the
+            corresponding statistics and charts on the right.
+        </p>
+
+        <p>
+            The application is built with Python and Dash, using Plotly for charts and Leaflet for the geographic
+            visualizations, alongside custom JavaScript and CSS. The data is historical, primarily from 2021, so this
+            is not a live COVID-19 tracker. In particular, the intensive-care history uses a historical RKI/DIVI
+            dataset, while the vaccination views use archived vaccination figures.
+        </p>
+
+        <p>
+            Once the dashboard was working again, I cleaned up the project, put the source code on GitHub, and deployed
+            it on Render using Gunicorn. The site runs on Render's free tier, so the first visit after a period of
+            inactivity can take a little longer to load. What I find most interesting about this project is not the
+            COVID-19 data itself, but how much easier it has become to revisit and restore an old software project
+            with AI assistance. A dashboard I had more or less abandoned is now running again.
+        </p>
+
+    </main>
+</body>
+
+</html>
