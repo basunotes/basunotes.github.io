@@ -308,64 +308,163 @@ quantile_value = stats.norm.ppf(p, loc=mu, scale=sigma)</code></pre>
                 <span id="Hypotheses"><b>Hypotheses</b></span>
 
                 <p>
-                    In statistical <i>hypothesis testing</i>, the goal is to determine whether there is sufficient
-                    evidence to reject a presumed <i>null hypothesis</i> in favor of a conjectured <i>alternative
-                        hypothesis</i>.
-                    The null hypothesis is usually denoted by \(H_0\), while the alternative hypothesis is usually
-                    denoted by \(H_1\).
+                    In statistical <i>hypothesis testing</i>, the goal is to determine whether observed data provide
+                    sufficient evidence to reject a specified <i>null hypothesis</i> in favour of an
+                    <i>alternative hypothesis</i>. We denote the null hypothesis by \(H_0\) and the alternative
+                    hypothesis by \(H_1\) (or \(H_A\)). Hypothesis testing is a form of statistical inference:
+                    we use a sample to assess a claim about a larger population or a data-generating process.
+                </p>
+
+                <p><b>From a research question to statistical hypotheses.</b></p>
+
+                <p>
+                    Before choosing a statistical test, we must decide what quantity we want to learn about.
+                    This quantity is called a <i>parameter</i>. Examples include a population mean \(\mu\),
+                    a population proportion \(p\), a population variance \(\sigma^2\), or a difference
+                    between two population means \(\mu_1-\mu_2\). Hypotheses concern these unknown
+                    <i>population parameters</i>, not the values of the corresponding sample statistics.
                 </p>
 
                 <p>
-                    For example, if the hypothesis test concerns deciding whether a population mean \(\mu\)
-                    differs from a specified value \(\mu_0\), then the null hypothesis can be expressed as
+                    Suppose we want to investigate whether a population has mean \(\mu_0\). We can write
                     \[
-                    H_0: \mu = \mu_0
+                        H_0:\mu=\mu_0, \qquad H_1:\mu\neq\mu_0.
                     \]
-                </p>
-
-                <p>
-                    and the alternative hypothesis as
+                    This is a <b>two-sided test</b>: differences in either direction count as evidence against
+                    \(H_0\). If the research question concerns only an increase or only a decrease, we
+                    may instead formulate a one-sided alternative:
                     \[
-                    H_1: \mu \neq \mu_0\text{.}
+                        H_1:\mu&gt;\mu_0 \qquad\text{or}\qquad H_1:\mu&lt;\mu_0.
                     \]
+                    The former is called a <b>right-tailed test</b>, and the latter a <b>left-tailed test</b>.
+                    The direction must be chosen from the research question <i>before inspecting the results</i>.
+                    Choosing a direction because it produces a smaller p-value invalidates the intended error control.
                 </p>
 
-                <p>Such a hypothesis test is called a <b>two-sided test</b>.</p>
+                <p>
+                    In introductory calculations, the null is commonly written with an equality, even for
+                    a one-sided test. For example, \(H_0:\mu=\mu_0\) versus \(H_1:\mu&gt;\mu_0\)
+                    is often used to calculate the test statistic's null distribution. More formally, the
+                    hypotheses for a one-sided decision may be \(H_0:\mu\leq\mu_0\) versus
+                    \(H_1:\mu&gt;\mu_0\); in many standard tests, the boundary value
+                    \(\mu=\mu_0\) determines the relevant critical values.
+                </p>
+
+                <p><b>Simple and composite hypotheses.</b></p>
 
                 <p>
-                    If the hypothesis test is about deciding whether a population mean \(\mu\)
-                    is smaller than the specified value \(\mu_0\), the alternative hypothesis is expressed as
+                    A statistical model describes a family of possible probability distributions
+                    \(\{P_\theta:\theta\in\Theta\}\), indexed by an unknown parameter \(\theta\).
+                    The hypotheses divide the parameter space into sets \(\Theta_0\) and \(\Theta_1\):
                     \[
-                    H_1: \mu < \mu_0\text{.} \] </p>
+                        H_0:\theta\in\Theta_0, \qquad H_1:\theta\in\Theta_1.
+                    \]
+                    A hypothesis is called <i>simple</i> when it specifies a single probability distribution;
+                    otherwise, it is called <i>composite</i>. For example, in a model with known variance,
+                    specifying \(\mu=\mu_0\) determines the distribution if the model is normal, so that
+                    this null is simple. If the variance is also unknown, specifying only
+                    \(\mu=\mu_0\) leaves multiple possible normal distributions, and the null is composite.
+                    An alternative such as \(\mu&gt;\mu_0\) is generally composite.
+                </p>
 
-                        <p>Such a hypothesis test is called a <b>left-tailed test</b>.</p>
+                <p><b>From observations to a test statistic.</b></p>
 
-                        <p>
-                            Analogously, we have the <b>right-tailed test</b>, which is about deciding whether a
-                            population mean
-                            \(\mu\) is greater than the specified value \(\mu_0\).
-                        </p>
+                <p>
+                    Suppose we observe a random sample \(X_1,\ldots,X_n\), with realised values
+                    \(x_1,\ldots,x_n\). A <i>test statistic</i> is a function of these observations,
+                    \[
+                        T=T(X_1,\ldots,X_n),
+                    \]
+                    whose distribution under the null hypothesis is known or can be approximated.
+                    For a hypothesis concerning a population mean, the sample mean
+                    \[
+                        \overline{X}=\frac{1}{n}\sum_{i=1}^{n}X_i
+                    \]
+                    is a natural starting point. In practice, we usually standardise a statistic so that
+                    we can compare it with a familiar reference distribution, such as a normal,
+                    Student's t, chi-square, or F-distribution.
+                </p>
 
-                        <p>
-                            We make the decision to reject the null hypothesis in favor of the alternative,
-                            or to not reject the null hypothesis, based on the observed outcome, say \(\mathbf{x}\),
-                            of
-                            a random
-                            experiment.
-                            We identify an appropriate subset \(R\) of the sample space \(S\) and reject \(H_0\) if
-                            and
-                            only if \(\mathbf{x} \in R\).
-                            This set \(R\) is known as the <b>rejection region</b> or the <b>critical region</b>.
-                            However, we will
-                            see that this
-                            critical region is often defined in terms of a <i>test statistic</i>, which maps \(S\)
-                            into
-                            another set
-                            \(T\). This allows
-                            for siginificant data reduction.
-                        </p>
+                <p>
+                    We make the decision to reject \(H_0\) or <i>fail to reject</i> \(H_0\) based on the
+                    observed outcome \(\mathbf{x}\). A test specifies a subset \(R\) of the sample
+                    space \(S\), called the <b>rejection region</b> or <b>critical region</b>. We reject
+                    \(H_0\) precisely when \(\mathbf{x}\in R\). Frequently, the region is expressed
+                    through the test statistic, for example \(T(\mathbf{x})&gt;c\) for a suitable
+                    critical value \(c\). We will examine how these regions are chosen in the sections
+                    on significance levels, critical values, and p-values.
+                </p>
 
-                        <hr>
+                <p>
+                    <b>Failing to reject a null hypothesis does not establish that it is true.</b>
+                    It means only that the observed data, together with the specified model and test,
+                    do not provide sufficiently strong evidence against it at the chosen significance level.
+                    If we wish to demonstrate that an effect is small enough to be practically negligible,
+                    an <i>equivalence test</i> or a non-inferiority framework may be more appropriate
+                    than an ordinary test for a difference.
+                </p>
+
+                <p><b>Example: comparing an average weight with a reference value.</b></p>
+
+                <p>
+                    We will use the <i>students</i> dataset provided by the SOGA-Py course to illustrate
+                    the connection between a statistical question and the data used to investigate it.
+                    Let \(\mu\) denote the population mean weight for the population of interest,
+                    and suppose that \(70.8\,\mathrm{kg}\) is a proposed benchmark. We might test
+                    \[
+                        H_0:\mu=70.8 \qquad\text{against}\qquad H_1:\mu\neq70.8.
+                    \]
+                    The sample mean alone cannot determine whether \(H_0\) should be rejected:
+                    differences arise naturally through random sampling, and their importance depends on
+                    the variation in the data and the sample size.
+                </p>
+
+                <pre class="plain"><code>import pandas as pd
+import numpy as np
+
+students = pd.read_csv(
+    "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+)
+
+# Draw the same reproducible sample used in the later z-test example.
+sample_weights = students.sample(n=14, random_state=8)["weight"].dropna()
+
+mu_0 = 70.8
+sample_mean = sample_weights.mean()
+sample_sd = sample_weights.std(ddof=1)
+
+print("Sample size:", len(sample_weights))
+print("Sample mean:", round(sample_mean, 2))
+print("Sample standard deviation:", round(sample_sd, 2))
+print("Difference from benchmark:", round(sample_mean - mu_0, 2))</code></pre>
+
+                <p>
+                    This code is <i>descriptive</i>: it calculates quantities that a later hypothesis test
+                    will need, but it has not yet evaluated the evidence against the null hypothesis.
+                    We must first justify our statistical model and choose an appropriate test.
+                    In particular, a random subsample of an existing teaching dataset is not automatically
+                    a representative random sample of all students or of all European adults.
+                    The population to which we can generalise depends on how the original data were collected.
+                </p>
+
+                <p><b>Questions to answer before performing a test.</b></p>
+
+                <ul>
+                    <li><b>Population and parameter:</b> What population is the conclusion about, and what is the unknown quantity?</li>
+                    <li><b>Study design:</b> Are observations independent? Are measurements paired, clustered, or repeated?</li>
+                    <li><b>Sampling and missing values:</b> How were the observations selected, and could selection or missingness bias the result?</li>
+                    <li><b>Scientific hypothesis:</b> What difference, direction, or association matters, and why?</li>
+                    <li><b>Method:</b> Which sampling assumptions are needed for the proposed statistic and its reference distribution?</li>
+                    <li><b>Interpretation:</b> Would a statistically detectable effect also be substantively important?</li>
+                </ul>
+
+                <p>
+                    The following sections explain how to control the probability of erroneous conclusions,
+                    calculate p-values and confidence intervals, and choose tests suited to different kinds
+                    of data. We will also examine test assumptions and implement the procedures in Python.
+                </p>
+
+                <hr>
 
                         <span id="ErrorSignificance"><b>Error and Significance Level</b></span>
 
