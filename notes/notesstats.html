@@ -77,6 +77,8 @@
 
                         <li><a href="#PolynomialRegression">Polynomial Regression</a></li>
                         <li><a href="#LogisticRegression">Logistic Regression</a></li>
+                        <li><a href="#MaximumLikelihoodEstimation">Maximum Likelihood Estimation</a></li>
+
                     </ul>
                 </nav>
             </aside>
@@ -13537,7 +13539,828 @@ plt.show()</code></pre>
                         >.
                     </p>
                     <hr />
-                    
+
+                    <!-- ========================= MAIN SECTION 21: Maximum Likelihood Estimation ========================= -->
+
+                    <span id="MaximumLikelihoodEstimation"><b>Maximum Likelihood Estimation</b></span>
+
+                    <p>
+                        Maximum likelihood estimation (MLE) is a general method for estimating parameters of a
+                        probabilistic model. It connects the point-estimation theory of mathematical statistics with
+                        practical machine learning: fitting a probabilistic model often amounts to minimizing a
+                        <i>negative log-likelihood</i>. This section develops the method from first principles and then
+                        relates it to regression and classification.
+                    </p>
+
+                    <!-- ==================== Statistics, Estimators, and Likelihood ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (statistic, estimator, and estimate).</b></p>
+                        <p>
+                            Let \(X\) be observed data taking values in a sample space \(S\). A <i>statistic</i> is a
+                            function \(u:S\to T\); the random variable \(u(X)\) depends on the data but not on an
+                            unknown parameter. An <i>estimator</i> \(\widehat\theta=u(X)\) is a statistic used to
+                            estimate \(\theta\). After observing \(X=x\), the number \(u(x)\) is an <i>estimate</i>.
+                        </p>
+                        <p>
+                            For a parameter vector \(\theta=(\theta_1,\ldots,\theta_k)\), an estimator can also be
+                            vector-valued.
+                        </p>
+                    </div>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (likelihood and maximum likelihood).</b></p>
+                        <p>
+                            Suppose the distribution of \(X\) is specified by a probability mass function or density
+                            \(f_\theta(x)\), where \(\theta\in\Theta\). Fixing the observed data \(x\), the
+                            <i>likelihood function</i> is
+                        </p>
+                        \[L_x(\theta)=f_\theta(x),\qquad\theta\in\Theta.\]
+                        <p>A <i>maximum likelihood estimate</i> is any global maximizer</p>
+                        \[\widehat\theta(x)\in\operatorname*{arg\,max}_{\theta\in\Theta}L_x(\theta).\]
+                        <p>
+                            If such a measurable maximizing rule exists, then \(\widehat\theta(X)\) is a
+                            <i>maximum likelihood estimator</i>. A maximizer need not exist or be unique.
+                        </p>
+                    </div>
+
+                    <p>
+                        <b>Interpretation.</b> The data are held fixed and candidate parameter values vary. A likelihood
+                        is <i>not</i> a probability distribution over the parameter: in particular, \(L_x(\theta)\) need
+                        not integrate to one over \(\Theta\), and a high density is not the probability of observing one
+                        particular continuous value.
+                    </p>
+
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (maximizing the log-likelihood).</b></p>
+                        <p>
+                            Whenever \(L_x(\theta)&gt;0\), the natural logarithm preserves the order of likelihood
+                            values. Thus maximizers of \(L_x\) and of \(\ell_x(\theta)=\log L_x(\theta)\) coincide. We
+                            use the extended convention \(\log0=-\infty\) for impossible parameter values.
+                        </p>
+                        <p>
+                            Proof. The logarithm is strictly increasing on \((0,\infty)\). Therefore
+                            \(L_x(\theta_1)&gt;L_x(\theta_2)\) if and only if \(\log L_x(\theta_1)&gt;\log
+                            L_x(\theta_2)\), whenever both values are positive.
+                        </p>
+                    </div>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (likelihood of an independent random sample).</b></p>
+                        <p>
+                            If \(X_1,\ldots,X_n\) are independent and identically distributed according to a pmf or
+                            density \(g_\theta\), then for observed \(x_1,\ldots,x_n\),
+                        </p>
+                        \[L_x(\theta)=\prod_{i=1}^{n}g_\theta(x_i),\qquad \ell_x(\theta)=\sum_{i=1}^{n}\log
+                        g_\theta(x_i).\]
+                        <p>
+                            Proof. Independence gives the product for the joint mass function or density. Taking
+                            logarithms converts the product to a sum. Without independence, the joint distribution must
+                            be modeled instead; the product formula is not generally valid.
+                        </p>
+                    </div>
+
+                    <p>
+                        <b>Practical workflow.</b> Specify a model and parameter space, write the likelihood, simplify
+                        its logarithm, find candidate maximizers analytically or numerically, and verify boundaries and
+                        global optimality. For an interior differentiable optimum, the
+                        <i>score</i> \(\nabla\ell(\widehat\theta)\) vanishes; this first-order condition alone is not
+                        sufficient for a global maximum.
+                    </p>
+
+                    <!-- ==================== Bernoulli Likelihood and the Binomial Experiment ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (Bernoulli maximum likelihood estimator).</b></p>
+                        <p>
+                            For independent \(X_i\sim\operatorname{Bernoulli}(p)\), let \(K=\sum_iX_i\). If
+                            \(\Theta=[0,1]\), then the unique MLE is \(\widehat p=K/n\). For \(0&lt;K&lt;n\) the
+                            log-likelihood is
+                        </p>
+                        \[\ell(p)=K\log p+(n-K)\log(1-p),\]
+                        <p>
+                            with derivative \(K/p-(n-K)/(1-p)\) and negative second derivative \(-K/p^2-(n-K)/(1-p)^2\).
+                            The unique critical point is \(p=K/n\). For \(K=0\) or \(K=n\), the maximum is attained at
+                            the boundary \(0\) or \(1\), respectively. If instead \(\Theta=(0,1)\), these two boundary
+                            samples have no MLE.
+                        </p>
+                    </div>
+
+                    <p>
+                        For aggregated counts \(K\sim\operatorname{Binomial}(n,p)\), the binomial coefficient \(\binom
+                        nk\) multiplies the likelihood. It depends on the data, not \(p\), so it does not affect the
+                        maximizing value.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 143: visualize the likelihood of a Bernoulli success probability.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import binom
+
+n, k = 20, 7
+p_grid = np.linspace(0, 1, 501)
+likelihood = binom.pmf(k, n, p_grid)
+p_hat = k / n
+
+print(&quot;MLE p_hat =&quot;, p_hat)
+print(&quot;Likelihood at p_hat =&quot;, round(binom.pmf(k, n, p_hat), 6))
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(p_grid, likelihood, label=&quot;Binomial likelihood (fixed k, n)&quot;)
+ax.axvline(p_hat, linestyle=&quot;--&quot;, label=f&quot;MLE = {p_hat:.2f}&quot;)
+ax.set(xlabel=&quot;Candidate success probability p&quot;, ylabel=&quot;Likelihood L(p)&quot;,
+       title=f&quot;Observed {k} successes in {n} Bernoulli trials&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_binomial_likelihood.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_binomial_likelihood.png"
+                            alt="Likelihood curve with a vertical line at the sample success proportion."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Likelihood as a function of the parameter for a fixed observed binomial
+                            count. Generated by Experiment 143.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Closed-Form Maximum Likelihood Estimators ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (Poisson mean).</b></p>
+                        <p>For i.i.d. \(X_i\sim\operatorname{Poisson}(\lambda)\), \(\lambda\geq0\),</p>
+                        \[\ell(\lambda)=\left(\sum_i x_i\right)\log\lambda-n\lambda-\sum_i\log(x_i!),\quad
+                        \lambda&gt;0,\]
+                        <p>
+                            so \(\widehat\lambda=\bar X\), with the boundary estimate \(\widehat\lambda=0\) when all
+                            observations are zero. If the parameter space excludes zero and all counts are zero, only a
+                            supremum exists.
+                        </p>
+                    </div>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 144: estimate a Poisson arrival rate analytically and numerically.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.optimize import minimize_scalar
+from scipy.stats import poisson
+
+counts = np.array([1, 0, 3, 2, 4, 1, 2, 3, 0, 2], dtype=int)
+lam_hat = counts.mean()
+
+def nll(lam):
+    return -np.sum(poisson.logpmf(counts, mu=lam))
+
+result = minimize_scalar(nll, bounds=(0.001, 10), method=&quot;bounded&quot;)
+print(&quot;Analytic MLE:&quot;, round(lam_hat, 6))
+print(&quot;Numerical MLE:&quot;, round(result.x, 6))
+print(&quot;Numerical optimization succeeded:&quot;, result.success)
+assert abs(result.x - lam_hat) &lt; 1e-4</code></pre>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (normal mean and variance, both unknown).</b></p>
+                        <p>
+                            For an i.i.d. sample from \(N(\mu,\sigma^2)\), with \(\mu\in\mathbb R\) and
+                            \(\sigma^2&gt;0\), the log-likelihood is
+                        </p>
+                        \[\ell(\mu,\sigma^2)=-\frac n2\log(2\pi\sigma^2)-\frac1{2\sigma^2}\sum_{i=1}^n(x_i-\mu)^2.\]
+                        <p>If the observations are not all identical, the MLEs are</p>
+                        \[\widehat\mu=\bar X,\qquad \widehat{\sigma}^2_{\rm MLE}=\frac1n\sum_{i=1}^n(X_i-\bar X)^2.\]
+                        <p>
+                            Proof. For fixed \(\sigma^2\), maximize by minimizing squared deviations, giving \(\bar X\).
+                            Substitution and differentiation with respect to \(\sigma^2\) gives the second formula. If
+                            all observations are identical, the likelihood is unbounded as \(\sigma^2\downarrow0\), so
+                            no finite MLE exists in the stated parameter space.
+                        </p>
+                    </div>
+
+                    <p>
+                        The MLE of normal variance divides by \(n\), while the unbiased sample variance divides by
+                        \(n-1\). Under normal sampling, \(E(\widehat\sigma^2_{\mathrm{MLE}})=(n-1)\sigma^2/n\). Maximum
+                        likelihood does <i>not</i> automatically produce unbiased estimators; bias and mean squared
+                        error are different criteria.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 145: compare normal variance MLE and unbiased sample variance.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(145)
+n, repetitions, sigma = 8, 12000, 2.0
+samples = rng.normal(3.0, sigma, size=(repetitions, n))
+v_mle = np.var(samples, axis=1, ddof=0)
+v_unbiased = np.var(samples, axis=1, ddof=1)
+truth = sigma**2
+for name, estimates in [(&quot;MLE&quot;, v_mle), (&quot;Unbiased&quot;, v_unbiased)]:
+    print(name, &quot;mean:&quot;, round(estimates.mean(), 4),
+          &quot;bias:&quot;, round(np.mean(estimates - truth), 4),
+          &quot;MSE:&quot;, round(np.mean((estimates - truth)**2), 4))
+print(&quot;Theoretical E[MLE]:&quot;, (n-1)/n * truth)
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.hist(v_mle, bins=55, density=True, alpha=0.55, label=&quot;MLE (divisor n)&quot;)
+ax.hist(v_unbiased, bins=55, density=True, alpha=0.4,
+        label=&quot;Unbiased (divisor n-1)&quot;)
+ax.axvline(truth, linestyle=&quot;--&quot;, label=&quot;True variance&quot;)
+ax.set(xlabel=&quot;Estimated variance&quot;, ylabel=&quot;Density&quot;,
+       title=&quot;Sampling distributions of two variance estimators&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_normal_variance_bias.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_normal_variance_bias.png"
+                            alt="Two histograms of estimated variance and a true-variance reference line."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Distribution of the biased normal variance MLE and the unbiased sample
+                            variance. Generated by Experiment 145.
+                        </figcaption>
+                    </figure>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (exponential rate and invariance).</b></p>
+                        <p>If \(X_i\) are i.i.d. exponential observations with rate \(\lambda&gt;0\), then</p>
+                        \[\ell(\lambda)=n\log\lambda-\lambda\sum_i x_i,\qquad
+                        \widehat\lambda=\frac{n}{\sum_iX_i}=\frac1{\bar X}.\]
+                        <p>
+                            If instead the parameter is the mean waiting time \(\tau=1/\lambda\), the
+                            <i>invariance property</i> gives \(\widehat\tau=1/\widehat\lambda=\bar X\). In general, when
+                            \(\widehat\theta\) is an MLE, \(g(\widehat\theta)\) is an MLE for \(g(\theta)\), when the
+                            induced likelihood is defined by profiling over parameter values with the same
+                            \(g(\theta)\).
+                        </p>
+                    </div>
+
+                    <p>
+                        The rate MLE has upward finite-sample bias: for \(n&gt;1\),
+                        \(E(\widehat\lambda)=n\lambda/(n-1)\). In contrast, \(\bar X\) is unbiased for the mean waiting
+                        time \(\tau\). The invariance of an MLE is therefore not a claim about unbiasedness.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 146: estimate exponential rate and mean lifetime.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(146)
+rate_true, n, repetitions = 0.4, 12, 10000
+samples = rng.exponential(scale=1 / rate_true, size=(repetitions, n))
+rate_hat = 1 / samples.mean(axis=1)
+mean_lifetime_hat = samples.mean(axis=1)
+print(&quot;Mean estimated rate:&quot;, round(rate_hat.mean(), 4))
+print(&quot;Expected rate MLE:&quot;, round(n*rate_true/(n-1), 4))
+print(&quot;Mean estimated lifetime:&quot;, round(mean_lifetime_hat.mean(), 4))
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.hist(rate_hat, bins=65, density=True, alpha=0.75)
+ax.axvline(rate_true, linestyle=&quot;--&quot;, label=&quot;True rate&quot;)
+ax.axvline(rate_hat.mean(), linestyle=&quot;:&quot;, label=&quot;Mean estimated rate&quot;)
+ax.set(xlabel=&quot;Rate MLE&quot;, ylabel=&quot;Density&quot;, title=&quot;Small-sample bias of the exponential rate MLE&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_exponential_rate_bias.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_exponential_rate_bias.png"
+                            alt="Histogram showing the positive bias of a rate maximum likelihood estimate."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Sampling distribution of the exponential rate MLE, showing finite-sample
+                            upward bias. Generated by Experiment 146.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Boundary Solutions and the Parameter Space ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (uniform upper endpoint).</b></p>
+                        <p>
+                            If \(X_i\overset{\rm iid}{\sim}\operatorname{Uniform}(0,\theta)\), \(\theta&gt;0\), and we
+                            use the density version supported on \(0\leq x\leq\theta\), then
+                        </p>
+                        \[L_x(\theta)=\theta^{-n}\mathbf1\{\theta\geq x_{(n)}\},\qquad
+                        \widehat\theta=X_{(n)}=\max_iX_i.\]
+                        <p>
+                            Proof. Likelihood is zero below the largest observation and strictly decreases for
+                            \(\theta\geq x_{(n)}\); hence the maximum occurs at the smallest admissible endpoint. Since
+                            \(E[X_{(n)}]=n\theta/(n+1)\), the MLE is biased downward. The rescaled estimator
+                            \((n+1)X_{(n)}/n\) is unbiased, although it is not the MLE.
+                        </p>
+                    </div>
+
+                    <p>
+                        This is a <i>nonregular</i> model: the support depends on \(\theta\). The score-equals-zero
+                        approach is not applicable to its boundary maximum, and ordinary Fisher-information and Wald
+                        approximations must not be applied without checking their conditions. Even a choice between
+                        strict and non-strict density endpoints can affect mathematical attainment of the maximum,
+                        despite leaving the probability distribution unchanged.
+                    </p>
+
+                    <p class="stats-experiment-title"><b>Experiment 147: show a boundary MLE in a uniform model.</b></p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(147)
+theta_true, n = 5.0, 15
+x = rng.uniform(0, theta_true, size=n)
+x_max = max(x)
+theta_grid = np.linspace(0.5*x_max, 1.7*theta_true, 600)
+likelihood = np.where(theta_grid &gt;= x_max, theta_grid**(-n), 0.0)
+likelihood /= likelihood.max()
+
+print(&quot;Sample maximum (MLE):&quot;, round(x_max, 4))
+print(&quot;Bias-corrected estimate:&quot;, round((n+1)/n*x_max, 4))
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(theta_grid, likelihood, label=&quot;Likelihood (rescaled to maximum 1)&quot;)
+ax.axvline(x_max, linestyle=&quot;--&quot;, label=&quot;MLE at sample maximum&quot;)
+ax.axvline(theta_true, linestyle=&quot;:&quot;, label=&quot;True upper endpoint&quot;)
+ax.set(xlabel=&quot;Candidate upper endpoint&quot;, ylabel=&quot;Relative likelihood&quot;,
+       title=&quot;A maximum attained at the boundary of the support&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_uniform_boundary.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_uniform_boundary.png"
+                            alt="Discontinuous likelihood curve for a uniform distribution with a boundary MLE."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Uniform endpoint likelihood is zero below the largest observation and
+                            decreases above it. Generated by Experiment 147.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Score, Hessian, and Fisher Information ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (score and information).</b></p>
+                        <p>
+                            For a differentiable log-likelihood \(\ell(\theta)\), the <i>score vector</i> and
+                            <i>observed information</i> are
+                        </p>
+                        \[U(\theta)=\nabla_\theta\ell(\theta),\qquad J(\theta)=-\nabla_\theta^2\ell(\theta).\]
+                        <p>
+                            The expected <i>Fisher information</i> is \(I_n(\theta)=E_\theta[J(\theta)]\) under
+                            regularity conditions, equivalently \(\operatorname{Var}_\theta[U(\theta)]\) when the
+                            information identity holds. For scalar \(\theta\), a typical regular, interior MLE has
+                            approximate large-sample distribution
+                        </p>
+                        \[\sqrt n(\widehat\theta-\theta_0)\xrightarrow{\mathcal D}
+                        N\!\left(0,I_1(\theta_0)^{-1}\right),\]
+                        <p>
+                            where \(I_1\) is information in one i.i.d. observation. These claims require identifiability
+                            and differentiability, a nonsingular information matrix, and other regularity conditions;
+                            they are not universal properties of MLE.
+                        </p>
+                    </div>
+
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (Fisher information for Bernoulli observations).</b></p>
+                        <p>For i.i.d. Bernoulli observations with \(0&lt;p&lt;1\),</p>
+                        \[U(p)=\frac Kp-\frac{n-K}{1-p},\qquad I_n(p)=\frac n{p(1-p)}.\]
+                        <p>
+                            Proof. The negative second derivative is \(K/p^2+(n-K)/(1-p)^2\). Its expectation is
+                            \(np/p^2+n(1-p)/(1-p)^2=n/[p(1-p)]\). Consequently, the estimated large-sample standard
+                            error of \(\widehat p=K/n\) is \(\sqrt{\widehat p(1-\widehat p)/n}\), provided the estimate
+                            is away from the boundary.
+                        </p>
+                    </div>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 148: check Fisher-information standard errors by simulation.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(148)
+p_true, repetitions = 0.35, 5000
+sample_sizes = [20, 80, 320]
+empirical = []
+theoretical = []
+for n in sample_sizes:
+    estimates = rng.binomial(n, p_true, size=repetitions) / n
+    empirical.append(estimates.std(ddof=1))
+    theoretical.append(np.sqrt(p_true*(1-p_true)/n))
+    print(f&quot;n={n}: empirical SE={empirical[-1]:.5f}; theory={theoretical[-1]:.5f}&quot;)
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(sample_sizes, empirical, &quot;o-&quot;, label=&quot;Empirical SD of MLE&quot;)
+ax.plot(sample_sizes, theoretical, &quot;s--&quot;, label=&quot;Information-based SE&quot;)
+ax.set(xlabel=&quot;Sample size&quot;, ylabel=&quot;Standard error&quot;,
+       title=&quot;Bernoulli MLE precision increases with sample size&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_fisher_information.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_fisher_information.png"
+                            alt="Two lines comparing empirical standard error with information-based theory."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Simulated sampling standard deviations agree with Fisher-information standard
+                            errors. Generated by Experiment 148.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Vector Parameters and Numerical Optimization ==================== -->
+
+                    <p>
+                        The original notes already introduce vector parameters and the partial derivative equations
+                        \(\partial\ell/\partial\theta_j=0\). With several parameters, the score is a vector and the
+                        Hessian is a matrix. Numerical maximization is often unavoidable, but an algorithm returning a
+                        stationary point does not prove global optimality. In concave log-likelihood models any
+                        stationary point is a global maximum; in nonconcave models several starts or other diagnostics
+                        may be needed.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 149: estimate a two-parameter normal model by numerical optimization.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.optimize import minimize
+
+rng = np.random.default_rng(149)
+x = rng.normal(loc=2.3, scale=1.7, size=90)
+
+# Parameterization: theta = (mu, log_sigma) guarantees sigma &gt; 0.
+def nll(theta):
+    mu, log_sigma = theta
+    sigma = np.exp(log_sigma)
+    return (len(x) * (0.5*np.log(2*np.pi) + log_sigma)
+            + np.sum((x-mu)**2) / (2*sigma**2))
+
+result = minimize(nll, x0=np.array([0.0, 0.0]), method=&quot;BFGS&quot;,
+                  options={&quot;gtol&quot;: 1e-7})
+mu_mle, sigma_mle = x.mean(), x.std(ddof=0)
+print(&quot;Analytic MLE (mu, sigma):&quot;, np.round([mu_mle, sigma_mle], 5))
+print(&quot;Numerical MLE (mu, sigma):&quot;,
+      np.round([result.x[0], np.exp(result.x[1])], 5))
+print(&quot;Gradient norm:&quot;, round(np.linalg.norm(result.jac), 7))
+assert np.allclose([result.x[0], np.exp(result.x[1])],
+                   [mu_mle, sigma_mle], atol=2e-4)</code></pre>
+
+                    <p>
+                        <b>Numerical tip.</b> Optimize log-standard-deviation rather than standard deviation itself when
+                        the parameter must remain positive. For fitted models with constrained parameters, make the
+                        constraint explicit and evaluate whether the proposed estimate is on the boundary.
+                    </p>
+
+                    <!-- ==================== Why Maximum Likelihood Appears in Machine Learning ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (likelihood losses for common prediction models).</b>
+                        </p>
+                        <p>
+                            Under conditional independence, maximizing likelihood is equivalent to minimizing the
+                            <i>negative</i> log-likelihood. For predicted means or probabilities \(\mu_i\), \(p_i\), and
+                            Poisson intensities \(\lambda_i\), the following objectives arise (up to terms independent
+                            of fitted parameters):
+                        </p>
+                        <ul>
+                            <li>
+                                <b>Gaussian response with fixed common variance:</b> \(\sum_i(y_i-\mu_i)^2\), the
+                                squared-error loss.
+                            </li>
+                            <li>
+                                <b>Bernoulli response:</b> \(-\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)]\), the binary
+                                cross-entropy or log loss.
+                            </li>
+                            <li>
+                                <b>Poisson count:</b> \(\sum_i[\lambda_i-y_i\log\lambda_i]\), a Poisson negative
+                                log-likelihood.
+                            </li>
+                        </ul>
+                        <p>
+                            Proof. Insert the corresponding conditional pmf or density into the independent-observation
+                            log-likelihood, sum over observations, negate, and omit additive constants not depending on
+                            model parameters. For the Gaussian equivalence, the error variance is held fixed while
+                            optimizing model coefficients.
+                        </p>
+                    </div>
+
+                    <p>
+                        Logistic regression is therefore a special case of maximum likelihood: the predictor variables
+                        specify \(p_i=\sigma(x_i^T\beta)\), and binary cross-entropy optimizes its Bernoulli likelihood.
+                        A modern prediction system may minimize the average per-observation loss instead of its sum,
+                        which has the same unpenalized minimizer but changes how a regularization penalty should be
+                        scaled.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 150: verify Gaussian squared error and Bernoulli cross-entropy.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import norm
+from scipy.special import expit, xlogy
+
+x = np.array([-1., 0., 1., 2.])
+y_real = np.array([-0.5, 1.3, 2.7, 4.1])
+mu = 0.9 + 1.5*x
+sigma = 1.4
+normal_nll = -np.sum(norm.logpdf(y_real, loc=mu, scale=sigma))
+squared_error = np.sum((y_real - mu)**2)
+constant = len(x) * (0.5*np.log(2*np.pi) + np.log(sigma))
+assert np.isclose(normal_nll, constant + squared_error/(2*sigma**2))
+
+y_binary = np.array([0, 0, 1, 1])
+p = expit(-0.4 + 1.2*x)
+# xlogy handles 0*log(0) and is safe for exact zero or one observations.
+bernoulli_nll = -np.sum(xlogy(y_binary, p)
+                         + xlogy(1-y_binary, 1-p))
+print(&quot;Gaussian NLL:&quot;, round(normal_nll, 5))
+print(&quot;SSE scaled by 1/(2*sigma^2):&quot;, round(squared_error/(2*sigma**2), 5))
+print(&quot;Bernoulli NLL (total log loss):&quot;, round(bernoulli_nll, 5))
+print(&quot;Bernoulli mean log loss:&quot;, round(bernoulli_nll/len(y_binary), 5))</code></pre>
+
+                    <!-- ==================== MLE, MAP, and Regularization ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (maximum a posteriori estimation).</b></p>
+                        <p>
+                            Given a prior density \(\pi(\theta)\), a maximum a posteriori (MAP) estimate maximizes the
+                            posterior density, or equivalently \(L_x(\theta)\pi(\theta)\), when the posterior is well
+                            defined. Thus
+                        </p>
+                        \[\widehat\theta_{\rm MAP}\in\operatorname*{arg\,min}_{\theta}
+                        \big[-\ell_x(\theta)-\log\pi(\theta)\big].\]
+                        <p>
+                            MLE does not include a prior. MAP adds a prior-dependent term, which often resembles a
+                            regularization penalty in machine learning. Unlike MLE, a posterior density mode generally
+                            changes nontrivially under nonlinear reparameterization.
+                        </p>
+                    </div>
+
+                    <p>
+                        <b>Worked example.</b> With \(K=k\) successes out of \(n\) trials and a
+                        \(\operatorname{Beta}(a,b)\) prior, the posterior is \(\operatorname{Beta}(k+a,n-k+b)\). When
+                        its two parameters exceed 1, the posterior mode is \((k+a-1)/(n+a+b-2)\), whereas the MLE is
+                        \(k/n\) and posterior mean is \((k+a)/(n+a+b)\). These are three different estimators with
+                        different interpretations.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 151: compare Bernoulli MLE, MAP, and the posterior distribution.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import beta, binom
+
+n, k = 12, 1
+a, b = 3, 3
+p_mle = k/n
+p_map = (k+a-1)/(n+a+b-2)
+p_mean = (k+a)/(n+a+b)
+grid = np.linspace(0.001, 0.999, 500)
+likelihood = binom.pmf(k, n, grid)
+posterior = beta.pdf(grid, k+a, n-k+b)
+
+print(&quot;MLE:&quot;, round(p_mle, 4), &quot;MAP:&quot;, round(p_map, 4),
+      &quot;Posterior mean:&quot;, round(p_mean, 4))
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(grid, likelihood/likelihood.max(), label=&quot;Relative likelihood&quot;)
+ax.plot(grid, posterior/posterior.max(), label=&quot;Posterior density (rescaled)&quot;)
+ax.axvline(p_mle, linestyle=&quot;--&quot;, label=&quot;MLE&quot;)
+ax.axvline(p_map, linestyle=&quot;:&quot;, label=&quot;MAP&quot;)
+ax.set(xlabel=&quot;Candidate success probability&quot;, ylabel=&quot;Relative height&quot;,
+       title=&quot;Data likelihood and prior-adjusted estimation&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_vs_map.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_vs_map.png"
+                            alt="Rescaled likelihood and posterior curves with distinct MLE and MAP markers."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The maximum of the binomial likelihood differs from the Beta-posterior mode.
+                            Generated by Experiment 151.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Likelihood-Based Uncertainty ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (likelihood-ratio interval).</b></p>
+                        <p>
+                            For a scalar parameter \(\theta\), a likelihood-ratio confidence set is obtained by
+                            retaining parameter values for which the log-likelihood drop from its maximum is not too
+                            large:
+                        </p>
+                        \[\mathcal C_{1-\alpha}=\big\{\theta:\
+                        2[\ell(\widehat\theta)-\ell(\theta)]\leq\chi^2_{1,1-\alpha}\big\}.\]
+                        <p>
+                            Under suitable regularity conditions and for large samples, the likelihood-ratio statistic
+                            is approximately chi-square with one degree of freedom. This is not an exact finite-sample
+                            confidence statement, and the approximation can fail for small samples, parameters on the
+                            boundary, or nonregular models. With nuisance parameters, use the
+                            <i>profile log-likelihood</i>, maximizing over those parameters at each fixed parameter of
+                            interest.
+                        </p>
+                    </div>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 152: construct a profile-likelihood confidence interval for Bernoulli p.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.special import xlogy
+from scipy.optimize import brentq
+from scipy.stats import chi2, norm
+
+n, k, alpha = 40, 8, 0.05
+p_hat = k/n
+
+def loglik(p):
+    if p &lt; 0 or p &gt; 1:
+        return -np.inf
+    return xlogy(k, p) + xlogy(n-k, 1-p)
+
+cutoff = chi2.ppf(1-alpha, df=1)
+def lr_stat(p):
+    return 2*(loglik(p_hat) - loglik(p))
+
+lower = 0 if k == 0 else brentq(lambda p: lr_stat(p)-cutoff, 0, p_hat)
+upper = 1 if k == n else brentq(lambda p: lr_stat(p)-cutoff, p_hat, 1)
+wald_se = np.sqrt(p_hat*(1-p_hat)/n)
+wald_low = p_hat - norm.ppf(1-alpha/2)*wald_se
+wald_high = p_hat + norm.ppf(1-alpha/2)*wald_se
+print(&quot;MLE:&quot;, p_hat)
+print(&quot;Approximate LR interval:&quot;, tuple(round(v, 4) for v in (lower, upper)))
+print(&quot;Approximate Wald interval:&quot;, tuple(round(v, 4) for v in (wald_low, wald_high)))
+
+p_grid = np.linspace(0.001, 0.999, 500)
+values = np.array([lr_stat(p) for p in p_grid])
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(p_grid, values, label=&quot;Likelihood-ratio statistic&quot;)
+ax.axhline(cutoff, linestyle=&quot;--&quot;, label=&quot;Asymptotic 95% cutoff&quot;)
+ax.axvspan(lower, upper, alpha=0.18, label=&quot;LR confidence set&quot;)
+ax.set(xlabel=&quot;Candidate success probability p&quot;, ylabel=&quot;2 × log-likelihood drop&quot;,
+       ylim=(0, 15), title=&quot;Likelihood-based uncertainty for a binomial proportion&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;mle_likelihood_ratio_interval.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/mle_likelihood_ratio_interval.png"
+                            alt="Likelihood-ratio curve and horizontal cutoff defining a confidence interval."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Likelihood-ratio confidence set formed by inverting an asymptotic chi-square
+                            cutoff. Generated by Experiment 152.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Limitations and Practical Checklist ==================== -->
+
+                    <ul>
+                        <li>
+                            <b>Model adequacy:</b> an optimizer can maximize a badly misspecified model perfectly. Check
+                            observed-versus-predicted behavior, independence assumptions, support, and outliers.
+                        </li>
+                        <li>
+                            <b>Identifiability:</b> distinct parameters can sometimes produce the same data
+                            distribution; the MLE can then be nonunique.
+                        </li>
+                        <li>
+                            <b>Existence:</b> a supremum is not necessarily attained. Bernoulli endpoints, uniform
+                            support parameters, and complete separation in logistic regression illustrate this issue.
+                        </li>
+                        <li>
+                            <b>Numerics:</b> use log-likelihoods for stability, enforce parameter constraints, and check
+                            convergence, objective values, and curvature rather than trusting an optimizer's reported
+                            point uncritically.
+                        </li>
+                        <li>
+                            <b>Uncertainty:</b> likelihood curvature, bootstrap procedures, and likelihood-ratio sets
+                            require assumptions; regular asymptotic formulas should not be used mechanically at
+                            boundaries.
+                        </li>
+                        <li>
+                            <b>Machine learning:</b> avoid leakage between training and evaluation data; optimization of
+                            a likelihood-based training loss does not guarantee good generalization or calibrated
+                            predictions.
+                        </li>
+                    </ul>
+
+                    <!-- ==================== Exercises ==================== -->
+
+                    <ol>
+                        <li>
+                            <b>Bernoulli:</b> Observe \(x=(1,0,1,1,0,0,1,0)\). Write the likelihood and log-likelihood;
+                            derive the MLE for \(p\in[0,1]\). Repeat when the permissible parameter space is
+                            \([0,0.4]\).
+                        </li>
+                        <li>
+                            <b>Boundary case:</b> Assume \(X_i\sim\operatorname{Bernoulli}(p)\) with \(p\in(0,1)\), and
+                            every observation is zero. Prove that the likelihood has a supremum but no maximizer.
+                            Compare with \(p\in[0,1]\).
+                        </li>
+                        <li>
+                            <b>Poisson:</b> Derive the MLE for \(\lambda\) from first principles, including a sample of
+                            all zeros. State how your answer changes when the parameter space is \((0,\infty)\).
+                        </li>
+                        <li>
+                            <b>Normal:</b> Derive the joint MLEs of \(\mu\) and \(\sigma^2\). Show that
+                            \(E(\widehat\sigma^2_{\rm MLE})=(n-1)\sigma^2/n\), and compare its mean squared error to the
+                            unbiased variance estimator.
+                        </li>
+                        <li>
+                            <b>Invariance:</b> For exponential waiting times, parameterize the distribution by rate
+                            \(\lambda\), then by mean \(\tau\). Show that maximizing either parameterization gives the
+                            same fitted distribution.
+                        </li>
+                        <li>
+                            <b>Nonregular model:</b> Determine the MLE of the upper endpoint \(\theta\) for a sample
+                            from \(\operatorname{Uniform}(0,\theta)\). Explain why setting a derivative to zero does not
+                            find it.
+                        </li>
+                        <li>
+                            <b>Machine learning:</b> Starting from independent Bernoulli observations with different
+                            probabilities \(p_i\), derive binary cross-entropy. Explain why the same loss applies to
+                            logistic regression despite its predictors not being identically distributed.
+                        </li>
+                        <li>
+                            <b>Likelihood inference:</b> For \(n=12\) and \(k=1\), construct the approximate 95%
+                            likelihood-ratio interval numerically. Compare it with a simple Wald interval and discuss
+                            why small-sample coverage must be checked rather than assumed.
+                        </li>
+                    </ol>
+
+                    <!-- ==================== References and Further Reading ==================== -->
+
+                    <p>
+                        <b>Core references.</b> M. H. DeGroot and M. J. Schervish, <i>Probability and Statistics</i>,
+                        4th ed., <b>Section 7.5</b> (Maximum Likelihood Estimators, printed pp. 417–426),
+                        <b>Section 7.6</b> (Properties of Maximum Likelihood Estimators, printed pp. 426–443), and
+                        <b>Section 8.8</b> (Fisher Information, beginning on printed p. 514). For concrete assigned
+                        problems, see Section 7.5, Exercises <b>2–7 and 9–10</b> (printed pp. 425–426); Exercise 4
+                        specifically addresses nonexistence of a Bernoulli MLE when the parameter space is open.
+                    </p>
+                    <p>
+                        <b>Random Services:</b> Kyle Siegrist,
+                        <a
+                            href="https://www.randomservices.org/random/point/Likelihood.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Point Estimation — Maximum Likelihood</a
+                        >. Its Basic Theory and examples treat the same definitions as the author's original draft, the
+                        invariance property, and Bernoulli, normal, exponential, and uniform models. For the broader
+                        chapter, see
+                        <a
+                            href="https://www.randomservices.org/random/point/index.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Point Estimation</a
+                        >.
+                    </p>
+                    <p>
+                        <b>Connection to these notes:</b> the earlier sections on sampling distributions, hypothesis
+                        tests, linear regression, and logistic regression use ideas developed here. In particular,
+                        Bernoulli negative log-likelihood is binary cross-entropy, Gaussian negative log-likelihood with
+                        fixed variance reduces to squared-error fitting, and likelihood-ratio inference provides an
+                        alternative to Wald-type procedures.
+                    </p>
+
+                    <hr />
                 </article>
             </main>
         </div>
