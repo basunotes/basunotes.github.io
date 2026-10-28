@@ -5913,178 +5913,746 @@ print("Reject H0 at 5%:", result.pvalue &lt;= alpha)
                     </p>
 
                     <hr />
-                    <!-- ========================= MAIN SECTION 09: Inference for Two
-                                                                Independent Population Means
-                                                                with
-                                                                Equal Standard
-                                                                Deviations ========================= -->
+
+                    <!-- ========================= MAIN SECTION 09: Inference for Two Independent Population Means with Equal Standard Deviations ========================= -->
                     <span id="TwoPopulationMeansEqualSD"
                         ><b>Inference for Two Independent Population Means with Equal Standard Deviations</b></span
                     >
+
                     <p>
-                        So far, we have focused on hypothesis tests for one population mean. However, in many
-                        applications, we want to compare the means of two or more populations. Therefore, we first need
-                        to distinguish between samples from two independent populations and samples from populations
-                        that are not independent, which are called paired samples.
+                        So far, we have considered inference for a single population mean. Many practical questions
+                        instead concern a <i>difference between two population means</i>: whether two production methods
+                        have the same average output, whether two treatments have different mean outcomes, or whether
+                        two groups have different average salaries. We first consider <i>independent samples</i> from
+                        populations with a common, but unknown, variance.
+                    </p>
+
+                    <!-- ==================== Independent Samples and the Statistical Model ==================== -->
+                    <p><b>Independent versus paired samples.</b></p>
+                    <p>
+                        Two samples are independent when observations in one group do not determine or directly
+                        correspond to observations in the other. For example, randomly selected individuals assigned to
+                        two different treatments can form independent groups. By contrast, measurements made on the same
+                        individuals before and after a treatment are <i>paired</i>. Paired observations require a
+                        different analysis, based on within-pair differences; we will study that later.
+                    </p>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (equal-variance two-sample normal model).</b></p>
+                        <p>
+                            Let \(X_1,\ldots,X_{n_1}\) and \(Y_1,\ldots,Y_{n_2}\) be independent random samples, with
+                            \(n_1,n_2\geq2\), such that \[ X_i\overset{\mathrm{iid}}{\sim}N(\mu_1,\sigma^2), \qquad
+                            Y_j\overset{\mathrm{iid}}{\sim}N(\mu_2,\sigma^2). \] The means \(\mu_1\) and \(\mu_2\) may
+                            differ, but the populations have the same unknown variance \(\sigma^2&gt;0\). Our parameter
+                            of interest is \(\delta=\mu_1-\mu_2\).
+                        </p>
+                    </div>
+
+                    <p>
+                        The exact results below rely on normality and independence <i>within and between</i> the groups,
+                        together with a common population variance. Equal sample sizes are not required. Independence
+                        refers to how the data were collected, not to whether two sample means happen to have similar
+                        values.
+                    </p>
+
+                    <p>
+                        The natural estimator of \(\delta\) is \[ D=\overline X-\overline Y, \qquad
+                        \mathbb{E}(D)=\mu_1-\mu_2. \] Independence gives \[
+                        \operatorname{Var}(D)=\frac{\sigma^2}{n_1}+\frac{\sigma^2}{n_2}
+                        =\sigma^2\left(\frac1{n_1}+\frac1{n_2}\right). \] Consequently, if the common \(\sigma\) were
+                        known, \[ Z=\frac{(\overline X-\overline Y)-\delta} {\sigma\sqrt{1/n_1+1/n_2}}\sim N(0,1). \] In
+                        most applications, however, \(\sigma\) is unknown and must be estimated.
+                    </p>
+
+                    <!-- ==================== Pooled Variance ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading">
+                            <b>Definition (pooled sample variance and standard deviation).</b>
+                        </p>
+                        <p>
+                            Let \(S_1^2\) and \(S_2^2\) denote the usual sample variances, computed using denominators
+                            \(n_1-1\) and \(n_2-1\). Define \[ S_p^2=\frac{(n_1-1)S_1^2+(n_2-1)S_2^2}{n_1+n_2-2}, \qquad
+                            S_p=\sqrt{S_p^2}. \] The quantity \(S_p\) is the <i>pooled sample standard deviation</i>.
+                        </p>
+                    </div>
+
+                    <p>
+                        The weights are the groups' <i>degrees of freedom</i>, not simply their sample sizes. The
+                        numerator is the combined within-group sum of squared deviations; variation between the two
+                        group means is deliberately excluded. Thus, pooling does not mean computing the standard
+                        deviation after combining all observations into one group.
+                    </p>
+
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (unbiasedness of the pooled variance).</b></p>
+                        <p>Under the common-variance model, \[ \mathbb{E}(S_p^2)=\sigma^2. \]</p>
+                    </div>
+                    <p>
+                        Proof. Each unbiased within-group variance satisfies
+                        \(\mathbb{E}(S_1^2)=\mathbb{E}(S_2^2)=\sigma^2\). Taking expectations in the weighted expression
+                        for \(S_p^2\) gives \[ \mathbb{E}(S_p^2)= \frac{(n_1-1)\sigma^2+(n_2-1)\sigma^2}{n_1+n_2-2}
+                        =\sigma^2. \]
                     </p>
                     <p>
-                        We assume that the standard deviations of the two populations are equal but unknown. If,
-                        however, the population standard deviation \(\sigma\) were known, the test statistic could be
-                        written as follows: \[ z = \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})} {\sigma
-                        \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}} \]
+                        Unbiasedness of the <i>variance estimator</i> does not imply that the square root \(S_p\) is an
+                        unbiased estimator of \(\sigma\). The pooled variance remains a sensible estimator only if a
+                        shared population variance is plausible; averaging two genuinely different variances does not
+                        make them equal.
+                    </p>
+
+                    <!-- ==================== Pooled Two-Sample t Statistic ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (distribution of the pooled two-sample t-statistic).</b>
+                        </p>
+                        <p>
+                            Under the independent normal model with common unknown variance, define \[
+                            T=\frac{(\overline X-\overline Y)-(\mu_1-\mu_2)} {S_p\sqrt{1/n_1+1/n_2}}. \] Whenever the
+                            denominator is nonzero, \[ T\sim t_{\nu},\qquad \nu=n_1+n_2-2. \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof. The standardized difference \[ Z=\frac{(\overline X-\overline Y)-(\mu_1-\mu_2)}
+                        {\sigma\sqrt{1/n_1+1/n_2}} \] is standard normal. For independent normal samples, the
+                        within-group sample variances are independent of the corresponding sample means, and \[
+                        V=\frac{(n_1+n_2-2)S_p^2}{\sigma^2} =\frac{(n_1-1)S_1^2}{\sigma^2}
+                        +\frac{(n_2-1)S_2^2}{\sigma^2} \sim\chi^2_{n_1+n_2-2}. \] Also, \(Z\) and \(V\) are independent.
+                        Hence \(T=Z/\sqrt{V/\nu}\) has Student's t-distribution with \(\nu=n_1+n_2-2\) degrees of
+                        freedom.
+                    </p>
+
+                    <p>
+                        For testing \(H_0:\delta=\delta_0\), the observed statistic is \[ t_{\mathrm{obs}}= \frac{(\bar
+                        x-\bar y)-\delta_0} {s_p\sqrt{1/n_1+1/n_2}}. \] The estimated standard error is
+                        \(\widehat{\mathrm{SE}}(\bar X-\bar Y) =s_p\sqrt{1/n_1+1/n_2}\). The usual comparison of two
+                        means takes \(\delta_0=0\), but other hypothesized differences are possible.
+                    </p>
+
+                    <!-- ==================== Hypothesis Tests and Confidence Intervals ==================== -->
+                    <p><b>Two-sided and one-sided tests.</b></p>
+                    <p>
+                        Let \(F_\nu\) be the CDF of Student's t-distribution with \(\nu\) degrees of freedom. Under the
+                        boundary null \(\delta=\delta_0\), the familiar rejection regions and p-values are:
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Reject at level \(\alpha\) if</th>
+                                <th>p-value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>\(H_1:\delta\neq\delta_0\)</td>
+                                <td>\(|t_{\mathrm{obs}}|&gt;t_{1-\alpha/2,\nu}\)</td>
+                                <td>\(2[1-F_\nu(|t_{\mathrm{obs}}|)]\)</td>
+                            </tr>
+                            <tr>
+                                <td>\(H_1:\delta&gt;\delta_0\)</td>
+                                <td>\(t_{\mathrm{obs}}&gt;t_{1-\alpha,\nu}\)</td>
+                                <td>\(1-F_\nu(t_{\mathrm{obs}})\)</td>
+                            </tr>
+                            <tr>
+                                <td>\(H_1:\delta&lt;\delta_0\)</td>
+                                <td>\(t_{\mathrm{obs}}&lt;t_{\alpha,\nu}\)</td>
+                                <td>\(F_\nu(t_{\mathrm{obs}})\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        Here, \(t_{p,\nu}\) denotes the \(p\)-quantile of the t-distribution. For a one-sided scientific
+                        claim, the corresponding composite null includes values on the opposite side of \(\delta_0\);
+                        the boundary value determines the usual critical value in this normal common-variance model.
+                    </p>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (pooled two-sample confidence interval).</b></p>
+                        <p>
+                            Under the same assumptions, an exact \(100(1-\alpha)\%\) confidence interval for
+                            \(\delta=\mu_1-\mu_2\) is \[ (\bar x-\bar y)\ \pm\ t_{1-\alpha/2,\nu}\,
+                            s_p\sqrt{\frac1{n_1}+\frac1{n_2}}, \qquad \nu=n_1+n_2-2. \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof. The preceding theorem gives \[\mathbb{P}\!\left(-t_{1-\alpha/2,\nu}\leq T \leq
+                        t_{1-\alpha/2,\nu}\right)=1-\alpha.\] Substituting the definition of \(T\) and rearranging the
+                        inequalities isolates \(\delta\), yielding the stated interval.
                     </p>
                     <p>
-                        In most real-world applications, \(\sigma\) is unknown and must therefore be estimated. A
-                        natural approach is to use the sample variances \(s_1^2\) and \(s_2^2\) as estimates of
-                        \(\sigma^2\). By pooling these variances and weighting them according to their respective sample
-                        sizes, we obtain the following estimate of \(\sigma\): \[ s_{p} = \sqrt{\frac{(n_{1} -
-                        1)s_{1}^{2} + (n_{2} - 1)s_{2}^{2}}{n_{1} + n_{2} - 2}}. \]
+                        A two-sided level-\(\alpha\) test of \(H_0:\delta=\delta_0\) rejects exactly when the
+                        corresponding \(100(1-\alpha)\%\) confidence interval excludes \(\delta_0\). A confidence
+                        interval also communicates an effect estimate and its uncertainty; a p-value alone does not
+                        describe effect magnitude.
+                    </p>
+
+                    <!-- --- Experiment 55: pooled t-test and confidence interval from raw data --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 55: pooled t-test and confidence interval from raw data.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+# Independent samples; the numbers are illustrative.
+group_1 = np.array([21, 24, 23, 26, 25, 22, 24, 27], dtype=float)
+group_2 = np.array([19, 20, 22, 21, 23, 20, 21, 22, 19, 20], dtype=float)
+
+n1, n2 = len(group_1), len(group_2)
+mean1, mean2 = np.mean(group_1), np.mean(group_2)
+s1 = np.std(group_1, ddof=1)
+s2 = np.std(group_2, ddof=1)
+
+pooled_var = ((n1 - 1) * s1**2 + (n2 - 1) * s2**2) / (n1 + n2 - 2)
+sp = np.sqrt(pooled_var)
+se = sp * np.sqrt(1 / n1 + 1 / n2)
+difference = mean1 - mean2
+df = n1 + n2 - 2
+
+statistic = difference / se
+p_value = 2 * stats.t.sf(abs(statistic), df=df)
+critical = stats.t.ppf(0.975, df=df)
+ci = (difference - critical * se, difference + critical * se)
+
+software_result = stats.ttest_ind(group_1, group_2, equal_var=True)
+
+print(f"Difference in means: {difference:.3f}")
+print(f"Pooled standard deviation: {sp:.3f}")
+print(f"Estimated standard error: {se:.3f}")
+print(f"t({df}) = {statistic:.4f}, two-sided p = {p_value:.5f}")
+print(f"95% CI: ({ci[0]:.3f}, {ci[1]:.3f})")
+print("SciPy result:", software_result)
+
+assert np.isclose(statistic, software_result.statistic)
+assert np.isclose(p_value, software_result.pvalue)
+
+# Experiment: add the same constant to both groups.
+# What happens to the difference, t-statistic, and p-value?
+</code></pre>
+                    <p>
+                        For the difference \(\mu_1-\mu_2\), the sign matters: a positive estimate means that group 1 has
+                        the higher observed mean. Reversing the group order changes the sign of the difference and
+                        t-statistic but not the two-sided p-value or the width of the confidence interval.
+                    </p>
+
+                    <!-- --- Experiment 56: summary statistics and directional alternatives --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 56: computing pooled tests from summary statistics.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+# Independently reported sample summaries.
+mean1, sd1, n1 = 52.0, 8.0, 30
+mean2, sd2, n2 = 48.0, 7.5, 35
+
+result = stats.ttest_ind_from_stats(
+    mean1=mean1, std1=sd1, nobs1=n1,
+    mean2=mean2, std2=sd2, nobs2=n2,
+    equal_var=True
+)
+
+pooled_var = ((n1 - 1) * sd1**2 + (n2 - 1) * sd2**2) / (n1 + n2 - 2)
+se = np.sqrt(pooled_var) * np.sqrt(1 / n1 + 1 / n2)
+df = n1 + n2 - 2
+
+# Reconstruct the two-sided confidence interval for mu1 - mu2.
+difference = mean1 - mean2
+margin = stats.t.ppf(0.975, df) * se
+
+print(f"t({df}) = {result.statistic:.4f}")
+print(f"Two-sided p-value = {result.pvalue:.5f}")
+print(f"95% CI = ({difference - margin:.3f}, {difference + margin:.3f})")
+
+# The sign of t determines which tail is relevant.
+right_p = stats.t.sf(result.statistic, df)
+left_p = stats.t.cdf(result.statistic, df)
+print(f"H1: mu1 > mu2: p = {right_p:.5f}")
+print(f"H1: mu1 < mu2: p = {left_p:.5f}")
+
+# Experiment: double both sample sizes, keeping means and SDs fixed.
+</code></pre>
+
+                    <!-- ==================== Checking the Assumptions ==================== -->
+                    <p><b>What must be checked before using the pooled test?</b></p>
+                    <p>
+                        The design must justify independence within and across samples. A normal Q-Q plot can help
+                        assess the plausibility of normality within each group; histograms and box plots can reveal
+                        skewness, extreme observations, and differences in spread. Exact small-sample t-inference
+                        requires normality, while approximate inference may be adequate for sufficiently large samples
+                        under suitable conditions.
                     </p>
                     <p>
-                        The quantity \(s_p\) is called the <em>pooled sample standard deviation</em>, where the
-                        subscript \(p\) denotes pooling.
+                        Crucially, <i>equal sample standard deviations do not prove equal population variances</i>.
+                        Conversely, different sample standard deviations do not prove unequal population variances.
+                        Rules such as “the larger sample SD must be less than twice the smaller one” are only rough
+                        heuristics, not formal guarantees. A non-significant variance test is not proof that the
+                        variances are equal.
                     </p>
                     <p>
-                        Replacing \(\sigma\) in the test statistic with its estimate \(s_p\) yields: \[ t =
-                        \frac{(\bar{x}_{1} - \bar{x}_{2}) - (\mu_{1} - \mu_{2})}{s_{p} \sqrt{\frac{1}{n_{1}} +
-                        \frac{1}{n_{2}}}} \]
+                        The choice to pool should be supported by substantive knowledge of the populations and the study
+                        design, not just by a preliminary significance test. When equal variances cannot be justified,
+                        <i>Welch's two-sample t-test</i>
+                        is a useful default and will be treated in the following section.
                     </p>
-                    <p>
-                        The denominator of this expression, \(s_p \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}}\), is an
-                        estimator of the standard deviation of \(\bar{x}_{1} - \bar{x}_{2}\), which can be written as
-                        \(s_{\bar{x}_{1} - \bar{x}_{2}}\).
+
+                    <!-- --- Experiment 57: visual diagnostics for two independent groups --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 57: visual diagnostics for two independent groups.</b>
                     </p>
-                    <p>
-                        Note that the test statistic \(t\) follows a
-                        <em>t-distribution</em> with degrees of freedom given by: \[ \text{df} = n_{1} + n_{2} - 2. \]
-                    </p>
-                    <p>
-                        A \(100(1 - \alpha)\%\) confidence interval for \(\mu_{1} - \mu_{2}\) is given by: \[
-                        (\bar{x}_{1} - \bar{x}_{2}) \pm t \cdot s_{p} \sqrt{\frac{1}{n_{1}} + \frac{1}{n_{2}}} \]
-                    </p>
-                    <p>
-                        Here, the value of \(t\) is obtained from the
-                        <em>t-distribution</em> corresponding to the desired confidence level and \(n_{1} + n_{2} - 2\)
-                        degrees of freedom.
-                    </p>
-                    <p>
-                        Python allows us to conduct a <i>pooled t-test</i> using the
-                        <code>ttest_ind_from_stats()</code>
-                        over the <code>stats</code> module from the <code>scipy</code> package.
-                    </p>
-                    <p>We will again load the <code>students</code> data set:</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">&gt;&gt;&gt; import pandas as pd
-&gt;&gt;&gt; import numpy as np
-&gt;&gt;&gt; 
-&gt;&gt;&gt; students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")</code></pre>
-                    <p>
-                        We will examine the mean annual salary (in Euros) of graduates to determine whether there are
-                        statistically significant differences between male and female students. The key question is
-                        whether gender influences the mean salary of graduates.
-                    </p>
-                    <p>In order to do this we need to first prepare the data. The following code speaks for itself:</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">&gt;&gt;&gt; graduated_students = students.loc[students.graduated == 1]
-&gt;&gt;&gt; males_graduated = graduated_students.loc[students.gender == "Male"]
-&gt;&gt;&gt; females_graduated = graduated_students.loc[students.gender == "Female"]
-&gt;&gt;&gt; 
-&gt;&gt;&gt; n = 50
-&gt;&gt;&gt; 
-&gt;&gt;&gt; sample_males = males_graduated.sample(n, random_state = 9)["salary"]
-&gt;&gt;&gt; sample_females = females_graduated.sample(n, random_state = 9)["salary"]
-&gt;&gt;&gt; print(np.mean(sample_males))
-47262.417382791995
-&gt;&gt;&gt; print(np.mean(sample_females))
-35825.54641661087</code></pre>
-                    <p>
-                        We test the normaility assumption by plotting a normal probability plot, often referred to as
-                        <a href="https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot" target="_blank">Q-Q plot</a>. If the
-                        variable is normally distributed, the normal probability plot should be roughly linear.
-                    </p>
-                    <p>We will switch to VS Code to write the following code and display the graph.</p>
-                    <pre class="plain stats-code code-python"><code class="language-python"># Rest of the code
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
-import scipy.stats as stats
+from scipy import stats
 
-plt.figure(figsize=(12,5))
+rng = np.random.default_rng(2026)
 
-ax = plt.subplot(1, 2, 1)
-qq = stats.probplot(sample_males, dist="norm", plot = plt)
-ax.set_title("Q-Q plot for males (sample)")
-ax.set_ylabel("Sample quantiles")
+# One roughly normal group and one positively skewed group.
+normal_group = rng.normal(loc=50, scale=8, size=60)
+skewed_group = rng.lognormal(mean=np.log(45), sigma=0.35, size=60)
 
-ax = plt.subplot(1, 2, 2)
-qq = stats.probplot(sample_females, dist="norm", plot = plt)
-ax.set_title("Q-Q plot for females (sample)")
-ax.set_ylabel("Sample quantiles")
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
 
-plt.show(block=True)</code></pre>
-                    <div class="img-div">
-                        <img alt="two-sided critical value" src="../images/qq_plot_male_female_salary.png" />
+stats.probplot(normal_group, dist="norm", plot=axes[0])
+axes[0].set_title("Q-Q plot: normal sample")
+
+stats.probplot(skewed_group, dist="norm", plot=axes[1])
+axes[1].set_title("Q-Q plot: skewed sample")
+
+axes[2].boxplot([normal_group, skewed_group], tick_labels=["Normal", "Skewed"])
+axes[2].set_title("Group spreads and unusual values")
+axes[2].set_ylabel("Observation")
+
+fig.tight_layout()
+fig.savefig("pooled_t_assumptions_diagnostics.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+print("Sample SDs:", np.std(normal_group, ddof=1),
+      np.std(skewed_group, ddof=1))
+
+# Experiment: increase the skewness of the second population.
+# A visual diagnostic cannot prove normality or equal variances.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/pooled_t_assumptions_diagnostics.png"
+                            alt="Two normal Q-Q plots and a comparison box plot illustrating assumptions for two-sample t-inference"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Q-Q plots and a box plot can help assess normality, skewness, and unequal
+                            spreads, but cannot establish the assumptions with certainty. Generated by Experiment 57.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Sampling Distribution and Confidence-Interval Coverage ==================== -->
+                    <p><b>Why the degrees of freedom and standard error matter.</b></p>
+                    <p>
+                        Under the equal-variance normal model, the pooled t-statistic has exactly \(n_1+n_2-2\) degrees
+                        of freedom. Increasing the sample sizes generally reduces the standard error, making the
+                        confidence interval narrower and increasing the ability to detect a fixed difference. The
+                        statement depends on appropriate sampling and model assumptions, not merely on a large count of
+                        recorded observations.
+                    </p>
+
+                    <!-- --- Experiment 58: null distribution and confidence-interval coverage --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 58: null distribution and confidence-interval coverage.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(2026)
+B = 20_000
+n1, n2 = 14, 22
+mu1, mu2, sigma = 5.0, 5.0, 3.0
+alpha = 0.05
+
+# Each row represents one complete independent two-group study.
+x = rng.normal(mu1, sigma, size=(B, n1))
+y = rng.normal(mu2, sigma, size=(B, n2))
+
+x_bar, y_bar = x.mean(axis=1), y.mean(axis=1)
+s1_sq = x.var(axis=1, ddof=1)
+s2_sq = y.var(axis=1, ddof=1)
+df = n1 + n2 - 2
+sp_sq = ((n1 - 1) * s1_sq + (n2 - 1) * s2_sq) / df
+se = np.sqrt(sp_sq * (1 / n1 + 1 / n2))
+t_values = (x_bar - y_bar) / se
+
+critical = stats.t.isf(alpha / 2, df)
+ci_low = x_bar - y_bar - critical * se
+ci_high = x_bar - y_bar + critical * se
+true_difference = mu1 - mu2
+
+coverage = np.mean((ci_low &lt;= true_difference) &amp;
+                   (true_difference &lt;= ci_high))
+rejection_rate = np.mean(np.abs(t_values) &gt; critical)
+
+print(f"Nominal CI coverage: {1 - alpha:.1%}")
+print(f"Simulated CI coverage: {coverage:.2%}")
+print(f"Simulated type I error: {rejection_rate:.2%}")
+
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.hist(t_values, bins=65, density=True, alpha=0.45,
+        label="Simulated t-statistics")
+grid = np.linspace(-4, 4, 500)
+ax.plot(grid, stats.t.pdf(grid, df), label=f"Theoretical t(df={df})")
+ax.set_xlabel("t-statistic")
+ax.set_ylabel("Density")
+ax.set_title("Pooled t-statistic under the null")
+ax.legend()
+fig.tight_layout()
+fig.savefig("pooled_t_null_distribution.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: increase n1 and n2; inspect the t-distribution.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/pooled_t_null_distribution.png"
+                            alt="Simulated pooled two-sample t-statistics compared with their theoretical Student t-distribution"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Under independent normal sampling with a common variance, the simulated
+                            pooled t-statistics follow the expected Student's t-distribution. Generated by Experiment
+                            58.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== What Happens When Variances Differ? ==================== -->
+                    <p><b>The equal-variance assumption is substantive, not cosmetic.</b></p>
+                    <p>
+                        If the population variances differ, the pooled standard error estimates the wrong quantity. The
+                        problem can be particularly serious when sample sizes are unequal. For example, if the
+                        <i>smaller</i> group has the <i>larger</i>
+                        variance, a pooled test may reject a true null hypothesis far more often than the nominal
+                        significance level allows. Reversing that relationship can make the test unnecessarily
+                        conservative.
+                    </p>
+                    <p>
+                        Equal group sizes often make a pooled test less sensitive to unequal variances, but do not make
+                        its exact t-distributional justification true. Welch's method estimates the standard error
+                        without pooling variances: \[ \widehat{\mathrm{SE}}_{\mathrm{Welch}}
+                        =\sqrt{\frac{S_1^2}{n_1}+\frac{S_2^2}{n_2}}. \] Its approximate reference distribution and
+                        degrees-of-freedom formula will be developed in the next section.
+                    </p>
+
+                    <!-- --- Experiment 59: type I error when the common-variance assumption fails --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 59: unequal variances and unequal sample sizes.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(2026)
+B = 25_000
+alpha = 0.05
+
+# Both population means equal zero: the null is true in every case.
+cases = [
+    (20, 20, 1.0, 1.0, "Equal variances, balanced"),
+    (20, 20, 3.0, 1.0, "Unequal variances, balanced"),
+    (12, 60, 3.0, 1.0, "Larger SD in smaller group"),
+    (60, 12, 3.0, 1.0, "Larger SD in larger group"),
+]
+
+pooled_rates = []
+welch_rates = []
+labels = []
+
+for n1, n2, sigma1, sigma2, label in cases:
+    x = rng.normal(0, sigma1, size=(B, n1))
+    y = rng.normal(0, sigma2, size=(B, n2))
+
+    pooled = stats.ttest_ind(x, y, axis=1, equal_var=True)
+    welch = stats.ttest_ind(x, y, axis=1, equal_var=False)
+
+    pooled_rate = np.mean(pooled.pvalue &lt; alpha)
+    welch_rate = np.mean(welch.pvalue &lt; alpha)
+
+    pooled_rates.append(pooled_rate)
+    welch_rates.append(welch_rate)
+    labels.append(label)
+    print(f"{label}: pooled={pooled_rate:.3f}, Welch={welch_rate:.3f}")
+
+positions = np.arange(len(cases))
+width = 0.35
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.bar(positions - width / 2, pooled_rates, width, label="Pooled")
+ax.bar(positions + width / 2, welch_rates, width, label="Welch")
+ax.axhline(alpha, linestyle="--", label="Nominal alpha = 0.05")
+ax.set_xticks(positions, labels, rotation=15, ha="right")
+ax.set_ylabel("Fraction of true nulls rejected")
+ax.set_title("Type I error under different variance and allocation patterns")
+ax.legend()
+fig.tight_layout()
+fig.savefig("pooled_t_unequal_variances.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: interchange group variances or sample sizes.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/pooled_t_unequal_variances.png"
+                            alt="Simulated type I error for pooled and Welch t-tests under different variance and sample-size patterns"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The pooled t-test can have severely distorted false-positive rates when group
+                            variances differ and group sizes are unbalanced. Welch's test is generally more stable in
+                            these scenarios. Generated by Experiment 59.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Power, Sample Size, and Allocation ==================== -->
+                    <p><b>Effect size, power, and sample allocation.</b></p>
+                    <p>
+                        Under the two-normal-population model with a common variance, the test statistic for
+                        \(H_0:\delta=0\) has, when the true difference is \(\delta\), a noncentral t-distribution with
+                        \(\nu=n_1+n_2-2\) degrees of freedom and noncentrality parameter \[
+                        \lambda=\frac{\delta}{\sigma\sqrt{1/n_1+1/n_2}}. \] Hence the power of the two-sided
+                        level-\(\alpha\) test is \[ \pi(\delta)=\mathbb{P}_{\delta}(T&lt;-c)
+                        +\mathbb{P}_{\delta}(T&gt;c),\qquad c=t_{1-\alpha/2,\nu}. \] The probabilities on the right are
+                        evaluated using the noncentral t-distribution.
+                    </p>
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading">
+                            <b>Lemma (balanced groups minimize the standard error for fixed total size).</b>
+                        </p>
+                        <p>
+                            If \(N=n_1+n_2\) is fixed and the population variance is common, then \[
+                            \frac1{n_1}+\frac1{n_2} =\frac{N}{n_1n_2}\geq\frac4N. \] Equality is attained when
+                            \(n_1=n_2=N/2\), if an exact split is possible. For odd \(N\), the most nearly equal integer
+                            allocation is optimal.
+                        </p>
                     </div>
                     <p>
-                        We see that the sample data is somehow noisy, but it is still roughly normally distributed. The
-                        deviations from the straight line in the upper and lower parts suggest, that the probability
-                        distribution is slightly skewed.
+                        Proof. Since \((n_1-n_2)^2\geq0\), we have \(4n_1n_2\leq(n_1+n_2)^2=N^2\). Rearrangement gives
+                        the result. Thus, with a fixed total sample size, equal allocation minimizes the standard error
+                        of the difference under the common-variance model. Real studies may use unequal allocation
+                        because of cost, recruitment, or ethical constraints.
                     </p>
                     <p>
-                        Further, we check if the standard deviations of the two populations are roughly equal. As a rule
-                        of thumb, the condition of equal population standard deviations is met, if the ratio of the
-                        larger to the smaller sample standard deviation is less than 2 (<a
-                            href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
-                            target="_blank"
-                            >Weiss, 2010</a
-                        >). Let us assume, that the data of the students data set is a good approximation for the
-                        population.
+                        The standardized difference \(d=(\bar x-\bar y)/s_p\) is sometimes called
+                        <i>Cohen's d</i> for two independent groups. It expresses the observed mean difference in pooled
+                        standard-deviation units; it should be interpreted in context, not as a universal measure of
+                        practical importance.
                     </p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">&gt;&gt;&gt; print(np.std(sample_males, ddof = 1))
-9576.164209488374
-&gt;&gt;&gt; print(np.std(sample_females, ddof = 1))
-7200.9719569940535
-&gt;&gt;&gt; print(np.std(sample_males, ddof = 1) / np.std(sample_females, ddof = 1))
-1.3298432859729967</code></pre>
+
+                    <!-- --- Experiment 60: theoretical power and group allocation --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 60: power, sample size, and balanced allocation.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import nct, t
+
+alpha = 0.05
+sigma = 1.0
+delta = 0.5
+sample_sizes = np.arange(10, 101, 5)  # Per group.
+
+
+def two_sample_power(n1, n2, difference, sigma, alpha=0.05):
+    df = n1 + n2 - 2
+    nc = difference / (sigma * np.sqrt(1 / n1 + 1 / n2))
+    cutoff = t.isf(alpha / 2, df)
+    return nct.cdf(-cutoff, df, nc) + nct.sf(cutoff, df, nc)
+
+
+power = [
+    two_sample_power(n, n, delta, sigma, alpha)
+    for n in sample_sizes
+]
+
+print("Power with 40 observations per group:",
+      round(two_sample_power(40, 40, delta, sigma), 3))
+
+# Compare group allocations with the same total sample size.
+for n1, n2 in [(40, 40), (20, 60), (10, 70)]:
+    result = two_sample_power(n1, n2, delta, sigma)
+    print(f"n1={n1}, n2={n2}: power={result:.3f}")
+
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.plot(sample_sizes, power, marker="o", markersize=4)
+ax.axhline(0.80, linestyle="--", label="80% power")
+ax.set_xlabel("Observations per group (balanced design)")
+ax.set_ylabel("Probability of rejecting H0")
+ax.set_title("Power of the pooled two-sided t-test")
+ax.set_ylim(0, 1)
+ax.grid(alpha=0.25)
+ax.legend()
+fig.tight_layout()
+fig.savefig("pooled_t_power_sample_size.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: double the true standard deviation.
+# How does the sample size needed for 80% power change?
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/pooled_t_power_sample_size.png"
+                            alt="Theoretical power of a two-sided pooled t-test as the balanced per-group sample size increases"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> With fixed effect size, population standard deviation, and significance
+                            level, power generally increases with sample size. Generated by Experiment 60.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Applied Example: Graduate Salaries ==================== -->
+                    <p><b>Application: comparing graduate salaries in the SOGA-Py students dataset.</b></p>
                     <p>
-                        The ratio is approximately \(1.33\) and thus, we conclude that the equal population standard
-                        deviations criterion is fulfilled. A simple visualization technique for evaluating the spread of
-                        a variable is to use a box plot.
+                        We return to the students dataset used earlier. The original example compares salaries for male
+                        and female graduates using independent subsamples and a pooled two-sample t-test. Let \(\mu_M\)
+                        and \(\mu_F\) denote the population mean salaries for the two groups in a clearly defined target
+                        population. A two-sided comparison is \[ H_0:\mu_M-\mu_F=0 \qquad\text{versus}\qquad
+                        H_1:\mu_M-\mu_F\neq0. \] We report a confidence interval as well as the test result. The data
+                        are observational; a difference in sample means, even if statistically significant, cannot by
+                        itself establish that gender <i>causes</i> a salary difference. Other variables, selection
+                        effects, and the original data-collection design matter.
                     </p>
-                    <pre class="plain stats-code code-python"><code class="language-python"># Rest of the code
 
-import seaborn as sns
+                    <!-- --- Experiment 61: pooled t-inference for graduate salaries --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 61: graduate salaries and the equal-variance assumption.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import stats
 
-plt.figure(figsize=(11,5))
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+students = pd.read_csv(url)
 
-sample_df = pd.melt(pd.DataFrame({'male': sample_males.values,
-                                  'female': sample_females.values}))
-sample_df.columns = ["Gender", "Annual salary in EUR"]
+required = {"graduated", "gender", "salary"}
+missing = required.difference(students.columns)
+if missing:
+    raise KeyError(f"Missing dataset columns: {sorted(missing)}")
 
-sns.boxplot(x='Gender', y='Annual salary in EUR', data=sample_df).set(title='Sample data')
+# Restrict to graduates, and explicitly remove unavailable salaries.
+graduates = students.loc[
+    students["graduated"] == 1, ["gender", "salary"]
+].copy()
+graduates["salary"] = pd.to_numeric(graduates["salary"], errors="coerce")
+graduates = graduates.dropna(subset=["gender", "salary"])
 
-plt.show(block=True)</code></pre>
-                    <div class="img-div">
-                        <img alt="two-sided critical value" src="../images/box_plot_male_female_salary.png" />
-                    </div>
-                    <p>We now conduct the pooled t-test using an already available Python package.</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">&gt;&gt;&gt; from scipy import stats
-&gt;&gt;&gt; 
-&gt;&gt;&gt; test_result = stats.ttest_ind(sample_males, sample_females, 
-...                               equal_var = True, 
-...                               alternative = "greater")
-&gt;&gt;&gt;
-&gt;&gt;&gt; test_result
-TtestResult(statistic=np.float64(6.7496330142831065), pvalue=np.float64(5.25205313471519e-10), df=np.float64(98.0))</code></pre>
+male_pool = graduates.loc[graduates["gender"] == "Male", "salary"]
+female_pool = graduates.loc[graduates["gender"] == "Female", "salary"]
+
+if min(len(male_pool), len(female_pool)) &lt; 50:
+    raise ValueError("The dataset needs at least 50 available salaries per group")
+
+# Independent subsamples selected reproducibly from each group.
+male = male_pool.sample(n=50, random_state=9).to_numpy(dtype=float)
+female = female_pool.sample(n=50, random_state=9).to_numpy(dtype=float)
+
+n1, n2 = len(male), len(female)
+m1, m2 = male.mean(), female.mean()
+s1, s2 = male.std(ddof=1), female.std(ddof=1)
+df = n1 + n2 - 2
+sp = np.sqrt(((n1 - 1) * s1**2 + (n2 - 1) * s2**2) / df)
+se = sp * np.sqrt(1 / n1 + 1 / n2)
+margin = stats.t.isf(0.025, df) * se
+ci = (m1 - m2 - margin, m1 - m2 + margin)
+
+pooled = stats.ttest_ind(male, female, equal_var=True)
+welch = stats.ttest_ind(male, female, equal_var=False)
+
+print(f"Sample sizes: {n1}, {n2}")
+print(f"Mean salaries: {m1:.2f}, {m2:.2f} EUR")
+print(f"Sample SDs: {s1:.2f}, {s2:.2f} EUR")
+print(f"Mean difference (M - F): {m1 - m2:.2f} EUR")
+print(f"Pooled t({df}) = {pooled.statistic:.4f}")
+print(f"Pooled two-sided p-value = {pooled.pvalue:.5g}")
+print(f"Pooled 95% CI: ({ci[0]:.2f}, {ci[1]:.2f}) EUR")
+print(f"Welch two-sided p-value = {welch.pvalue:.5g}")
+
+# Visual diagnostics; these do not verify the model assumptions.
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+stats.probplot(male, dist="norm", plot=axes[0])
+axes[0].set_title("Male salary: Q-Q plot")
+stats.probplot(female, dist="norm", plot=axes[1])
+axes[1].set_title("Female salary: Q-Q plot")
+axes[2].boxplot([male, female], tick_labels=["Male", "Female"])
+axes[2].set_title("Salaries by group")
+axes[2].set_ylabel("Annual salary (EUR)")
+fig.tight_layout()
+fig.savefig("pooled_t_graduate_salary_diagnostics.png",
+            dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: compare results with the full groups (without subsampling).
+# Do not interpret an observational difference as a causal effect.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/pooled_t_graduate_salary_diagnostics.png"
+                            alt="Normal Q-Q plots and salary box plots for independent samples of male and female graduates"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Diagnostic plots for the two salary samples. These plots support an
+                            exploratory assessment of distribution shapes and variation but cannot establish normality
+                            or a common variance. Generated by Experiment 61.
+                        </figcaption>
+                    </figure>
                     <p>
-                        We may conclude that at the 1% significance level, the data provides very strong evidence to
-                        conclude that the average salary of male graduates is higher than the average salary of female
-                        graduates.
+                        As in the original example, the sample is drawn from an existing teaching dataset. Even if the
+                        pooled test rejects equality, its interpretation is conditional on the statistical assumptions
+                        and on how representative the original dataset is of the target population. The estimated salary
+                        difference is an <i>association</i>, not automatically a causal effect.
                     </p>
+
+                    <!-- ==================== Practical Summary and Exercises ==================== -->
+                    <p><b>When should we use the pooled two-sample t-test?</b></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Situation</th>
+                                <th>Recommended interpretation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Independent groups; equal population variances plausible</td>
+                                <td>The pooled two-sample t-test is appropriate under the normal model.</td>
+                            </tr>
+                            <tr>
+                                <td>Independent groups; different or uncertain population variances</td>
+                                <td>Prefer Welch's two-sample t-test, developed next.</td>
+                            </tr>
+                            <tr>
+                                <td>Same people measured twice, or matched pairs</td>
+                                <td>Use an analysis of within-pair differences, not an independent-sample test.</td>
+                            </tr>
+                            <tr>
+                                <td>Strong skewness, outliers, or dependence</td>
+                                <td>Assess robustness, study design, and possible alternative inference methods.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        <b>Try it yourself.</b>
+                        (1) Derive the pooled variance formula from the combined within-group sums of squares. (2) In
+                        Experiment 55, exchange the group labels and explain what changes. (3) For \(n_1=12\),
+                        \(n_2=48\), compute \(1/n_1+1/n_2\), then compare it with the balanced allocation
+                        \(n_1=n_2=30\). (4) In Experiment 59, explain why a larger population variance in the smaller
+                        group leads to anti-conservative pooled inference. (5) In Experiment 61, state which conclusions
+                        are descriptive, inferential, and causal.
+                    </p>
+                    <p>
+                        <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 9.6, pp. 587–591, derives the
+                        two-sample t-statistic for independent normal populations with a common unknown variance and
+                        discusses one- and two-sided tests. OpenIntro Statistics (4th ed.), Section 7.3.4, p. 273,
+                        explains pooled standard deviation estimation and emphasizes that pooling requires a substantive
+                        justification for equal population standard deviations. For practice, consult the exercises
+                        accompanying these sections.
+                    </p>
+
                     <hr />
                     <!-- ========================= MAIN SECTION 10: Inference for Two
                                                                 Independent Population Means
