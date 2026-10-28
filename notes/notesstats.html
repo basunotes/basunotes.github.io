@@ -8015,102 +8015,712 @@ print(f"Wilcoxon signed-rank p-value: {wilcoxon.pvalue:.5f}")
                     </p>
 
                     <hr />
-                    <!-- ========================= MAIN SECTION 12: Inferences for One
-                                                                Population Standard
-                                                                Deviation ========================= -->
+
+                    <!-- ========================= MAIN SECTION 12: Inferences for One Population Standard Deviation ========================= -->
+
                     <span id="InferencesOnePopulationSD"><b>Inferences for One Population Standard Deviation</b></span>
+
                     <p>
-                        So far, we have discussed methods of inferential statistics that focus on making inferences
-                        about one or more population means. We will now consider methods of inferential statistics that
-                        focus on inferences for population variances (or standard deviations).
+                        In the preceding sections, we developed tests and confidence intervals for population means. We
+                        now investigate the <i>variability</i> of a population. Such questions arise, for example, when
+                        checking the precision of a measurement instrument, the consistency of a manufacturing process,
+                        or the variability of service response times.
                     </p>
+
                     <p>
-                        The test statistic for a hypothesis test concerning the population standard deviation, with the
-                        null hypothesis \(H_0: \sigma = \sigma_0\), for a normally distributed variable is calculated
-                        as: \[ \chi^{2} = \frac{(n - 1) s^{2}}{\sigma^{2}_{0}} \text{.} \]
+                        For a random variable with finite variance, the population variance is
+                        \(\sigma^2=\mathbb{E}[(X-\mu)^2]\) and the population standard deviation is
+                        \(\sigma=\sqrt{\sigma^2}\). Since \(\sigma\geq0\), a hypothesis concerning \(\sigma\) can
+                        equivalently be written in terms of \(\sigma^2\). We will calculate inference for the variance
+                        and then take square roots to obtain results for the standard deviation.
                     </p>
-                    <p>
-                        This statistic follows a chi-square distribution, which is why it is denoted by the symbol
-                        \(\chi^2\), with \(n - 1\) degrees of freedom.
-                    </p>
-                    <p>
-                        The \(100(1-\alpha)\%\) confidence interval for \(\sigma\) is given by: \[\sqrt { \frac {n - 1}
-                        {\chi^2_{\alpha / 2}}} \le \sigma \le \sqrt { \frac{n - 1} {\chi^2_{1 - \alpha / 2}} }\text{,}\]
-                    </p>
-                    <p>where \(n\) is the sample size of the sample data.</p>
-                    <p>
-                        It is important to note that the chi-square test for standard deviation is not robust to
-                        violations of the normality assumption. If the data is not normally distributed, the results of
-                        the test may be unreliable (<a
-                            href="https://www.sciencedirect.com/book/monograph/9780128043172/introductory-statistics"
-                            target="_blank"
-                            >Weiss, 2010</a
-                        >).
-                    </p>
-                    <p>
-                        In order to showcase the one standard deviation \(\chi^2\)-test, we examine the spread of the
-                        height in cm of female students and compare it to the spread of the height of all students (our
-                        population). We want to test whether the standard deviation of the height of female students is
-                        significantly smaller than the standard deviation of the height of all students.
-                    </p>
-                    <p>The following code speaks for itself:</p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import numpy as np
 
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+                    <!-- ==================== Sample Variance and the Chi-Square Distribution ==================== -->
 
-sigma_0 = np.std(students["height"], ddof = 1)
-
-n = 30
-
-female_students = students.loc[students.gender == "Female"]
-
-female_height_sample = female_students.sample(n, random_state = 12)["height"]
-
-sample_sd = np.std(female_height_sample, ddof = 1)</code></pre>
-                    <p>We check the normality assumption by plotting a Q–Q plot:</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">import matplotlib.pyplot as plt
-import scipy.stats as stats
-
-plt.figure(figsize=(12,5))
-fig, ax = plt.subplots()
-
-qq = stats.probplot(female_height_sample, dist="norm", plot = plt)
-ax.set_title("Q–Q plot for the heights of\nsampled female students")
-ax.set_ylabel("Sample quantiles")
-
-plt.show(block=True)</code></pre>
-                    <div class="img-div">
-                        <img alt="two-sided critical value" src="../images/qq_plot_female_weight.png" />
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading">
+                            <b>Definition (sample variance and sample standard deviation).</b>
+                        </p>
+                        <p>
+                            For a sample \(X_1,\ldots,X_n\) with \(n\geq2\), write \[
+                            \overline{X}=\frac1n\sum_{i=1}^{n}X_i, \qquad
+                            S^2=\frac{1}{n-1}\sum_{i=1}^{n}(X_i-\overline{X})^2, \qquad S=\sqrt{S^2}. \] The denominator
+                            \(n-1\) is used because the sample mean has been estimated from the same observations. The
+                            resulting \(S^2\) is an unbiased estimator of \(\sigma^2\) when the observations are
+                            identically distributed, independent, and have finite variance. In general, \(S\) is not an
+                            unbiased estimator of \(\sigma\).
+                        </p>
                     </div>
-                    <p>
-                        As we can see, the data falls roughly along a straight line. Based on this graphical evaluation,
-                        we conclude that the variable of interest is approximately normally distributed.
-                    </p>
-                    <p>
-                        We now conduct the one–standard-deviation \(\chi^2\) test from scratch in Python. The null
-                        hypothesis is \(H_0: \sigma = \sigma_0\), and the alternative hypothesis is \(H_1: \sigma &lt;
-                        \sigma_0\). We choose a significance level of \(\alpha=0.05\).
-                    </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import chi2
 
-chi_squared_value = ((n - 1) / (sigma_0**2)) * sample_sd**2
-print(chi_squared_value)
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (chi-square distribution).</b></p>
+                        <p>
+                            If \(Z_1,\ldots,Z_\nu\) are independent standard normal random variables, then \[
+                            Y=\sum_{j=1}^{\nu}Z_j^2 \] has a <i>chi-square distribution</i> with \(\nu\) degrees of
+                            freedom, written \(Y\sim\chi^2_\nu\). Its mean is \(\nu\) and its variance is \(2\nu\).
+                        </p>
+                    </div>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (sampling distribution of the normal sample variance).</b>
+                        </p>
+                        <p>
+                            Suppose \[ X_1,\ldots,X_n\overset{\mathrm{iid}}{\sim}N(\mu,\sigma^2), \qquad n\geq2,\quad
+                            \sigma&gt;0. \] Then \[ V=\frac{(n-1)S^2}{\sigma^2}
+                            =\frac{\sum_{i=1}^{n}(X_i-\overline{X})^2}{\sigma^2} \sim\chi^2_{n-1}. \] This result is
+                            exact for independent normal observations, regardless of the unknown population mean
+                            \(\mu\).
+                        </p>
+                    </div>
+
+                    <p>
+                        Proof (outline). Standardize the observations to obtain \(n\) independent standard normal
+                        variables. An orthogonal change of coordinates separates the sample-mean component from the
+                        \(n-1\) orthogonal residual components. The sum of squared residual components is
+                        \((n-1)S^2/\sigma^2\). By the definition of a chi-square distribution, this sum has \(n-1\)
+                        degrees of freedom. This is a special case of Cochran's theorem.
+                    </p>
+
+                    <p>
+                        The factor \(n-1\) is essential: estimating the sample mean removes one degree of freedom. A
+                        commonly encountered alternative variance estimator uses the divisor \(n\), but that estimator
+                        must not be substituted for \(S^2\) in this chi-square formula without adjusting the scaling.
+                    </p>
+
+                    <!-- --- Experiment 76: sampling distribution of the sample variance --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 76: sampling distribution of the sample variance.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import chi2
+
+rng = np.random.default_rng(2026)
+
+n = 12
+mu = 100.0
+sigma = 5.0
+repetitions = 20_000
+
+samples = rng.normal(mu, sigma, size=(repetitions, n))
+sample_variances = np.var(samples, axis=1, ddof=1)
+pivots = (n - 1) * sample_variances / sigma**2
 
 df = n - 1
+print(f"Empirical pivot mean: {pivots.mean():.3f}")
+print(f"Theoretical mean:     {df}")
+print(f"Empirical pivot variance: {pivots.var(ddof=1):.3f}")
+print(f"Theoretical variance:     {2 * df}")
 
-p = chi2.cdf(chi_squared_value, df = df)
-print(p)</code></pre>
-                    <p>Output:</p>
-                    <pre class="plain stats-code code-output"><code class="nohighlight">20.44603451476297
-0.12147734513377556</code></pre>
+x = np.linspace(0, chi2.ppf(0.999, df), 400)
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.hist(pivots, bins=55, density=True, alpha=0.5,
+        label="Simulated chi-square pivots")
+ax.plot(x, chi2.pdf(x, df), linewidth=2,
+        label=f"Chi-square distribution, df={df}")
+ax.set_xlabel("(n - 1) S² / sigma²")
+ax.set_ylabel("Density")
+ax.set_title("Sampling distribution of the normal sample variance")
+ax.legend()
+fig.tight_layout()
+fig.savefig("one_variance_chi_square_sampling.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: increase n and compare the simulated distribution.
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/one_variance_chi_square_sampling.png"
+                            alt="Simulated chi-square pivots and their theoretical density"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The standardized sample variance follows the predicted chi-square
+                            distribution under normal sampling. Generated by Experiment 76.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Testing One Population Variance ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (one-sample chi-square variance test).</b></p>
+                        <p>
+                            Under independent normal sampling, to test \(H_0:\sigma^2=\sigma_0^2\), where
+                            \(\sigma_0&gt;0\) is fixed in advance, use the statistic \[ V_0=\frac{(n-1)S^2}{\sigma_0^2}.
+                            \] Under \(H_0\), \(V_0\sim\chi^2_{n-1}\).
+                        </p>
+                    </div>
+
                     <p>
-                        As we can see, the p-value is greater than the specified significance level of 0.05. Therefore,
-                        at the 5% significance level, the data does not provide sufficient evidence that the standard
-                        deviation of the heights of female students is smaller than the population standard deviation.
+                        A small value of \(V_0\) indicates less variability than specified by the null hypothesis; a
+                        large value indicates more variability. Let \(\nu=n-1\) and write \(c_p=F^{-1}_{\chi^2_\nu}(p)\)
+                        for the \(p\)-quantile of the chi-square distribution. For a test at significance level
+                        \(\alpha\), the rejection regions and p-values are:
                     </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Rejection region</th>
+                                <th>p-value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>\(H_1:\sigma&lt;\sigma_0\)</td>
+                                <td>\(V_0&lt;c_\alpha\)</td>
+                                <td>\(F_{\chi^2_\nu}(v_0)\)</td>
+                            </tr>
+                            <tr>
+                                <td>\(H_1:\sigma&gt;\sigma_0\)</td>
+                                <td>\(V_0&gt;c_{1-\alpha}\)</td>
+                                <td>\(1-F_{\chi^2_\nu}(v_0)\)</td>
+                            </tr>
+                            <tr>
+                                <td>\(H_1:\sigma\neq\sigma_0\)</td>
+                                <td>\(V_0&lt;c_{\alpha/2}\) or \(V_0&gt;c_{1-\alpha/2}\)</td>
+                                <td>\(\min\{1,2\min(F_{\chi^2_\nu}(v_0),1-F_{\chi^2_\nu}(v_0))\}\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        Here \(v_0\) is the observed statistic. The two-sided test shown above is the
+                        <i>equal-tailed</i> chi-square test. Because the chi-square distribution is asymmetric,
+                        different conventions for two-sided testing can yield different p-values; we will consistently
+                        use the equal-tailed convention in this section. For numerical accuracy, the upper-tail
+                        probability should be calculated with <code>scipy.stats.chi2.sf</code>, rather than by directly
+                        subtracting the CDF from 1.
+                    </p>
+
+                    <p>
+                        For a one-sided formulation such as \(H_0:\sigma\geq\sigma_0\) against
+                        \(H_1:\sigma&lt;\sigma_0\), the boundary \(\sigma=\sigma_0\) controls the rejection probability
+                        under the composite null. The same applies, with the inequalities reversed, to a right-sided
+                        alternative.
+                    </p>
+
+                    <p><b>Worked example: variability of a measurement process.</b></p>
+
+                    <p>
+                        Suppose a measurement process is expected to have population standard deviation \(\sigma_0=4\)
+                        units. We observe \(n=20\) independent measurements from an approximately normal population and
+                        obtain \(s=6.1\) units. We want to test \[ H_0:\sigma=4\qquad\text{against}\qquad
+                        H_1:\sigma&gt;4. \] The observed test statistic is \[ v_0=\frac{19(6.1)^2}{4^2}=44.186875. \]
+                        Under the null, it is compared with a chi-square distribution having 19 degrees of freedom. The
+                        right-tailed p-value is approximately \(0.00089\), providing strong evidence of greater
+                        variability under the assumed model. This does not identify the cause of the increased
+                        variation.
+                    </p>
+
+                    <!-- --- Experiment 77: one-sided and two-sided variance tests --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 77: calculating variance-test p-values and critical values.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import chi2
+
+n = 20
+sample_sd = 6.1
+sigma_0 = 4.0
+alpha = 0.05
+df = n - 1
+
+statistic = df * sample_sd**2 / sigma_0**2
+p_left = chi2.cdf(statistic, df)
+p_right = chi2.sf(statistic, df)
+p_two_sided = min(1.0, 2 * min(p_left, p_right))
+
+lower_critical = chi2.ppf(alpha / 2, df)
+upper_critical = chi2.isf(alpha / 2, df)
+
+print(f"Statistic: {statistic:.5f}")
+print(f"Left-tailed p-value:  {p_left:.6f}")
+print(f"Right-tailed p-value: {p_right:.6f}")
+print(f"Two-sided p-value:   {p_two_sided:.6f}")
+print(f"Two-sided critical values: {lower_critical:.3f}, "
+      f"{upper_critical:.3f}")
+print("Reject right-sided H0:", p_right &lt; alpha)
+
+# Experiment: change the sample SD while keeping n fixed.
+</code></pre>
+
+                    <!-- ==================== Confidence Intervals for Variance and SD ==================== -->
+
+                    <p><b>Confidence intervals for the population variance and standard deviation.</b></p>
+
+                    <p>
+                        The same chi-square sampling result produces an exact confidence interval. Under the normal
+                        model, \[ \mathbb{P}\left( c_{\alpha/2}\leq \frac{(n-1)S^2}{\sigma^2} \leq c_{1-\alpha/2}
+                        \right)=1-\alpha. \] Solving both inequalities for the positive parameter \(\sigma^2\) gives the
+                        following result.
+                    </p>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (exact chi-square confidence intervals).</b></p>
+                        <p>
+                            For independent \(N(\mu,\sigma^2)\) observations, a \(100(1-\alpha)\%\) confidence interval
+                            for the population variance is \[ \boxed{\left[ \frac{(n-1)s^2}{c_{1-\alpha/2}},
+                            \frac{(n-1)s^2}{c_{\alpha/2}} \right]}. \] Taking the square root of each positive endpoint
+                            gives the corresponding confidence interval for the population standard deviation: \[
+                            \boxed{\left[ s\sqrt{\frac{n-1}{c_{1-\alpha/2}}}, s\sqrt{\frac{n-1}{c_{\alpha/2}}} \right]}.
+                            \] Here \(s\) is the observed sample standard deviation and \(c_p=\chi^2_{\nu,p}\), with
+                            \(\nu=n-1\), denotes the lower-tail \(p\)-quantile of the chi-square distribution.
+                        </p>
+                    </div>
+
+                    <p>
+                        Proof. The probability statement preceding the theorem is exact because the standardized sample
+                        variance has the \(\chi^2_{n-1}\) distribution. The variable \(\sigma^2\) is positive, so
+                        dividing the inequalities by positive terms and reversing the fractions yields the displayed
+                        interval. Taking square roots gives the result for \(\sigma\).
+                    </p>
+
+                    <p>
+                        Notice that the upper chi-square quantile appears in the
+                        <i>lower</i> confidence bound and the lower chi-square quantile in the <i>upper</i> bound. Both
+                        bounds also depend on the observed sample standard deviation \(s\); they cannot be calculated
+                        from the sample size alone.
+                    </p>
+
+                    <p>
+                        As in previous sections, 95% confidence refers to repeated-sampling coverage under the
+                        statistical model: 95% of intervals obtained by repeatedly applying the procedure would contain
+                        the fixed population parameter. It is not the posterior probability that \(\sigma\) belongs to
+                        this particular observed interval.
+                    </p>
+
+                    <p>
+                        The interval is generally asymmetric around \(s\), reflecting the asymmetry of the chi-square
+                        distribution. A two-sided equal-tailed test of \(H_0:\sigma=\sigma_0\) at level \(\alpha\)
+                        rejects precisely when the corresponding \(100(1-\alpha)\%\) confidence interval excludes
+                        \(\sigma_0\).
+                    </p>
+
+                    <!-- --- Experiment 78: variance and standard-deviation confidence intervals --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 78: exact confidence intervals for variance and standard deviation.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chi2
+
+n = 20
+s = 6.1
+alpha = 0.05
+df = n - 1
+
+q_lower = chi2.ppf(alpha / 2, df)
+q_upper = chi2.ppf(1 - alpha / 2, df)
+
+variance_ci = (
+    df * s**2 / q_upper,
+    df * s**2 / q_lower
+)
+sd_ci = tuple(np.sqrt(variance_ci))
+
+print(f"Sample variance: {s**2:.4f}")
+print(f"95% CI for variance: {variance_ci}")
+print(f"95% CI for SD:       {sd_ci}")
+
+# Verify the connection with the two-sided test.
+sigma_0 = 4.0
+statistic = df * s**2 / sigma_0**2
+p_value = min(1.0, 2 * min(
+    chi2.cdf(statistic, df),
+    chi2.sf(statistic, df)
+))
+excluded = not (sd_ci[0] &lt;= sigma_0 &lt;= sd_ci[1])
+
+print(f"Two-sided p-value: {p_value:.6f}")
+print("Null excluded by interval:", excluded)
+assert excluded == (p_value &lt; alpha)
+
+# Experiment: compare 90%, 95%, and 99% intervals.
+</code></pre>
+
+                    <!-- ==================== Normality and Robustness ==================== -->
+
+                    <p><b>Why the normality assumption is unusually important here.</b></p>
+
+                    <p>
+                        The chi-square test and intervals above are exact only under the independent normal sampling
+                        model. Unlike many large-sample methods for means, the chi-square variance procedure can remain
+                        badly miscalibrated for nonnormal data, even at moderately large sample sizes. Heavy tails,
+                        skewness, and outliers can strongly affect the sample variance because deviations are squared.
+                    </p>
+
+                    <p>
+                        A diagnostic histogram and a normal Q-Q plot can help identify pronounced skewness, unusually
+                        heavy tails, or extreme observations. However, a visually straight Q-Q plot does not prove
+                        normality, especially with a small sample. A formal normality test does not establish normality
+                        merely because it fails to reject it.
+                    </p>
+
+                    <!-- --- Experiment 79: confidence-interval coverage under normal and skewed data --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 79: confidence-interval coverage and sensitivity to nonnormality.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import chi2
+
+rng = np.random.default_rng(2026)
+
+n = 30
+repetitions = 10_000
+sigma = 10.0
+alpha = 0.05
+df = n - 1
+
+# Both populations have true SD = 10, but different shapes.
+normal = rng.normal(0, sigma, size=(repetitions, n))
+skewed = rng.exponential(scale=sigma, size=(repetitions, n))
+
+q_lower = chi2.ppf(alpha / 2, df)
+q_upper = chi2.isf(alpha / 2, df)
+
+coverages = {}
+rejection_rates = {}
+
+for name, samples in [("Normal", normal), ("Exponential", skewed)]:
+    s2 = np.var(samples, axis=1, ddof=1)
+    lower = df * s2 / q_upper
+    upper = df * s2 / q_lower
+    coverage = np.mean((lower &lt;= sigma**2) &amp;
+                       (sigma**2 &lt;= upper))
+
+    pivot_under_null = df * s2 / sigma**2
+    rejects = ((pivot_under_null &lt; q_lower) |
+               (pivot_under_null &gt; q_upper))
+
+    coverages[name] = coverage
+    rejection_rates[name] = rejects.mean()
+    print(f"{name}: CI coverage = {coverage:.3%}, "
+          f"type I error = {rejects.mean():.3%}")
+
+fig, ax = plt.subplots(figsize=(8, 4.7))
+ax.bar(list(coverages), list(coverages.values()))
+ax.axhline(0.95, linestyle="--", label="Nominal 95% coverage")
+ax.set_ylim(0, 1)
+ax.set_ylabel("Empirical confidence-interval coverage")
+ax.set_title("Chi-square intervals: normal vs. skewed data")
+ax.legend()
+fig.tight_layout()
+fig.savefig("one_variance_coverage_nonnormal.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: repeat for n=10 and n=200.
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/one_variance_coverage_nonnormal.png"
+                            alt="Confidence interval coverage under normal and skewed populations"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Empirical coverage of the nominal 95% chi-square variance interval under
+                            normal and exponential sampling. The exact guarantee applies to the normal case. Generated
+                            by Experiment 79.
+                        </figcaption>
+                    </figure>
+
+                    <!-- --- Experiment 80: visual diagnostics for the normality assumption --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 80: normal Q-Q plots for different distribution shapes.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(2026)
+
+normal_sample = rng.normal(loc=10, scale=2, size=80)
+skewed_sample = rng.exponential(scale=2, size=80)
+
+fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.5))
+
+for ax, (name, sample) in zip(axes, [
+    ("Normal sample", normal_sample),
+    ("Exponential sample", skewed_sample)
+]):
+    stats.probplot(sample, dist="norm", plot=ax)
+    ax.set_title(name)
+    ax.grid(alpha=0.2)
+
+fig.tight_layout()
+fig.savefig("one_variance_normality_qq.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: repeat with a smaller sample of 15 observations.
+# Can a small sample hide departures from normality?
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/one_variance_normality_qq.png"
+                            alt="Normal Q-Q plots for a normal and an exponential sample"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Normal Q-Q plots provide a visual check for distributional shape; they cannot
+                            prove a population is normal. Generated by Experiment 80.
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        When normality is doubtful, a different method may be needed. For example, a bootstrap
+                        confidence interval for the sample standard deviation can be useful in some settings, but it is
+                        not automatically reliable for very small samples, extreme heavy tails, or dependent
+                        observations. In other applications, robust scale summaries such as the interquartile range or
+                        median absolute deviation are more appropriate than the standard deviation itself. These
+                        statistics describe different population quantities and should not be treated as
+                        interchangeable.
+                    </p>
+
+                    <!-- ==================== Power and Sample Size ==================== -->
+
+                    <p><b>Power of the variance test under normal sampling.</b></p>
+
+                    <p>
+                        The power depends on the true value of \(\sigma\) as well as the sample size. Under a true
+                        standard deviation \(\sigma\), the null-based statistic can be written as \[
+                        V_0=\frac{\sigma^2}{\sigma_0^2}Y, \qquad Y\sim\chi^2_{n-1}. \] Thus, for the equal-tailed,
+                        two-sided test with critical values \(a=c_{\alpha/2}\) and \(b=c_{1-\alpha/2}\), the power is \[
+                        \begin{aligned} \pi(\sigma) &amp;=\mathbb{P}_{\sigma}(V_0&lt;a) +\mathbb{P}_{\sigma}(V_0&gt;b)\\
+                        &amp;=F_{\chi^2_{n-1}}\!\left(a\frac{\sigma_0^2}{\sigma^2}\right)
+                        +1-F_{\chi^2_{n-1}}\!\left(b\frac{\sigma_0^2}{\sigma^2}\right). \end{aligned} \]
+                    </p>
+
+                    <p>
+                        At \(\sigma=\sigma_0\), the rejection probability is exactly \(\alpha\). For a specified
+                        proportional change in variability, increasing the sample size generally makes the test more
+                        powerful. A larger sample also tends to give a narrower confidence interval for \(\sigma\).
+                        Neither property removes the need to check the normality and sampling assumptions.
+                    </p>
+
+                    <!-- --- Experiment 81: power of the two-sided chi-square variance test --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 81: power and sample size for the variance test.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import chi2
+
+alpha = 0.05
+sample_sizes = [10, 30, 80]
+sd_ratios = np.linspace(0.5, 1.7, 300)
+
+fig, ax = plt.subplots(figsize=(9, 5))
+
+for n in sample_sizes:
+    df = n - 1
+    lower_critical = chi2.ppf(alpha / 2, df)
+    upper_critical = chi2.isf(alpha / 2, df)
+
+    # Each ratio is sigma_true / sigma_null.
+    powers = (
+        chi2.cdf(lower_critical / sd_ratios**2, df)
+        + chi2.sf(upper_critical / sd_ratios**2, df)
+    )
+
+    ax.plot(sd_ratios, powers, label=f"n={n}")
+
+ax.axvline(1.0, linestyle="--", label="Null SD")
+ax.axhline(alpha, linestyle=":", label="Significance level")
+ax.set_ylim(0, 1.02)
+ax.set_xlabel("True SD / null SD")
+ax.set_ylabel("Probability of rejecting H0")
+ax.set_title("Power of the two-sided chi-square variance test")
+ax.legend()
+ax.grid(alpha=0.2)
+fig.tight_layout()
+fig.savefig("one_variance_power_sample_size.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: compare alpha=0.01 with alpha=0.05.
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/one_variance_power_sample_size.png"
+                            alt="Power curves for chi-square tests of a population standard deviation"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Power as a function of the true-to-null standard deviation ratio for several
+                            sample sizes, under the normal model. Generated by Experiment 81.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Applied Student-Height Example ==================== -->
+
+                    <p><b>Application: variation in student heights.</b></p>
+
+                    <p>
+                        We retain the SOGA-Py students dataset from the original notes, but formulate the hypothesis
+                        using a <i>prespecified, hypothetical</i>
+                        reference standard deviation. Let \(\sigma\) be the standard deviation of height in the
+                        population of female students of interest. Suppose, solely for illustration, that the reference
+                        value is \(\sigma_0=8\,\mathrm{cm}\). We test \[ H_0:\sigma=8\,\mathrm{cm}
+                        \qquad\text{against}\qquad H_1:\sigma&lt;8\,\mathrm{cm}. \]
+                    </p>
+
+                    <p>
+                        In the original example, a standard deviation computed from
+                        <i>all</i> students in the dataset was used as though it were a known population parameter. That
+                        is not generally justified: it is itself an estimate, and the female-student subgroup overlaps
+                        with the full dataset. Treating that estimate as fixed would ignore its sampling uncertainty. A
+                        comparison of two estimated population variances calls for a different inferential design,
+                        discussed in the next section.
+                    </p>
+
+                    <!-- --- Experiment 82: one-sample chi-square test using student-height data --- -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 82: student-height variability and a prespecified reference.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import stats
+
+students = pd.read_csv(
+    "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+)
+
+female_heights = students.loc[
+    students["gender"].astype(str).str.strip().eq("Female"),
+    "height"
+].dropna()
+
+# Sample from the available female-student records.
+sample = female_heights.sample(n=30, random_state=12).to_numpy()
+
+sigma_0 = 8.0  # Hypothetical, fixed benchmark in centimeters.
+alpha = 0.05
+n = len(sample)
+df = n - 1
+s = np.std(sample, ddof=1)
+
+statistic = df * s**2 / sigma_0**2
+p_value = stats.chi2.cdf(statistic, df)
+
+sd_lower = s * np.sqrt(df / stats.chi2.isf(alpha / 2, df))
+sd_upper = s * np.sqrt(df / stats.chi2.ppf(alpha / 2, df))
+
+print(f"Sample size: {n}")
+print(f"Sample SD: {s:.3f} cm")
+print(f"Chi-square statistic: {statistic:.3f}")
+print(f"Left-sided p-value: {p_value:.4f}")
+print(f"95% two-sided CI for SD: [{sd_lower:.3f}, {sd_upper:.3f}] cm")
+print("Reject the left-sided null:", p_value &lt; alpha)
+
+fig, ax = plt.subplots(figsize=(6.7, 5))
+stats.probplot(sample, dist="norm", plot=ax)
+ax.set_title("Normal Q-Q plot: sampled female heights")
+fig.tight_layout()
+fig.savefig("one_variance_students_qq.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Interpretation depends on normality and the sampling design.
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/one_variance_students_qq.png"
+                            alt="Normal Q-Q plot for sampled heights of female students"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Normal Q-Q diagnostic for the sampled female-student heights. Generated by
+                            Experiment 82 after obtaining the SOGA-Py dataset.
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        The sample in Experiment 82 is drawn from an existing educational dataset. It is not
+                        automatically a representative random sample of all female students. Consequently, any
+                        inferential conclusion must be restricted to a defensible target population, and the exact
+                        chi-square calculations additionally require normality and independence. A Q-Q plot alone cannot
+                        validate those assumptions.
+                    </p>
+
+                    <!-- ==================== Practical Guidance and Exercises ==================== -->
+
+                    <p><b>Choosing a measure and an inferential procedure.</b></p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Question</th>
+                                <th>Relevant quantity</th>
+                                <th>Important consideration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>How variable are individual measurements?</td>
+                                <td>Population SD \(\sigma\)</td>
+                                <td>Use SD in the original measurement units.</td>
+                            </tr>
+                            <tr>
+                                <td>Is normal-population variability equal to a fixed benchmark?</td>
+                                <td>\(\sigma^2\) or \(\sigma\)</td>
+                                <td>Chi-square procedure requires independent normal sampling.</td>
+                            </tr>
+                            <tr>
+                                <td>Does a sample include unusually extreme values?</td>
+                                <td>SD, IQR, MAD, and plots</td>
+                                <td>Investigate the data-generating process before discarding values.</td>
+                            </tr>
+                            <tr>
+                                <td>Are two population variances different?</td>
+                                <td>\(\sigma_1^2/\sigma_2^2\)</td>
+                                <td>Requires a two-population method, not a fixed-benchmark test.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>
+                        <b>Try it yourself.</b>
+                        (1) Derive the confidence-interval endpoints for \(\sigma^2\) by solving the chi-square pivot
+                        inequalities. (2) In Experiment 77, find the right-sided critical value and determine the
+                        decision directly from the statistic. (3) In Experiment 79, explain why normal and exponential
+                        samples have the same true SD but give different observed coverage rates. (4) In Experiment 81,
+                        find a sample size giving at least 80% power for an increase in SD from \(\sigma_0\) to
+                        \(1.5\sigma_0\). (5) Explain why calculating \(\sigma_0\) from a second sample and then treating
+                        it as fixed is not generally valid.
+                    </p>
+
+                    <p>
+                        <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 8.2, pp. 469–473, introduces
+                        the chi-square distributions; Section 8.3, pp. 473–479, derives the normal sample-variance
+                        distribution; and Section 8.5, pp. 485–495 (particularly Example 8.5.8 and Exercise 5), develops
+                        confidence intervals through pivotal quantities. For descriptive comparisons of variability, see
+                        OpenIntro Statistics (4th ed.), Sections 2.1.4–2.1.6.
+                    </p>
+
                     <hr />
                     <!-- ========================= MAIN SECTION 13: Inferences for
                                                                         Two Population Standard
