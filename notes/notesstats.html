@@ -7395,161 +7395,625 @@ plt.show()
                     </p>
 
                     <hr />
-                    <!-- ========================= MAIN SECTION 11: Inferences for Two
-                                                                Population Means Using
-                                                                Paired
-                                                                Samples ========================= -->
+
+                    <!-- ========================= MAIN SECTION 11: Inferences for Two Population Means Using Paired Samples ========================= -->
                     <span id="TwoPopulationMeansPairedSamples"
                         ><b>Inferences for Two Population Means Using Paired Samples</b></span
                     >
+
                     <p>
-                        Let us now turn to a hypothesis-testing procedure for the difference between two population
-                        means when the samples are dependent. If, for example, two data values are collected from the
-                        same source (or element), these are called paired or matched samples.
+                        The previous two sections compared the means of <i>independent</i> samples. A different
+                        situation arises when each observation in one sample has a meaningful correspondence with
+                        exactly one observation in the other. Such data are called <i>paired</i> or
+                        <i>matched</i> observations. Examples include measurements taken before and after an
+                        intervention on the same person, two methods applied to the same specimen, or prices charged by
+                        two retailers for the same product.
                     </p>
                     <p>
-                        These procedures are often applied in Before–After–Control–Impact (BACI) analysis. Imagine you
-                        are asked to evaluate the effectiveness of a filtering system in removing air pollutants
-                        released by a factory. One population consists of air-quality measurements taken before the
-                        filtering system is implemented or renewed, and the other population consists of measurements
-                        taken after installing the new filter system. In this case, you are dealing with paired samples
-                        because both data sets are collected from the same source, i.e., the factory.
+                        Pairing is part of the study design, not something established merely because the two sample
+                        sizes are equal. The key idea is to analyze <i>within-pair differences</i> instead of treating
+                        the two sets of measurements as unrelated.
                     </p>
-                    <p>
-                        In paired samples, the difference between the data values of the two samples is denoted by
-                        \(d\), often called the paired difference. Note that the sample size \(n\) for each sample is
-                        equal. The mean of the paired differences is denoted by \(\bar{d}\): \[ \bar{d} = \frac{\sum
-                        d}{n} \]
-                    </p>
-                    <p>
-                        The standard deviation of the paired differences, \(s_d\), is calculated as: \[ s_d =
-                        \sqrt{\frac{\sum d^{2} - \frac{(\sum d)^{2}}{n}}{n - 1}} \]
-                    </p>
-                    <p>
-                        Suppose that the paired-difference variable \(d\) is normally distributed. Then the paired
-                        t-statistic is expressed as: \[ t = \frac{\bar{d} - (\mu_{1} - \mu_{2})}{\frac{s_d}{\sqrt{n}}}
-                        \]
-                    </p>
-                    <p>
-                        This simplifies to \(t = \frac{\bar{d}}{\frac{s_d}{\sqrt{n}}}\) when \(\mu_{1} - \mu_{2} = 0\).
-                        The test statistic \(t\) for paired samples follows a t-distribution with \(n - 1\) degrees of
-                        freedom.
-                    </p>
-                    <p>
-                        The 100(1 − \(\alpha\))% confidence interval for \(\mu_d\) is: \[ \bar{d} \pm t \times
-                        \frac{s_d}{\sqrt{n}} \] where the value of \(t\) is obtained from the t-distribution for the
-                        given confidence level and \(n - 1\) degrees of freedom.
-                    </p>
-                    <p>
-                        To demonstrate the paired t-test for dependent samples, we will investigate whether an online
-                        statistics learning tutorial helps students improve their grades.
-                    </p>
-                    <p>There are two research questions of interest:</p>
-                    <p>
-                        1. We want to examine whether the group of students who attended the online statistics tutorial
-                        performed better on the second exam compared to the first exam.<br />
-                        2. We also want to test how the group of students who did not attend the tutorial performed on
-                        both exams.
-                    </p>
-                    <p>The following code loads the data and selects the relevant sample.</p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import numpy as np
 
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
-
-n = 65
-
-subset = students.loc[students["online.tutorial"] == 1]
-
-sample = subset.sample(n, random_state = 9)[["score1", "score2"]]</code></pre>
-                    <p>Next, we compute the paired differences, \(d\), and visualize them:</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">import matplotlib.pyplot as plt
-import seaborn as sns
-
-plt.figure(figsize=(9,6))
-
-d = sample["score1"] - sample["score2"]
-
-data = pd.DataFrame({'index' : np.arange(1, 66),
-                     'Paired differences'  : d},
-                    columns = ['index', 'Paired differences'])
-
-sns.barplot(data = data, x = "index", y = "Paired differences", color = "darkgrey")
-plt.axhline(y = 0, color = "orangered")
-
-ax = plt.gca()
-ax.get_xaxis().set_visible(False)
-
-plt.show(block=True)</code></pre>
-                    <div class="img-div">
-                        <img alt="Paired differences plot" src="../images/paired_differences.png" />
+                    <!-- ==================== The Paired Data Model ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (paired observations and differences).</b></p>
+                        <p>
+                            Suppose that for each experimental unit \(i=1,\ldots,n\) we observe two numerical
+                            measurements \((X_i,Y_i)\). Define the paired difference \[ D_i=Y_i-X_i. \] We choose and
+                            retain this subtraction order throughout the analysis. For a before-and-after study, we will
+                            use \(D_i=\text{after}_i-\text{before}_i\), so a positive difference means an increase.
+                        </p>
                     </div>
                     <p>
-                        The plot looks as expected: some students performed better on the first exam than on the second,
-                        and others performed better on the second exam. To check the normality assumption, we rely on a
-                        visual inspection using a Q–Q plot.
+                        The \(n\) pairs must be linked correctly. The two observations <i>within</i>
+                        a pair may be dependent; indeed, that is usually the reason for pairing. For the standard paired
+                        t-test, we assume that the differences \(D_1,\ldots,D_n\) are independent and identically
+                        distributed across pairs, with population mean \(\mu_D=\mathbb{E}(D_i)\) and finite positive
+                        variance \(\sigma_D^2=\operatorname{Var}(D_i)\).
                     </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import scipy.stats as stats
+                    <p>
+                        We interpret \(\mu_D\) as the <i>population mean within-pair change</i>. When the marginal
+                        expectations exist, linearity gives \[ \mu_D=\mathbb{E}(Y_i-X_i)=\mu_Y-\mu_X. \] Thus, testing
+                        the mean difference is a way to compare population means, but it uses the joint structure of the
+                        observations rather than discarding it.
+                    </p>
+                    <p>
+                        The distinction between independence <i>across pairs</i> and dependence <i>within pairs</i> is
+                        essential. For example, repeated daily measurements from a single factory may be serially
+                        correlated. Simply labelling consecutive days as pairs does not make the paired differences
+                        independent.
+                    </p>
 
-plt.figure(figsize=(12,5))
-fig, ax = plt.subplots()
-
-qq = stats.probplot(d, dist="norm", plot = plt)
-ax.set_title("Q–Q plot for differences in exam scores")
-ax.set_ylabel("Sample quantiles")</code></pre>
-                    <div class="img-div">
-                        <img alt="Q–Q plot of paired differences" src="../images/qq_plot_paired_differences.png" />
+                    <!-- ==================== Mean and Standard Error of Paired Differences ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading">
+                            <b>Definition (sample mean and standard deviation of differences).</b>
+                        </p>
+                        <p>
+                            Given observed differences \(d_1,\ldots,d_n\), with \(n\geq2\), define \[ \bar
+                            d=\frac{1}{n}\sum_{i=1}^{n}d_i, \qquad s_D^2=\frac{1}{n-1}\sum_{i=1}^{n}(d_i-\bar d)^2. \]
+                            The estimated standard error of \(\bar D\) is \[ \widehat{\operatorname{SE}}(\bar
+                            D)=\frac{s_D}{\sqrt n}. \]
+                        </p>
                     </div>
                     <p>
-                        The pattern is somewhat noisy, but the points generally follow the reference line, suggesting
-                        that the paired differences are approximately normally distributed.
+                        Some textbooks write the sample variance in the computationally equivalent form \[
+                        s_D^2=\frac{\sum_{i=1}^{n}d_i^2-(\sum_{i=1}^{n}d_i)^2/n}{n-1}. \] In numerical software,
+                        calculating variance from centered differences is generally preferable to subtracting large,
+                        nearly equal sums of squares.
                     </p>
-                    <p>We now conduct the paired t-test using a Python package.</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">&gt;&gt;&gt; from scipy import stats
-&gt;&gt;&gt; 
-&gt;&gt;&gt; test_result = stats.ttest_rel(sample["score1"], sample["score2"], alternative = "less")
-&gt;&gt;&gt; 
-&gt;&gt;&gt; print("t-value:", round(test_result.statistic, 5))
-t-value: -1.84743
-&gt;&gt;&gt; print("p-value:", round(test_result.pvalue, 5))
-p-value: 0.03465</code></pre>
+
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (the role of within-pair covariance).</b></p>
+                        <p>
+                            If \(X_i\) and \(Y_i\) have finite variances, then \[ \begin{aligned}
+                            \operatorname{Var}(D_i) &amp;=\operatorname{Var}(Y_i-X_i)\\ &amp;=\sigma_Y^2+\sigma_X^2
+                            -2\operatorname{Cov}(X_i,Y_i). \end{aligned} \] For independent and identically distributed
+                            pairs, \[\operatorname{Var}(\bar D)=\operatorname{Var}(D_i)/n.\]
+                        </p>
+                    </div>
                     <p>
-                        At the 5% significance level, the data provide sufficient evidence to conclude that students’
-                        exam scores improve after taking the online statistics tutorial.
-                    </p>
-                    <p>
-                        There is still one research question to be answered: What if there are other reasons for better
-                        grades on the second exam? What if the second exam was easier? What if the students simply
-                        improved over the semester because of a great lecturer? We test this hypothesis by conducting a
-                        paired t-test specifically for those students who did not take the online statistics tutorial.
-                    </p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">&gt;&gt;&gt; sample = students.loc[students["online.tutorial"] == 0].dropna().sample(n, random_state = 10)[["score1", "score2"]]
-&gt;&gt;&gt; 
-&gt;&gt;&gt; test_result = stats.ttest_rel(sample["score1"], sample["score2"], alternative = "less")
-&gt;&gt;&gt; 
-&gt;&gt;&gt; print("t-value:", round(test_result.statistic, 5))
-t-value: 0.68109
-&gt;&gt;&gt; print("p-value:", round(test_result.pvalue, 5))
-p-value: 0.75086</code></pre>
-                    <p>
-                        The p-value is greater than the significance level of 0.05, so we do not reject \(H_0\). The
-                        test is not statistically significant and therefore does not provide sufficient evidence against
-                        the null hypothesis.
+                        Proof. Expand \(\operatorname{Var}[(Y_i-\mu_Y)-(X_i-\mu_X)]\) and collect the two variances and
+                        covariance terms. Independence <i>between different pairs</i>
+                        gives the second identity.
                     </p>
                     <p>
-                        At the 5% significance level, the data do not provide sufficient evidence to conclude that the
-                        exam grades of students who did not attend the online tutorial improved.
+                        Positive within-pair covariance decreases the variance of the difference, often making a paired
+                        comparison more precise than an unpaired one. Negative covariance has the opposite effect.
+                        Pairing does not automatically improve precision: its benefit depends on the actual relationship
+                        between measurements. The standard error must be calculated from the differences.
                     </p>
-                    <!--
-            I may add these exercises later: 
-            https://www.geo.fu-berlin.de/en/v/soga-py/Basics-of-statistics/Hypothesis-Tests/Hypothesis-Tests-for-Two-Population-Means/Hypothesis-Tests-for-Two-Population-Means-Exercises/index.html
-            -->
+
+                    <!-- ==================== Paired t-Test ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (exact paired t-test under normal differences).</b></p>
+                        <p>
+                            Suppose \(D_1,\ldots,D_n\overset{\mathrm{iid}}{\sim} N(\mu_D,\sigma_D^2)\), where
+                            \(\sigma_D^2&gt;0\) is unknown. Under the equality null \(H_0:\mu_D=\delta_0\), \[
+                            T=\frac{\bar D-\delta_0}{S_D/\sqrt n} \sim t_{n-1}. \] The degrees of freedom are \(n-1\),
+                            where \(n\) is the number of
+                            <i>complete pairs</i>, not the number of individual measurements.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. By normal sampling, \(Z=\sqrt n(\bar D-\mu_D)/\sigma_D\sim N(0,1)\). Moreover,
+                        \((n-1)S_D^2/\sigma_D^2\sim\chi^2_{n-1}\), independently of \(\bar D\). Under \(H_0\), their
+                        ratio \[ T=\frac{Z}{\sqrt{\big((n-1)S_D^2/\sigma_D^2\big)/(n-1)}} \] therefore has a Student's
+                        t-distribution with \(n-1\) degrees of freedom.
+                    </p>
+                    <p>
+                        For the usual null of no average change, \(\delta_0=0\). A two-sided test rejects at level
+                        \(\alpha\) when \[ |t_{\mathrm{obs}}|&gt;t_{n-1,1-\alpha/2}. \] With the subtraction order
+                        \(D=\text{after}-\text{before}\), a one-sided test for an increase uses \(H_1:\mu_D&gt;0\) and
+                        rejects for sufficiently
+                        <i>large positive</i> values of \(T\). The direction is reversed if the subtraction order is
+                        reversed.
+                    </p>
+                    <p>
+                        Under the normal-differences model, the reference distribution is exact, even for small \(n\).
+                        If the differences are not normal, the test can still be a useful large-sample approximation
+                        under suitable independence and moment conditions; exact small-sample t-inference is no longer
+                        guaranteed.
+                    </p>
+
+                    <!-- ==================== Confidence Interval ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (confidence interval for the mean paired difference).</b>
+                        </p>
+                        <p>
+                            Under the assumptions of the preceding theorem, a two-sided \(100(1-\alpha)\%\) confidence
+                            interval for \(\mu_D\) is \[ \bar d\;\pm\; t_{n-1,1-\alpha/2}\frac{s_D}{\sqrt n}. \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof. The probability that \(-t_{n-1,1-\alpha/2}\leq(\bar D-\mu_D)/(S_D/\sqrt n) \leq
+                        t_{n-1,1-\alpha/2}\) is \(1-\alpha\). Rearranging the inequalities gives the interval.
+                    </p>
+                    <p>
+                        For a two-sided paired t-test at level \(\alpha\), the equality null \(H_0:\mu_D=\delta_0\) is
+                        rejected exactly when the corresponding \(100(1-\alpha)\%\) confidence interval excludes
+                        \(\delta_0\). A confidence interval additionally reports the plausible magnitude and direction
+                        of the mean difference.
+                    </p>
+
+                    <!-- --- Experiment 69: a paired t-test by hand and with SciPy --- -->
+                    <p class="stats-experiment-title"><b>Experiment 69: a paired t-test by hand and with SciPy.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+before = np.array([62, 71, 68, 74, 69, 77, 73, 66, 70, 75], dtype=float)
+after = np.array([66, 73, 74, 75, 73, 79, 78, 68, 73, 80], dtype=float)
+
+differences = after - before  # Positive means improvement.
+n = len(differences)
+mean_d = np.mean(differences)
+sd_d = np.std(differences, ddof=1)
+se_d = sd_d / np.sqrt(n)
+
+t_manual = mean_d / se_d
+p_manual = 2 * stats.t.sf(abs(t_manual), df=n - 1)
+critical = stats.t.ppf(0.975, df=n - 1)
+ci = (mean_d - critical * se_d, mean_d + critical * se_d)
+
+paired_result = stats.ttest_rel(after, before)
+one_sample_result = stats.ttest_1samp(differences, popmean=0)
+
+print(f"Number of pairs: {n}")
+print(f"Mean paired change: {mean_d:.3f}")
+print(f"SD of changes: {sd_d:.3f}")
+print(f"t statistic: {t_manual:.4f}")
+print(f"Two-sided p-value: {p_manual:.6f}")
+print(f"95% CI: ({ci[0]:.3f}, {ci[1]:.3f})")
+
+assert np.isclose(t_manual, paired_result.statistic)
+assert np.isclose(p_manual, paired_result.pvalue)
+assert np.isclose(paired_result.statistic, one_sample_result.statistic)
+
+# Experiment: reverse the subtraction order.
+# Which results change sign, and which do not?</code></pre>
+                    <p>
+                        This example demonstrates that a paired t-test is a
+                        <i>one-sample t-test applied to the differences</i>. The calculation requires neither pooled
+                        variance nor Welch–Satterthwaite degrees of freedom.
+                    </p>
+
+                    <!-- ==================== Why Pairing Matters ==================== -->
+                    <p><b>Pairing, correlation, and loss of information.</b></p>
+                    <p>
+                        A paired analysis preserves the connection between two observations from the same experimental
+                        unit. An independent two-sample analysis discards that connection and generally estimates the
+                        wrong standard error for paired data. With positive within-pair correlation it is often
+                        unnecessarily conservative; with negative correlation it can be anti-conservative.
+                    </p>
+                    <!-- --- Experiment 70: the effect of within-pair correlation --- -->
+                    <p class="stats-experiment-title"><b>Experiment 70: the effect of within-pair correlation.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(2026)
+n = 80
+
+# The paired measurements have strong positive correlation.
+pairs = rng.multivariate_normal(
+    mean=[50, 52],
+    cov=[[100, 80], [80, 100]],
+    size=n
+)
+
+before, after = pairs[:, 0], pairs[:, 1]
+d = after - before
+
+paired_se = np.std(d, ddof=1) / np.sqrt(n)
+wrong_unpaired_se = np.sqrt(
+    np.var(before, ddof=1) / n + np.var(after, ddof=1) / n
+)
+
+print(f"Within-pair correlation: {np.corrcoef(before, after)[0, 1]:.3f}")
+print(f"SE using paired differences: {paired_se:.3f}")
+print(f"SE ignoring pairing: {wrong_unpaired_se:.3f}")
+
+fig, ax = plt.subplots(figsize=(6.5, 5.5))
+ax.scatter(before, after, alpha=0.7)
+limits = [min(before.min(), after.min()), max(before.max(), after.max())]
+ax.plot(limits, limits, linestyle="--", label="No change")
+ax.set_xlabel("Before")
+ax.set_ylabel("After")
+ax.set_title("Correspondence between paired measurements")
+ax.legend()
+ax.grid(alpha=0.25)
+fig.tight_layout()
+fig.savefig("paired_measurement_relationship.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: replace the off-diagonal covariance 80 with -80.
+# How does the precision of the paired mean change?</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/paired_measurement_relationship.png"
+                            alt="Scatterplot of corresponding before and after measurements with a no-change reference line"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Each point represents a pair of measurements. Their association influences
+                            the uncertainty of the mean paired difference. Generated by Experiment 70.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Checking the Assumptions ==================== -->
+                    <p><b>Assumptions and diagnostic checks.</b></p>
+                    <p>
+                        The most important design requirement is that the paired units are selected appropriately and
+                        the <i>differences between different units</i> can reasonably be treated as independent. The
+                        t-reference distribution is exact when these differences are identically normally distributed.
+                    </p>
+                    <p>
+                        We should examine the distribution of the <i>differences</i>, not demand that the before and
+                        after measurements individually look normal. A histogram and a normal Q–Q plot help identify
+                        strong skewness, unusual observations, and possible departures from normality. With small
+                        samples, such plots offer limited evidence in either direction; with very large samples, modest
+                        nonnormality need not invalidate approximate t-inference.
+                    </p>
+                    <p>
+                        Missing measurements are also important. If either member of a pair is missing, the difference
+                        cannot be calculated without further assumptions. Simply dropping incomplete pairs can bias an
+                        analysis when missingness is related to outcomes or changes.
+                    </p>
+                    <!-- --- Experiment 71: diagnostic plots of paired differences --- -->
+                    <p class="stats-experiment-title"><b>Experiment 71: diagnostic plots of paired differences.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(2026)
+differences = rng.normal(loc=2.0, scale=4.0, size=45)
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+axes[0].hist(differences, bins=12, edgecolor="white")
+axes[0].axvline(0, linestyle="--")
+axes[0].set_title("Distribution of within-pair differences")
+axes[0].set_xlabel("After minus before")
+axes[0].set_ylabel("Frequency")
+
+stats.probplot(differences, dist="norm", plot=axes[1])
+axes[1].set_title("Normal Q-Q plot of differences")
+fig.tight_layout()
+fig.savefig("paired_difference_diagnostics.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+print("Paired t-test:", stats.ttest_1samp(differences, popmean=0))
+
+# Experiment: replace the last difference with 50.
+# Examine the diagnostic plots and resulting test.</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/paired_difference_diagnostics.png"
+                            alt="Histogram and normal Q-Q plot of paired differences"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Diagnostics focus on the within-pair differences, because their distribution
+                            determines the validity of exact paired t-inference. Generated by Experiment 71.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Incorrectly Treating Pairs as Independent ==================== -->
+                    <p><b>Repeated-sampling comparison with an unpaired test.</b></p>
+                    <p>
+                        A statistically significant result is not guaranteed to occur, even if a real effect exists;
+                        conversely, a true equality null can be rejected by chance. To see why the analysis method
+                        matters, we can repeatedly simulate data under the null when pairs share a common baseline.
+                    </p>
+                    <!-- --- Experiment 72: type I error with and without pairing --- -->
+                    <p class="stats-experiment-title"><b>Experiment 72: type I error with and without pairing.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(2026)
+repetitions = 10_000
+n = 24
+alpha = 0.05
+
+# Shared baselines yield positively correlated measurements.
+baselines = rng.normal(100, 12, size=(repetitions, n))
+before = baselines + rng.normal(0, 3, size=(repetitions, n))
+after = baselines + rng.normal(0, 3, size=(repetitions, n))
+
+d = after - before
+se_paired = d.std(axis=1, ddof=1) / np.sqrt(n)
+t_paired = d.mean(axis=1) / se_paired
+p_paired = 2 * stats.t.sf(np.abs(t_paired), df=n - 1)
+
+# Intentionally incorrect for these dependent samples:
+wrong = stats.ttest_ind(after, before, axis=1, equal_var=False)
+p_wrong = wrong.pvalue
+
+rates = [np.mean(p_paired &lt; alpha), np.mean(p_wrong &lt; alpha)]
+print(f"Paired rejection rate under H0: {rates[0]:.3f}")
+print(f"Ignoring pairs under H0:      {rates[1]:.3f}")
+
+fig, ax = plt.subplots(figsize=(7.5, 4.5))
+ax.bar(["Paired t-test", "Incorrect unpaired test"], rates)
+ax.axhline(alpha, linestyle="--", label="Nominal level = 0.05")
+ax.set_ylabel("Fraction of true nulls rejected")
+ax.set_title("Type I error when the pairing is ignored")
+ax.legend()
+fig.tight_layout()
+fig.savefig("paired_vs_unpaired_type1.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: create negatively correlated pairs instead.
+# Does ignoring the pairing remain conservative?</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/paired_vs_unpaired_type1.png"
+                            alt="Simulated type I error rates for correctly paired and incorrectly unpaired analyses"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Both methods are applied to the same dependent observations under a true
+                            equality null. The unpaired analysis does not correctly account for their dependence.
+                            Generated by Experiment 72.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        In this example, ignoring strong positive pairwise dependence greatly overestimates the
+                        uncertainty and makes the unpaired procedure conservative. This is a property of the simulated
+                        design, <i>not</i> a general guarantee about every form of dependence.
+                    </p>
+
+                    <!-- ==================== Confidence Interval Coverage and Sample Size ==================== -->
+                    <p><b>Coverage, power, and planning the number of pairs.</b></p>
+                    <p>
+                        Under the normal-differences model, the paired confidence interval has its stated coverage in
+                        repeated sampling. A narrower interval generally requires more independent pairs or a smaller
+                        standard deviation of differences. For testing \(H_0:\mu_D=0\) against \(H_1:\mu_D&gt;0\), the
+                        noncentrality parameter under a true effect \(\mu_D=\delta&gt;0\) is \[ \lambda=\frac{\sqrt
+                        n\,\delta}{\sigma_D}. \] The exact normal-model power can be computed using a noncentral
+                        t-distribution with \(n-1\) degrees of freedom. In study planning, it is \(\sigma_D\), the
+                        standard deviation of the <i>differences</i>, rather than the two marginal standard deviations
+                        separately, that governs precision.
+                    </p>
+                    <!-- --- Experiment 73: confidence interval coverage and power --- -->
+                    <p class="stats-experiment-title"><b>Experiment 73: confidence-interval coverage and power.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(2026)
+alpha = 0.05
+mu_d = 2.0
+sigma_d = 5.0
+repetitions = 6_000
+sample_sizes = [10, 20, 40, 80]
+
+coverage = []
+power = []
+
+for n in sample_sizes:
+    d = rng.normal(mu_d, sigma_d, size=(repetitions, n))
+    means = d.mean(axis=1)
+    se = d.std(axis=1, ddof=1) / np.sqrt(n)
+    critical = stats.t.ppf(1 - alpha / 2, df=n - 1)
+
+    lower = means - critical * se
+    upper = means + critical * se
+    coverage.append(np.mean((lower &lt;= mu_d) &amp; (mu_d &lt;= upper)))
+
+    # One-sided power for detecting a positive mean change.
+    nc = np.sqrt(n) * mu_d / sigma_d
+    cutoff = stats.t.ppf(1 - alpha, df=n - 1)
+    power.append(stats.nct.sf(cutoff, df=n - 1, nc=nc))
+
+for n, c, p in zip(sample_sizes, coverage, power):
+    print(f"n={n:3d}: CI coverage={c:.3f}, one-sided power={p:.3f}")
+
+fig, ax = plt.subplots(figsize=(8.5, 4.8))
+ax.plot(sample_sizes, coverage, marker="o", label="95% CI coverage")
+ax.plot(sample_sizes, power, marker="s", label="One-sided test power")
+ax.axhline(0.95, linestyle="--", label="Nominal coverage")
+ax.set_xlabel("Number of independent pairs")
+ax.set_ylabel("Probability")
+ax.set_ylim(0, 1.05)
+ax.set_title("Coverage and power in a paired normal model")
+ax.grid(alpha=0.25)
+ax.legend()
+fig.tight_layout()
+fig.savefig("paired_ci_coverage_power.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: change the standard deviation of differences.
+# How many pairs are needed for at least 80% power?</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/paired_ci_coverage_power.png"
+                            alt="Confidence interval coverage and one-sided test power as functions of the number of independent pairs"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> For normally distributed differences, the t-based interval achieves
+                            approximately 95% coverage, while power increases with the number of independent pairs when
+                            the true effect is positive. Generated by Experiment 73.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Application: Statistics Tutorial and Exam Scores ==================== -->
+                    <p><b>Application: exam scores before and after an online tutorial.</b></p>
+                    <p>
+                        The <i>students</i> dataset used in SOGA-Py contains exam scores and an indicator of whether a
+                        student attended an online statistics tutorial. We use \(D_i=\text{score2}_i-\text{score1}_i\),
+                        so a positive value denotes improvement from the first exam to the second. This reverses the
+                        subtraction order in the original notes, but leaves a two-sided test unchanged and makes the
+                        one-sided direction easier to interpret.
+                    </p>
+                    <p>
+                        Within each group, a paired test can assess the null hypothesis of no average score change
+                        against the alternative of improvement: \[ H_0:\mu_D=0,\qquad H_1:\mu_D&gt;0. \] We also compare
+                        the groups' <i>mean changes</i> to address a different question: did the students who attended
+                        the tutorial improve by more than those who did not? Testing that question requires a
+                        <i>between-group</i>
+                        comparison of changes, not two separate declarations that one within-group test is significant
+                        and the other is not.
+                    </p>
+                    <!-- --- Experiment 74: paired tests and a comparison of improvements --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 74: tutorial attendance and paired exam-score changes.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy import stats
+
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+students = pd.read_csv(url)
+
+columns = ["online.tutorial", "score1", "score2"]
+complete = students[columns].copy()
+for column in columns:
+    complete[column] = pd.to_numeric(complete[column], errors="coerce")
+complete = complete.dropna(subset=columns)
+
+group_differences = {}
+for tutorial, seed in [(1, 9), (0, 10)]:
+    group = complete.loc[complete["online.tutorial"] == tutorial]
+    if len(group) &lt; 3:
+        raise ValueError("At least three complete pairs are required per group")
+
+    # Reproducible subsamples, as in the earlier SOGA-Py example.
+    sample = group.sample(n=min(65, len(group)), random_state=seed)
+    changes = sample["score2"].to_numpy() - sample["score1"].to_numpy()
+    group_differences[tutorial] = changes
+
+    test = stats.ttest_1samp(changes, popmean=0, alternative="greater")
+    print(f"Tutorial attendance: {tutorial}")
+    print(f"Pairs: {len(changes)}; mean change: {np.mean(changes):.3f}")
+    print(f"One-sided paired t-test p-value: {test.pvalue:.5f}")
+
+attended = group_differences[1]
+not_attended = group_differences[0]
+
+# Directly compare mean changes across the two independent groups.
+comparison = stats.ttest_ind(attended, not_attended, equal_var=False)
+print("Difference in mean change:", round(attended.mean() - not_attended.mean(), 3))
+print("Welch two-sided p-value for change difference:", round(comparison.pvalue, 5))
+
+fig, ax = plt.subplots(figsize=(8.5, 4.8))
+ax.boxplot([not_attended, attended])
+ax.set_xticks([1, 2], ["No tutorial", "Tutorial"])
+ax.axhline(0, linestyle="--", label="No change")
+ax.set_ylabel("Score2 minus score1")
+ax.set_title("Exam-score changes by tutorial attendance")
+ax.grid(axis="y", alpha=0.25)
+ax.legend()
+fig.tight_layout()
+fig.savefig("paired_tutorial_score_changes.png", dpi=180, bbox_inches="tight")
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/paired_tutorial_score_changes.png"
+                            alt="Box plots of within-student exam-score changes for tutorial and non-tutorial groups"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Exam-score changes, rather than the raw scores, are compared across
+                            tutorial-attendance groups. Generated by Experiment 74. The actual values depend on the
+                            downloaded dataset.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        Even if an improvement is statistically significant in the tutorial group, the paired analysis
+                        alone does not establish that the tutorial <i>caused</i>
+                        that improvement. Exam difficulty, general learning, selection into the tutorial, or other
+                        factors could influence the results. A comparison of changes between groups is more relevant to
+                        an intervention-effect question, but a causal interpretation additionally requires assumptions
+                        about the study design and possible confounding. A genuine Before–After–Control–Impact analysis
+                        uses the control group's change as part of the comparison; it is not simply two independent
+                        before–after significance tests.
+                    </p>
+
+                    <!-- ==================== Alternatives for Non-Normal Differences ==================== -->
+                    <p><b>Robust and nonparametric alternatives.</b></p>
+                    <p>
+                        For a small sample with pronounced skewness or influential differences, an ordinary paired
+                        t-test may be sensitive to its normality assumption. Alternatives include a <i>sign test</i> and
+                        the <i>Wilcoxon signed-rank test</i>. However, they generally address a different hypothesis
+                        from the paired t-test and must not be treated as interchangeable procedures.
+                    </p>
+                    <p>
+                        For continuous differences, the sign test examines whether positive and negative differences are
+                        equally likely (equivalently, whether zero is a median under the usual continuity conditions).
+                        It ignores magnitudes. The Wilcoxon signed-rank test uses ranks of absolute differences and is
+                        especially appropriate for assessing a distribution of paired differences that is symmetric
+                        about zero under its null hypothesis. Neither test, in general, is simply a test that the
+                        <i>mean</i> difference equals zero.
+                    </p>
+                    <!-- --- Experiment 75: sign and Wilcoxon signed-rank tests --- -->
+                    <p class="stats-experiment-title"><b>Experiment 75: sign and Wilcoxon signed-rank tests.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+# Most changes are positive, but one negative change is large.
+d = np.array([1.2, 2.1, 0.8, 1.7, 1.5, 2.6,
+              0.9, 1.8, 2.2, -25.0])
+
+paired_t = stats.ttest_1samp(d, popmean=0)
+
+# For the sign test, exclude exact zeros and count positive signs.
+nonzero = d[d != 0]
+positive = np.count_nonzero(nonzero &gt; 0)
+sign_test = stats.binomtest(
+    positive, n=len(nonzero), p=0.5, alternative="two-sided"
+)
+
+# Supply the already calculated differences directly.
+wilcoxon = stats.wilcoxon(d, alternative="two-sided")
+
+print(f"Mean change: {np.mean(d):.3f}")
+print(f"Median change: {np.median(d):.3f}")
+print(f"Paired t-test p-value: {paired_t.pvalue:.5f}")
+print(f"Sign-test p-value: {sign_test.pvalue:.5f}")
+print(f"Wilcoxon signed-rank p-value: {wilcoxon.pvalue:.5f}")
+
+# Experiment: replace -25 by -2.5.
+# How do the three methods react to the changed magnitude?</code></pre>
+                    <p>
+                        The tests can disagree because they respond differently to magnitude, ranks, and signs. This
+                        example demonstrates their sensitivity, not a recommendation to select whichever method gives
+                        the smallest p-value. Select the parameter or scientific claim of interest first and choose a
+                        suitable procedure based on the study design and its assumptions.
+                    </p>
+
+                    <!-- ==================== Practical Guidance and Exercises ==================== -->
+                    <p><b>Practical considerations when working with paired data.</b></p>
+                    <p>
+                        The number of complete pairs determines the sample size for paired inference. Always document
+                        the direction of subtraction; retain matching identifiers; examine missing pairs and extreme
+                        differences; and avoid treating repeated observations from the same unit as independent pairs.
+                        For intervention studies, distinguish the existence of a change from evidence that the
+                        intervention caused that change.
+                    </p>
+                    <p>
+                        <b>Try it yourself.</b>
+                        (1) Using Experiment 69, calculate the mean paired difference and 95% confidence interval by
+                        hand, and verify the results in SciPy. (2) Derive the covariance formula for
+                        \(\operatorname{Var}(Y-X)\) and explain when pairing improves precision. (3) In Experiment 72,
+                        change the simulated within-pair correlation from positive to negative and investigate the two
+                        rejection rates. (4) In Experiment 73, determine the smallest number of pairs that achieves at
+                        least 80% theoretical power for the specified one-sided test. (5) Explain why a significant
+                        before–after change in one group and an insignificant change in another group do not, by
+                        themselves, establish a significant difference between the groups.
+                    </p>
+                    <p>
+                        <b>Further reading.</b> OpenIntro Statistics (4th ed.), Section 7.2, pp. 262–265, develops
+                        inference based on paired observations; Exercises 7.15 and following offer paired-data practice.
+                        DeGroot and Schervish (4th ed.), Section 9.5, pp. 580–581, gives a paired t-test example using
+                        matched injury measurements. The tutorial example follows the topic and dataset used in SOGA-Py;
+                        the additional comparison of changes and cautions about causal interpretation expand the
+                        original discussion.
+                    </p>
+
                     <hr />
                     <!-- ========================= MAIN SECTION 12: Inferences for One
                                                                 Population Standard
