@@ -1,0 +1,572 @@
+/* ===== BASE TYPOGRAPHY AND LAYOUT ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    min-width: 0;
+}
+
+body {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.55;
+    background-color: white;
+}
+
+p {
+    font-size: 0.96rem;
+    line-height: 1.65;
+    overflow-wrap: break-word;
+}
+
+a {
+    color: blue;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+a:visited,
+a:hover {
+    color: blue;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    color: #0000ff;
+}
+
+ul {
+    padding-left: 1rem;
+    margin-top: 0;
+    font-size: smaller;
+}
+
+ol {
+    padding-left: 1.5em;
+    margin-top: 0;
+    font-size: smaller;
+}
+
+li {
+    padding-bottom: 0.2em;
+}
+
+/* ===== PAGE LAYOUT AND SIDEBAR ===== */
+.page-layout {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 3rem);
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    /* Single source of page padding: avoid padding body as well. */
+    padding: 2rem clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.sidebar,
+main,
+article {
+    min-width: 0;
+    max-width: 100%;
+}
+
+main,
+article {
+    width: 100%;
+}
+
+/* Wide third-party content must not widen the whole page. */
+article {
+    overflow-x: clip;
+}
+
+.sidebar {
+    position: relative;
+}
+
+.sidebar-nav {
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+.sidebar-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 0.65rem;
+}
+
+.sidebar-nav a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+
+.sidebar-nav a:hover {
+    text-decoration: underline;
+}
+
+/* Keep anchor-linked headings clear of the top edge. */
+article h2,
+article span[id] {
+    scroll-margin-top: 2rem;
+}
+
+/* ===== GENERAL CONTAINERS ===== */
+.container {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.container > div {
+    width: 50%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0.8em 1.2em;
+    border: 0.1em solid black;
+    text-align: left;
+}
+
+.container-row {
+    display: flex;
+    flex-direction: row;
+    min-width: 0;
+    max-width: 100%;
+    font-size: smaller;
+}
+
+.container-row > div {
+    width: 50%;
+    min-width: 0;
+    text-align: left;
+}
+
+.right-column {
+    padding: 0 1.2em;
+}
+
+/* Scroll genuinely wide content within its own area. */
+.scrollable {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ===== TABLES: COMPACT AND CONTENT-DRIVEN ===== */
+article table {
+    border-collapse: collapse;
+    table-layout: auto;
+    width: auto;
+    max-width: 100%;
+    margin: 0.65rem 0;
+    font-size: 0.84rem;
+    line-height: 1.4;
+}
+
+article th,
+article td {
+    width: auto !important;
+    min-width: 0;
+    padding: 0.35rem 0.55rem;
+    border: 1px solid #d9dfe7;
+    vertical-align: top;
+    text-align: left;
+    overflow-wrap: break-word;
+}
+
+article th {
+    background: #edf2f9;
+    color: #182430;
+    font-weight: 700;
+}
+
+/* ===== CODE BLOCKS: AIRY, HIGH-CONTRAST PYTHON ===== */
+pre.plain.stats-code {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0.75rem 0 1.3rem;
+    padding: 0.95rem 1.1rem;
+    border: 1px solid #dbe6f2;
+    border-radius: 5px;
+    background: white;
+    color: #172435;
+    font-family: Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    text-align: left;
+    white-space: pre;
+    tab-size: 4;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+pre.plain.stats-code code {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    white-space: inherit;
+}
+
+pre.stats-code.code-output {
+    background: #fbfcfe;
+    color: #2c3948;
+}
+
+/* ===== HIGHLIGHT.JS: PYTHON SYNTAX COLORS ===== */
+pre.plain.stats-code code.hljs {
+    display: block;
+    padding: 0 !important;
+    background: transparent !important;
+    font: inherit;
+    color: #172435;
+}
+
+pre.stats-code .hljs-keyword,
+pre.stats-code .hljs-operator,
+pre.stats-code .hljs-literal {
+    color: #7139a7;
+    font-weight: 600;
+}
+
+pre.stats-code .hljs-title,
+pre.stats-code .hljs-title.function_,
+pre.stats-code .hljs-built_in,
+pre.stats-code .hljs-attr {
+    color: #165eaf;
+}
+
+pre.stats-code .hljs-string,
+pre.stats-code .hljs-meta .hljs-string,
+pre.stats-code .hljs-regexp {
+    color: #08734d;
+}
+
+pre.stats-code .hljs-number,
+pre.stats-code .hljs-symbol {
+    color: #a75000;
+}
+
+pre.stats-code .hljs-comment,
+pre.stats-code .hljs-doctag {
+    color: #526d88;
+    font-style: italic;
+}
+
+pre.stats-code .hljs-meta,
+pre.stats-code .hljs-params {
+    color: #334155;
+}
+
+/* ===== MATHJAX AND IMAGES ===== */
+/* Do not turn every inline formula into an inline-flex scroll container. */
+article mjx-container[display="true"],
+article .MathJax[display="true"] {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.img-div,
+figure,
+.stats-figure {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.img-div img {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+figure img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+/* ===== INTRO LAYOUT ===== */
+.intro-with-pick {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 2rem;
+    align-items: center;
+    min-width: 0;
+    margin-bottom: 1.5rem;
+}
+
+.intro-text {
+    min-width: 0;
+}
+
+.intro-text p:first-child {
+    margin-top: 0;
+}
+
+.my-pick {
+    min-width: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.my-pick img {
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.my-pick figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* ===== STATISTICS NOTES: HIGHLIGHTED MATHEMATICAL STATEMENTS ===== */
+.stats-note.stats-definition,
+.stats-note.stats-lemma,
+.stats-note.stats-theorem {
+    min-width: 0;
+    max-width: 100%;
+    margin: 0.55rem 0;
+    padding: 0.4rem 0.75rem;
+    background: #f6f7f9;
+    line-height: 1.4;
+}
+
+.stats-note p {
+    margin: 0.3rem 0;
+}
+
+.stats-note .stats-note-heading {
+    margin: 0 0 0.2rem;
+    font-weight: 700;
+}
+
+.stats-note mjx-container[display="true"] {
+    margin: 0.35rem 0 !important;
+}
+
+.stats-note > p:last-child {
+    margin-bottom: 0;
+}
+
+.stats-note > p:first-child {
+    margin-top: 0;
+}
+
+.stats-note code {
+    overflow-wrap: anywhere;
+}
+
+/* ===== STATISTICS NOTES: EXPERIMENTS, TABLES, AND FIGURES ===== */
+.stats-experiment-title {
+    margin-top: 1.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.stats-figure {
+    margin: 1.5rem auto;
+    max-width: 780px;
+}
+
+.stats-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.stats-figure figcaption {
+    margin-top: 0.5em;
+    font-size: 0.92em;
+}
+
+.stats-means-table {
+    width: auto;
+    max-width: 100%;
+    margin: 0.65rem 0;
+    table-layout: auto;
+}
+
+.stats-means-table th,
+.stats-means-table td {
+    width: auto !important;
+    min-width: 0;
+    padding: 0.35rem 0.55rem;
+}
+
+/* ===== TABLET: SIDEBAR MOVES ABOVE CONTENT ===== */
+@media (max-width: 900px) {
+    .page-layout {
+        display: block;
+        padding: 1.5rem clamp(1rem, 4vw, 2rem);
+    }
+
+    .sidebar {
+        margin-bottom: 1.5rem;
+    }
+
+    .sidebar-nav {
+        position: static;
+        max-height: 12rem;
+        overflow-y: auto;
+        padding: 0 0 0.75rem;
+        border-bottom: 1px solid #d9dfe7;
+    }
+
+    .sidebar-nav ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 1rem;
+    }
+
+    .sidebar-nav li {
+        margin-bottom: 0.35rem;
+    }
+}
+
+/* ===== SMALL SCREENS: REAL SIDE MARGINS AND LOCAL SCROLLING ===== */
+@media (max-width: 700px) {
+    body {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    p {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .page-layout {
+        /* Prevent text from touching either edge of the viewport. */
+        padding: 1rem 1rem 1.5rem;
+    }
+
+    .sidebar-nav {
+        max-height: 10rem;
+    }
+
+    .sidebar-nav ul {
+        grid-template-columns: 1fr;
+    }
+
+    .intro-with-pick {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+    }
+
+    .my-pick img {
+        max-width: 180px;
+    }
+
+    .container-row {
+        flex-direction: column;
+    }
+
+    .container > div,
+    .container-row > div {
+        width: 100%;
+    }
+
+    .right-column {
+        padding: 0;
+    }
+
+    pre.plain.stats-code {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.78rem;
+        line-height: 1.55;
+    }
+
+    /* Existing bare tables can scroll without adding HTML wrappers. */
+    article table {
+        display: block;
+        width: max-content;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: 0.8rem;
+    }
+
+    article th,
+    article td {
+        padding: 0.3rem 0.45rem;
+    }
+
+    .stats-note.stats-definition,
+    .stats-note.stats-lemma,
+    .stats-note.stats-theorem {
+        padding: 0.4rem 0.6rem;
+    }
+
+    /* Unusually long inline formulas can scroll instead of widening the page. */
+    article mjx-container:not([display="true"]) {
+        display: inline-block;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        vertical-align: middle;
+    }
+}
+
+/* ===== VERY NARROW PHONE SCREENS ===== */
+@media (max-width: 380px) {
+    .page-layout {
+        padding-inline: 0.875rem;
+    }
+
+    pre.plain.stats-code {
+        font-size: 0.74rem;
+        padding-inline: 0.65rem;
+    }
+
+    article table {
+        font-size: 0.76rem;
+    }
+}
