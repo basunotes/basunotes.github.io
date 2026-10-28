@@ -66,13 +66,15 @@
                         </li>
                         <li><a href="#ChiSquareGoodnessofFitTest">Chi-Square Goodness-of-Fit Test</a></li>
                         <li><a href="#ChiSquareIndependenceTest">The Chi-Square Independence Test</a></li>
+
+                        <li><a href="#LinearRegression">Linear Regression</a></li>
                         <li><a href="#InferencesSlope">Inferences About the Slope</a></li>
                         <li>
                             <a href="#InferencesLinearCorrelationCoefficient"
                                 >Inferences About the Linear Correlation Coefficient</a
                             >
                         </li>
-                        <li><a href="#LinearRegression">Linear Regression</a></li>
+
                         <li><a href="#PolynomialRegression">Polynomial Regression</a></li>
                         <li><a href="#LogisticRegression">Logistic Regression</a></li>
                     </ul>
@@ -10899,182 +10901,1055 @@ for name, table in [
                     </p>
 
                     <hr />
-                    <!-- ========================= MAIN SECTION 16: Inferences About the
-                                                                        Slope ========================= -->
+
+                    <!-- ========================= MAIN SECTION 16: Linear Regression: Linear Regression ========================= -->
+                    <span id="LinearRegression"><b>Linear Regression</b></span>
+
+                    <p>
+                        Regression models relate a numerical response to one or more predictors. Unlike a deterministic
+                        formula, a statistical regression model explicitly allows unexplained variation. We first
+                        develop <i>simple linear regression</i>, then use it to understand estimation, diagnostics, and
+                        prediction. The next section develops hypothesis tests for its slope. The Python examples use
+                        NumPy, SciPy, pandas, Matplotlib, scikit-learn, and statsmodels; install any missing packages in
+                        your project environment before running them.
+                    </p>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (simple linear regression model).</b></p>
+                        <p>For observations \((x_i,Y_i)\), \(i=1,\ldots,n\), suppose</p>
+                        \[Y_i=\beta_0+\beta_1x_i+\varepsilon_i,\qquad \mathbb E(\varepsilon_i\mid x_i)=0.\]
+                        <p>
+                            The unknown parameters \(\beta_0\) and \(\beta_1\) are the <i>population intercept</i> and
+                            <i>population slope</i>. The conditional mean is \(\mathbb E(Y_i\mid
+                            x_i)=\beta_0+\beta_1x_i\). In the fixed-design model, the \(x_i\) are treated as fixed; in a
+                            random-design model, inference may be conditioned on the observed predictors.
+                        </p>
+                    </div>
+                    <p>
+                        The slope gives the expected difference in the response for a one-unit increase in \(x\),
+                        <i>holding the model's interpretation fixed</i>. An association in observational data does not
+                        establish a causal effect. A predictor may also be statistically associated with a response
+                        while explaining little of its variation.
+                    </p>
+
+                    <!-- ==================== Estimation by Least Squares ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (fitted values, residuals, and SSE).</b></p>
+                        <p>
+                            For candidate coefficients \(b_0,b_1\), write \(\hat y_i=b_0+b_1x_i\) and residual
+                            \(e_i=y_i-\hat y_i\). Ordinary least squares (OLS) selects the coefficients minimizing
+                        </p>
+                        \[\operatorname{SSE}(b_0,b_1)=\sum_{i=1}^{n}(y_i-b_0-b_1x_i)^2.\]
+                        <p>
+                            The observable residuals \(e_i\) are <i>not</i> the same as the unobservable errors
+                            \(\varepsilon_i=Y_i-\beta_0-\beta_1x_i\).
+                        </p>
+                    </div>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (simple OLS formulas).</b></p>
+                        <p>For \(n\geq2\) and \(S_{xx}=\sum_i(x_i-\bar x)^2&gt;0\), the unique OLS estimates are</p>
+                        \[\hat\beta_1=\frac{S_{xy}}{S_{xx}},\qquad \hat\beta_0=\bar y-\hat\beta_1\bar x,\qquad
+                        S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y).\]
+                        <p>
+                            The fitted line passes through \((\bar x,\bar y)\), and the OLS residuals satisfy \(\sum_i
+                            e_i=0\) and \(\sum_i x_ie_i=0\).
+                        </p>
+                    </div>
+                    <p>
+                        Proof. Differentiate SSE with respect to \(b_0\) and \(b_1\), set both derivatives to zero, and
+                        obtain the normal equations \(\sum_i(y_i-b_0-b_1x_i)=0\) and \(\sum_i x_i(y_i-b_0-b_1x_i)=0\).
+                        The first gives \(b_0=\bar y-b_1\bar x\); substituting into the second yields
+                        \(b_1=S_{xy}/S_{xx}\). As \(S_{xx}&gt;0\), the quadratic objective is strictly convex in the two
+                        coefficients, proving uniqueness. The normal equations give the residual identities.
+                    </p>
+                    <p>
+                        Notice that minimizing <i>squared prediction errors in the observed sample</i> does not, by
+                        itself, require normally distributed errors. Normality enters later for certain exact confidence
+                        intervals and hypothesis tests.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 107: derive and visualize the least-squares line.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(107)
+x = np.linspace(0, 10, 45)
+y = 3 + 1.7 * x + rng.normal(0, 2, size=x.size)
+
+x_bar, y_bar = x.mean(), y.mean()
+s_xx = np.sum((x - x_bar) ** 2)
+s_xy = np.sum((x - x_bar) * (y - y_bar))
+b1 = s_xy / s_xx
+b0 = y_bar - b1 * x_bar
+fitted = b0 + b1 * x
+residuals = y - fitted
+
+print(f"Intercept: {b0:.4f}; slope: {b1:.4f}")
+print(f"SSE: {np.sum(residuals ** 2):.4f}")
+print(f"Sum of residuals: {residuals.sum():.3e}")
+print(f"Sum of x * residuals: {np.sum(x * residuals):.3e}")
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y, label="Observed values")
+ax.plot(x, fitted, label="OLS fitted line")
+ax.plot(x, 3 + 1.7 * x, linestyle="--", label="Population mean line")
+ax.set(xlabel="Predictor x", ylabel="Response y", title="Ordinary least squares")
+ax.legend()
+fig.tight_layout()
+fig.savefig("lr_ols_fit.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/lr_ols_fit.png"
+                            alt="Observed responses, the least-squares line, and the population mean used to simulate the data."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Observed responses, the least-squares line, and the population mean used to
+                            simulate the data. Generated by Experiment 107.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Regression Software ==================== -->
+                    <p>
+                        <b>Software implementations.</b> OLS solves the same optimization problem whether we use the
+                        closed-form expression, NumPy, scikit-learn, or statsmodels. scikit-learn emphasizes prediction
+                        workflows, whereas statsmodels reports statistical uncertainty and diagnostic information. The
+                        model matrix must include an intercept explicitly in <code>statsmodels.OLS</code> when one is
+                        desired.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 108: compare NumPy, scikit-learn, and statsmodels.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression
+
+rng = np.random.default_rng(108)
+x = rng.normal(size=100)
+y = 2.5 - 0.8 * x + rng.normal(0, 0.9, size=x.size)
+
+X = np.column_stack([np.ones(x.size), x])
+beta_numpy = np.linalg.lstsq(X, y, rcond=None)[0]
+model_sklearn = LinearRegression().fit(x.reshape(-1, 1), y)
+model_sm = sm.OLS(y, sm.add_constant(x)).fit()
+
+print("NumPy (intercept, slope):", beta_numpy)
+print("scikit-learn:", model_sklearn.intercept_, model_sklearn.coef_[0])
+print("statsmodels:", model_sm.params)
+print("Identical coefficients:", np.allclose(beta_numpy, model_sm.params))
+print("R-squared:", model_sm.rsquared)
+print("Residual standard error:", np.sqrt(model_sm.mse_resid))</code></pre>
+
+                    <!-- ==================== Decomposition of Variation ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (SST, SSR, SSE, and R-squared).</b></p>
+                        <p>
+                            For OLS with an intercept, define total variation \(\mathrm{SST}=\sum_i(y_i-\bar y)^2\),
+                            explained variation \(\mathrm{SSR}=\sum_i(\hat y_i-\bar y)^2\), and residual variation
+                            \(\mathrm{SSE}=\sum_i(y_i-\hat y_i)^2\). Then
+                        </p>
+                        \[\mathrm{SST}=\mathrm{SSR}+\mathrm{SSE},\qquad
+                        R^2=1-\frac{\mathrm{SSE}}{\mathrm{SST}}\quad(\mathrm{SST}&gt;0).\]
+                        <p>
+                            In this in-sample OLS setting with an intercept, \(0\leq R^2\leq1\). The decomposition and
+                            range need not hold in the same way for models without an intercept or for out-of-sample
+                            scores.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. Write \(y_i-\bar y=(\hat y_i-\bar y)+e_i\); after squaring and summing, the cross term is
+                        zero because OLS residuals are orthogonal to the fitted values. Dividing the identity by SST
+                        gives the formula for \(R^2\). This number describes <i>in-sample variation explained</i>, not
+                        causation or guaranteed future prediction quality.
+                    </p>
+                    <p>
+                        <b>Scale-dependent errors.</b> The residual standard error is \(s=\sqrt{\mathrm{SSE}/(n-2)}\)
+                        for simple regression with an intercept. Training RMSE instead uses \(\sqrt{\mathrm{SSE}/n}\).
+                        Their denominators differ because the first estimates the conditional error standard deviation
+                        after fitting two parameters, while the latter summarizes observed prediction errors.
+                    </p>
+
+                    <!-- ==================== Assumptions and Diagnostics ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (classical conditional-error assumptions).</b></p>
+                        <p>
+                            For exact small-sample t-based inference, the common model assumes independent observations
+                            and, conditional on the predictor values, \(\varepsilon_i\overset{\mathrm{ind}}\sim
+                            N(0,\sigma^2)\), with a common unknown variance \(\sigma^2&gt;0\). For unbiased OLS
+                            coefficients, the central requirement is the correct conditional-mean specification
+                            \(\mathbb E(\varepsilon_i\mid X)=0\); independent, homoskedastic errors provide simpler
+                            variance formulas. Normality is not needed to calculate OLS estimates.
+                        </p>
+                    </div>
+                    <p>
+                        Check scatterplots and residuals versus fitted values for curvature, varying spread, and
+                        anomalous points; Q-Q plots can help assess error-normality approximations. These plots are
+                        diagnostics, not proofs. When observations are clustered or collected over time, dependence must
+                        also be considered. Residuals are mechanically constrained by the fit and are not identical to
+                        the underlying errors.
+                    </p>
+
+                    <p class="stats-experiment-title"><b>Experiment 109: diagnose heteroskedastic residuals.</b></p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from statsmodels.stats.diagnostic import het_breuschpagan
+
+rng = np.random.default_rng(109)
+x = rng.uniform(0, 10, 110)
+y = 1 + 2.2 * x + rng.normal(0, 0.4 + 0.28 * x)
+fit = sm.OLS(y, sm.add_constant(x)).fit()
+lm, p_lm, _, _ = het_breuschpagan(fit.resid, fit.model.exog)
+print(f"Breusch-Pagan LM statistic: {lm:.3f}, p-value: {p_lm:.4g}")
+print("The test is a diagnostic; inspect the plot and sampling design too.")
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(fit.fittedvalues, fit.resid, alpha=0.7)
+ax.axhline(0, linestyle="--", linewidth=1)
+ax.set(xlabel="Fitted response", ylabel="Residual", title="Residual spread grows with fitted values")
+fig.tight_layout()
+fig.savefig("lr_residual_diagnostics.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/lr_residual_diagnostics.png"
+                            alt="A widening pattern in residuals signals heteroskedasticity in simulated data."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> A widening pattern in residuals signals heteroskedasticity in simulated data.
+                            Generated by Experiment 109.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Leverage and Influence ==================== -->
+                    <p>
+                        <b>Outliers, leverage, and influence.</b> A large response residual does not necessarily mean a
+                        predictor value is unusual. An observation with an extreme predictor can have high
+                        <i>leverage</i>; its <i>influence</i> measures how substantially the fitted model changes when
+                        it is removed. With one predictor and an intercept, \(h_{ii}=1/n+(x_i-\bar x)^2/S_{xx}\). Cook's
+                        distance combines leverage with the residual size. Rules of thumb such as \(4/n\) are screening
+                        aids, not automatic reasons to discard data.
+                    </p>
+
+                    <p class="stats-experiment-title"><b>Experiment 110: inspect leverage and Cook’s distance.</b></p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import statsmodels.api as sm
+
+rng = np.random.default_rng(110)
+x = np.linspace(-2, 2, 36)
+y = 1.5 + 0.7 * x + rng.normal(0, 0.7, size=x.size)
+x[-1], y[-1] = 8.0, -6.0  # Intentionally influential observation
+
+full = sm.OLS(y, sm.add_constant(x)).fit()
+without_last = sm.OLS(y[:-1], sm.add_constant(x[:-1])).fit()
+influence = full.get_influence()
+leverage = influence.hat_matrix_diag
+cook = influence.cooks_distance[0]
+index = int(np.argmax(cook))
+
+print("Full-sample slope:", round(full.params[1], 4))
+print("Slope without final observation:", round(without_last.params[1], 4))
+print("Largest Cook's D at index:", index)
+print("Its leverage and Cook's D:", round(leverage[index], 4), round(cook[index], 4))
+print("Reference screening threshold 4/n:", round(4 / len(x), 4))</code></pre>
+
+                    <!-- ==================== Estimation Versus Individual Prediction ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (mean-response and prediction intervals).</b></p>
+                        <p>
+                            Under the classical independent normal-error model, let \(s=\sqrt{\mathrm{SSE}/(n-2)}\),
+                            \(\hat m(x_0)=\hat\beta_0+\hat\beta_1x_0\), and \(h_0=1/n+(x_0-\bar x)^2/S_{xx}\). With
+                            \(t^*=t_{n-2,1-\alpha/2}\), a \(100(1-\alpha)\%\) confidence interval for the mean response
+                            \(\mathbb E(Y\mid x_0)\) is
+                        </p>
+                        \[\hat m(x_0)\pm t^*s\sqrt{h_0}.\]
+                        <p>
+                            A corresponding prediction interval for a <i>new, independent</i> response
+                            \(Y_{\mathrm{new}}\) at \(x_0\) is
+                        </p>
+                        \[\hat m(x_0)\pm t^*s\sqrt{1+h_0}.\]
+                    </div>
+                    <p>
+                        The additional \(1\) under the prediction standard error accounts for the new observation's
+                        random error. Proof. The OLS mean predictor is unbiased with variance \(\sigma^2h_0\). For a new
+                        independent response, \(Y_{\mathrm{new}}-\hat m(x_0)\) has variance \(\sigma^2(1+h_0)\).
+                        Independence of the standardized normal errors and the residual variance estimator gives the two
+                        t-statistics with \(n-2\) degrees of freedom.
+                    </p>
+                    <p>
+                        The intervals are <i>pointwise</i>, not simultaneous confidence bands over all \(x_0\), and
+                        extrapolation beyond the observed predictor range may be unreliable even when the formal
+                        calculations are possible.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 111: distinguish confidence and prediction intervals.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+rng = np.random.default_rng(111)
+x = rng.uniform(0, 8, size=65)
+y = 4 + 1.35 * x + rng.normal(0, 2.2, size=x.size)
+fit = sm.OLS(y, sm.add_constant(x)).fit()
+grid = np.linspace(0, 8, 180)
+frame = fit.get_prediction(sm.add_constant(grid)).summary_frame(alpha=0.05)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y, alpha=0.55, label="Observed")
+ax.plot(grid, frame["mean"], label="Fitted mean")
+ax.fill_between(grid, frame["mean_ci_lower"], frame["mean_ci_upper"],
+                alpha=0.35, label="95% CI for mean")
+ax.plot(grid, frame["obs_ci_lower"], linestyle="--", label="95% prediction bounds")
+ax.plot(grid, frame["obs_ci_upper"], linestyle="--")
+ax.set(xlabel="Predictor x", ylabel="Response y", title="Mean CI versus individual prediction interval")
+ax.legend()
+fig.tight_layout()
+fig.savefig("lr_prediction_intervals.png", dpi=170, bbox_inches="tight")
+plt.show()
+print(frame.loc[0, ["mean", "mean_ci_lower", "mean_ci_upper", "obs_ci_lower", "obs_ci_upper"]])</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/lr_prediction_intervals.png"
+                            alt="The interval for an individual future observation is wider than the interval for the conditional mean."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The interval for an individual future observation is wider than the interval
+                            for the conditional mean. Generated by Experiment 111.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Out-of-Sample Prediction ==================== -->
+                    <p>
+                        <b>Prediction must be evaluated out of sample.</b> OLS always minimizes <i>training</i> SSE for
+                        the chosen features, but excellent in-sample fit can coexist with poor generalization. Report
+                        performance on held-out data or with suitable cross-validation; avoid fitting transformations on
+                        the test set. Random train/test splitting assumes exchangeable observations, and is
+                        inappropriate for some chronological, grouped, or otherwise dependent datasets.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 112: compare training and test error with a baseline.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.dummy import DummyRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+
+rng = np.random.default_rng(112)
+x = rng.uniform(0, 10, 220)
+y = 3 + 1.5 * x + 0.2 * x**2 + rng.normal(0, 2.0, x.size)
+X = x.reshape(-1, 1)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=112)
+
+for name, model in [("Linear model", LinearRegression()),
+                    ("Mean baseline", DummyRegressor(strategy="mean"))]:
+    model.fit(X_train, y_train)
+    for split, features, targets in [("train", X_train, y_train),
+                                      ("test", X_test, y_test)]:
+        pred = model.predict(features)
+        rmse = np.sqrt(mean_squared_error(targets, pred))
+        print(f"{name:13s} {split:5s}: RMSE={rmse:.3f}, R2={r2_score(targets, pred):.3f}")
+print("The generating relationship is curved: inspect residuals before trusting extrapolation.")</code></pre>
+
+                    <!-- ==================== Beyond One Predictor ==================== -->
+                    <p>
+                        <b>Extension to multiple regression.</b> With predictors \(x_{i1},\ldots,x_{ip}\), the
+                        conditional-mean model becomes \(\mathbb E(Y_i\mid
+                        x_{i1},\ldots,x_{ip})=\beta_0+\sum_{j=1}^{p}\beta_jx_{ij}\). In matrix notation, OLS minimizes
+                        \(\lVert y-Xb\rVert_2^2\); when \(X\) has full column rank, \(\hat\beta=(X^TX)^{-1}X^Ty\).
+                        Numerical software typically uses more stable solvers than explicitly computing that inverse. A
+                        multiple-regression coefficient is interpreted conditional on the other included predictors.
+                        Polynomial regression will develop expanded feature sets later.
+                    </p>
+                    <p>
+                        <b>Worked exercise.</b> For \((x_i,y_i)=(1,2),(2,3),(3,5)\), show \(\bar x=2\), \(\bar y=10/3\),
+                        \(S_{xx}=2\), and \(S_{xy}=3\). Hence \(\hat\beta_1=3/2\) and \(\hat\beta_0=1/3\). Compute the
+                        residuals and verify that they sum to zero.
+                    </p>
+                    <p>
+                        <b>Further exercises.</b> (a) Derive the normal equations and explain the role of
+                        \(S_{xx}&gt;0\). (b) Give a counterexample where \(R^2\) is high but prediction is unsafe. (c)
+                        Simulate nonconstant error variance and compare residual plots. (d) Explain why a prediction
+                        interval is wider than a mean-response confidence interval.
+                    </p>
+                    <p>
+                        <b>References.</b> DeGroot and Schervish, <i>Probability and Statistics</i>, 4th ed., Chapter
+                        11, Sections 11.1–11.3 (printed pp. 689–717); OpenIntro Statistics, 4th ed., Chapter 8, Sections
+                        8.1–8.3 (pp. 305–330), Exercises 8.17, 8.27–8.28. Documentation:
+                        <a href="https://www.statsmodels.org/stable/regression.html">statsmodels regression</a> and
+                        <a href="https://scikit-learn.org/stable/modules/linear_model.html"
+                            >scikit-learn linear models</a
+                        >.
+                    </p>
+
+                    <hr />
+
+                    <!-- ========================= MAIN SECTION 17: Inferences About the Slope: Inferences About the Slope ========================= -->
                     <span id="InferencesSlope"><b>Inferences About the Slope</b></span>
-                    <p>The linear model is given by the equation \[ y = \alpha + \beta x + \epsilon \]</p>
+
                     <p>
-                        where \(\alpha\) is the intercept, \(\beta\) is the regression coefficient, and \(\epsilon\) is
-                        the error term. The best regression line is found by applying the
-                        <a href="https://en.wikipedia.org/wiki/Ordinary_least_squares" target="_blank"
-                            >ordinary least squares method</a
-                        >, which minimizes the sum of squared errors (SSE). This means minimizing the squared difference
-                        between the measured response variable \(y\) and the model prediction \(\hat{y}\), which is
-                        given by \[ \mathrm{SSE} = \sum_{i=1}^{n} \epsilon_i^2 = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 \]
+                        In the preceding section, we derived the least-squares coefficients and studied model
+                        diagnostics. Here the goal is <i>inference about the unknown population slope</i> \(\beta_1\),
+                        not merely computation of its observed estimate \(\hat\beta_1\). The original example of student
+                        height as predictor and weight as response will be retained.
                     </p>
-                    <p>We will go into more detail when we discuss linear regression.</p>
+
+                    <!-- ==================== Sampling Properties of OLS ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (sampling distribution of the OLS slope).</b></p>
+                        <p>Conditional on predictor values \(x_1,\ldots,x_n\), suppose</p>
+                        \[Y_i=\beta_0+\beta_1x_i+\varepsilon_i,\qquad \varepsilon_i\overset{\mathrm{ind}}\sim
+                        N(0,\sigma^2),\qquad S_{xx}&gt;0.\]
+                        <p>Then</p>
+                        \[\hat\beta_1=\beta_1+\frac{\sum_i(x_i-\bar x)\varepsilon_i}{S_{xx}},\qquad \hat\beta_1\sim
+                        N\!\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right).\]
+                        <p>
+                            With \(s^2=\mathrm{SSE}/(n-2)\) and \(n&gt;2\), the estimated standard error is
+                            \(\widehat{\mathrm{SE}}(\hat\beta_1)=s/\sqrt{S_{xx}}\), and
+                        </p>
+                        \[T=\frac{\hat\beta_1-\beta_1}{s/\sqrt{S_{xx}}}\sim t_{n-2}.\]
+                    </div>
                     <p>
-                        The regression t-test is applied to test whether the slope \(\beta\) of the population
-                        regression line is equal to \(0\). Based on this test, we may decide whether \(x\) is a useful
-                        (linear) predictor of \(y\).
-                    </p>
-                    <p>
-                        The test statistic follows a t-distribution with \(df = n - 2\) degrees of freedom and can be
-                        written as \[ t = \frac{\beta}{s_b} = \frac{\beta}{\dfrac{s_e}{\sqrt{\sum (x - \bar{x})^2}}} \]
-                        where \(\beta\) corresponds to the sample regression coefficient and \(s_e\) to the residual
-                        standard error (also known as the standard error of the estimate), given by \[ s_e =
-                        \sqrt{\frac{\mathrm{SSE}}{n - 2}} \text{.} \]
-                    </p>
-                    <p>
-                        The \(100(1 - \alpha)\%\) confidence interval for \(\beta\) is given by \[ \beta \pm
-                        t_{\alpha/2} \times \frac{s_e}{\sqrt{\sum (x - \bar{x})^2}} \text{.} \]
-                    </p>
-                    <p>
-                        The value of \(t_{\alpha/2}\) is obtained from the t-distribution for the given confidence level
-                        and \(n - 2\) degrees of freedom.
-                    </p>
-                    <p>
-                        In order to illustrate the regression t-test, we examine the relationship between two variables:
-                        students’ height as the predictor variable and students’ weight as the response variable. The
-                        question is whether height is a useful predictor of students’ weight.
+                        Proof. Insert \(Y_i=\beta_0+\beta_1x_i+\varepsilon_i\) into the OLS expression
+                        \(\hat\beta_1=S_{xy}/S_{xx}\); the intercept term vanishes after centering. The numerator's
+                        noise component is a linear combination of independent normal variables, with variance
+                        \(\sigma^2S_{xx}\). Therefore the standardized slope is normal. In the classical normal model,
+                        \(\mathrm{SSE}/\sigma^2\sim\chi^2_{n-2}\) and is independent of the OLS coefficient vector.
+                        Their ratio has a Student t-distribution.
                     </p>
                     <p>
-                        The null hypothesis states that there is no linear relationship between the height and the
-                        weight of the individuals in the students data set, \(H_0: \beta = 0\), meaning that the
-                        predictor variable is not useful for making predictions. The alternative hypothesis states that
-                        there is a linear relationship, \(H_A: \beta \neq 0\), meaning that the predictor variable is
-                        useful for making predictions.
+                        Without normality, the same OLS estimate can be useful but the exact t law need not hold.
+                        Correlated errors, endogeneity, nonlinearity, and heterogeneous error variance can invalidate
+                        the conventional standard errors and tests.
                     </p>
+
+                    <!-- ==================== Hypothesis Tests and Confidence Intervals ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (slope t-test and t-confidence interval).</b></p>
+                        <p>To test \(H_0:\beta_1=\beta_{1,0}\) against a specified alternative, use</p>
+                        \[t_{\mathrm{obs}}=\frac{\hat\beta_1-\beta_{1,0}}{s/\sqrt{S_{xx}}},\qquad \nu=n-2.\]
+                        <p>
+                            For a two-sided alternative, \(p=2\,\mathbb P(t_{\nu}\geq |t_{\mathrm{obs}}|)\). For the
+                            alternatives \(\beta_1&gt;\beta_{1,0}\) and \(\beta_1&lt;\beta_{1,0}\), use the right and
+                            left t-tails, respectively. The two-sided \(100(1-\alpha)\%\) confidence interval is
+                        </p>
+                        \[\hat\beta_1\pm t_{\nu,1-\alpha/2}\frac{s}{\sqrt{S_{xx}}}.\]
+                        <p>
+                            For a two-sided test at level \(\alpha\), rejection is equivalent to exclusion of
+                            \(\beta_{1,0}\) from this corresponding confidence interval, provided the same model and
+                            standard error are used.
+                        </p>
+                    </div>
                     <p>
-                        In order to conduct a regression t-test in Python using the
-                        <code>stats</code>
-                        module from the <code>scipy</code> package, we apply the
-                        <code>linregress()</code>
-                        function. We only need to provide our data separately as NumPy arrays. Furthermore, the test
-                        method can be specified using the <code>alternative</code> argument. Because the default is
-                        already set to two-sided, no adjustment is required.
+                        The null \(H_0:\beta_1=0\) says the
+                        <i>conditional mean is constant in x within this specified simple linear model</i>; it does not
+                        imply that \(X\) and \(Y\) are independent or that there is no nonlinear relationship. A small
+                        p-value is evidence against the zero-slope model under its assumptions, not a certificate of
+                        causation or predictive utility.
                     </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import numpy as np
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 113: calculate a slope test and interval manually.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+x = np.arange(1., 10.)
+y = np.array([2.2, 2.3, 3.7, 4.1, 5.0, 5.7, 6.4, 7.4, 7.8])
+n = x.size
+s_xx = np.sum((x - x.mean()) ** 2)
+b1 = np.sum((x - x.mean()) * (y - y.mean())) / s_xx
+b0 = y.mean() - b1 * x.mean()
+residual = y - (b0 + b1 * x)
+s = np.sqrt(np.sum(residual**2) / (n - 2))
+se = s / np.sqrt(s_xx)
+t_obs = b1 / se
+p = 2 * stats.t.sf(abs(t_obs), df=n - 2)
+t_star = stats.t.ppf(0.975, df=n - 2)
+ci = (b1 - t_star * se, b1 + t_star * se)
+
+print(f"Slope={b1:.5f}, SE={se:.5f}, t={t_obs:.5f}, p={p:.6g}")
+print("95% CI:", tuple(round(v, 5) for v in ci))
+print("SciPy linregress:", stats.linregress(x, y))</code></pre>
+
+                    <!-- ==================== Applied Student Height and Weight ==================== -->
+                    <p>
+                        <b>Applied example (student height and weight).</b> The original notes considered a random
+                        sample of 12 students using SOGA-Py data with <code>height</code> and
+                        <code>weight</code> columns. The example below retains the original 12-row sampling procedure
+                        and random seed, removes incomplete pairs if any, and reports both the estimate and its
+                        uncertainty. The result describes an <i>association</i> in this sample; neither
+                        representativeness nor causality is established by the t-test.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 114: compare SciPy and statsmodels on the SOGA-Py height–weight sample.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import statsmodels.api as sm
 from scipy.stats import linregress
 
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+students = pd.read_csv(url)
+if len(students) &lt; 12:
+    raise ValueError("Fewer than 12 students in the source dataset")
+sample = students.sample(n=12, random_state=9)[["height", "weight"]]
+sample = sample.apply(pd.to_numeric, errors="coerce").dropna()
+if len(sample) &lt; 3:
+    raise ValueError("Not enough complete pairs after the original 12-row sampling")
+x = sample["height"].to_numpy()
+y = sample["weight"].to_numpy()
+fit = sm.OLS(y, sm.add_constant(x)).fit()
+scipy_fit = linregress(x, y)
 
-n = 12
+print("Sample n:", len(sample))
+print("Slope and estimated standard error:", fit.params[1], fit.bse[1])
+print("Two-sided slope p-value:", fit.pvalues[1])
+print("95% slope CI:", fit.conf_int(alpha=0.05)[1])
+print("SciPy slope / p-value:", scipy_fit.slope, scipy_fit.pvalue)
+print("Coefficients agree:", np.isclose(fit.params[1], scipy_fit.slope))</code></pre>
 
-sample = students.sample(n, random_state = 9)[["height", "weight"]]
-
-test_result = linregress(sample["height"], sample["weight"])
-
-print(test_result)</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">LinregressResult(slope=np.float64(0.7477660695468915), intercept=np.float64(-54.99202318229716), rvalue=np.float64(0.940268246582142), pvalue=np.float64(5.414310239986541e-06), stderr=np.float64(0.08561453550612985), intercept_stderr=np.float64(15.028988955403905))</code></pre>
+                    <!-- ==================== Validity and Empirical Coverage ==================== -->
                     <p>
-                        The p-value is smaller than the specified significance level of 0.01; therefore, we reject
-                        \(H_0\). At the 1% significance level, the data provide very strong evidence that height is a
-                        good predictor of students’ weight.
+                        <b>Coverage and Type I error.</b> In repeated sampling under the classical assumptions, a
+                        nominal 95% slope interval covers the fixed population slope in 95% of samples. Equivalently,
+                        testing a true zero slope with its matching two-sided 5% t-test rejects in 5% of repeated
+                        samples. Neither statement describes the probability that the parameter lies inside one
+                        particular observed frequentist interval.
                     </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 115: simulate exact slope t-inference under normal errors.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(115)
+B, n, true_slope = 5000, 24, 0.0
+x = np.linspace(-2, 2, n)
+xc = x - x.mean()
+s_xx = np.sum(xc**2)
+errors = rng.normal(size=(B, n))
+b1 = true_slope + errors @ xc / s_xx
+b0_error = errors.mean(axis=1)
+residuals = errors - b0_error[:, None] - (b1 - true_slope)[:, None] * xc
+s = np.sqrt(np.sum(residuals**2, axis=1) / (n - 2))
+se = s / np.sqrt(s_xx)
+t_values = (b1 - true_slope) / se
+critical = stats.t.ppf(0.975, n - 2)
+coverage = np.mean(np.abs(t_values) &lt;= critical)
+rejection = np.mean(np.abs(t_values) &gt; critical)
+print(f"95% CI coverage={coverage:.4f}; null rejection={rejection:.4f}")
+
+z = np.linspace(-4, 4, 400)
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.hist(t_values, bins=60, density=True, alpha=0.5, label="Simulated slope t-statistic")
+ax.plot(z, stats.t.pdf(z, n - 2), linewidth=2, label=f"t distribution, df={n-2}")
+ax.set(xlabel="t-statistic", ylabel="Density", title="Exact normal-error sampling reference")
+ax.legend()
+fig.tight_layout()
+fig.savefig("slope_t_reference.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/slope_t_reference.png"
+                            alt="The simulated null statistic follows the exact t reference distribution when the classical normal-error assumptions hold."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The simulated null statistic follows the exact t reference distribution when
+                            the classical normal-error assumptions hold. Generated by Experiment 115.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Heteroskedasticity Robust Inference ==================== -->
+                    <p>
+                        <b>Robust standard errors.</b> Under conditional heteroskedasticity, OLS coefficients may remain
+                        unbiased or consistent when the conditional-mean model is correctly specified, but the classical
+                        formula \(s/\sqrt{S_{xx}}\) no longer estimates the correct sampling variability.
+                        Heteroskedasticity-consistent estimators (HC0–HC3), particularly HC3 in small-to-moderate
+                        samples, can improve inference without changing the fitted OLS coefficients. They do
+                        <i>not</i> repair endogeneity, omitted-variable bias, dependence, or a misspecified conditional
+                        mean; their t-based p-values are generally approximate rather than finite-sample exact.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 116: compare conventional and HC3 tests under heteroskedasticity.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+rng = np.random.default_rng(116)
+B, n = 1000, 80
+x = np.linspace(0, 1, n)
+X = sm.add_constant(x)
+spread = 0.2 + 3.0 * x  # True slope is zero; variance grows with x
+count_classical = 0
+count_hc3 = 0
+for _ in range(B):
+    y = rng.normal(0, spread)
+    fit = sm.OLS(y, X).fit()
+    count_classical += fit.pvalues[1] &lt; 0.05
+    count_hc3 += fit.get_robustcov_results(cov_type="HC3").pvalues[1] &lt; 0.05
+rates = [count_classical / B, count_hc3 / B]
+print("Null rejection rates (nominal 5%):", dict(zip(["Classical", "HC3"], rates)))
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.bar(["Classical", "HC3"], rates)
+ax.axhline(0.05, linestyle="--", label="Nominal 5%")
+ax.set(ylabel="Rejection probability", title="Heteroskedasticity and slope Type I error")
+ax.legend()
+fig.tight_layout()
+fig.savefig("slope_heteroskedastic_type1.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/slope_heteroskedastic_type1.png"
+                            alt="Monte Carlo comparison of conventional versus HC3 standard-error inference when the true slope is zero."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Monte Carlo comparison of conventional versus HC3 standard-error inference
+                            when the true slope is zero. Generated by Experiment 116.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Statistical Versus Practical Significance ==================== -->
+                    <p>
+                        <b>Effect magnitude, precision, and usefulness.</b> Increasing the sample size reduces sampling
+                        uncertainty and can make a practically tiny population slope statistically distinguishable from
+                        zero. The effect magnitude must be expressed in the response's units per predictor unit; whether
+                        that effect matters depends on the application, error scale, and plausible intervention. For
+                        prediction, evaluate held-out error and prediction intervals in addition to p-values.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 117: contrast statistical and practical importance.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import linregress, t
+
+rng = np.random.default_rng(117)
+true_slope = 0.09  # 0.9 response units across the entire x-range [0, 10]
+for n in [30, 2500]:
+    x = rng.uniform(0, 10, n)
+    y = 5 + true_slope * x + rng.normal(0, 3, n)
+    result = linregress(x, y)
+    half_width = t.ppf(0.975, n - 2) * result.stderr
+    print(f"n={n}: slope={result.slope:.4f}, p={result.pvalue:.5g}, "
+          f"95% CI=({result.slope-half_width:.4f}, {result.slope+half_width:.4f}), "
+          f"R2={result.rvalue**2:.4f}")
+print("Even a significant slope can account for little of the response variation.")</code></pre>
+
+                    <!-- ==================== Slope and Correlation Bridge ==================== -->
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (slope–correlation identity).</b></p>
+                        <p>In simple OLS regression with an intercept and nonzero sample standard deviations,</p>
+                        \[\hat\beta_1=r\frac{s_y}{s_x},\qquad R^2=r^2,\]
+                        <p>
+                            where \(r\) is the sample Pearson correlation. The first identity follows from
+                            \(S_{xy}/S_{xx}=[S_{xy}/\sqrt{S_{xx}S_{yy}}]\sqrt{S_{yy}/S_{xx}}\), and the second from
+                            \(\mathrm{SSR}=\hat\beta_1^2S_{xx}\). The next section uses these identities to relate slope
+                            and correlation tests, without duplicating OLS estimation.
+                        </p>
+                    </div>
+                    <p>
+                        <b>Exercises.</b> (a) Starting from the OLS formula, derive \(\operatorname{Var}(\hat\beta_1\mid
+                        X)=\sigma^2/S_{xx}\). (b) Explain precisely why the residual variance estimator has \(n-2\)
+                        degrees of freedom. (c) Re-run Experiment 116 with constant error variance and compare rejection
+                        rates. (d) Find a setting in which the zero-slope hypothesis holds although \(Y\) depends on
+                        \(X\).
+                    </p>
+                    <p>
+                        <b>References.</b> DeGroot and Schervish, <i>Probability and Statistics</i>, 4th ed., Section
+                        11.3 (printed pp. 707–717); OpenIntro Statistics, 4th ed., Section 8.4 (pp. 331–337), Exercises
+                        8.33–8.35. Related Python interfaces:
+                        <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html"
+                            >SciPy linregress</a
+                        >,
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.RegressionResults.get_robustcov_results.html"
+                            >statsmodels robust covariance</a
+                        >.
+                    </p>
+
                     <hr />
-                    <!-- ========================= MAIN SECTION 17: Inferences
-                                                                        About the Linear
-                                                                        Correlation
-                                                                        Coefficient ========================= -->
+
+                    <!-- ========================= MAIN SECTION 18: Inferences About the Linear Correlation Coefficient: Inferences About the Linear Correlation Coefficient ========================= -->
                     <span id="InferencesLinearCorrelationCoefficient"
                         ><b>Inferences About the Linear Correlation Coefficient</b></span
                     >
+
                     <p>
-                        In order to test whether two variables are linearly correlated, or in other words, whether there
-                        is a linear relationship between them, we may apply the so-called correlation
-                        <em>t</em>-test. The population linear correlation coefficient, \(\rho\), measures the linear
-                        correlation between two variables in the same manner as the sample linear correlation
-                        coefficient, \(r\), measures the linear correlation between two variables in a sample of paired
-                        observations. Both \(\rho\) and \(r\) describe the strength of the linear relationship between
-                        two variables; however, \(r\) is an estimate of \(\rho\) obtained from sample data.
+                        Correlation describes <i>association</i> between variables and does not assign one variable the
+                        role of response. In the previous two sections, linear regression estimated a conditional-mean
+                        relationship and tested its slope. We now quantify the strength and direction of linear
+                        association and make inferences about population correlation.
+                    </p>
+
+                    <!-- ==================== Pearson Correlation ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (population and sample Pearson correlation).</b></p>
+                        <p>
+                            For random variables with positive finite variances, the population Pearson correlation is
+                        </p>
+                        \[\rho=\operatorname{Corr}(X,Y)=\frac{\operatorname{Cov}(X,Y)}{\sigma_X\sigma_Y}.\]
+                        <p>For nonconstant paired observations \((x_i,y_i)\), the sample correlation is</p>
+                        \[r=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}},\quad S_{xy}=\sum_i(x_i-\bar x)(y_i-\bar y),\quad
+                        S_{xx}=\sum_i(x_i-\bar x)^2,\quad S_{yy}=\sum_i(y_i-\bar y)^2.\]
+                    </div>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (range and affine invariance).</b></p>
+                        <p>
+                            For nonconstant samples, \(-1\leq r\leq1\). Under transformations \(x_i'=a+bx_i\) and
+                            \(y_i'=c+dy_i\) with \(b,d\neq0\),
+                        </p>
+                        \[r(x',y')=\operatorname{sign}(bd)\,r(x,y).\]
+                        <p>
+                            Thus correlation is unchanged by positive changes of units and changes sign when exactly one
+                            scale is reversed. The same properties hold for population correlations when the necessary
+                            variances exist.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. The Cauchy–Schwarz inequality gives \(S_{xy}^2\leq S_{xx}S_{yy}\), hence \(|r|\leq1\).
+                        Centered transformed observations are \(b(x_i-\bar x)\) and \(d(y_i-\bar y)\), so their
+                        cross-product sum scales by \(bd\) and the denominator by \(|bd|\).
                     </p>
                     <p>
-                        The linear correlation coefficient of two variables lies between \(-1\) and \(1\). If \(\rho =
-                        0\), the variables are linearly uncorrelated; thus, there is no linear relationship between
-                        them. If \(\rho \neq 0\), the variables are linearly correlated. If \(\rho &gt; 0\), the
-                        variables are positively linearly correlated, whereas if \(\rho &lt; 0\), they are negatively
-                        linearly correlated.
+                        Perfect positive or negative correlation means all observed points lie on a line with nonzero
+                        slope, but \(r=0\) only means the sample linear association vanishes. In general,
+                        <i>uncorrelated does not imply independent</i>. Even a large \(|r|\) does not by itself imply
+                        causation.
                     </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 118: calculate Pearson correlation and check its invariances.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(118)
+x = rng.normal(size=80)
+y = 0.6 * x + np.sqrt(1 - 0.6**2) * rng.normal(size=x.size)
+s_xx = np.sum((x - x.mean())**2)
+s_yy = np.sum((y - y.mean())**2)
+s_xy = np.sum((x - x.mean()) * (y - y.mean()))
+r_manual = s_xy / np.sqrt(s_xx * s_yy)
+r_scipy = stats.pearsonr(x, y).statistic
+print(f"Manual r={r_manual:.6f}; SciPy r={r_scipy:.6f}")
+print("After positive rescaling:", stats.pearsonr(5 + 3*x, -4 + 2*y).statistic)
+print("After reversing y:", stats.pearsonr(x, -y).statistic)
+print("Theoretical correlation in the generator: 0.6")</code></pre>
+
+                    <!-- ==================== Nonlinear Association ==================== -->
                     <p>
-                        A commonly used statistic to quantify the linear relationship between quantitative variables is
-                        the Pearson product–moment correlation coefficient. It is given by \[ r = \frac{\sum_{i=1}^{n}
-                        (x_i - \bar{x})(y_i - \bar{y})} {\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2}\sqrt{\sum_{i=1}^{n}
-                        (y_i - \bar{y})^2}} = \frac{s_{xy}}{s_x s_y} \]
+                        <b>Zero correlation does not imply independence.</b> For example, let
+                        \(X\sim\operatorname{Uniform}(-a,a)\) and \(Y=X^2\). By symmetry, \(\mathbb E(X)=\mathbb
+                        E(X^3)=0\), so \(\operatorname{Cov}(X,Y)=0\), even though \(Y\) is completely determined by
+                        \(X\). This counterexample remains instructive if independent measurement noise is added to
+                        \(Y\).
                     </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 119: visualize nonlinear dependence with small Pearson correlation.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import pearsonr, spearmanr
+
+rng = np.random.default_rng(119)
+x = np.linspace(-3, 3, 161)
+y = x**2 + rng.normal(0, 0.35, size=x.size)
+print("Pearson r and p:", pearsonr(x, y))
+print("Spearman rho and p:", spearmanr(x, y))
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y, alpha=0.6)
+ax.plot(x, x**2, label="Conditional mean y = x²")
+ax.set(xlabel="x", ylabel="y", title="Strong nonlinear relationship, weak linear correlation")
+ax.legend()
+fig.tight_layout()
+fig.savefig("corr_nonlinear_dependence.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/corr_nonlinear_dependence.png"
+                            alt="An approximately symmetric quadratic relationship has nearly zero linear correlation despite evident dependence."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> An approximately symmetric quadratic relationship has nearly zero linear
+                            correlation despite evident dependence. Generated by Experiment 119.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Correlation Hypothesis Testing ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (exact Pearson test for zero correlation).</b></p>
+                        <p>
+                            For an iid sample from a <i>bivariate normal distribution</i> with population correlation
+                            \(\rho\), under \(H_0:\rho=0\),
+                        </p>
+                        \[T=r\sqrt{\frac{n-2}{1-r^2}}\sim t_{n-2}\qquad(n&gt;2,\ |r|&lt;1).\]
+                        <p>
+                            For a two-sided alternative \(H_1:\rho\neq0\), the p-value is \(2\mathbb
+                            P(t_{n-2}\geq|t_{\mathrm{obs}}|)\). Under assumptions allowing the simple regression t-test,
+                            this is algebraically the same test as \(H_0:\beta_1=0\); the two procedures share the same
+                            p-value on the same complete paired observations.
+                        </p>
+                    </div>
                     <p>
-                        where \(s_{xy}\) is the covariance of \(x\) and \(y\), and \(s_x\) and \(s_y\) are the standard
-                        deviations of \(x\) and \(y\), respectively.
+                        The familiar t-reference is <i>not</i> generally an exact test for \(\rho=0\) under arbitrary
+                        nonnormal bivariate distributions. In particular, \(\rho=0\) need not imply independence. A
+                        permutation test that randomly reassigns the \(Y\) labels instead tests a stronger
+                        <i>independence/exchangeability</i> null, not every possible dependent distribution with zero
+                        correlation.
                     </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading">
+                            <b>Definition (Fisher-z confidence interval for correlation).</b>
+                        </p>
+                        <p>
+                            When the pairs are iid bivariate normal, and for sufficiently large \(n\), Fisher's
+                            transformation \(z=\operatorname{arctanh}(r)=\frac12\log\frac{1+r}{1-r}\) is approximately
+                            normal with mean \(\operatorname{arctanh}(\rho)\) and variance \(1/(n-3)\). Therefore an
+                            approximate \(100(1-\alpha)\%\) interval for \(\rho\) is
+                        </p>
+                        \[\left[\tanh\!\left(z-\frac{z_{1-\alpha/2}}{\sqrt{n-3}}\right),\quad
+                        \tanh\!\left(z+\frac{z_{1-\alpha/2}}{\sqrt{n-3}}\right)\right].\]
+                        <p>
+                            This interval is approximate, unlike the exact zero-correlation t-test under bivariate
+                            normality; it can perform poorly when \(n\) is small or normality is badly violated.
+                        </p>
+                    </div>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 120: compute Pearson p-values, Fisher confidence limits, and a permutation
+                            p-value.</b
+                        >
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(120)
+n = 65
+x = rng.normal(size=n)
+y = 0.42 * x + np.sqrt(1 - 0.42**2) * rng.normal(size=n)
+r, p = stats.pearsonr(x, y)
+t_obs = r * np.sqrt((n - 2) / (1 - r**2))
+p_manual = 2 * stats.t.sf(abs(t_obs), n - 2)
+z = np.arctanh(r)
+half_width = stats.norm.ppf(0.975) / np.sqrt(n - 3)
+ci = (np.tanh(z - half_width), np.tanh(z + half_width))
+
+# Randomization is valid for the independence/exchangeability null.
+B = 4000
+x_c = x - x.mean()
+y_c = y - y.mean()
+den = np.linalg.norm(x_c) * np.linalg.norm(y_c)
+permuted = np.array([np.dot(x_c, rng.permutation(y_c)) / den for _ in range(B)])
+p_perm = (1 + np.count_nonzero(np.abs(permuted) &gt;= abs(r))) / (B + 1)
+
+print(f"r={r:.5f}; SciPy p={p:.5g}; t-reference p={p_manual:.5g}")
+print("Approximate Fisher 95% CI:", tuple(round(v, 4) for v in ci))
+print(f"Permutation p-value (independence null): {p_perm:.5g}")</code></pre>
+
+                    <!-- ==================== Rank Correlation ==================== -->
                     <p>
-                        Since the sample linear correlation coefficient \(r\) is an estimate of the population linear
-                        correlation coefficient \(\rho\), we may use \(r\) to perform a hypothesis test for \(\rho\).
-                        The test statistic for a correlation test follows a
-                        <em>t</em>-distribution with \(n - 2\) degrees of freedom and can be written as \[ t =
-                        \frac{r\sqrt{n - 2}}{\sqrt{1 - r^2}}. \]
+                        <b>Pearson versus Spearman.</b> Pearson's \(r\) measures standardized linear association in the
+                        original values. Spearman's rank correlation \(r_s\) is Pearson correlation applied to ranks
+                        (with average ranks for ties); it measures monotonic association and is invariant to strictly
+                        increasing transformations when there are no ties. It can respond differently to outliers and
+                        nonlinear monotonic relationships. Inferential p-values for rank tests depend on their own
+                        assumptions and approximations.
                     </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 121: contrast Pearson and Spearman under a nonlinear monotonic relationship.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import pearsonr, spearmanr
+
+rng = np.random.default_rng(121)
+x = rng.uniform(0, 3, 120)
+y = np.exp(x) + rng.normal(0, 0.2, x.size)
+print("Pearson:", pearsonr(x, y))
+print("Spearman:", spearmanr(x, y))
+print("Pearson after nonlinear rescaling of x:", pearsonr(np.exp(x), y))
+print("Spearman after strictly increasing rescaling of x:", spearmanr(np.exp(x), y))</code></pre>
+
+                    <!-- ==================== Outliers, Grouping, and Causation ==================== -->
                     <p>
-                        In order to showcase the correlation t-test, we examine the relationship between the variable
-                        <code>score1</code> and <code>score2</code>, which show the result of two mandatory statistics
-                        exams. The question is whether a linear relationship exists between the grades of two
-                        consecutive statistics exams.
+                        <b>Outliers and confounding.</b> Pearson correlation can be greatly changed by one unusual pair.
+                        Pooling data from different groups can also produce a strong marginal correlation even when the
+                        within-group correlations are near zero. Such differences can arise because group membership
+                        influences both variables. Report scatterplots, subgroup analyses, sample size, and meaningful
+                        uncertainty—not merely a correlation and p-value.
                     </p>
-                    <p>
-                        The null hypothesis states that there is no linear relationship between the grades of two
-                        consecutive statistics exams, \(H_0: r = 0\). Recall that the formulation of the alternative
-                        hypothesis dictates whether a two-sided, left-tailed, or right-tailed hypothesis test is
-                        applied. The alternative hypothesis \(H_A: r \neq 0\) results in a two-sided hypothesis test.
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 122: demonstrate confounding and sensitivity to a single outlier.</b>
                     </p>
-                    <p>
-                        In order to conduct a correlation
-                        <em>t</em>-test in Python using the
-                        <code>stats</code>
-                        module from the
-                        <code>scipy</code> package, we apply the
-                        <code>pearsonr()</code>
-                        function. We only need to provide our data separately as NumPy arrays. Furthermore, the test
-                        method can be specified using the
-                        <code>alternative</code> argument. Because the default is already set to two-sided, no
-                        adjustment is required.
-                    </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import numpy as np
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+rng = np.random.default_rng(122)
+n_per_group = 150
+group = np.repeat([0, 1], n_per_group)
+x = 3 * group + rng.normal(size=group.size)
+y = 3 * group + rng.normal(size=group.size)
+print("Pooled Pearson r:", round(pearsonr(x, y).statistic, 4))
+for g in [0, 1]:
+    print(f"Within group {g} r:", round(pearsonr(x[group == g], y[group == g]).statistic, 4))
 
-n = 50
+u = rng.normal(size=80)
+v = rng.normal(size=80)
+print("Independent-looking sample r:", round(pearsonr(u, v).statistic, 4))
+u[-1], v[-1] = 20.0, 20.0
+print("After replacing one pair by (20,20):", round(pearsonr(u, v).statistic, 4))
 
-sample = students[["score1", "score2"]].dropna().sample(n, random_state = 9)
+fig, ax = plt.subplots(figsize=(8, 5))
+for g in [0, 1]:
+    ax.scatter(x[group == g], y[group == g], alpha=0.6, label=f"Group {g}")
+ax.set(xlabel="x", ylabel="y", title="Group shifts create a pooled correlation")
+ax.legend()
+fig.tight_layout()
+fig.savefig("corr_confounding_groups.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
 
-test_result = pearsonr(sample["score1"], sample["score2"])
-print(test_result)
-</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">PearsonRResult(statistic=np.float64(0.8738759767952877), pvalue=np.float64(1.2019492648237161e-16))</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/corr_confounding_groups.png"
+                            alt="A strong pooled association can be driven by differences between groups rather than within-group correlation."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> A strong pooled association can be driven by differences between groups
+                            rather than within-group correlation. Generated by Experiment 122.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Applied Two-Exam Scores ==================== -->
                     <p>
-                        At the 1 % significance level, the data provides very strong evidence to conclude, that the exam
-                        grades of students are linearly correlated.
+                        <b>Applied example (two exam scores).</b> The original notes used <code>score1</code> and
+                        <code>score2</code> from the SOGA-Py students dataset, selecting 50 complete pairs with a fixed
+                        seed. We retain that analysis, add a confidence interval, and compare rank correlation. High
+                        correlation of scores is compatible with shared background factors such as prior preparation; it
+                        does not establish that performance on one exam causes performance on the other.
                     </p>
-                    <hr />
-                    <!-- ========================= MAIN SECTION 18: Linear
-                                                                                Regression ========================= -->
-                    <span id="LinearRegression"><b>Linear Regression</b></span>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 123: analyze students’ two statistics-exam scores.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
+from scipy.stats import pearsonr, spearmanr
+
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+students = pd.read_csv(url)
+pairs = students[["score1", "score2"]].apply(pd.to_numeric, errors="coerce").dropna()
+if len(pairs) &lt; 50:
+    raise ValueError("Fewer than 50 complete paired exam scores")
+sample = pairs.sample(n=50, random_state=9)
+x = sample["score1"].to_numpy()
+y = sample["score2"].to_numpy()
+result = pearsonr(x, y)
+rank_result = spearmanr(x, y)
+print("Pearson r and two-sided p-value:", result)
+print("Approximate 95% Pearson confidence interval:",
+      result.confidence_interval(confidence_level=0.95))
+print("Spearman rank correlation and p-value:", rank_result)
+print("n:", len(sample))</code></pre>
+
+                    <!-- ==================== Bridge Back to Regression ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (equivalence of zero-slope and zero-correlation tests).</b>
+                        </p>
+                        <p>For nonconstant paired data in simple OLS regression with an intercept,</p>
+                        \[\hat\beta_1=r\sqrt{\frac{S_{yy}}{S_{xx}}},\qquad R^2=r^2,\qquad
+                        \frac{\hat\beta_1}{\widehat{\operatorname{SE}}(\hat\beta_1)} =r\sqrt{\frac{n-2}{1-r^2}}.\]
+                        <p>
+                            Consequently, the usual two-sided zero-slope t-test and the zero-Pearson-correlation t-test
+                            yield the <i>same computed statistic and p-value</i> for the same \(n\) complete
+                            observations. Whether the common p-value is valid requires appropriate model assumptions.
+                            This equivalence pertains to <i>simple</i> regression with an intercept and does not apply
+                            unchanged to partial slopes in multiple regression.
+                        </p>
+                    </div>
                     <p>
-                        Regression analysis is a statistical process for estimating the relationships between two or
-                        more variables. The relationship is modeled as \( y \sim x \) or \( y = f(x) \). Both model
-                        descriptions indicate that the variable \( y \) is a function of \( x \). Therefore the variable
-                        \( y \) is denoted as the response or dependent variable, whereas the variable \( x \) is
-                        denoted as the predictor or independent variable.
+                        Proof. The first identity follows by rewriting \(S_{xy}/S_{xx}\). For OLS with an intercept,
+                        \(\mathrm{SSE}=S_{yy}(1-r^2)\); hence \(s^2=S_{yy}(1-r^2)/(n-2)\). Substitute this into
+                        \(\widehat{\operatorname{SE}}(\hat\beta_1)=s/\sqrt{S_{xx}}\), and simplify. These are algebraic
+                        identities, not distributional assumptions.
                     </p>
-                    <p><i>This section will be completed later!</i></p>
+                    <p>
+                        <b>Worked exercise.</b> Suppose \(n=22\) and \(r=0.50\). Then
+                        \(t=0.50\sqrt{20/(1-0.25)}\approx2.582\), with \(20\) degrees of freedom. Calculate the
+                        two-sided p-value with SciPy, and explain which conditions are required to use the t-reference
+                        for a population correlation test.
+                    </p>
+                    <p>
+                        <b>Further exercises.</b> (a) Prove that \(\operatorname{Corr}(X,X^2)=0\) for a symmetric random
+                        variable with suitable finite moments. (b) Explore how a single high-leverage pair changes
+                        Pearson's \(r\) and Spearman's rank correlation. (c) Construct a dataset with positive marginal
+                        correlation and near-zero within-group correlations. (d) Explain why a permutation test for
+                        independence is not automatically a valid test of the composite hypothesis \(\rho=0\) in
+                        arbitrary dependent distributions.
+                    </p>
+                    <p>
+                        <b>References.</b> OpenIntro Statistics, 4th ed., Sections 8.1 and 8.4 (pp. 305–311, 331–337),
+                        Exercises 8.13 and 8.33; DeGroot and Schervish, 4th ed., Chapter 4 (covariance and correlation)
+                        and Chapter 11, Sections 11.2–11.3. Python documentation:
+                        <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html"
+                            >SciPy pearsonr</a
+                        >
+                        and
+                        <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html"
+                            >SciPy spearmanr</a
+                        >.
+                    </p>
+
                     <hr />
+
                     <!-- ========================= MAIN SECTION 19: Polynomial
                                                                                 Regression ========================= -->
                     <span id="PolynomialRegression"><b>Polynomial Regression</b></span>
