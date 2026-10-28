@@ -12692,68 +12692,854 @@ plt.show()</code></pre>
                     </p>
 
                     <hr />
-                    <!-- ========================= MAIN SECTION 20: Logistic
-                                                                                Regression ========================= -->
+
+                    <!-- ========================= MAIN SECTION 20: Logistic Regression ========================= -->
                     <span id="LogisticRegression"><b>Logistic Regression</b></span>
-                    <p><i>This section will be completed later!</i></p>
+                    <p>
+                        Linear and polynomial regression model the conditional mean of a <i>numerical</i> response. We
+                        now consider a binary response, such as whether a customer renews a subscription, a transaction
+                        is fraudulent, or an applicant receives a callback. A binary outcome is encoded as
+                        \(Y\in\{0,1\}\), where the meaning of 1 must be stated explicitly.
+                    </p>
+                    <p>
+                        The goal of <i>binary logistic regression</i> is first to estimate a probability \(P(Y=1\mid
+                        X=x)\), not to assign a class. A classification rule is a separate decision that turns this
+                        probability into 0 or 1 using a threshold. Keeping
+                        <i>probability estimation, statistical inference, and decision-making</i> distinct will be
+                        important throughout the section.
+                    </p>
+
+                    <!-- ==================== Probability Model and the Logit Link ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (binary logistic regression).</b></p>
+                        <p>
+                            For observations \((x_i,Y_i)\), assume that, conditionally on the predictors, the outcomes
+                            are independent Bernoulli variables:
+                        </p>
+                        \[Y_i\mid x_i\sim\operatorname{Bernoulli}(p_i),\qquad P(Y_i=1\mid x_i)=p_i,\quad
+                        0&lt;p_i&lt;1.\]
+                        <p>
+                            For a predictor vector \(x_i=(x_{i1},\ldots,x_{ik})^T\), the model specifies a linear
+                            predictor \(\eta_i=\beta_0+\sum_{j=1}^k\beta_j x_{ij}\) and the <i>logit link</i>
+                        </p>
+                        \[\operatorname{logit}(p_i)=\log\!\left(\frac{p_i}{1-p_i}\right)=\eta_i.\]
+                        <p>
+                            Equivalently, with \(\sigma(t)=1/(1+e^{-t})\), the success probability is
+                            \(p_i=\sigma(\eta_i)\). This is a Bernoulli generalized linear model (GLM) with canonical
+                            link.
+                        </p>
+                    </div>
+                    <p>
+                        Unlike ordinary least squares applied directly to \(Y\in\{0,1\}\), the logistic model always
+                        gives probabilities between zero and one. Since \(\mathbb E(Y_i\mid x_i)=p_i\) and
+                        \(\operatorname{Var}(Y_i\mid x_i)=p_i(1-p_i)\), the conditional variance is not constant. A
+                        Gaussian, constant-variance error model for the binary response is therefore inappropriate.
+                    </p>
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (properties of the logistic function).</b></p>
+                        <p>
+                            The function \(\sigma:\mathbb R\to(0,1)\) is strictly increasing and satisfies
+                            \(\sigma(-t)=1-\sigma(t)\), \(\sigma(0)=1/2\), and
+                        </p>
+                        \[\sigma'(t)=\sigma(t)[1-\sigma(t)]\leq\frac14.\]
+                        <p>
+                            Proof. Differentiation gives \(\sigma'(t)=e^{-t}/(1+e^{-t})^2\). Substitute
+                            \(\sigma(t)=1/(1+e^{-t})\); the bound follows from \(p(1-p)\leq1/4\) for \(0\leq p\leq1\).
+                        </p>
+                    </div>
+                    <p>
+                        For one predictor, \(p(x)=\sigma(\beta_0+\beta_1x)\) describes an S-shaped probability curve.
+                        Positive \(\beta_1\) increases the probability with \(x\), negative \(\beta_1\) decreases it,
+                        and \(\beta_1=0\) produces a constant probability. The probability crosses \(1/2\) at
+                        \(x=-\beta_0/\beta_1\) when \(\beta_1\ne0\). Its rate of change is \(dp/dx=\beta_1p(1-p)\), so a
+                        unit change in \(x\) does <i>not</i> generally produce a constant change in probability.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 133: visualize the logistic link and simulate binary responses.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.special import expit
+
+rng = np.random.default_rng(133)
+intercept, slope = -0.8, 1.4
+x = rng.uniform(-3, 3, size=180)
+p = expit(intercept + slope*x)
+y = rng.binomial(n=1, p=p)
+
+grid = np.linspace(-3.2, 3.2, 400)
+probability = expit(intercept + slope*grid)
+print(&quot;Probability at x=0:&quot;, round(expit(intercept), 4))
+print(&quot;Probability at x=1:&quot;, round(expit(intercept + slope), 4))
+print(&quot;Probability-one-half boundary:&quot;, round(-intercept/slope, 4))
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y + rng.uniform(-0.035, 0.035, len(y)), s=14,
+           alpha=0.40, label=&quot;Binary observations (jittered)&quot;)
+ax.plot(grid, probability, linewidth=2.3, label=&quot;True logistic probability&quot;)
+ax.axhline(0.5, linestyle=&quot;--&quot;, linewidth=1, label=&quot;Probability 0.5&quot;)
+ax.axvline(-intercept/slope, linestyle=&quot;:&quot;, linewidth=1)
+ax.set(xlabel=&quot;Predictor x&quot;, ylabel=&quot;P(Y=1 | x)&quot;, ylim=(-0.1, 1.1),
+       title=&quot;Binary outcomes and a continuous probability model&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_sigmoid_probability.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_sigmoid_probability.png"
+                            alt="A smooth logistic probability curve alongside jittered zero-one observations and the probability-one-half threshold."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> A smooth logistic probability curve alongside jittered zero-one observations
+                            and the probability-one-half threshold. Generated by Experiment 133.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Odds and Coefficient Interpretation ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (odds, log-odds, and odds ratio).</b></p>
+                        <p>
+                            For an event with probability \(p\), its <i>odds</i> are \(p/(1-p)\), and its
+                            <i>log-odds</i> are \(\log[p/(1-p)]\). In a logistic model, increasing predictor \(x_j\) by
+                            one unit while holding the remaining predictors fixed changes the log-odds by \(\beta_j\)
+                            and multiplies the odds by \(e^{\beta_j}\).
+                        </p>
+                        \[\frac{\operatorname{odds}(Y=1\mid x_j+1,\,x_{-j})} {\operatorname{odds}(Y=1\mid
+                        x_j,\,x_{-j})}=e^{\beta_j}.\]
+                        <p>
+                            The quantity \(e^{\beta_j}\) is the <i>conditional odds ratio</i> (OR) for a one-unit change
+                            in predictor \(j\). It is not a probability difference and generally not a relative risk.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. Under the logit model, \(\operatorname{odds}(Y=1\mid x)=e^{\eta(x)}\). Adding one to
+                        \(x_j\) increases \(\eta\) by \(\beta_j\), so the new-to-old odds ratio equals
+                        \(e^{\eta+\beta_j}/e^\eta=e^{\beta_j}\).
+                    </p>
+                    <p>
+                        <b>Worked example.</b> For \(\eta(x)=-2+0.8x\), the odds ratio per extra unit of \(x\) is
+                        \(e^{0.8}\approx2.23\). However, the predicted probabilities are approximately \(p(0)=0.119\),
+                        \(p(1)=0.231\), and \(p(2)=0.401\), so the increases are about 0.112 and 0.170 rather than a
+                        fixed number. For a binary predictor, the OR compares the category coded 1 against the reference
+                        category coded 0, holding other variables fixed.
+                    </p>
+
+                    <!-- ==================== Likelihood and Optimization ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (log-likelihood, score, and curvature).</b></p>
+                        <p>
+                            Let \(X\) be the \(n\times(k+1)\) design matrix, including a column of ones, and let
+                            \(p_i=\sigma(x_i^T\beta)\). For conditionally independent Bernoulli responses, the
+                            log-likelihood is
+                        </p>
+                        \[\ell(\beta)=\sum_{i=1}^{n}\left[y_i\log p_i+(1-y_i)\log(1-p_i)\right]
+                        =\sum_{i=1}^{n}\left[y_i(x_i^T\beta)-\log(1+e^{x_i^T\beta})\right].\]
+                        <p>Its score vector and Hessian are</p>
+                        \[\nabla\ell(\beta)=X^T(y-p),\qquad \nabla^2\ell(\beta)=-X^TWX,\quad
+                        W=\operatorname{diag}(p_i[1-p_i]).\]
+                        <p>
+                            Thus \(\ell\) is concave. When \(X\) has full column rank, its Hessian is negative definite
+                            for every finite \(\beta\), but this does <i>not</i> guarantee that a finite maximizer
+                            exists: complete or quasi-complete separation can prevent it.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. For \(\eta=x_i^T\beta\), the first derivative of \(y_i\eta-\log(1+e^\eta)\) is
+                        \(y_i-\sigma(\eta)\), and the second is \(-\sigma(\eta)[1-\sigma(\eta)]\). Applying the chain
+                        rule and summing yields the stated expressions. For any vector \(v\),
+                        \(v^T\nabla^2\ell(\beta)v=-(Xv)^TW(Xv)\leq0\).
+                    </p>
+                    <p>
+                        Unlike OLS, logistic regression has no general closed-form formula for its maximum-likelihood
+                        coefficients. Software uses iterative numerical optimization. Computations should use stable
+                        functions such as <code>scipy.special.expit</code> and <code>numpy.logaddexp</code> instead of
+                        directly evaluating very large exponentials or logs of probabilities near zero.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 134: fit the maximum-likelihood coefficients from first principles.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from scipy.special import expit
+from scipy.optimize import minimize
+
+rng = np.random.default_rng(134)
+x = rng.normal(size=450)
+y = rng.binomial(1, expit(-0.6 + 1.1*x))
+X = np.column_stack((np.ones_like(x), x))
+
+def negative_log_likelihood(beta):
+    eta = X @ beta
+    return np.logaddexp(0, eta).sum() - y @ eta
+
+def gradient(beta):
+    return X.T @ (expit(X @ beta) - y)
+
+fit_manual = minimize(negative_log_likelihood, x0=[0.0, 0.0],
+                      jac=gradient, method=&quot;BFGS&quot;,
+                      options={&quot;gtol&quot;: 1e-7})
+fit_statsmodels = sm.Logit(y, X).fit(disp=False)
+print(&quot;Numerical optimization:&quot;, np.round(fit_manual.x, 5))
+print(&quot;statsmodels MLE:     &quot;, np.round(fit_statsmodels.params, 5))
+print(&quot;Optimizer message:&quot;, fit_manual.message)
+assert np.allclose(fit_manual.x, fit_statsmodels.params, atol=1e-4)
+
+# Profile the likelihood in the slope, fixing the intercept at its MLE.
+beta0_hat, beta1_hat = fit_statsmodels.params
+slopes = np.linspace(beta1_hat - 1, beta1_hat + 1, 240)
+losses = [negative_log_likelihood([beta0_hat, b]) for b in slopes]
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.plot(slopes, losses)
+ax.axvline(beta1_hat, linestyle=&quot;--&quot;, label=&quot;Estimated slope&quot;)
+ax.set(xlabel=&quot;Slope coefficient&quot;, ylabel=&quot;Negative log-likelihood&quot;,
+       title=&quot;Likelihood-based estimation of logistic coefficients&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_likelihood_profile.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_likelihood_profile.png"
+                            alt="Negative Bernoulli log-likelihood around the fitted slope, with the intercept held fixed at its maximum-likelihood estimate."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Negative Bernoulli log-likelihood around the fitted slope, with the intercept
+                            held fixed at its maximum-likelihood estimate. Generated by Experiment 134.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Inference for Logistic Coefficients ==================== -->
+                    <p>
+                        In a correctly specified finite-dimensional model with identifiable coefficients, suitable
+                        regularity conditions, and sufficient information, the maximum-likelihood estimator is
+                        <i>approximately</i> normal in large samples:
+                    </p>
+                    \[\hat\beta\;\dot\sim\; N\!\left(\beta,\;I(\beta)^{-1}\right),\qquad I(\beta)=X^TWX.\]
+                    <p>
+                        Here the information matrix depends on the predictors and the fitted probabilities; the
+                        approximation is not a finite-sample identity. Replacing \(\beta\) by \(\hat\beta\) gives the
+                        conventional model-based covariance estimate, subject to independent observations and correct
+                        model specification. Clustered or otherwise dependent observations require a design-appropriate
+                        approach.
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Wald test and confidence interval).</b></p>
+                        <p>To test \(H_0:\beta_j=\beta_{j,0}\), the usual Wald statistic is</p>
+                        \[Z=\frac{\hat\beta_j-\beta_{j,0}}{\widehat{\operatorname{SE}}(\hat\beta_j)}\;\dot\sim\;N(0,1)
+                        \quad\text{under }H_0.\]
+                        <p>
+                            An approximate two-sided \(100(1-\alpha)\%\) confidence interval for \(\beta_j\) is
+                            \(\hat\beta_j\pm z_{1-\alpha/2}\widehat{\operatorname{SE}}(\hat\beta_j)\). Exponentiating
+                            both endpoints gives the corresponding Wald interval for its odds ratio. These intervals can
+                            be unreliable with small samples, very rare outcomes, or separation.
+                        </p>
+                    </div>
+                    <p>
+                        For a nested-model comparison, a <i>likelihood-ratio test</i> uses \(G^2=2[\ell(\hat\beta_{\rm
+                        full})-\ell(\hat\beta_{\rm reduced})]\), which is approximately chi-square with degrees of
+                        freedom equal to the number of removed parameters under standard regularity conditions. Neither
+                        the Wald nor the likelihood-ratio reference distribution should be treated as exact here.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 135: interpret estimated odds ratios and confidence intervals.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+from scipy.special import expit
+
+rng = np.random.default_rng(135)
+n = 700
+x = rng.normal(size=n)
+z = rng.binomial(1, 0.45, size=n)
+p = expit(-1.1 + 0.75*x + 0.9*z)
+y = rng.binomial(1, p)
+
+X = sm.add_constant(pd.DataFrame({&quot;x&quot;: x, &quot;z&quot;: z}))
+fit = sm.Logit(y, X).fit(disp=False)
+interval = fit.conf_int(alpha=0.05)
+summary = pd.DataFrame({
+    &quot;log_odds_coef&quot;: fit.params,
+    &quot;odds_ratio&quot;: np.exp(fit.params),
+    &quot;OR_lower_95&quot;: np.exp(interval.iloc[:, 0]),
+    &quot;OR_upper_95&quot;: np.exp(interval.iloc[:, 1]),
+    &quot;Wald_p_value&quot;: fit.pvalues
+})
+print(summary.round(4))
+
+new = pd.DataFrame({&quot;const&quot;: [1, 1], &quot;x&quot;: [0.5, 0.5], &quot;z&quot;: [0, 1]})
+probabilities = np.asarray(fit.predict(new))
+print(&quot;Predicted probabilities at x=0.5, z=0 vs 1:&quot;,
+      np.round(probabilities, 4))
+print(&quot;Probability difference:&quot;, round(probabilities[1] - probabilities[0], 4))</code></pre>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 136: compare Wald and likelihood-ratio inference for a coefficient.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import statsmodels.api as sm
+from scipy.special import expit
+from scipy.stats import chi2, norm
+
+rng = np.random.default_rng(136)
+x = rng.normal(size=600)
+z = rng.normal(size=600)
+y = rng.binomial(1, expit(-0.5 + 0.7*x + 0.4*z))
+X_full = sm.add_constant(np.column_stack((x, z)))
+X_reduced = sm.add_constant(x)
+full = sm.Logit(y, X_full).fit(disp=False)
+reduced = sm.Logit(y, X_reduced).fit(disp=False)
+
+# H0: the coefficient of z is zero.
+beta_z, se_z = full.params[2], full.bse[2]
+z_value = beta_z / se_z
+wald_p = 2*norm.sf(abs(z_value))
+LR = 2*(full.llf - reduced.llf)
+lr_p = chi2.sf(LR, df=1)
+ci = full.conf_int()[2]
+print(f&quot;Wald z={z_value:.4f}, p={wald_p:.3g}&quot;)
+print(f&quot;LR statistic={LR:.4f}, p={lr_p:.3g}&quot;)
+print(&quot;95% confidence interval for beta_z:&quot;, np.round(ci, 4))
+print(&quot;95% confidence interval for its OR:&quot;, np.round(np.exp(ci), 4))</code></pre>
+
+                    <!-- ==================== Separation and Regularization ==================== -->
+                    <p>
+                        <b>Complete separation.</b> If a linear combination of predictors perfectly separates all zero
+                        outcomes from all one outcomes, increasing the magnitude of some coefficients can keep improving
+                        the likelihood without reaching a finite maximum. For example, if every observation with
+                        \(x&lt;0\) has \(Y=0\) and every observation with \(x&gt;0\) has \(Y=1\), an unpenalized
+                        logistic fit may have no finite slope estimate. Warnings, huge coefficients, and unstable
+                        standard errors are symptoms, not evidence of a very precisely estimated effect.
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (L2-penalized logistic estimation).</b></p>
+                        <p>
+                            A common predictive alternative minimizes negative log-likelihood with a quadratic penalty
+                            on the slope coefficients:
+                        </p>
+                        \[\hat\beta_{\lambda}\in\operatorname*{arg\,min}_{\beta}
+                        \Big[-\ell(\beta)+\frac\lambda2\sum_{j=1}^{k}\beta_j^2\Big],\quad\lambda&gt;0.\]
+                        <p>
+                            Depending on software conventions, the penalty and likelihood may be scaled differently. The
+                            objective shown illustrates the idea; it is <i>not</i> asserted to be the exact internal
+                            objective of every library. In scikit-learn, increasing <code>C</code> means weaker
+                            regularization; logistic models are penalized by default. The penalized coefficients should
+                            not be analyzed using ordinary unpenalized-MLE Wald intervals.
+                        </p>
+                    </div>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 137: demonstrate separation and finite regularized fits.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+
+x = np.r_[np.linspace(-3, -0.2, 25), np.linspace(0.2, 3, 25)]
+y = (x &gt; 0).astype(int)
+grid = np.linspace(-3.5, 3.5, 300)[:, None]
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y, s=24, alpha=0.7, label=&quot;Perfectly separated classes&quot;)
+for strength in (0.1, 1.0, 100.0):
+    clf = LogisticRegression(C=strength, max_iter=1500)
+    clf.fit(x[:, None], y)
+    ax.plot(grid[:, 0], clf.predict_proba(grid)[:, 1],
+            label=f&quot;C={strength}; slope={clf.coef_[0, 0]:.2f}&quot;)
+    print(f&quot;C={strength}: regularized slope={clf.coef_[0, 0]:.3f}&quot;)
+ax.set(xlabel=&quot;Predictor x&quot;, ylabel=&quot;Predicted P(Y=1)&quot;,
+       title=&quot;Separation and the role of L2 regularization&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_separation.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_separation.png"
+                            alt="Regularized logistic S-curves of different steepness fitted to completely separated classes."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Regularized logistic S-curves of different steepness fitted to completely
+                            separated classes. Generated by Experiment 137.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Predictive Modeling and Data Leakage ==================== -->
+                    <p>
+                        For prediction, <code>sklearn.linear_model.LogisticRegression</code> is convenient, but its
+                        default penalty differs from the unpenalized <code>statsmodels.Logit</code> model used for
+                        classical coefficient inference. A clean evaluation workflow splits the data before fitting the
+                        scaler or classifier, keeps preprocessing in a <code>Pipeline</code>, uses stratification for an
+                        ordinary random split when appropriate, and measures performance on untouched test data.
+                        Grouped, longitudinal, and temporal observations need grouped or forward-in-time splits instead.
+                    </p>
+                    <p>
+                        A fitted logistic model produces <i>scores</i> or probabilities. Classification requires an
+                        explicit rule, for example \(\hat y=\mathbb 1\{\hat p\geq t\}\) for threshold \(t\in[0,1]\). The
+                        conventional \(t=0.5\) is not generally optimal for unequal error costs or imbalanced outcomes.
+                        A threshold should be chosen using validation data and the intended decision costs, not tuned on
+                        the final test set.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 138: fit a leakage-safe binary classifier and evaluate held-out predictions.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from sklearn.datasets import load_breast_cancer
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (confusion_matrix, accuracy_score,
+                             precision_score, recall_score, roc_auc_score,
+                             average_precision_score, log_loss,
+                             roc_curve, precision_recall_curve)
+
+# A bundled educational dataset; not a validated clinical diagnostic tool.
+dataset = load_breast_cancer()
+X = dataset.data
+# Original label 0 = malignant, 1 = benign. Choose malignant as class 1.
+y = (dataset.target == 0).astype(int)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=138, stratify=y)
+
+model = make_pipeline(StandardScaler(),
+                      LogisticRegression(C=1.0, max_iter=3000))
+model.fit(X_train, y_train)
+prob = model.predict_proba(X_test)[:, 1]
+pred = (prob &gt;= 0.5).astype(int)
+print(&quot;Positive class: malignant&quot;)
+print(&quot;Confusion matrix [[TN, FP], [FN, TP]]:&quot;)
+print(confusion_matrix(y_test, pred))
+print(&quot;Accuracy:&quot;, round(accuracy_score(y_test, pred), 4))
+print(&quot;Precision:&quot;, round(precision_score(y_test, pred), 4))
+print(&quot;Recall:&quot;, round(recall_score(y_test, pred), 4))
+print(&quot;ROC AUC:&quot;, round(roc_auc_score(y_test, prob), 4))
+print(&quot;Average precision:&quot;, round(average_precision_score(y_test, prob), 4))
+print(&quot;Log loss:&quot;, round(log_loss(y_test, prob), 4))
+
+fpr, tpr, _ = roc_curve(y_test, prob)
+precision, recall, _ = precision_recall_curve(y_test, prob)
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+axes[0].plot(fpr, tpr, label=f&quot;ROC AUC = {roc_auc_score(y_test, prob):.3f}&quot;)
+axes[0].plot([0, 1], [0, 1], linestyle=&quot;--&quot;, label=&quot;Random ranking&quot;)
+axes[0].set(xlabel=&quot;False positive rate&quot;, ylabel=&quot;True positive rate&quot;,
+            title=&quot;ROC curve&quot;)
+axes[0].legend()
+axes[1].plot(recall, precision,
+             label=f&quot;Average precision = {average_precision_score(y_test, prob):.3f}&quot;)
+axes[1].axhline(np.mean(y_test), linestyle=&quot;--&quot;, label=&quot;Positive prevalence&quot;)
+axes[1].set(xlabel=&quot;Recall&quot;, ylabel=&quot;Precision&quot;, ylim=(0, 1.05),
+            title=&quot;Precision-recall curve&quot;)
+axes[1].legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_roc_pr.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_roc_pr.png"
+                            alt="ROC and precision-recall curves on held-out observations from a bundled educational dataset."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> ROC and precision-recall curves on held-out observations from a bundled
+                            educational dataset. Generated by Experiment 138.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Thresholds and Classification Metrics ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (confusion-matrix rates).</b></p>
+                        <p>
+                            Let \(TP,FP,TN,FN\) denote true positives, false positives, true negatives, and false
+                            negatives at a specified threshold. Then
+                        </p>
+                        \[\operatorname{precision}=\frac{TP}{TP+FP},\quad \operatorname{recall}=\frac{TP}{TP+FN},\quad
+                        \operatorname{specificity}=\frac{TN}{TN+FP}.\]
+                        <p>
+                            The false-positive rate is \(FPR=1-\operatorname{specificity}\), the \(F_1\) score is the
+                            harmonic mean of precision and recall when both are defined, and accuracy is \((TP+TN)/n\).
+                            Undefined ratios require explicit treatment when their denominators vanish.
+                        </p>
+                    </div>
+                    <p>
+                        A receiver-operating-characteristic (ROC) curve plots recall against FPR over score thresholds;
+                        ROC AUC measures ranking discrimination. A precision-recall (PR) curve and average precision are
+                        often informative for rare positive classes; their baseline depends on prevalence. Neither AUC
+                        nor average precision certifies that output probabilities are calibrated. Additionally, two
+                        models can have similar AUC but very different performance at a particular operational
+                        threshold.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 139: choose a decision threshold on validation data, then evaluate once on test
+                            data.</b
+                        >
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (precision_score, recall_score,
+                             confusion_matrix, precision_recall_curve)
+
+source = load_breast_cancer()
+X, y = source.data, (source.target == 0).astype(int)
+X_trainval, X_test, y_trainval, y_test = train_test_split(
+    X, y, test_size=0.25, stratify=y, random_state=139)
+X_train, X_val, y_train, y_val = train_test_split(
+    X_trainval, y_trainval, test_size=0.25,
+    stratify=y_trainval, random_state=139)
+model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=3000))
+model.fit(X_train, y_train)
+val_prob = model.predict_proba(X_val)[:, 1]
+
+# Choose the threshold on validation data only. For this demonstration,
+# maximize recall subject to validation precision &gt;= 0.90.
+thresholds = np.linspace(0.05, 0.95, 91)
+val_precision = np.array([precision_score(
+    y_val, val_prob &gt;= t, zero_division=0) for t in thresholds])
+val_recall = np.array([recall_score(
+    y_val, val_prob &gt;= t, zero_division=0) for t in thresholds])
+valid = np.flatnonzero(val_precision &gt;= 0.90)
+if not len(valid):
+    raise ValueError(&quot;No candidate threshold meets the validation constraint&quot;)
+chosen = valid[np.argmax(val_recall[valid])]
+t_star = float(thresholds[chosen])
+
+# A single final report on untouched test data.
+test_prob = model.predict_proba(X_test)[:, 1]
+test_pred = (test_prob &gt;= t_star).astype(int)
+print(&quot;Threshold selected from validation:&quot;, t_star)
+print(&quot;Test precision:&quot;, round(precision_score(y_test, test_pred), 4))
+print(&quot;Test recall:&quot;, round(recall_score(y_test, test_pred), 4))
+print(&quot;Test confusion matrix:\n&quot;, confusion_matrix(y_test, test_pred))
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.plot(thresholds, val_precision, label=&quot;Validation precision&quot;)
+ax.plot(thresholds, val_recall, label=&quot;Validation recall&quot;)
+ax.axvline(t_star, linestyle=&quot;--&quot;, label=f&quot;Chosen threshold = {t_star:.2f}&quot;)
+ax.set(xlabel=&quot;Classification threshold&quot;, ylabel=&quot;Metric value&quot;,
+       ylim=(0, 1.05), title=&quot;The precision-recall trade-off&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_threshold_tradeoff.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_threshold_tradeoff.png"
+                            alt="Precision and recall as functions of the decision threshold, with a threshold selected on validation observations."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Precision and recall as functions of the decision threshold, with a threshold
+                            selected on validation observations. Generated by Experiment 139.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Discrimination, Calibration, and Rare Outcomes ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (log loss and Brier score).</b></p>
+                        <p>
+                            For independent binary outcomes \(y_i\) and predicted probabilities \(\hat p_i\), the
+                            <i>binary log loss</i> and <i>Brier score</i> are
+                        </p>
+                        \[\operatorname{LogLoss}=-\frac1n\sum_{i=1}^n\left[y_i\log\hat p_i+(1-y_i)\log(1-\hat
+                        p_i)\right], \qquad \operatorname{Brier}=\frac1n\sum_{i=1}^n(y_i-\hat p_i)^2.\]
+                        <p>
+                            Both are proper scoring rules: in expectation, reporting the true conditional event
+                            probability minimizes the score. Small values indicate better probability predictions,
+                            though scores also depend on the difficulty and prevalence of the task.
+                        </p>
+                    </div>
+                    <p>
+                        <i>Calibration</i> concerns whether events assigned probability about \(q\) occur about \(q\) of
+                        the time. A reliability diagram compares observed outcome rates with mean predicted
+                        probabilities within bins. A well-calibrated model need not discriminate strongly, and a
+                        high-AUC model need not be calibrated. Reliability diagrams with few observations per bin can be
+                        noisy. Calibration must be assessed on held-out data, rather than the same observations used to
+                        fit and adjust the model.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 140: compare calibrated and overconfident probabilities.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.special import expit, logit
+from sklearn.calibration import calibration_curve
+from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
+
+rng = np.random.default_rng(140)
+score = rng.normal(size=7000)
+true_prob = expit(-0.6 + score)
+y = rng.binomial(1, true_prob)
+
+# A thought experiment: one model knows the true conditional probability;
+# the other reports an overly extreme score, preserving all ranks.
+candidates = {
+    &quot;Correct conditional probabilities&quot;: true_prob,
+    &quot;Overconfident probabilities&quot;: expit(2*logit(true_prob))
+}
+fig, ax = plt.subplots(figsize=(7, 5))
+ax.plot([0, 1], [0, 1], linestyle=&quot;--&quot;, label=&quot;Perfect calibration&quot;)
+for label, prob in candidates.items():
+    observed, forecast = calibration_curve(y, prob, n_bins=12,
+                                            strategy=&quot;quantile&quot;)
+    ax.plot(forecast, observed, marker=&quot;o&quot;, label=label)
+    print(label)
+    print(&quot;  Brier:&quot;, round(brier_score_loss(y, prob), 4),
+          &quot;log loss:&quot;, round(log_loss(y, prob), 4),
+          &quot;ROC AUC:&quot;, round(roc_auc_score(y, prob), 4))
+ax.set(xlabel=&quot;Mean forecast probability&quot;, ylabel=&quot;Observed event rate&quot;,
+       xlim=(0, 1), ylim=(0, 1),
+       title=&quot;Discrimination and calibration are different&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_calibration.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_calibration.png"
+                            alt="Reliability diagrams comparing correctly calibrated predictions with overconfident predictions having the same ranking."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Reliability diagrams comparing correctly calibrated predictions with
+                            overconfident predictions having the same ranking. Generated by Experiment 140.
+                        </figcaption>
+                    </figure>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 141: compare ROC AUC, average precision, and baseline accuracy for rare
+                            events.</b
+                        >
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.special import expit
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.dummy import DummyClassifier
+from sklearn.metrics import (accuracy_score, balanced_accuracy_score,
+                             average_precision_score, roc_auc_score,
+                             precision_score, recall_score)
+
+rng = np.random.default_rng(141)
+X = rng.normal(size=(3500, 3))
+true_prob = expit(-3.5 + 1.0*X[:, 0] - 0.5*X[:, 1])
+y = rng.binomial(1, true_prob)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, stratify=y, random_state=141)
+model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000))
+model.fit(X_train, y_train)
+pred_prob = model.predict_proba(X_test)[:, 1]
+pred_label = (pred_prob &gt;= 0.5).astype(int)
+baseline = DummyClassifier(strategy=&quot;most_frequent&quot;).fit(X_train, y_train)
+base_label = baseline.predict(X_test)
+
+print(&quot;Positive prevalence:&quot;, round(np.mean(y_test), 4))
+print(&quot;Always-negative baseline accuracy:&quot;,
+      round(accuracy_score(y_test, base_label), 4))
+print(&quot;Logistic accuracy:&quot;, round(accuracy_score(y_test, pred_label), 4))
+print(&quot;Logistic balanced accuracy:&quot;,
+      round(balanced_accuracy_score(y_test, pred_label), 4))
+print(&quot;Logistic recall at 0.5:&quot;, round(recall_score(y_test, pred_label), 4))
+print(&quot;ROC AUC:&quot;, round(roc_auc_score(y_test, pred_prob), 4))
+print(&quot;Average precision:&quot;,
+      round(average_precision_score(y_test, pred_prob), 4))
+print(&quot;PR baseline (prevalence):&quot;, round(np.mean(y_test), 4))</code></pre>
+
+                    <!-- ==================== Applied Student Example ==================== -->
+                    <p>
+                        <b>Applied example: predicting an examination-score indicator.</b> We return to the SOGA-Py
+                        <i>students</i> dataset used in earlier notes. The continuous first-exam result,
+                        <code>score1</code>, is the predictor; the second-exam result, <code>score2</code>, supplies a
+                        <i>constructed</i> binary response. We define the outcome as whether <code>score2</code> is at
+                        least the <i>training-set median</i> of <code>score2</code>. This is a demonstration of binary
+                        modeling, <i>not</i> an official pass/fail threshold. It deliberately discards information from
+                        the original numerical score, making it less appropriate than a regression analysis when the
+                        exact exam score matters.
+                    </p>
+                    <p>
+                        The code first attempts the external data download, then explicitly labels a simulated fallback
+                        if access fails. After splitting the complete score pairs, it determines the binary-outcome
+                        threshold from training observations alone. A fitted probability curve illustrates association
+                        between examinations, not a causal effect of taking the first examination on performance in the
+                        second.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 142: apply logistic regression to a constructed exam-score outcome.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, brier_score_loss
+
+url = &quot;https://userpage.fu-berlin.de/soga/data/raw-data/students.csv&quot;
+try:
+    students = pd.read_csv(url)
+    data_source = &quot;SOGA-Py students (external data)&quot;
+except Exception as error:
+    print(&quot;Download unavailable; using simulated data:&quot;, type(error).__name__)
+    rng = np.random.default_rng(142)
+    score1 = rng.normal(70, 11, 550)
+    score2 = 24 + 0.67*score1 + rng.normal(0, 9, len(score1))
+    students = pd.DataFrame({&quot;score1&quot;: score1, &quot;score2&quot;: score2})
+    data_source = &quot;SIMULATED DEMONSTRATION DATA&quot;
+
+clean = students[[&quot;score1&quot;, &quot;score2&quot;]].apply(
+    pd.to_numeric, errors=&quot;coerce&quot;).dropna()
+if len(clean) &lt; 60:
+    raise ValueError(&quot;At least 60 complete examination-score pairs are needed&quot;)
+X = clean[[&quot;score1&quot;]].to_numpy()
+raw_score2 = clean[&quot;score2&quot;].to_numpy()
+X_train, X_test, s2_train, s2_test = train_test_split(
+    X, raw_score2, test_size=0.25, random_state=142)
+threshold = float(np.median(s2_train))
+y_train = (s2_train &gt;= threshold).astype(int)
+y_test = (s2_test &gt;= threshold).astype(int)
+if len(np.unique(y_test)) != 2:
+    raise ValueError(&quot;Need both outcome classes in the test sample&quot;)
+
+model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000))
+model.fit(X_train, y_train)
+prob = model.predict_proba(X_test)[:, 1]
+print(&quot;Data source:&quot;, data_source)
+print(&quot;Training-defined score2 threshold:&quot;, round(threshold, 3))
+print(&quot;Test ROC AUC:&quot;, round(roc_auc_score(y_test, prob), 4))
+print(&quot;Test Brier score:&quot;, round(brier_score_loss(y_test, prob), 4))
+
+x_grid = np.linspace(X.min(), X.max(), 300).reshape(-1, 1)
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(X_test[:, 0], y_test, s=15, alpha=0.35,
+           label=&quot;Held-out binary outcomes&quot;)
+ax.plot(x_grid[:, 0], model.predict_proba(x_grid)[:, 1],
+        linewidth=2, label=&quot;Fitted logistic probability&quot;)
+ax.axhline(0.5, linestyle=&quot;--&quot;, linewidth=1)
+ax.set(xlabel=&quot;First examination score&quot;, ylabel=&quot;P(second score &gt;= training median)&quot;,
+       ylim=(-0.05, 1.05), title=f&quot;Examination classification: {data_source}&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;logistic_student_exam_outcome.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/logistic_student_exam_outcome.png"
+                            alt="The fitted probability that the second exam score exceeds a threshold learned from the training sample, with held-out observations."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The fitted probability that the second exam score exceeds a threshold learned
+                            from the training sample, with held-out observations. Generated by Experiment 142.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Interpretation, Exercises, and References ==================== -->
+                    <p>
+                        <b>Assumptions and practical interpretation.</b> Binary logistic regression assumes an
+                        appropriate Bernoulli response model and a specified linear relation between predictors and
+                        <i>log-odds</i>. Conditional independence of observations is important for the likelihood and
+                        ordinary standard errors; matched, repeated, clustered, or time-dependent observations require
+                        suitable alternatives. Predictors must contain sufficient variation for identifiable effects,
+                        and extreme sparsity or separation can invalidate ordinary maximum-likelihood inference. Check
+                        for important nonlinearities and interactions on the logit scale, influential observations,
+                        distribution shift, and data leakage. Correlation among predictors may greatly inflate
+                        coefficient uncertainty without necessarily ruining predictive discrimination.
+                    </p>
+                    <p>
+                        <b>Interpretation cautions.</b> An odds ratio does not equal a risk ratio, a statistically
+                        significant coefficient does not establish a causal effect, and a predicted probability is not
+                        itself a classification. Validation performance depends on the target population, prevalence,
+                        and sampling scheme. If outcomes or groups are imbalanced, report the positive-class definition,
+                        prevalence, precision, recall, and relevant cost-sensitive performance. For consequential
+                        decisions, assess calibration, group-specific error rates, and whether use of the model is
+                        appropriate.
+                    </p>
+                    <p>
+                        <b>Worked exercise (odds versus probability).</b> Consider
+                        \(\operatorname{logit}(p)=-1+\log(3)x\) with \(x\in\{0,1\}\). At \(x=0\), the odds are
+                        \(e^{-1}\) and \(p\approx0.269\). At \(x=1\), the odds are \(3e^{-1}\) and \(p\approx0.525\).
+                        The odds ratio is exactly 3; the probability difference is approximately 0.256, not 3 and not a
+                        threefold probability increase.
+                    </p>
+                    <p>
+                        <b>Further exercises.</b> (1) Differentiate the logistic log-likelihood to recover the score and
+                        Hessian, and explain why concavity does not ensure a finite MLE under separation. (2) For
+                        \(\eta=-1+0.6x\), compute \(p\) at \(x=0,1,2\), the odds ratio, and the derivatives \(dp/dx\).
+                        (3) In Experiment 135, change the coding of binary predictor <code>z</code> from 0/1 to 1/0.
+                        Predict the coefficient and odds-ratio change before refitting. (4) Explain why exponentiating
+                        an asymptotic coefficient confidence interval gives an OR interval, but exponentiating a
+                        probability difference does not. (5) In Experiment 136, compare the Wald and likelihood-ratio
+                        p-values for 100 different random samples; identify when the approximation becomes unreliable.
+                        (6) In Experiment 139, choose a threshold to prioritize recall instead of precision, and
+                        describe how false-positive and false-negative counts change. (7) In Experiment 140, explain why
+                        overconfident probabilities can preserve ROC AUC while worsening calibration and proper scoring
+                        rules. (8) In Experiment 141, show algebraically why an always-negative classifier can have high
+                        accuracy for rare events but zero recall. (9) In Experiment 142, compare the constructed binary
+                        task with linear regression on the original numerical <code>score2</code>; discuss information
+                        loss.
+                    </p>
+                    <p>
+                        <b>Textbook exercises.</b> OpenIntro Statistics, 4th ed., Section 9.5, printed pp. 371–378,
+                        develops binary logistic regression using a resume-callback example, coefficients and model
+                        interpretation. Exercises 9.15–9.18 appear on printed pp. 379–381 and cover possum
+                        classification and the Challenger O-ring example; try Exercise 9.15 for coefficient
+                        interpretation and Exercise 9.18 for converting a fitted logit into predicted event
+                        probabilities. DeGroot and Schervish, <i>Probability and Statistics</i>, 4th ed., Chapter 9
+                        provides general likelihood and hypothesis-testing foundations, while its Chapter 11 treats
+                        linear regression; neither is presented here as a dedicated logistic-regression chapter. The
+                        likelihood derivatives, separation discussion, and predictive-modeling examples above extend
+                        beyond the introductory treatment in OpenIntro.
+                    </p>
+                    <p>
+                        <b>Software references.</b>
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.discrete.discrete_model.Logit.html"
+                            >statsmodels Logit</a
+                        >
+                        (maximum likelihood and asymptotic inference);
+                        <a
+                            href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html"
+                            >scikit-learn LogisticRegression</a
+                        >
+                        (regularized prediction);
+                        <a href="https://scikit-learn.org/stable/modules/model_evaluation.html"
+                            >scikit-learn classification metrics</a
+                        >; and
+                        <a href="https://scikit-learn.org/stable/modules/calibration.html"
+                            >calibration and probability estimates</a
+                        >.
+                    </p>
                     <hr />
+                    
                 </article>
             </main>
         </div>
     </body>
 </html>
-<!--
-Excerpts from randomservices.org, which I might add later.
-
-            <p>
-                Our starting point for these tests will usually be a random sample
-                \( \mathbf{X} = (X_1, X_2, \dots, X_n) \)
-                from a normal distribution whose mean \(\mu\) and variance \(\sigma^2\) may or may not be known.
-            </p>
-
-            <p>
-                The basic <i>test statistics</i>, the sample mean \(M\) and the sample variance \(S^2\), are defined as
-                \[
-                M = \frac{1}{n} \sum_{i=1}^n X_i, \quad
-                S^2 = \frac{1}{n - 1} \sum_{i=1}^n (X_i - M)^2
-                \]
-            </p>
-
-            <p>
-                Both \(M\) and \(S^2\) are <i>unbiased</i> and <i>consistent</i> estimators of \(\mu\) and \(\sigma^2\),
-                respectively.
-            </p>
-
-            <p>
-                From these basic statistics, we can construct other test statistics that are quite useful for hypothesis
-                testing, namely:
-                \[
-                Z = \frac{M - \mu}{\sigma / \sqrt{n}}, \quad
-                T = \frac{M - \mu}{S / \sqrt{n}}, \quad
-                V = \frac{n - 1}{\sigma^2} S^2
-                \]
-            </p>
-
-            <p>In the above:</p>
-
-            <ul>
-                <li>\(Z\) has the standard normal distribution.</li>
-                <li>\(T\) has the Student \(t\)-distribution with \(n - 1\) degrees of freedom.</li>
-                <li>\(V\) has the chi-square distribution with \(n - 1\) degrees of freedom.</li>
-                <li>\(Z\) and \(V\) are independent.</li>
-            </ul>
-
-            <p>
-                Let us now consider the <b>one-sample t-test</b>. It is reasonable to use this test when you have a
-                single
-                sample of data, you know the population mean you want to compare against, the population standard
-                deviation is
-                unknown, and the data is approximately normally distributed (especially for small samples).
-            </p>
-
-            <p>
-                We first set the significance level \( \alpha \in (0,1)\). Let \(t_k(p)\) denote the quantile of order
-                \(p\)
-                for the Student \(t\)-distribution with \(k\) degrees of freedom.
-            </p>
--->
