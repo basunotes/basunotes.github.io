@@ -3883,591 +3883,739 @@ print("Simulated Bonferroni FWER:", round(
                     </p>
 
                     <hr />
+
                     <!-- ========================= MAIN SECTION 06: Critical Value and the p-Value ========================= -->
+
                     <span id="CriticalValuePValue"><b>Critical Value and the p-Value</b></span>
+
                     <p>
-                        Once we have specified a null hypothesis \(H_0\), an alternative hypothesis \(H_1\), and an
-                        appropriate test statistic, we still need a rule for deciding whether the observed data provide
-                        sufficient evidence against \(H_0\). There are two closely related approaches: the
-                        <b>critical-value approach</b>, which compares the observed test statistic with a rejection
-                        region, and the <b>p-value approach</b>, which measures how incompatible the observed statistic
-                        is with the distribution assumed under \(H_0\). Both approaches rely on the
-                        <i>null distribution</i> of the test statistic.
+                        Once a null hypothesis, an alternative hypothesis, and a test statistic have been specified, we
+                        need a rule for deciding whether the observed data provide sufficiently strong evidence against
+                        the null. Two equivalent ways to express the decision for a given test are the
+                        <i>critical-value approach</i> and the <i>p-value approach</i>. Both depend on the distribution
+                        of the test statistic under the null hypothesis.
                     </p>
+
+                    <!-- ==================== The Null Distribution ==================== -->
+
                     <p><b>The test statistic and its null distribution.</b></p>
+
                     <p>
-                        Let \(X=(X_1,\ldots,X_n)\) denote our random sample and let \(T=T(X)\) be a test statistic.
-                        Unlike an unknown population parameter, \(T\) is calculated entirely from the sample and
-                        therefore has a probability distribution. Its observed value, which we shall denote by
-                        \(t_{\mathrm{obs}}\), is a number. The <b>null distribution</b> is the distribution that \(T\)
-                        would have if \(H_0\) were true. It is this distribution, rather than the raw observations
-                        considered individually, against which we compare \(t_{\mathrm{obs}}\).
+                        Let \(X=(X_1,\ldots,X_n)\) denote the random observations and let \(T=T(X)\) be a test
+                        statistic. Before observing the data, \(T\) is a random variable; after observing
+                        \(\mathbf{x}\), its value \(t_{\mathrm{obs}}=T(\mathbf{x})\) is a fixed number. A
+                        <i>null distribution</i>
+                        describes the sampling distribution of \(T\) under a distribution permitted by \(H_0\). For a
+                        composite null, this distribution may depend on unknown nuisance parameters, or the test may use
+                        a statistic with a null law that does not depend on them.
                     </p>
+
                     <p>
-                        For example, suppose \(X_1,\ldots,X_n\) are independent observations from a normal distribution
-                        with unknown mean \(\mu\) and <i>known</i> population standard deviation \(\sigma&gt;0\). To
-                        test \(H_0:\mu=\mu_0\), consider the statistic \[ Z=\frac{\bar X-\mu_0}{\sigma/\sqrt n}. \]
-                        Under \(H_0\), the statistic \(Z\) follows the standard normal distribution \(N(0,1)\). This is
-                        an exact result under the stated assumptions; it is not a claim that the original observations
-                        themselves are standard normal. We shall examine this test in much more detail in the next
-                        section.
+                        For example, suppose \(X_1,\ldots,X_n\) are independent and normally distributed with unknown
+                        mean \(\mu\) and <i>known</i> standard deviation \(\sigma&gt;0\). Under \(H_0:\mu=\mu_0\), the
+                        statistic \[ Z=\frac{\overline{X}-\mu_0}{\sigma/\sqrt{n}} \] follows the standard normal
+                        distribution \(N(0,1)\). This exact statement concerns the standardized sample mean, not the
+                        individual observations.
                     </p>
+
                     <p>
-                        <b>Worked example: constructing an observed test statistic.</b>
-                        Suppose \(n=25\), the hypothesized population mean is \(\mu_0=50\), the known population
-                        standard deviation is \(\sigma=10\), and the observed sample mean is \(\bar x=54.2\). The
-                        observed standardized statistic is \[ z_{\mathrm{obs}} =\frac{54.2-50}{10/\sqrt{25}}
-                        =\frac{4.2}{2} =2.10. \] A value of \(2.10\) means that the sample mean is \(2.10\) standard
-                        errors above its hypothesized mean. Whether we reject \(H_0\) depends on the alternative
-                        hypothesis and our chosen significance level, not merely on the fact that \(z_{\mathrm{obs}}\)
-                        is positive.
+                        <b>Worked example.</b> Let \(n=25\), \(\mu_0=50\), \(\sigma=10\), and suppose the observed
+                        sample mean is \(\bar{x}=54.2\). Then \[ z_{\mathrm{obs}}=\frac{54.2-50}{10/\sqrt{25}}=2.10. \]
+                        The sample mean is 2.10 standard errors above the hypothesized mean. Whether this leads to
+                        rejection depends on the alternative and the significance level, not just on the sign of the
+                        statistic.
                     </p>
-                    <p><b>Critical values and rejection regions.</b></p>
+
+                    <!-- ==================== Critical Values and Rejection Regions ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (critical value and rejection region).</b></p>
+                        <p>
+                            A <i>rejection region</i> is the set of observed outcomes for which a test rejects \(H_0\).
+                            When the decision depends on a statistic \(T\), the rejection region can be specified using
+                            values of \(T\). A <i>critical value</i> is a boundary used to define that region. The
+                            boundaries are chosen so that the probability of rejection under \(H_0\) is no greater than
+                            the chosen significance level \(\alpha\).
+                        </p>
+                    </div>
+
                     <p>
-                        In the <b>critical-value approach</b>, we determine the set of test-statistic values that would
-                        lead us to reject the null hypothesis. This is the <b>rejection region</b> or
-                        <b>critical region</b>. Its boundary is a <b>critical value</b>. Critical values are chosen from
-                        the null distribution so that the probability of falling in the rejection region when \(H_0\) is
-                        true is no greater than our specified significance level \(\alpha\). For a simple null
-                        hypothesis and a continuous distribution, we can often make this probability exactly equal to
-                        \(\alpha\).
+                        Let \(\Phi\) denote the standard normal CDF and \(\Phi^{-1}\) its quantile function. Consider
+                        the z-statistic above and a significance level \(\alpha\in(0,1)\). The usual rejection regions
+                        are as follows.
                     </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Critical value(s)</th>
+                                <th>Reject when</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Right-tailed: \(\mu&gt;\mu_0\)</td>
+                                <td>\(c_R=\Phi^{-1}(1-\alpha)\)</td>
+                                <td>\(z_{\mathrm{obs}}\geq c_R\)</td>
+                            </tr>
+                            <tr>
+                                <td>Left-tailed: \(\mu&lt;\mu_0\)</td>
+                                <td>\(c_L=\Phi^{-1}(\alpha)\)</td>
+                                <td>\(z_{\mathrm{obs}}\leq c_L\)</td>
+                            </tr>
+                            <tr>
+                                <td>Two-sided: \(\mu\neq\mu_0\)</td>
+                                <td>\(\pm\Phi^{-1}(1-\alpha/2)\)</td>
+                                <td>\(|z_{\mathrm{obs}}|\geq\Phi^{-1}(1-\alpha/2)\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <p>
-                        Recall that the cumulative distribution function (CDF) is \(F_0(t)=P_0(T\leq t)\), where the
-                        subscript \(0\) means that probabilities are calculated under \(H_0\). Its quantile function,
-                        written \(F_0^{-1}\), allows us to determine critical values. For the standard normal
-                        distribution, we denote its CDF by \(\Phi\) and its quantile function by \(\Phi^{-1}\). In the
-                        following examples we use \(\alpha=0.05\).
+                        At \(\alpha=0.05\), the right-tail cutoff is approximately \(1.6449\), the left-tail cutoff is
+                        approximately \(-1.6449\), and the two-sided cutoffs are approximately \(-1.9600\) and
+                        \(1.9600\). Thus, for \(z_{\mathrm{obs}}=2.10\), we reject for the right-tailed and two-sided
+                        alternatives but fail to reject for the left-tailed alternative.
                     </p>
-                    <p><b>Right-tailed test.</b></p>
+
                     <p>
-                        For an alternative such as \(H_1:\mu&gt;\mu_0\), large positive test statistics provide evidence
-                        against \(H_0\). We choose a critical value \(c_R\) satisfying \[ P_0(Z\geq c_R)=\alpha, \qquad
-                        c_R=\Phi^{-1}(1-\alpha). \] At the \(5\%\) significance level, \(c_R\approx1.6449\). Thus the
-                        rejection region is \(R_{0.05}=\{z:z\geq1.6449\}\). Our observed value \(z_{\mathrm{obs}}=2.10\)
-                        lies inside this region, so we reject \(H_0\) for the right-tailed alternative.
+                        The equal-tail two-sided rule is appropriate for this symmetric normal statistic. There is no
+                        universal requirement that a two-sided rejection region be symmetric or allocate equal
+                        probabilities to both tails; the rejection rule must be defined by the particular statistical
+                        test.
                     </p>
-                    <p><b>Left-tailed test.</b></p>
-                    <p>
-                        For an alternative such as \(H_1:\mu&lt;\mu_0\), unusually small test statistics provide
-                        evidence against \(H_0\). The critical value \(c_L\) is chosen so that \[ P_0(Z\leq c_L)=\alpha,
-                        \qquad c_L=\Phi^{-1}(\alpha). \] Consequently, \(c_L\approx-1.6449\) and the rejection region is
-                        \(R_{0.05}=\{z:z\leq-1.6449\}\). Our previously observed value \(2.10\) does not fall in this
-                        region. We therefore <i>fail to reject</i> \(H_0\) for this left-tailed alternative. The
-                        direction of the alternative matters.
+
+                    <!-- Experiment 34: critical regions for normal tests -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 34: critical regions for normal tests.</b>
                     </p>
-                    <p>
-                        <b>A second left-tailed example.</b> If we instead observed \(z_{\mathrm{obs}}=-1.80\), the
-                        statistic would fall in the left rejection region because \(-1.80&lt;-1.6449\). We would reject
-                        \(H_0\) at the \(5\%\) level. This is precisely the result we should expect: an observation well
-                        below the hypothesized mean supports a left-tailed, rather than a right-tailed, alternative.
-                    </p>
-                    <p><b>Two-sided test.</b></p>
-                    <p>
-                        For \(H_1:\mu\neq\mu_0\), sufficiently large deviations in <i>either</i> direction provide
-                        evidence against \(H_0\). With a symmetric standard normal null distribution, we allocate half
-                        the significance level to each tail. The critical values are \[ c_L=\Phi^{-1}(\alpha/2), \qquad
-                        c_R=\Phi^{-1}(1-\alpha/2). \] For \(\alpha=0.05\), they are approximately \(-1.9600\) and
-                        \(1.9600\). The rejection region is \[ R_{0.05} =\{z:z\leq-1.9600\} \;\cup\; \{z:z\geq1.9600\}.
-                        \] Since \(z_{\mathrm{obs}}=2.10&gt;1.9600\), we reject \(H_0\) for the two-sided alternative as
-                        well.
-                    </p>
-                    <div class="img-div">
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+alpha = 0.05
+z_obs = 2.10
+
+left = norm.ppf(alpha)
+right = norm.isf(alpha)
+two_lower = norm.ppf(alpha / 2)
+two_upper = norm.isf(alpha / 2)
+
+print(f"Left cutoff: {left:.4f}")
+print(f"Right cutoff: {right:.4f}")
+print(f"Two-sided cutoffs: {two_lower:.4f}, {two_upper:.4f}")
+
+print("Reject left-tailed:", z_obs &lt;= left)
+print("Reject right-tailed:", z_obs &gt;= right)
+print("Reject two-sided:", abs(z_obs) &gt;= two_upper)
+
+x = np.linspace(-4, 4, 1000)
+y = norm.pdf(x)
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.8))
+regions = [
+    ("Left-tailed", x &lt;= left),
+    ("Right-tailed", x &gt;= right),
+    ("Two-sided", (x &lt;= two_lower) | (x &gt;= two_upper))
+]
+
+for ax, (title, mask) in zip(axes, regions):
+    ax.plot(x, y)
+    ax.fill_between(x, y, where=mask, alpha=0.35)
+    ax.axvline(z_obs, linestyle="--", label="Observed z = 2.10")
+    ax.set_title(title)
+    ax.set_xlabel("z")
+    ax.set_ylabel("Density")
+    ax.grid(alpha=0.2)
+
+axes[0].legend(fontsize=8)
+fig.tight_layout()
+fig.savefig("critical_regions.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: change alpha to 0.01 and compare the regions.</code></pre>
+
+                    <figure class="stats-figure">
                         <img
-                            alt="Normal null distribution showing left-tailed, right-tailed, and two-sided rejection regions at the five-percent significance level"
+                            alt="Left-tailed, right-tailed and two-sided standard normal rejection regions"
+                            loading="lazy"
                             src="../images/critical_regions.png"
                         />
+                        <figcaption>
+                            <b>Figure.</b> Rejection regions at the 5% level for three different alternatives. The same
+                            observed statistic leads to different decisions depending on the direction of the test.
+                            Generated by Experiment 34.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== The p-Value ==================== -->
+
+                    <p><b>What does a p-value measure?</b></p>
+
+                    <p>
+                        A <i>p-value</i> measures how incompatible an observed test statistic is with the specified null
+                        model, using the notion of extremeness defined by the test. Smaller p-values indicate stronger
+                        evidence against the null in that testing procedure. A p-value is not a probability assigned to
+                        \(H_0\) itself.
+                    </p>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (p-value for a nested family of tests).</b></p>
+                        <p>
+                            Suppose \(\{R_\alpha:0&lt;\alpha&lt;1\}\) is a family of rejection regions for a specified
+                            test, with \(R_{\alpha_1}\subseteq R_{\alpha_2}\) whenever \(\alpha_1\leq\alpha_2\). The
+                            p-value for the observed outcome \(\mathbf{x}\) is \[
+                            p(\mathbf{x})=\inf\bigl(\{\alpha\in(0,1):\mathbf{x}\in R_\alpha\}\cup\{1\}\bigr), \] so the
+                            infimum equals 1 if rejection never occurs at a level below 1. Informally, it is the
+                            smallest significance level at which this family of tests rejects the observed outcome (with
+                            this convention).
+                        </p>
                     </div>
-                    <p>
-                        <b>Remark.</b> A two-sided rejection region need not always have symmetric endpoints or split
-                        its probability equally between the tails. That construction is natural for a symmetric
-                        statistic such as \(Z\), but other tests use asymmetric or discrete distributions and may define
-                        extremeness differently. The shape of the rejection region must come from the specified test,
-                        not from a memorized diagram.
-                    </p>
-                    <p><b>Computing critical values with Python.</b></p>
-                    <p>
-                        The \(\texttt{scipy.stats}\) module contains the <code>ppf()</code> function, which computes
-                        distribution quantiles. For the upper tail, <code>isf()</code> is the inverse survival function
-                        and can be convenient when the required tail probability is small. The following code reproduces
-                        the critical values above and checks the three decisions for \(z_{\mathrm{obs}}=2.10\).
-                    </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import norm
 
-alpha = 0.05
+                    <p>
+                        For the usual one-sided tests with a simple continuous null distribution, this leads to a tail
+                        probability: the probability under \(H_0\) of a statistic at least as extreme as the observed
+                        one in the direction of \(H_1\). For two-sided or discrete tests, what counts as
+                        <i>at least as extreme</i> must be specified rather than assumed.
+                    </p>
+
+                    <p>
+                        For our standard normal z-test, the conventional p-values are \[ \begin{aligned}
+                        p_{\mathrm{right}}&amp;=1-\Phi(z_{\mathrm{obs}}),\\
+                        p_{\mathrm{left}}&amp;=\Phi(z_{\mathrm{obs}}),\\
+                        p_{\mathrm{two}}&amp;=2\bigl[1-\Phi(|z_{\mathrm{obs}}|)\bigr]. \end{aligned} \] The factor of 2
+                        in the two-sided formula follows from symmetry of the standard normal distribution; it is not a
+                        general formula for every test.
+                    </p>
+
+                    <p>
+                        <b>Worked example.</b> With \(z_{\mathrm{obs}}=2.10\), we obtain \[ \begin{aligned}
+                        p_{\mathrm{right}}&amp;\approx0.01786,\\ p_{\mathrm{left}}&amp;\approx0.98214,\\
+                        p_{\mathrm{two}}&amp;\approx0.03573. \end{aligned} \] The observed data are unchanged, but the
+                        p-values differ because the alternatives ask different questions. The direction of the test
+                        should therefore be selected before examining the data.
+                    </p>
+
+                    <!-- Experiment 35: p-values and tail areas -->
+
+                    <p class="stats-experiment-title"><b>Experiment 35: p-values and tail areas.</b></p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
 z_obs = 2.10
+alpha = 0.05
 
-left_critical = norm.ppf(alpha)
-right_critical = norm.isf(alpha)
-two_sided_lower = norm.ppf(alpha / 2)
-two_sided_upper = norm.isf(alpha / 2)
+p_values = {
+    "Left-tailed": norm.cdf(z_obs),
+    "Right-tailed": norm.sf(z_obs),
+    "Two-sided": 2 * norm.sf(abs(z_obs))
+}
 
-print(f"Left-tailed critical value:  {left_critical:.4f}")
-print(f"Right-tailed critical value: {right_critical:.4f}")
-print(f"Two-sided critical values:  {two_sided_lower:.4f}, {two_sided_upper:.4f}")
+for name, p_value in p_values.items():
+    decision = "Reject H0" if p_value &lt;= alpha else "Fail to reject H0"
+    print(f"{name}: p={p_value:.5f} - {decision}")
 
-print("Reject left-tailed:", z_obs &lt;= left_critical)
-print("Reject right-tailed:", z_obs &gt;= right_critical)
-print("Reject two-sided:", z_obs &lt;= two_sided_lower or z_obs &gt;= two_sided_upper)</code></pre>
-                    <p>
-                        The output gives \(-1.6449\), \(1.6449\), and \((-1.9600,1.9600)\), followed by the decisions
-                        <code>False</code>, <code>True</code>, and <code>True</code>. This agrees with our mathematical
-                        calculations.
-                    </p>
-                    <p><b>The p-value and its formal definition.</b></p>
-                    <p>
-                        Critical values give a yes-or-no decision at a chosen level \(\alpha\), but they do not by
-                        themselves tell us how close the observed statistic is to the rejection boundary. A
-                        <b>p-value</b> provides a numerical measure of the evidence against \(H_0\), relative to the
-                        specified test. It quantifies how extreme the observed test statistic would be if the null model
-                        were correct.
-                    </p>
-                    <p>
-                        We can give a definition that does not depend on which probability distribution we use. Suppose
-                        a test is defined for each level \(\alpha\in(0,1)\) by a rejection region \(R_\alpha\), and
-                        these rejection regions are <i>nested</i>: smaller values of \(\alpha\) lead to smaller (or
-                        equal) rejection regions. For observed data \(x\), define \[ P(x)=\inf\{\alpha\in(0,1):x\in
-                        R_\alpha\}. \] Thus, the p-value is the infimum of the significance levels at which these data
-                        would lead us to reject \(H_0\). It is often described as the
-                        <i>smallest significance level at which the null hypothesis would be rejected</i>. The infimum
-                        formulation is more precise in cases where no smallest level is attained; if the observation is
-                        not in any of the rejection regions for levels below \(1\), we use the convention that its
-                        p-value is \(1\).
-                    </p>
-                    <p>
-                        For a usual nested family of tests with a valid p-value, the decision rule is \[ \text{Reject
-                        }H_0\ \text{if}\ P(x)\leq\alpha; \qquad \text{otherwise, fail to reject }H_0. \] A small p-value
-                        means that the observed data fall in rejection regions even for relatively stringent
-                        significance levels. A large p-value means that the observed evidence does not meet the chosen
-                        threshold. It does <i>not</i> establish that the null hypothesis is true.
-                    </p>
-                    <p><b>Computing p-values as tail probabilities.</b></p>
-                    <p>
-                        For many familiar continuous tests, the p-value can be calculated as a tail probability under
-                        the null distribution. Let \(F_0\) be the continuous null CDF, and suppose large positive values
-                        of \(T\) favor a right-sided alternative. If we observe \(t_{\mathrm{obs}}\), then \[
-                        p_{\mathrm{right}}=P_0(T\geq t_{\mathrm{obs}}) =1-F_0(t_{\mathrm{obs}}). \] If small values
-                        favor a left-sided alternative, the corresponding p-value is \[ p_{\mathrm{left}}=P_0(T\leq
-                        t_{\mathrm{obs}}) =F_0(t_{\mathrm{obs}}). \] These formulas express precisely the idea of
-                        observing a statistic at least as extreme in the direction specified by \(H_1\).
-                    </p>
-                    <p>
-                        For a <i>symmetric</i> continuous null distribution centered at zero, a common two-sided test
-                        rejects for large values of \(|T|\). Its p-value is \[ p_{\mathrm{two-sided}}
-                        =P_0(|T|\geq|t_{\mathrm{obs}}|) =2\min\{F_0(t_{\mathrm{obs}}),\,1-F_0(t_{\mathrm{obs}})\}. \] In
-                        the normal case this can be written more simply as \[
-                        p_{\mathrm{two-sided}}=2\bigl[1-\Phi(|z_{\mathrm{obs}}|)\bigr]. \] <b>Important:</b> doubling
-                        the smaller tail probability is a shortcut for this symmetric two-sided construction; it is not
-                        a universal definition of a two-sided p-value. We will see a discrete counterexample below.
-                    </p>
-                    <p>
-                        <b>Worked example: three p-values for the same observed statistic.</b>
-                        Return to our normal-mean example with \(z_{\mathrm{obs}}=2.10\). For the right-tailed
-                        alternative, we obtain \[ p_{\mathrm{right}}=P(Z\geq2.10) =1-\Phi(2.10)\approx0.01786. \] For
-                        the left-tailed alternative, we obtain \[ p_{\mathrm{left}}=P(Z\leq2.10)
-                        =\Phi(2.10)\approx0.98214. \] Finally, for the two-sided alternative, we obtain \[
-                        p_{\mathrm{two-sided}}=P(|Z|\geq2.10) =2\bigl[1-\Phi(2.10)\bigr]\approx0.03573. \] At
-                        \(\alpha=0.05\) we therefore reject the null for the right-tailed and two-sided tests, but not
-                        for the left-tailed test, exactly as in the critical-value approach. This example also shows why
-                        we must specify the alternative hypothesis <i>before examining the result</i>: choosing its
-                        direction afterward would invalidate the intended error control.
-                    </p>
-                    <div class="img-div">
+x = np.linspace(-4, 4, 1000)
+y = norm.pdf(x)
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.8))
+
+masks = [
+    x &lt;= z_obs,
+    x &gt;= z_obs,
+    (x &lt;= -abs(z_obs)) | (x &gt;= abs(z_obs))
+]
+
+for ax, (name, p_value), mask in zip(axes, p_values.items(), masks):
+    ax.plot(x, y)
+    ax.fill_between(x, y, where=mask, alpha=0.35)
+    ax.axvline(z_obs, linestyle="--")
+    ax.set_title(f"{name}: p = {p_value:.4f}")
+    ax.set_xlabel("z")
+    ax.set_ylabel("Density")
+    ax.grid(alpha=0.2)
+
+fig.tight_layout()
+fig.savefig("p_value_areas.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: repeat with z_obs = -1.80.</code></pre>
+
+                    <figure class="stats-figure">
                         <img
-                            alt="Shaded standard normal tail areas giving right-tailed and two-sided p-values"
+                            alt="Tail areas defining left, right and two-sided normal p-values"
+                            loading="lazy"
                             src="../images/p_value_areas.png"
                         />
+                        <figcaption>
+                            <b>Figure.</b> P-values as null tail areas for the same observed z-statistic and three
+                            different alternatives. Generated by Experiment 35.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Equivalence of the Two Decision Rules ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (equivalence of decisions).</b></p>
+                        <p>
+                            For the conventional continuous normal z-tests described above, the critical-value approach
+                            rejects at level \(\alpha\) if and only if the corresponding p-value satisfies
+                            \(p\leq\alpha\).
+                        </p>
                     </div>
-                    <p><b>Computing p-values with Python.</b></p>
-                    <p>
-                        In SciPy, <code>cdf()</code> gives the lower-tail probability, while <code>sf()</code> gives the
-                        survival function, or upper-tail probability. Using <code>sf()</code> is generally preferable to
-                        manually evaluating <code>1 - cdf()</code> when the upper-tail probability is very small,
-                        because subtraction can lose numerical precision. We can reproduce our three p-values as
-                        follows.
-                    </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import norm
 
-z_obs = 2.10
-alpha = 0.05
+                    <p>
+                        Proof. In the right-tailed case, the inequality \(1-\Phi(z_{\mathrm{obs}})\leq\alpha\) is
+                        equivalent to \(z_{\mathrm{obs}}\geq\Phi^{-1}(1-\alpha)\), since \(\Phi\) is strictly
+                        increasing. The left-tailed case is analogous. For a two-sided test,
+                        \(2[1-\Phi(|z_{\mathrm{obs}}|)]\leq\alpha\) is equivalent to
+                        \(|z_{\mathrm{obs}}|\geq\Phi^{-1}(1-\alpha/2)\).
+                    </p>
 
-p_left = norm.cdf(z_obs)
-p_right = norm.sf(z_obs)
-p_two_sided = 2 * norm.sf(abs(z_obs))
+                    <p>
+                        More generally, when a p-value is defined from the nested rejection regions of a test, the two
+                        approaches express the same rejection rule (with suitable treatment of boundary cases). The
+                        p-value is useful because it reports the result independently of a single chosen \(\alpha\): a
+                        two-sided p-value of approximately \(0.03573\) rejects at the 5% level but not at the 1% level.
+                        The evidence has not changed; only the decision threshold has.
+                    </p>
 
-for name, p_value in [
-    ("Left-tailed", p_left),
-    ("Right-tailed", p_right),
-    ("Two-sided", p_two_sided),
-]:
-    decision = "Reject H0" if p_value &lt;= alpha else "Fail to reject H0"
-    print(f"{name:12s}: p = {p_value:.5f} ({decision})")</code></pre>
-                    <p><b>Why do the two approaches agree?</b></p>
+                    <!-- ==================== Other Null Distributions ==================== -->
+
+                    <p><b>Student's t, chi-square, and F-distributions.</b></p>
+
                     <p>
-                        For the right-tailed standard normal test, we reject by the critical-value approach if
-                        \(z_{\mathrm{obs}}\geq\Phi^{-1}(1-\alpha)\). Because \(\Phi\) is increasing, this is equivalent
-                        to \[ \Phi(z_{\mathrm{obs}})\geq1-\alpha \quad\Longleftrightarrow\quad
-                        1-\Phi(z_{\mathrm{obs}})\leq\alpha \quad\Longleftrightarrow\quad p_{\mathrm{right}}\leq\alpha.
-                        \] Thus the critical-value and p-value approaches are two ways of expressing the
-                        <i>same rejection rule</i>. The same argument applies to left-tailed and two-sided normal tests,
-                        with their respective rejection regions.
+                        Critical values and p-values are not restricted to normal tests. The relevant null distribution
+                        depends on the statistic and on the assumptions used to derive its sampling law. For example:
                     </p>
+
+                    <ul>
+                        <li>
+                            A Student's t-statistic may arise when a normal population mean is tested with unknown
+                            standard deviation.
+                        </li>
+                        <li>
+                            A chi-square statistic may arise in a goodness-of-fit test or a test concerning a normal
+                            population variance.
+                        </li>
+                        <li>
+                            An F-statistic may arise in an analysis of variance (ANOVA) or when comparing nested
+                            regression models.
+                        </li>
+                    </ul>
+
                     <p>
-                        <b>Example: changing the significance level.</b> For the observed two-sided p-value
-                        \(p\approx0.03573\), we reject \(H_0\) at the \(5\%\) or \(10\%\) significance level, but not at
-                        the \(1\%\) level. The data have not changed; only the evidential threshold has. In a
-                        well-designed study, \(\alpha\) should normally be chosen before the data are examined.
+                        The reference distribution alone does not determine whether the test is left-tailed,
+                        right-tailed, or two-sided. That depends on the hypotheses and on how the statistic is
+                        constructed.
                     </p>
-                    <p><b>Other null distributions: Student's t, chi-square, and F.</b></p>
+
                     <p>
-                        The basic principle remains unchanged when the test statistic does not follow a standard normal
-                        distribution. We still find critical values from its null distribution and compute the
-                        appropriate tail probability. However, the relevant distribution and the definition of an
-                        extreme outcome depend on the test. In particular, the chi-square and F distributions are
-                        asymmetric and take only nonnegative values.
+                        <b>Worked examples.</b> For a two-sided t-test with 9 degrees of freedom and
+                        \(t_{\mathrm{obs}}=2.30\), the p-value is approximately \(0.04700\). For a right-tailed
+                        chi-square test with 4 degrees of freedom and observed statistic \(13.28\), the p-value is
+                        approximately \(0.00999\). For a right-tailed F-test with numerator and denominator degrees of
+                        freedom 5 and 10 and observed statistic \(3.50\), it is approximately \(0.04349\). Each example
+                        rejects at the 5% level for its stated test.
                     </p>
-                    <p>
-                        <b>Worked example: a two-sided Student's t-test.</b>
-                        Suppose that a valid test statistic follows Student's t-distribution with \(\nu=9\) degrees of
-                        freedom under \(H_0\), and we observe \(t_{\mathrm{obs}}=2.30\). The distribution is symmetric,
-                        so \[ p=2P(T_9\geq2.30)\approx0.04700. \] The two-sided critical values at \(\alpha=0.05\) are
-                        approximately \(\pm2.2622\). Since \(2.30&gt;2.2622\), we reject \(H_0\) at the \(5\%\) level.
-                        This conclusion requires the assumptions justifying the t null distribution; calculating its
-                        p-value alone does not validate them.
+
+                    <!-- Experiment 36: p-values from other null distributions -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 36: p-values from other null distributions.</b>
                     </p>
-                    <p>
-                        <b>Worked example: a right-tailed chi-square test.</b>
-                        Suppose a chi-square statistic has \(\nu=4\) degrees of freedom under \(H_0\) and its observed
-                        value is \(13.28\). In a test that rejects for large chi-square statistics, \[
-                        p=P(\chi^2_4\geq13.28)\approx0.00999. \] The upper \(5\%\) critical value is approximately
-                        \(9.4877\), so the observation falls in the rejection region. We reject at \(\alpha=0.05\), and
-                        also at \(\alpha=0.01\) because the p-value is approximately \(0.00999\). The direction of this
-                        tail applies, for example, to Pearson's chi-square goodness-of-fit test; not every test
-                        involving a chi-square variable uses the same tail.
-                    </p>
-                    <p>
-                        <b>Worked example: a right-tailed F-test.</b>
-                        Suppose \(F\) has an F-distribution with numerator degrees of freedom \(5\) and denominator
-                        degrees of freedom \(10\) under \(H_0\). If \(f_{\mathrm{obs}}=3.50\), then \[
-                        p=P(F_{5,10}\geq3.50)\approx0.04349. \] The right-tail \(5\%\) critical value is approximately
-                        \(3.3258\). Therefore, we reject at the \(5\%\) level. This right-tail construction is typical
-                        of an overall ANOVA F-test. Tests comparing two population variances may have different,
-                        including two-sided, rejection rules.
-                    </p>
-                    <div class="img-div">
-                        <img
-                            alt="Student t, chi-square, and F null distributions with example p-value tail areas"
-                            src="../images/test_distributions.png"
-                        />
-                    </div>
-                    <p>
-                        We can verify all three calculations using SciPy. The degrees-of-freedom arguments are
-                        essential: a numerical statistic by itself is not enough to determine its p-value.
-                    </p>
+
                     <pre
                         class="plain stats-code code-python"
                     ><code class="language-python">from scipy.stats import t, chi2, f
 
 alpha = 0.05
 
-# Two-sided Student's t-test, 9 degrees of freedom
-t_obs, df = 2.30, 9
-t_p = 2 * t.sf(abs(t_obs), df)
-t_critical = t.isf(alpha / 2, df)
+# Two-sided Student's t-test, 9 degrees of freedom.
+t_obs, t_df = 2.30, 9
+t_p = 2 * t.sf(abs(t_obs), df=t_df)
+t_cutoff = t.isf(alpha / 2, df=t_df)
 
-# Right-tailed chi-square test, 4 degrees of freedom
+# Right-tailed chi-square test, 4 degrees of freedom.
 chi_obs, chi_df = 13.28, 4
-chi_p = chi2.sf(chi_obs, chi_df)
-chi_critical = chi2.isf(alpha, chi_df)
+chi_p = chi2.sf(chi_obs, df=chi_df)
+chi_cutoff = chi2.isf(alpha, df=chi_df)
 
-# Right-tailed F-test, degrees of freedom (5, 10)
+# Right-tailed F-test, degrees of freedom (5, 10).
 f_obs, df_num, df_den = 3.50, 5, 10
-f_p = f.sf(f_obs, df_num, df_den)
-f_critical = f.isf(alpha, df_num, df_den)
+f_p = f.sf(f_obs, dfn=df_num, dfd=df_den)
+f_cutoff = f.isf(alpha, dfn=df_num, dfd=df_den)
 
-print(f"t:       p={t_p:.5f}, upper critical={t_critical:.4f}")
-print(f"chi2:    p={chi_p:.5f}, upper critical={chi_critical:.4f}")
-print(f"F:       p={f_p:.5f}, upper critical={f_critical:.4f}")</code></pre>
-                    <p><b>Discrete test statistics: a useful counterexample.</b></p>
+print(f"t-test: p={t_p:.5f}, upper cutoff={t_cutoff:.4f}")
+print(f"Chi-square: p={chi_p:.5f}, cutoff={chi_cutoff:.4f}")
+print(f"F-test: p={f_p:.5f}, cutoff={f_cutoff:.4f}")
+
+assert t_p &lt; alpha
+assert chi_p &lt; alpha
+assert f_p &lt; alpha
+
+# Experiment: change the degrees of freedom and compare p-values.</code></pre>
+
+                    <!-- ==================== Exact Discrete Tests ==================== -->
+
+                    <p><b>Discrete tests and conservative significance levels.</b></p>
+
                     <p>
-                        With a discrete distribution, we cannot always construct a non-randomized rejection region whose
-                        probability under \(H_0\) is exactly \(\alpha\). Consider \(10\) independent fair coin tosses
-                        and let \(X\) be the number of heads. Under \(H_0:p=0.5\), we have
-                        \(X\sim\operatorname{Bin}(10,0.5)\). Suppose our alternative is \(H_1:p&gt;0.5\), so large
-                        numbers of heads favor the alternative.
+                        For a discrete statistic, the possible rejection probabilities occur in steps. A non-randomized
+                        test may therefore have actual size strictly smaller than the nominal level \(\alpha\). Recall
+                        the example of 10 independent fair coin tosses under \(H_0:p=0.5\), with
+                        \(X\sim\operatorname{Binomial}(10,0.5)\), against \(H_1:p&gt;0.5\).
                     </p>
+
                     <p>
-                        If our rejection rule is \(X\geq8\), the probability of rejecting under the fair-coin model is
-                        \[ P_{0.5}(X\geq8) =\frac{\binom{10}{8}+\binom{10}{9}+\binom{10}{10}}{2^{10}} =\frac{56}{1024}
-                        \approx0.05469. \] This rule exceeds a prescribed \(5\%\) significance level. If instead we
-                        require \(X\geq9\), we obtain \[ P_{0.5}(X\geq9) =\frac{\binom{10}{9}+\binom{10}{10}}{2^{10}}
-                        =\frac{11}{1024} \approx0.01074. \] Thus, for a non-randomized right-tailed test at level
-                        \(0.05\), the rejection region is \(\{9,10\}\), and its <i>actual size</i>
-                        is approximately \(1.07\%\), not exactly \(5\%\).
+                        If we reject for \(X\geq8\), the type I error probability is \[
+                        P_{0.5}(X\geq8)=\frac{56}{1024}\approx0.05469, \] which exceeds \(0.05\). If instead we reject
+                        for \(X\geq9\), the probability is \[ P_{0.5}(X\geq9)=\frac{11}{1024}\approx0.01074. \] Thus,
+                        the latter rule is a valid level-0.05 test, but its actual size is approximately 1.07%.
                     </p>
+
                     <p>
-                        Suppose the coin is tossed \(10\) times and \(8\) heads are observed. The right-tailed p-value
-                        is \(P_{0.5}(X\geq8)\approx0.05469\), so we fail to reject at the \(5\%\) level. If instead
-                        \(9\) heads are observed, the p-value is \(P_{0.5}(X\geq9)\approx0.01074\) and we reject. Notice
-                        that two neighboring possible observations can produce a noticeable jump in their p-values
-                        because no intermediate outcome is possible.
+                        If 8 heads are observed, the right-tailed p-value is \(P_{0.5}(X\geq8)\approx0.05469\), so we
+                        fail to reject at the 5% level. With 9 observed heads, the p-value is
+                        \(P_{0.5}(X\geq9)\approx0.01074\), so we reject. Notice the importance of including equality:
+                        for a discrete variable, \(P(X\geq k)\) and \(P(X&gt;k)\) differ.
                     </p>
+
                     <p>
-                        <b>Two-sided binomial example.</b> What if we observed \(8\) heads and instead tested
-                        \(H_1:p\neq0.5\)? In this symmetric fair-coin case, the exact two-sided p-value is \[
-                        p=P_{0.5}(X\leq2)+P_{0.5}(X\geq8) =2\cdot\frac{56}{1024} =0.109375. \] This calculation works
-                        because the binomial probabilities are symmetric around \(5\) when \(p=0.5\). For an asymmetric
-                        binomial null model, a common exact two-sided test instead sums probabilities of all outcomes
-                        having probability no greater than that of the observed outcome. It need not equal twice the
-                        smaller one-sided tail probability. The specification of the test determines what counts as "at
-                        least as extreme."
+                        A two-sided test requires an additional convention for what counts as more extreme. For 8
+                        observed heads under the fair-coin null, symmetry gives \[
+                        P_{0.5}(X\leq2)+P_{0.5}(X\geq8)=0.109375. \] For an asymmetric binomial null, doubling a
+                        one-sided tail is not generally the same as a two-sided exact p-value. For example, SciPy's
+                        <code>binomtest</code> two-sided procedure sums the null probabilities of outcomes no more
+                        probable than the observed one.
                     </p>
+
+                    <!-- Experiment 37: exact binomial p-values -->
+
+                    <p class="stats-experiment-title"><b>Experiment 37: exact binomial p-values.</b></p>
+
                     <pre
                         class="plain stats-code code-python"
                     ><code class="language-python">from scipy.stats import binom, binomtest
 
 n = 10
-p0 = 0.5
+p_0 = 0.5
+alpha = 0.05
 
-print("P(X &gt;= 8):", binom.sf(7, n, p0))
-print("P(X &gt;= 9):", binom.sf(8, n, p0))
+for successes in [8, 9]:
+    right_p = binom.sf(successes - 1, n, p_0)
+    exact_p = binomtest(
+        successes, n, p_0, alternative="greater"
+    ).pvalue
 
-print("Right-sided p-value, 8 heads:",
-      binomtest(8, n, p0, alternative="greater").pvalue)
-print("Two-sided p-value, 8 heads:",
-      binomtest(8, n, p0, alternative="two-sided").pvalue)
+    print(f"Observed heads: {successes}")
+    print(f"Right-tail p-value: {right_p:.5f}")
+    print(f"Exact test p-value: {exact_p:.5f}")
+    print("Reject:", exact_p &lt;= alpha)
+    print()
 
-# Use the relevant cumulative tail of a discrete distribution.
-# For P(X &gt;= k), binom.sf(k - 1, n, p0) includes X = k.</code></pre>
+print(
+    "Two-sided p-value for 8 heads:",
+    binomtest(8, n, p_0, alternative="two-sided").pvalue
+)
+
+# Experiment: repeat for a null probability p_0 = 0.3.</code></pre>
+
+                    <!-- ==================== Confidence Intervals and Test Inversion ==================== -->
+
+                    <p><b>The relationship with confidence intervals.</b></p>
+
                     <p>
-                        <b>Remark on inequalities.</b> For continuous distributions, writing \(P(T\geq t)\) rather than
-                        \(P(T&gt;t)\) does not affect the result, because \(P(T=t)=0\). For a discrete random variable,
-                        equality matters: \(P(X\geq8)\) includes the probability of exactly \(8\) successes, whereas
-                        \(P(X&gt;8)\) does not. This is one reason to be careful with continuous approximations to exact
-                        discrete tests.
+                        A confidence set can be constructed by retaining parameter values that the corresponding tests
+                        do not reject. In particular, for a two-sided normal z-test with known \(\sigma\), the null
+                        value \(\mu_0\) is rejected at level \(\alpha\) precisely when it lies outside the matching
+                        \(100(1-\alpha)\%\) confidence interval \[
+                        \bar{x}\pm\Phi^{-1}(1-\alpha/2)\frac{\sigma}{\sqrt{n}}. \] The word <i>matching</i> is
+                        essential: different confidence interval procedures need not agree with tests constructed using
+                        different assumptions or rejection rules.
                     </p>
-                    <p><b>The connection with confidence intervals.</b></p>
+
                     <p>
-                        A useful relationship connects hypothesis tests with confidence intervals. Under appropriate
-                        conditions, a two-sided test of \(H_0:\theta=\theta_0\) at significance level \(\alpha\) rejects
-                        exactly when \(\theta_0\) lies outside the corresponding \(100(1-\alpha)\%\) confidence
-                        interval. More generally, a confidence set can be constructed by retaining those parameter
-                        values that the corresponding tests do not reject. The qualification "corresponding" is
-                        important: not every interval method is the inversion of every test.
+                        <b>Worked example.</b> Suppose \(\bar{x}=54.5\), \(n=25\), \(\sigma=10\), and \(H_0:\mu=50\) is
+                        tested against \(H_1:\mu\neq50\). The observed statistic is \(z=2.25\), giving the two-sided
+                        p-value \(p\approx0.02445\). The corresponding 95% confidence interval is \[
+                        54.5\pm1.9600\cdot2\approx(50.58,58.42). \] Because the interval excludes 50, both methods
+                        reject at the 5% level. The interval also reports a range of parameter values compatible with
+                        the observed data under this model.
                     </p>
-                    <p>
-                        <b>Worked normal example.</b> Suppose we observe a sample mean \(\bar x=54.5\) from \(n=25\)
-                        independent normal observations, the population standard deviation is known to be \(\sigma=10\),
-                        and we want to test \(H_0:\mu=50\) against \(H_1:\mu\neq50\) at \(\alpha=0.05\). The observed
-                        test statistic is \[ z_{\mathrm{obs}} =\frac{54.5-50}{10/\sqrt{25}} =2.25, \qquad
-                        p=2P(Z\geq2.25)\approx0.02445. \] Since \(p&lt;0.05\), we reject \(H_0\).
+
+                    <!-- Experiment 38: confidence interval and z-test decision -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 38: confidence interval and z-test decision.</b>
                     </p>
-                    <p>
-                        The corresponding \(95\%\) confidence interval for \(\mu\) is \[ \bar x\pm
-                        z_{0.975}\frac{\sigma}{\sqrt n} =54.5\pm1.9600\cdot2 \approx(50.58,\,58.42). \] Because the
-                        hypothesized value \(50\) is <i>not</i> inside this interval, the confidence-interval approach
-                        reaches the same conclusion. If the interval had included \(50\), we would have failed to reject
-                        the matching two-sided test at the \(5\%\) level. The interval additionally communicates a range
-                        of parameter values consistent with the observed data under the model, rather than just a binary
-                        test decision.
-                    </p>
+
                     <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import norm
 
 sample_mean = 54.5
-mu0 = 50
-sigma = 10
+mu_0 = 50.0
+sigma = 10.0
 n = 25
 alpha = 0.05
 
-se = sigma / (n ** 0.5)
-z_obs = (sample_mean - mu0) / se
+standard_error = sigma / n**0.5
+z_obs = (sample_mean - mu_0) / standard_error
 p_value = 2 * norm.sf(abs(z_obs))
-margin = norm.isf(alpha / 2) * se
-confidence_interval = (sample_mean - margin, sample_mean + margin)
 
-print(f"z-statistic: {z_obs:.2f}")
-print(f"p-value: {p_value:.5f}")
-print("95% confidence interval:",
-      tuple(round(value, 2) for value in confidence_interval))</code></pre>
-                    <p><b>How are p-values distributed when the null hypothesis is true?</b></p>
+margin = norm.isf(alpha / 2) * standard_error
+lower = sample_mean - margin
+upper = sample_mean + margin
+
+reject_by_p = p_value &lt;= alpha
+reject_by_ci = not (lower &lt;= mu_0 &lt;= upper)
+
+print(f"Observed z: {z_obs:.2f}")
+print(f"Two-sided p-value: {p_value:.5f}")
+print(f"95% CI: ({lower:.2f}, {upper:.2f})")
+print("Reject by p-value:", reject_by_p)
+print("Reject by confidence interval:", reject_by_ci)
+
+assert reject_by_p == reject_by_ci
+
+# Experiment: repeat with sample_mean = 53.0.</code></pre>
+
+                    <!-- ==================== Distribution of p-Values ==================== -->
+
+                    <p><b>How are p-values distributed under the null hypothesis?</b></p>
+
                     <p>
-                        A p-value is itself a random variable before data have been observed. For an exactly calibrated
-                        test with a continuous null distribution, its p-value is uniformly distributed on \([0,1]\)
-                        under \(H_0\). For our two-sided normal test, \(P=2[1-\Phi(|Z|)]\) when \(Z\sim N(0,1)\). If
-                        \(0&lt;u&lt;1\), then \[ \begin{aligned} \mathbb{P}_0(P\leq u)
-                        &amp;=\mathbb{P}_0\left(2[1-\Phi(|Z|)]\leq u\right)\\
-                        &amp;=\mathbb{P}_0\left(|Z|\geq\Phi^{-1}(1-u/2)\right)\\
-                        &amp;=2\left[1-\Phi\left(\Phi^{-1}(1-u/2)\right)\right]\\ &amp;=u. \end{aligned} \] Thus, in
-                        repeated studies with a true null hypothesis, approximately \(5\%\) of p-values will be at most
-                        \(0.05\). This does <i>not</i>
-                        imply that any particular observed p-value is the probability that the null hypothesis is false.
+                        Before the data are collected, the p-value is itself a random variable. For an exactly
+                        calibrated test with a continuous null distribution, the p-value is uniformly distributed on
+                        \([0,1]\) under the simple null hypothesis.
                     </p>
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (uniformity of the two-sided normal p-value).</b>
+                        </p>
+                        <p>
+                            Let \(Z\sim N(0,1)\) and define \(P=2[1-\Phi(|Z|)]\). Then \[
+                            P\sim\operatorname{Uniform}(0,1). \]
+                        </p>
+                    </div>
+
                     <p>
-                        For many valid discrete or composite-null tests, the more general calibration property is \[
-                        P_\theta(P\leq u)\leq u \qquad\text{for every }\theta\in\Theta_0\text{ and }0\leq u\leq1. \]
-                        Such a p-value is sometimes called <i>super-uniform</i> under the null. The inequality allows
-                        for conservative tests like the fair-coin example, whose attainable p-values are discrete rather
-                        than uniformly spread over the unit interval.
+                        Proof. For \(0&lt;u&lt;1\), symmetry of the standard normal distribution gives \[
+                        \begin{aligned} \mathbb{P}(P\leq u) &amp;=\mathbb{P}\!\left(|Z|\geq\Phi^{-1}(1-u/2)\right)\\
+                        &amp;=2\left[1-\Phi\!\left(\Phi^{-1}(1-u/2)\right)\right]\\ &amp;=u. \end{aligned} \] Hence the
+                        CDF of \(P\) is the uniform CDF on \([0,1]\).
                     </p>
+
                     <p>
-                        <b>Python simulation.</b> We can check the continuous normal example by generating \(100{,}000\)
-                        independent null test statistics, calculating their two-sided p-values, and drawing a histogram.
-                        A roughly flat histogram supports the uniformity result; the proportion below \(0.05\) should be
-                        close to \(5\%\), with some Monte Carlo variation.
+                        Consequently, under a true null and the stated test assumptions, approximately 5% of independent
+                        repetitions produce p-values at most 0.05. This statement does <i>not</i> mean that a particular
+                        observed p-value of 0.05 assigns 5% probability to the null hypothesis being true or false.
                     </p>
+
+                    <p>
+                        For a valid conservative or discrete test, the appropriate general property is often
+                        <i>super-uniformity</i>: \[ \mathbb{P}_{\theta}(P\leq u)\leq u \qquad\text{for all
+                        }\theta\in\Theta_0,\;0\leq u\leq1. \] The inequality may be strict because the p-value cannot
+                        assume every possible number between 0 and 1.
+                    </p>
+
+                    <!-- Experiment 39: p-value calibration under a true null -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 39: p-value calibration under a true null.</b>
+                    </p>
+
                     <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+from scipy.stats import norm, binom
 
-rng = np.random.default_rng(42)
-z_sim = rng.standard_normal(100_000)
-p_sim = 2 * norm.sf(np.abs(z_sim))
+rng = np.random.default_rng(2026)
+repetitions = 100_000
+alpha = 0.05
 
-print("Proportion p &lt;= 0.05:", np.mean(p_sim &lt;= 0.05))
+# Exactly calibrated continuous normal test.
+z = rng.standard_normal(repetitions)
+p_normal = 2 * norm.sf(np.abs(z))
 
-plt.figure(figsize=(8, 4.5))
-plt.hist(p_sim, bins=20, density=True, edgecolor="white")
-plt.axhline(1, linestyle="--", color="black", label="Uniform density = 1")
-plt.xlabel("p-value")
-plt.ylabel("Estimated density")
-plt.title("Distribution of p-values when the null is true")
-plt.legend()
-plt.tight_layout()
-plt.show()</code></pre>
-                    <div class="img-div">
+# Conservative discrete right-tailed binomial test.
+heads = rng.binomial(n=10, p=0.5, size=repetitions)
+p_binomial = binom.sf(heads - 1, n=10, p=0.5)
+
+print("Normal rejection frequency:", np.mean(p_normal &lt;= alpha))
+print("Binomial rejection frequency:", np.mean(p_binomial &lt;= alpha))
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+
+axes[0].hist(p_normal, bins=20, density=True, edgecolor="white")
+axes[0].axhline(1, linestyle="--", label="Uniform density")
+axes[0].set_title("Continuous normal null")
+axes[0].set_xlabel("p-value")
+axes[0].set_ylabel("Density")
+axes[0].legend()
+
+axes[1].hist(p_binomial, bins=20, range=(0, 1), edgecolor="white")
+axes[1].set_title("Discrete binomial null")
+axes[1].set_xlabel("p-value")
+axes[1].set_ylabel("Frequency")
+
+fig.tight_layout()
+fig.savefig("pvalue_uniformity.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: change alpha to 0.01 and 0.10.</code></pre>
+
+                    <figure class="stats-figure">
                         <img
-                            alt="Histogram of simulated two-sided normal p-values showing an approximately uniform null distribution"
+                            alt="Uniform p-values for a continuous calibrated test compared with discrete binomial p-values"
+                            loading="lazy"
                             src="../images/pvalue_uniformity.png"
                         />
-                    </div>
-                    <p><b>Applying the approach to an actual dataset.</b></p>
-                    <p>
-                        In a real statistical analysis we usually calculate the test statistic and p-value from a column
-                        of observations rather than specify them by hand. The following example follows the dataset
-                        style used elsewhere in these notes. We load the SOGA-Py <i>students</i> dataset, obtain a
-                        sample of nonmissing student weights, and compare its mean with the illustrative benchmark
-                        \(70.8\,\mathrm{kg}\) using a two-sided one-sample t-test. Here the population standard
-                        deviation is unknown, which is why we use \(\texttt{ttest_1samp}\) rather than the
-                        known-variance z-test. The specific t-test assumptions will be discussed in a later section.
-                    </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-from scipy import stats
+                        <figcaption>
+                            <b>Figure.</b> Under a true null, continuous exactly calibrated p-values are approximately
+                            uniform; discrete exact-test p-values take only a limited set of values. Generated by
+                            Experiment 39.
+                        </figcaption>
+                    </figure>
 
-url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+                    <!-- ==================== Applying a p-Value to Observed Data ==================== -->
+
+                    <p><b>Application: a one-sample test using real observations.</b></p>
+
+                    <p>
+                        In practice, a statistic is computed from observations rather than supplied as a number. The
+                        following example uses a subsample of nonmissing weights from the SOGA-Py
+                        <i>students</i> dataset and tests the illustrative benchmark \(\mu_0=70.8\,\mathrm{kg}\).
+                        Because the population standard deviation is unknown, the example uses a one-sample t-test. The
+                        code illustrates the workflow; its population interpretation still depends on the original
+                        sampling design, independence, and the suitability of the t-test assumptions.
+                    </p>
+
+                    <!-- Experiment 40: one-sample t-test from data -->
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 40: one-sample t-test from data.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
+from scipy.stats import ttest_1samp
+
+url = (
+    "https://userpage.fu-berlin.de/"
+    "soga/data/raw-data/students.csv"
+)
+
 students = pd.read_csv(url)
 weights = students["weight"].dropna()
 
 sample = weights.sample(n=30, random_state=17)
-result = stats.ttest_1samp(
-    sample, popmean=70.8, alternative="two-sided"
+mu_0 = 70.8
+alpha = 0.05
+
+result = ttest_1samp(
+    sample,
+    popmean=mu_0,
+    alternative="two-sided"
 )
 
-alpha = 0.05
 print("Sample size:", len(sample))
 print("Sample mean:", round(sample.mean(), 2))
-print("t-statistic:", result.statistic)
-print("p-value:", result.pvalue)
-print("Decision:", "Reject H0" if result.pvalue &lt;= alpha
-      else "Fail to reject H0")</code></pre>
+print("t-statistic:", round(result.statistic, 4))
+print("p-value:", round(result.pvalue, 5))
+
+if result.pvalue &lt;= alpha:
+    print("Reject H0 at the 5% level")
+else:
+    print("Fail to reject H0 at the 5% level")
+
+# Experiment: change the benchmark or the alternative.
+# The CSV must be accessible when this script is run.</code></pre>
+
                     <p>
-                        <b>Interpretation caution.</b> This example demonstrates a reproducible Python workflow, not a
-                        scientifically justified comparison of all students with all European adults. A valid
-                        population-level conclusion also requires an appropriate sampling design, independence (or a
-                        method accounting for dependence), suitable test assumptions, and a meaningful benchmark.
-                        Removing missing values and drawing rows at random from a dataset does not by itself establish
-                        representativeness of the larger population.
+                        This is an example of correct test computation, not automatically a justified inference about
+                        all students or another broader population. Selecting rows randomly from an existing dataset
+                        does not repair selection bias in the original collection, and deleting missing values does not
+                        guarantee that the remaining observations are representative.
                     </p>
-                    <p><b>Common mistakes and important qualifications.</b></p>
+
+                    <!-- ==================== Interpretation and Exercises ==================== -->
+
+                    <p><b>Common interpretation errors.</b></p>
+
                     <ul>
                         <li>
-                            <b>A p-value is not the probability that the null hypothesis is true.</b>
-                            It is calculated under a null model and describes the distribution of the chosen statistic.
-                            Assigning probabilities to competing hypotheses requires a different framework and
-                            additional assumptions.
+                            <b>A p-value is not \(\mathbb{P}(H_0\text{ is true}\mid\text{data})\).</b>
+                            It is calculated from a specified null model. Hypothesis probabilities require additional
+                            modeling assumptions.
                         </li>
                         <li>
-                            <b>A large p-value does not prove the null hypothesis.</b>
-                            It means that the test has not provided enough evidence to reject it. A poorly powered study
-                            may be unable to detect a meaningful difference.
+                            <b>A large p-value does not establish that the null is true.</b>
+                            It may reflect an effect too small to detect with the available sample, or a test with low
+                            power.
                         </li>
                         <li>
-                            <b>A small p-value does not measure the size or importance of an effect.</b>
-                            Report the estimated effect, its uncertainty (for example a confidence interval), and its
-                            practical relevance wherever possible.
+                            <b>A small p-value does not measure effect size.</b>
+                            Report an estimate and an uncertainty measure where possible, and assess whether the effect
+                            matters in practice.
                         </li>
                         <li>
                             <b>The p-value depends on the entire testing procedure.</b>
-                            Different alternative hypotheses, test statistics, assumptions, and sampling designs can
-                            produce different p-values from the same dataset.
+                            The null model, alternative, statistic, and definition of extremeness all matter.
                         </li>
                         <li>
-                            <b>One-sided alternatives should not be selected after looking at the sign of an effect.</b>
-                            The direction should be justified in advance. Otherwise the advertised significance level no
-                            longer reflects the actual data-dependent procedure.
-                        </li>
-                        <li>
-                            <b>Multiple testing and selective reporting change error rates.</b>
-                            If we search many variables or perform many tests and report only the smallest p-value, the
-                            usual single-test interpretation may be misleading. We will return to multiplicity
-                            adjustments in a separate section.
+                            <b>Selective testing and repeated analyses affect calibration.</b>
+                            If many tests are performed and only the smallest p-value is reported without adjustment,
+                            the nominal single-test error interpretation can be misleading.
                         </li>
                     </ul>
-                    <p><b>Exercises.</b></p>
+
+                    <p><b>Try it yourself.</b></p>
+
+                    <ol>
+                        <li>
+                            For \(z_{\mathrm{obs}}=-1.80\), calculate the left-tailed and two-sided normal p-values.
+                            Compare the decisions at \(\alpha=0.05\).
+                        </li>
+                        <li>
+                            Find the two-sided standard normal critical values for \(\alpha=0.01\). Verify them using
+                            <code>norm.ppf</code>.
+                        </li>
+                        <li>
+                            Under \(H_0:p=0.5\) with 10 coin tosses, find the smallest integer \(k\) such that rejecting
+                            for \(X\geq k\) has significance level at most 0.05.
+                        </li>
+                        <li>
+                            For \(\bar{x}=12\), known \(\sigma=4\), \(n=16\), test \(H_0:\mu=10\) against
+                            \(H_1:\mu\neq10\), and construct the matching 95% confidence interval.
+                        </li>
+                        <li>
+                            Explain why the numerical result \(T=2.3\) is insufficient to calculate a p-value without
+                            knowing the null distribution and the alternative hypothesis.
+                        </li>
+                    </ol>
+
                     <p>
-                        <b>Exercise 1 (standard normal test).</b> Under \(H_0\), let \(Z\sim N(0,1)\), with observed
-                        value \(z=-1.80\). Calculate the left-tailed and two-sided p-values and decide whether to reject
-                        at \(\alpha=0.05\). <i>Solution:</i> the left-tailed p-value is \(\Phi(-1.80)\approx0.03593\),
-                        so we reject. The two-sided p-value is \(2\Phi(-1.80)\approx0.07186\), so we fail to reject.
-                    </p>
-                    <p>
-                        <b>Exercise 2 (critical values).</b> Find the rejection region for a two-sided standard normal
-                        test at \(\alpha=0.01\). <i>Solution:</i> the critical values are
-                        \(\Phi^{-1}(0.005)\approx-2.576\) and \(\Phi^{-1}(0.995)\approx2.576\), so we reject if
-                        \(|Z|\geq2.576\).
-                    </p>
-                    <p>
-                        <b>Exercise 3 (exact binomial test).</b> Under \(H_0:p=0.5\), let
-                        \(X\sim\operatorname{Bin}(10,0.5)\). Determine the smallest integer \(k\) for which the test
-                        "reject when \(X\geq k\)" has size at most \(0.05\). <i>Solution:</i> \(k=9\), because
-                        \(P(X\geq8)\approx0.05469&gt;0.05\), whereas \(P(X\geq9)\approx0.01074\leq0.05\).
-                    </p>
-                    <p>
-                        <b>Exercise 4 (confidence-interval equivalence).</b> A normal sample has \(\bar x=12\), known
-                        \(\sigma=4\), and \(n=16\). Test \(H_0:\mu=10\) against \(H_1:\mu\neq10\) at \(\alpha=0.05\) and
-                        calculate the corresponding confidence interval. <i>Solution:</i> \(z=(12-10)/(4/4)=2\) and
-                        \(p\approx0.04550\), so we reject. The \(95\%\) confidence interval is \(12\pm1.960\cdot1\), or
-                        approximately \((10.04,13.96)\), which excludes \(10\).
-                    </p>
-                    <p>
-                        <b>Exercise 5 (distribution choice).</b> Why is it not valid to calculate the p-value of a test
-                        statistic \(T=2.3\) without specifying its null distribution? <i>Solution:</i> the same
-                        numerical value can correspond to very different tail probabilities under a standard normal
-                        distribution, a Student's t-distribution with few degrees of freedom, or a different statistic's
-                        distribution. One must know the statistic, its null law, and what outcomes count as more extreme
-                        under the alternative.
-                    </p>
-                    <p><b>References and further reading.</b></p>
-                    <p>
-                        This section develops the approach in DeGroot and Schervish,
-                        <i>Probability and Statistics</i> (4th ed.), Section 9.1; OpenIntro Statistics (4th ed.),
-                        Section 5.3; and
-                        <a href="https://www.randomservices.org/random/hypothesis/Introduction.html" target="_blank"
-                            >Random Services: Introduction to Hypothesis Testing</a
-                        >. For Python functions such as <code>cdf</code>, <code>sf</code>, <code>ppf</code>, and
-                        <code>isf</code>, see the
+                        <b>Further reading.</b> DeGroot and Schervish (4th ed.), Chapter 9, especially Section 9.1,
+                        introduces significance tests, rejection regions, and p-values. OpenIntro Statistics (4th ed.),
+                        Chapter 5, develops hypothesis testing with applied examples. See also
                         <a
-                            href="https://docs.scipy.org/doc/scipy/tutorial/stats/probability_distributions.html"
+                            href="https://www.randomservices.org/random/hypothesis/Introduction.html"
                             target="_blank"
-                            >SciPy probability distribution documentation</a
+                            rel="noopener noreferrer"
+                            >Random Services: Introduction to Hypothesis Testing</a
                         >
                         and the
                         <a
-                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html"
+                            href="https://docs.scipy.org/doc/scipy/reference/stats.html"
                             target="_blank"
-                            >SciPy exact binomial test documentation</a
-                        >. The numerical examples and exercises above are illustrative worked examples; they are not
-                        presented as examples quoted from those sources.
+                            rel="noopener noreferrer"
+                            >SciPy statistics reference</a
+                        >. The numerical examples here are illustrative rather than reproduced from the textbooks.
                     </p>
+
                     <hr />
                     <!-- ========================= MAIN SECTION 07: Inference for One Population Mean with Known
                                         Sigma ========================= -->
