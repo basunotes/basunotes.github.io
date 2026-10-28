@@ -1,172 +1,218 @@
+/* ===== BASE TYPOGRAPHY AND LAYOUT ===== */
 body {
-  box-sizing: border-box;
-  min-height: 100%;
-  margin: 0 auto;
-  padding: 2em;
-  font-family: Verdana;
-  font-size: 1.2rem;
-  background-color: white;
+    box-sizing: border-box;
+    min-height: 100%;
+    margin: 0 auto;
+    padding: 2em;
+    font-family: Verdana;
+    font-size: 1.2rem;
+    background-color: white;
 }
 
 p {
-  font-size: smaller !important;
+    font-size: smaller !important;
 }
 
+/* ===== GENERAL CONTAINERS ===== */
 .container {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
-.container>div {
-  width: 50%;
-  text-align: left;
-  padding: 0.8em 1.2em;
-  border: solid 0.1em black;
+.container > div {
+    width: 50%;
+    text-align: left;
+    padding: 0.8em 1.2em;
+    border: solid 0.1em black;
 }
 
 .container-row {
-  display: flex;
-  flex-direction: row;
-  font-size: smaller;
-  /* border-bottom: solid 0.1em black !important; */
+    display: flex;
+    flex-direction: row;
+    font-size: smaller;
+    /* border-bottom: solid 0.1em black !important; */
 }
 
-.container-row>div {
-  width: 50%;
-  text-align: left;
-  /* padding: 0.8em 1.2em; */
-  /* border: solid 0.1em black; */
+.container-row > div {
+    width: 50%;
+    text-align: left;
+    /* padding: 0.8em 1.2em; */
+    /* border: solid 0.1em black; */
 }
 
 .right-column {
-  padding: 0em 1.2em;
-  /* background-color: yellow; */
+    padding: 0em 1.2em;
+    /* background-color: yellow; */
 }
 
+/* Allow genuinely wide tables to scroll without forcing each cell to be wide. */
 .scrollable {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
+    width: 100%;
+    overflow-x: auto;
 }
 
-.scrollable>div,
-td,
-th {
-  min-width: 50vh;
+/* ===== TABLES: COMPACT AND CONTENT-DRIVEN ===== */
+article table {
+    border-collapse: collapse;
+    table-layout: auto;
+    width: auto;
+    max-width: 100%;
+    font-size: 0.84rem;
+    line-height: 1.4;
+    margin: 0.65rem 0;
 }
 
-table {
-  border-collapse: collapse;
-  width: auto;
-  table-layout: fixed !important;
+article th,
+article td {
+    border: 1px solid #d9dfe7;
+    padding: 0.35rem 0.55rem;
+    vertical-align: top;
+    text-align: left;
+    width: auto !important;
+    min-width: 0;
+    overflow-wrap: break-word;
 }
 
-th,
-td {
-  border: 0.1em solid #ccc;
-  padding: 0.4em 0.6em;
-  vertical-align: top;
-  white-space: normal;
-  width: 50% !important;
-  min-width: min-content;
-  /* word-wrap: break-word; */
-  /* word-break: break-word; */
-}
-
-.three-column>th,
-td {
-  width: 33.33% !important;
-}
-
-th {
-  background: #ddd;
-  font-weight: bold;
-  text-align: left;
+article th {
+    background: #edf2f9;
+    color: #182430;
+    font-weight: 700;
 }
 
 a {
-  color: blue;
-  text-decoration: none;
+    color: blue;
+    text-decoration: none;
 }
 
 a:visited {
-  color: blue;
+    color: blue;
 }
 
 a:hover {
-  color: blue;
-  text-decoration: underline;
+    color: blue;
+    text-decoration: underline;
 }
 
 a:active {
-  color: #0000FF;
+    color: #0000ff;
 }
 
-pre {
-  margin: 0em !important;
-  background-color: white !important;
-  padding: 0.4em 0.6em !important;
+/* ===== CODE BLOCKS: AIRY, HIGH-CONTRAST PYTHON ===== */
+pre.plain.stats-code {
+    background: white;
+    color: #172435;
+    border: 1px solid #dbe6f2;
+    border-radius: 5px;
+    font-family: Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    padding: 0.95rem 1.1rem;
+    margin: 0.75rem 0 1.3rem;
+    overflow-x: auto;
+    white-space: pre;
+    tab-size: 4;
+    text-align: left;
+}
+
+pre.plain.stats-code code {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    white-space: inherit;
+}
+
+/* Output blocks retain the same spacing but are not treated as Python code. */
+pre.stats-code.code-output {
+    background: #fbfcfe;
+    color: #2c3948;
 }
 
 ul {
-  padding-left: 1rem;
-  margin-top: 0em !important;
-  font-size: smaller !important;
+    padding-left: 1rem;
+    margin-top: 0em !important;
+    font-size: smaller !important;
 }
 
 ol {
-  padding-left: 1.5em;
-  margin-top: 0em !important;
-  font-size: smaller !important;
+    padding-left: 1.5em;
+    margin-top: 0em !important;
+    font-size: smaller !important;
 }
 
 li {
-  padding-bottom: 0.2em !important;
+    padding-bottom: 0.2em !important;
 }
 
-
-code[class*="language-"],
-pre[class*="language-"] {
-  font-size: 1rem !important;
-  background-color: #F0F0F0 !important;
-  text-shadow: none !important;
+/* ===== HIGHLIGHT.JS: PYTHON SYNTAX COLORS =====
+   JavaScript adds token spans only in the browser, leaving HTML source readable.
+   Output blocks are excluded from highlighting. */
+pre.plain.stats-code code.hljs {
+    display: block;
+    padding: 0 !important;
+    background: transparent !important;
+    font: inherit;
+    color: #172435;
 }
 
-code[class="plain"],
-pre[class="plain"] {
-  font-size: 0.8rem !important;
-  background-color: #F0F0F0 !important;
-  text-shadow: none !important;
-  overflow-x: auto !important;
+pre.stats-code .hljs-keyword,
+pre.stats-code .hljs-operator,
+pre.stats-code .hljs-literal {
+    color: #7139a7;
+    font-weight: 600;
 }
 
-.token {
-  background-color: #F0F0F0 !important;
+pre.stats-code .hljs-title,
+pre.stats-code .hljs-title.function_,
+pre.stats-code .hljs-built_in,
+pre.stats-code .hljs-attr {
+    color: #165eaf;
+}
+
+pre.stats-code .hljs-string,
+pre.stats-code .hljs-meta .hljs-string,
+pre.stats-code .hljs-regexp {
+    color: #08734d;
+}
+
+pre.stats-code .hljs-number,
+pre.stats-code .hljs-symbol {
+    color: #a75000;
+}
+
+pre.stats-code .hljs-comment,
+pre.stats-code .hljs-doctag {
+    color: #526d88;
+    font-style: italic;
+}
+
+pre.stats-code .hljs-meta,
+pre.stats-code .hljs-params {
+    color: #334155;
 }
 
 /* Makes long math equations scrollable on mobile */
 
+/* ===== MATHJAX AND IMAGES ===== */
 mjx-container {
-  display: inline-flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-width: 100%;
+    display: inline-flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
 }
 
 .MathJax {
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
 }
 
 .img-div img {
-  width: 100%;        
-  max-width: 600px;   
-  height: auto;
-  object-fit: contain;
-  display: block;
-  margin: 0 auto;     
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
 figure img {
@@ -179,6 +225,7 @@ figure img {
 
 /* Page layout with sidebar */
 
+/* ===== PAGE LAYOUT AND SIDEBAR ===== */
 .page-layout {
     display: grid;
     grid-template-columns: 260px minmax(0, 1fr);
@@ -187,7 +234,6 @@ figure img {
     margin: 0 auto;
     padding: 0 2rem;
 }
-
 
 /* Sidebar */
 
@@ -239,13 +285,11 @@ figure img {
     text-decoration: underline;
 }
 
-
 /* Main article */
 
 main {
     min-width: 0;
 }
-
 
 /* Prevent anchor-linked headings from sitting directly against the top of the viewport */
 article h2,
@@ -253,11 +297,9 @@ article span[id] {
     scroll-margin-top: 2rem;
 }
 
-
 /* Mobile layout */
 
 @media (max-width: 900px) {
-
     .page-layout {
         display: block;
         padding: 0 1rem;
@@ -274,6 +316,7 @@ article span[id] {
     }
 }
 
+/* ===== INTRO LAYOUT ===== */
 .intro-with-pick {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 240px;
@@ -307,7 +350,6 @@ article span[id] {
 }
 
 @media (max-width: 700px) {
-
     .intro-with-pick {
         grid-template-columns: 1fr;
         gap: 1rem;
@@ -315,5 +357,98 @@ article span[id] {
 
     .my-pick img {
         max-width: 180px;
+    }
+}
+
+/* ========================================================================
+   STATISTICS NOTES: HIGHLIGHTED MATHEMATICAL STATEMENTS
+   Reusable classes: stats-note, stats-definition, stats-theorem,
+   stats-lemma. Proofs are plain text outside the highlighted boxes.
+   ======================================================================== */
+.stats-note.stats-definition,
+.stats-note.stats-lemma,
+.stats-note.stats-theorem {
+    background: #f6f7f9;
+    padding: 0.4rem 0.75rem;
+    margin: 0.55rem 0;
+    line-height: 1.4;
+}
+
+/* Override the browser's default paragraph spacing inside note boxes. */
+.stats-note p {
+    margin: 0.3rem 0;
+}
+
+.stats-note .stats-note-heading {
+    margin: 0 0 0.2rem;
+    font-weight: 700;
+}
+
+/* Display equations inserted by MathJax add their own vertical margins. */
+.stats-note mjx-container[display="true"] {
+    margin: 0.35rem 0 !important;
+}
+
+.stats-note > p:last-child {
+    margin-bottom: 0;
+}
+
+.stats-note > p:first-child {
+    margin-top: 0;
+}
+
+.stats-note code {
+    overflow-wrap: anywhere;
+}
+
+/* ========================================================================
+   STATISTICS NOTES: EXPERIMENTS, TABLES, AND FIGURES
+   ======================================================================== */
+.stats-experiment-title {
+    margin-top: 1.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.stats-figure {
+    margin: 1.5rem auto;
+    max-width: 780px;
+}
+
+.stats-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.stats-figure figcaption {
+    font-size: 0.92em;
+    margin-top: 0.5em;
+}
+
+/* Topic-specific summary tables inherit the same compact global sizing. */
+.stats-means-table {
+    width: auto;
+    max-width: 100%;
+    margin: 0.65rem 0;
+    table-layout: auto;
+}
+
+.stats-means-table th,
+.stats-means-table td {
+    padding: 0.35rem 0.55rem;
+    min-width: 0;
+    width: auto !important;
+}
+
+@media (max-width: 700px) {
+    .stats-note.stats-definition,
+    .stats-note.stats-lemma,
+    .stats-note.stats-theorem {
+        padding: 0.35rem 0.55rem;
+    }
+    .stats-means-table {
+        max-width: 100%;
     }
 }
