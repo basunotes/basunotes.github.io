@@ -8722,399 +8722,2182 @@ plt.show()
                     </p>
 
                     <hr />
-                    <!-- ========================= MAIN SECTION 13: Inferences for
-                                                                        Two Population Standard
-                                                                        Deviations ========================= -->
+                    <!-- ========================= MAIN SECTION 13: Inferences for Two Population Standard Deviations ========================= -->
+
                     <span id="InferencesTwoPopulationSD"><b>Inferences for Two Population Standard Deviations</b></span>
+
                     <p>
-                        In this section, we discuss hypothesis tests for two population standard deviations. In other
-                        words, we present methods of inference for the standard deviations of one variable from two
-                        different populations. These methods are based on the
-                        <a href="https://en.wikipedia.org/wiki/F-distribution" target="_blank">F-distribution</a>, named
-                        in honour of
-                        <a href="https://en.wikipedia.org/wiki/Ronald_Fisher" target="_blank"
-                            >Sir Ronald Aylmer Fisher</a
-                        >.
+                        We now consider inference about the <i>relative variability</i> of two populations. Comparing
+                        population means answers whether their centers differ; comparing their variances or standard
+                        deviations answers whether observations in one population are more dispersed than in the other.
+                        Examples include comparing the precision of two instruments, the consistency of two
+                        manufacturing lines, or the variability of measurements in two independent groups.
                     </p>
                     <p>
-                        The \(F\)-distribution is a right-skewed probability distribution with two shape parameters,
-                        \(v_1\) and \(v_2\), called the degrees of freedom for the numerator (\(v_1\)) and the
-                        denominator (\(v_2\)). \[df = (v_1, v_2)\]
+                        Let the population variances be \(\sigma_1^2\) and \(\sigma_2^2\), both positive. The principal
+                        parameter in this section is the <i>variance ratio</i>
+                        \[ R=\frac{\sigma_1^2}{\sigma_2^2}. \] Equality of the population variances corresponds to
+                        \(R=1\). Because both standard deviations are positive, testing \(\sigma_1=\sigma_2\) is
+                        equivalent to testing \(R=1\). A confidence interval for \(R\) can also be converted into an
+                        interval for \(\sigma_1/\sigma_2=\sqrt{R}\).
                     </p>
-                    <p>
-                        To perform a hypothesis test for two population standard deviations, we calculate the value
-                        corresponding to a specified area under an \(F\)-curve.
-                    </p>
-                    <p>
-                        The hypothesis-testing procedure for two standard deviations is called the
-                        two-standard-deviations \(F\)-test.
-                    </p>
-                    <p>
-                        The test statistic for a hypothesis test involving a normally distributed variable and
-                        independent samples of sizes \(n_1\) and \(n_2\) is given by \[F = \frac {s_{1}^{2} /
-                        \sigma_{1}^{2}} {s_{2}^{2} / \sigma_{2}^{2}} \text{,}\]
-                    </p>
-                    <p>with \(df = (n_1 - 1, n_2 - 1)\).</p>
-                    <p>
-                        If \(H_0: \sigma_1 = \sigma_2\) is true, then the equation simplifies to \[F = \frac {s_{1}^{2}}
-                        {s_{2}^{2}} \text{.}\]
-                    </p>
-                    <p>
-                        To illustrate the two-standard-deviations \(F\)-test, we once again examine the height variable
-                        in the students data set. We want to investigate whether the standard deviation of the height of
-                        female students (\(\sigma_1\)) is statistically different from the standard deviation of the
-                        height of male students (\(\sigma_2\)).
-                    </p>
-                    <p>The following code speaks for itself:</p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import numpy as np
 
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+                    <!-- ==================== The F Distribution ==================== -->
 
-n = 25
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (F-distribution).</b></p>
+                        <p>
+                            Let \(U\sim\chi^2_{\nu_1}\) and \(V\sim\chi^2_{\nu_2}\) be independent chi-square random
+                            variables with positive integer degrees of freedom \(\nu_1\) and \(\nu_2\). Then \[
+                            W=\frac{U/\nu_1}{V/\nu_2} \sim F_{\nu_1,\nu_2}. \] The F-distribution has a numerator
+                            degrees-of-freedom parameter \(\nu_1\) and a denominator degrees-of-freedom parameter
+                            \(\nu_2\). Its values are positive and its density is generally right-skewed.
+                        </p>
+                    </div>
 
-females_sample_height = students.loc[students.gender == "Female"].sample(n, random_state = 8)["height"]
-males_sample_height = students.loc[students.gender == "Male"].sample(n, random_state = 8)["height"]
-
-sample_std_females = np.std(females_sample_height, ddof = 1)
-sample_std_males = np.std(males_sample_height, ddof = 1)</code></pre>
-                    <p>We check the normality assumption by plotting a Q-Q plot.</p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">import matplotlib.pyplot as plt
-import scipy.stats as stats
-
-plt.figure(figsize=(12,5))
-
-ax = plt.subplot(1, 2, 1)
-qq = stats.probplot(females_sample_height, dist="norm", plot = plt)
-ax.set_title("Q-Q plot for heights of\n sampled female students")
-ax.set_ylabel("Sample quantiles")
-
-ax = plt.subplot(1, 2, 2)
-qq = stats.probplot(males_sample_height, dist="norm", plot = plt)
-ax.set_title("Q-Q plot for heights of\n sampled male students")
-ax.set_ylabel("Sample quantiles")
-
-plt.show(block=True)</code></pre>
-                    <div class="img-div">
-                        <img alt="two-sided critical value" src="../images/qq_plot_male_female_height.png" />
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (reciprocal F-distribution).</b></p>
+                        <p>
+                            If \(W\sim F_{\nu_1,\nu_2}\), then \[ \frac{1}{W}\sim F_{\nu_2,\nu_1}. \] The order of the
+                            degrees of freedom matters, and it must be reversed when the numerator and denominator are
+                            exchanged.
+                        </p>
                     </div>
                     <p>
-                        The data of both samples falls roughly onto a straight line. Based on the graphical evaluation
-                        approach we conclude that the data is normally distributed.
+                        Proof. Taking the reciprocal exchanges the two independent normalized chi-square variables in
+                        the definition of \(W\). The resulting numerator has \(\nu_2\) degrees of freedom and the
+                        denominator has \(\nu_1\).
+                    </p>
+
+                    <!-- --- Experiment 83: the F-distribution from independent normal samples --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 83: the F-distribution from independent normal samples.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import f
+
+rng = np.random.default_rng(2026)
+n1, n2 = 12, 24
+nu1, nu2 = n1 - 1, n2 - 1
+repetitions = 40_000
+
+# The populations have equal variances but different means.
+a = rng.normal(10, 3, size=(repetitions, n1))
+b = rng.normal(25, 3, size=(repetitions, n2))
+
+variance_ratios = a.var(axis=1, ddof=1) / b.var(axis=1, ddof=1)
+
+print("Empirical P(F &gt; 2):", np.mean(variance_ratios &gt; 2))
+print("Theoretical P(F &gt; 2):", f.sf(2, nu1, nu2))
+
+x = np.linspace(0.01, 5, 500)
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.hist(variance_ratios, bins=90, range=(0, 5), density=True,
+        alpha=0.45, label="Simulated variance ratios")
+ax.plot(x, f.pdf(x, nu1, nu2), linewidth=2.2,
+        label=f"F distribution ({nu1}, {nu2})")
+ax.set_xlabel("Ratio of sample variances")
+ax.set_ylabel("Density")
+ax.set_title("Sampling distribution under equal population variances")
+ax.legend()
+fig.tight_layout()
+fig.savefig("two_sd_f_distribution.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: swap n1 and n2. How does the distribution change?
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/two_sd_f_distribution.png"
+                            alt="Simulated ratios of normal sample variances compared with the theoretical F density"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Variance ratios under equal population variances, compared with their exact
+                            F-distribution. Generated by Experiment 83.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== The Normal-Sample Variance Ratio ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (sampling distribution of a variance ratio).</b></p>
+                        <p>
+                            Suppose the two samples are independent and \[
+                            X_1,\ldots,X_{n_1}\overset{\mathrm{iid}}{\sim}N(\mu_1,\sigma_1^2), \qquad
+                            Y_1,\ldots,Y_{n_2}\overset{\mathrm{iid}}{\sim}N(\mu_2,\sigma_2^2), \] with \(n_1,n_2\geq2\),
+                            \(\sigma_1,\sigma_2&gt;0\). Let \(S_1^2\) and \(S_2^2\) denote the usual sample variances,
+                            computed with denominators \(n_1-1\) and \(n_2-1\). Then \[
+                            \frac{S_1^2/\sigma_1^2}{S_2^2/\sigma_2^2} =\frac{S_1^2/S_2^2}{\sigma_1^2/\sigma_2^2} \sim
+                            F_{n_1-1,n_2-1}. \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof. The normal-sample variance theorem gives \[
+                        \frac{(n_1-1)S_1^2}{\sigma_1^2}\sim\chi^2_{n_1-1}, \qquad
+                        \frac{(n_2-1)S_2^2}{\sigma_2^2}\sim\chi^2_{n_2-1}. \] The samples are independent, so the two
+                        chi-square variables are independent. Dividing each by its degrees of freedom and taking their
+                        ratio gives the claimed F-distribution.
                     </p>
                     <p>
-                        We now conduct the two standard deviations \(F\)-test. The null hypothesis is \(H_0: \sigma_1 =
-                        \sigma_2\), and the alternative hypothesis is \(H_1: \sigma_1 \neq \sigma_2\). This formulation
-                        results in a two-sided hypothesis test. We choose a significance level of \(\alpha=0.05\).
+                        The population means \(\mu_1\) and \(\mu_2\) need not be equal. The theorem concerns the
+                        <i>variances</i>, not the difference between means. Crucially, the exact result relies on two
+                        independent random samples from normal populations. A Q-Q plot can reveal serious departures
+                        from normality, but cannot establish normality as a mathematical fact.
                     </p>
+
+                    <!-- ==================== F-Tests for a Variance Ratio ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (two-sample F-test statistic).</b></p>
+                        <p>
+                            To test \(H_0:R=R_0\), for a specified \(R_0&gt;0\), use \[
+                            F_{\mathrm{obs}}=\frac{s_1^2/s_2^2}{R_0}, \qquad \nu_1=n_1-1,\quad\nu_2=n_2-1. \] Under the
+                            equality null and the normal-sampling assumptions, the corresponding random statistic has
+                            the \(F_{\nu_1,\nu_2}\) distribution. For equality of population variances, \(R_0=1\) and
+                            \(F_{\mathrm{obs}}=s_1^2/s_2^2\).
+                        </p>
+                    </div>
+                    <p>
+                        Write \(G\) for the CDF of \(F_{\nu_1,\nu_2}\). The p-value depends on the alternative
+                        hypothesis: \[ \begin{aligned} H_1:R&gt;R_0 &amp;:\quad
+                        p_{\mathrm{right}}=1-G(F_{\mathrm{obs}}),\\ H_1:R&lt;R_0 &amp;:\quad
+                        p_{\mathrm{left}}=G(F_{\mathrm{obs}}),\\ H_1:R\neq R_0 &amp;:\quad
+                        p_{\mathrm{two}}=2\min\{G(F_{\mathrm{obs}}),1-G(F_{\mathrm{obs}})\}. \end{aligned} \] For
+                        numerical work, the survival function computes \(1-G(x)\) directly. The two-sided expression
+                        corresponds to the standard <i>equal-tailed F-test</i>; it is not obtained by using just
+                        \(G(F_{\mathrm{obs}})\), and alternative definitions of two-sided extremeness can give different
+                        tests.
+                    </p>
+                    <p>
+                        At significance level \(\alpha\), the equal-tailed two-sided test rejects precisely when \[
+                        F_{\mathrm{obs}}&lt;F_{\alpha/2;\nu_1,\nu_2} \quad\text{or}\quad
+                        F_{\mathrm{obs}}&gt;F_{1-\alpha/2;\nu_1,\nu_2}, \] where \(F_{q;\nu_1,\nu_2}\) denotes the
+                        \(q\)-quantile of that F-distribution. For a right-sided test, reject when
+                        \(F_{\mathrm{obs}}&gt;F_{1-\alpha;\nu_1,\nu_2}\); for a left-sided test, reject when
+                        \(F_{\mathrm{obs}}&lt;F_{\alpha;\nu_1,\nu_2}\).
+                    </p>
+
+                    <p><b>Worked example: comparing measurement variability.</b></p>
+                    <p>
+                        Suppose independent normal samples give \(n_1=14\), \(s_1=8.5\), \(n_2=19\), and \(s_2=4.2\), in
+                        the same measurement units. We test \(H_0:\sigma_1^2=\sigma_2^2\) against
+                        \(H_1:\sigma_1^2\neq\sigma_2^2\). The observed statistic is \[
+                        F_{\mathrm{obs}}=\frac{8.5^2}{4.2^2}\approx4.0958, \qquad (\nu_1,\nu_2)=(13,18). \] Its
+                        equal-tailed two-sided p-value is approximately \(0.00658\). Thus, at the 5% level, the data
+                        provide evidence that the population variances differ, provided the test assumptions are
+                        appropriate.
+                    </p>
+
+                    <!-- --- Experiment 84: one- and two-sided F-tests from summary statistics --- -->
+                    <p class="stats-experiment-title"><b>Experiment 84: F-tests from summary statistics.</b></p>
                     <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import f
 
-F_statistic = (sample_std_males**2) / (sample_std_females ** 2)
-print(F_statistic)
+n1, n2 = 14, 19
+s1, s2 = 8.5, 4.2
+nu1, nu2 = n1 - 1, n2 - 1
 
-df_1 = df_2 = n - 1
+f_obs = s1**2 / s2**2
+left_tail = f.cdf(f_obs, nu1, nu2)
+right_tail = f.sf(f_obs, nu1, nu2)
+two_sided_p = min(1.0, 2 * min(left_tail, right_tail))
 
-p_value = f.cdf(F_statistic, df_1, df_2)
-print(p_value)</code></pre>
-                    <p>Output:</p>
-                    <pre class="plain stats-code code-output"><code class="nohighlight">1.3901443625510146
-0.7872008348344762</code></pre>
-                    <p>
-                        The p-value is greater than the specified significance level of 0.05. At the 5% significance
-                        level the data does not provide sufficient evidence to conclude, that the standard deviations of
-                        the heights of female and male students differ significantly from each other.
-                    </p>
-                    <p><i>More on Bartlett’s test and Levene’s test later!</i></p>
-                    <hr />
-                    <!-- ========================= MAIN SECTION 14: Chi-Square
-                                                                        Goodness-of-Fit
-                                                                        Test ========================= -->
-                    <span id="ChiSquareGoodnessofFitTest"><b>Chi-Square Goodness-of-Fit Test</b></span>
-                    <p>
-                        The \(\chi^2\)-goodness-of-fit test is used to perform hypothesis tests on the distribution of a
-                        qualitative (categorical) variable or on a discrete quantitative variable that has only finitely
-                        many possible values.
-                    </p>
-                    <p>
-                        The basic idea of the \(\chi^2\)-goodness-of-fit test is to compare frequencies. We compare a
-                        sample’s observed frequencies with the corresponding expected frequencies.
-                    </p>
-                    <p>
-                        To illustrate the \(\chi^2\)-goodness-of-fit test, we examine whether religions are equally
-                        distributed among students compared with the distribution of religions in the population of the
-                        European Union. The data at the continental level are provided in the report “Discrimination in
-                        the EU in 2012” (<a
-                            href="https://health.ec.europa.eu/publications/discrimination-eu-2012_en"
-                            target="_blank"
-                            >European Union: European Commission, Special Eurobarometer 393, p. 233</a
-                        >).
-                    </p>
-                    <p>
-                        The \(\chi^2\) test statistic for a goodness-of-fit test is given by: \[\chi^{2} = \sum \frac{(O
-                        - E)^{2}}{E}\]
-                    </p>
-                    <p>
-                        Where \(O\) represents the observed frequencies and \(E\) represents the expected frequencies.
-                        If the null hypothesis is true, the test statistic \(\chi^2\) follows a chi-square distribution.
-                    </p>
-                    <p>The report provides data for eight categories of how people described themselves:</p>
-                    <ul>
-                        <li>48% as Catholic</li>
-                        <li>16% as Non-believers/Agnostic</li>
-                        <li>12% as Protestant</li>
-                        <li>8% as Orthodox</li>
-                        <li>7% as Atheist</li>
-                        <li>4% as Other Christian</li>
-                        <li>3% as Other religion/None stated</li>
-                        <li>2% as Muslim</li>
-                    </ul>
-                    <p>We plot the data as a pie chart for better understanding:</p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+alpha = 0.05
+lower_critical = f.ppf(alpha / 2, nu1, nu2)
+upper_critical = f.isf(alpha / 2, nu1, nu2)
 
-data = [48, 16, 12, 8, 7, 4, 3, 2]
-religions = ["Catholic", "Non believer/\nAgnostic", "Protestant", 
-             "Orthodox", "Atheist", "Other Christian",
-             "Other religion/None stated", "Muslim"]
+print(f"F statistic: {f_obs:.5f}")
+print(f"Left-sided p-value: {left_tail:.5f}")
+print(f"Right-sided p-value: {right_tail:.5f}")
+print(f"Two-sided p-value: {two_sided_p:.5f}")
+print(f"Rejection limits: {lower_critical:.4f}, {upper_critical:.4f}")
+print("Reject H0:", two_sided_p &lt; alpha)
 
-data = pd.Series(data, index = religions)
+# Experiment: reverse the groups and exchange the degrees
+# of freedom. Does the two-sided decision change?
+</code></pre>
 
-data.plot.pie(colors = sns.color_palette("Set3", 8))
+                    <!-- ==================== Confidence Intervals for Variance and Standard-Deviation Ratios ==================== -->
 
-plt.show(block=True)</code></pre>
-                    <div class="img-div">
-                        <img
-                            alt="Pie chart of religion distribution"
-                            src="../images/pie_chart_religion_distribution.png"
-                        />
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (confidence interval for a variance ratio).</b></p>
+                        <p>
+                            Under the independent normal-sampling assumptions, let \(r=s_1^2/s_2^2\) and
+                            \(\nu_i=n_i-1\). An exact equal-tailed \(100(1-\alpha)\%\) confidence interval for
+                            \(R=\sigma_1^2/\sigma_2^2\) is \[ \boxed{ \left[ \frac{r}{F_{1-\alpha/2;\nu_1,\nu_2}},\;
+                            \frac{r}{F_{\alpha/2;\nu_1,\nu_2}} \right].} \] Taking the square roots of both endpoints
+                            gives the corresponding confidence interval for the <i>standard-deviation ratio</i>
+                            \(\sigma_1/\sigma_2\).
+                        </p>
                     </div>
                     <p>
-                        First, we want to know which categories are available in the <i>students</i> data set for the
-                        column <code>religion</code>. Therefore, we apply the <code>unique()</code>
-                        method, which returns the levels (categories) of a variable:
+                        Proof. By the preceding theorem, \(W=(S_1^2/S_2^2)/R\sim F_{\nu_1,\nu_2}\). Hence \[
+                        \mathbb{P}\left( F_{\alpha/2;\nu_1,\nu_2}\leq W \leq F_{1-\alpha/2;\nu_1,\nu_2}
+                        \right)=1-\alpha. \] Substituting \(W=(S_1^2/S_2^2)/R\) and solving the two inequalities for
+                        \(R&gt;0\) gives the stated interval.
                     </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
-import numpy as np
-
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
-
-print(students["religion"].unique())</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">['Muslim' 'Other' 'Protestant' 'Catholic' 'Orthodox']</code></pre>
                     <p>
-                        In the <i>students</i> data set there are only 5 categories compared to the 8 categories above.
-                        Therefore, we need to combine some of the original categories:
+                        For the worked example, the 95% confidence interval for the variance ratio is approximately
+                        \([1.50,12.22]\), while the interval for the standard-deviation ratio is approximately
+                        \([1.22,3.50]\). Since neither interval includes 1, its corresponding two-sided equal-tailed
+                        test rejects equality at level 0.05. The width of these intervals shows that a significant test
+                        does not necessarily yield a precise estimate of the ratio.
                     </p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">data_raw = [48, 2, 8, (16 + 7 + 4 + 3), 12]
-religions = ["Catholic", "Muslim", "Orthodox", "Other", "Protestant"]
 
-data = pd.Series(data_raw, index = religions, name = "relative_frequency") / 100
+                    <!-- --- Experiment 85: confidence intervals and reciprocal consistency --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 85: confidence intervals and reciprocal consistency.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import f
 
-print(data.to_frame())</code></pre>
-                    <p>Output:</p>
-                    <pre class="plain stats-code code-output"><code class="nohighlight">            relative_frequency
-Catholic                  0.48
-Muslim                    0.02
-Orthodox                  0.08
-Other                     0.30
-Protestant                0.12</code></pre>
+n1, n2 = 14, 19
+s1, s2 = 8.5, 4.2
+alpha = 0.05
+nu1, nu2 = n1 - 1, n2 - 1
+ratio = s1**2 / s2**2
+
+variance_ci = (
+    ratio / f.isf(alpha / 2, nu1, nu2),
+    ratio / f.ppf(alpha / 2, nu1, nu2)
+)
+sd_ci = tuple(np.sqrt(variance_ci))
+
+print("Variance ratio:", round(ratio, 4))
+print("95% CI for variance ratio:", variance_ci)
+print("95% CI for SD ratio:", sd_ci)
+
+# Swapping groups reverses the ratio and its interval.
+reverse_ratio = 1 / ratio
+reverse_ci = (
+    reverse_ratio / f.isf(alpha / 2, nu2, nu1),
+    reverse_ratio / f.ppf(alpha / 2, nu2, nu1)
+)
+
+assert np.allclose(reverse_ci, (1 / variance_ci[1],
+                                1 / variance_ci[0]))
+print("CI after swapping groups:", reverse_ci)
+
+# Experiment: increase both sample sizes while holding
+# the sample SDs fixed. How does interval width change?
+</code></pre>
+
+                    <!-- ==================== Assumptions and Non-Normality ==================== -->
+
+                    <p><b>Why normality matters for the F-test.</b></p>
                     <p>
-                        Now we take a random sample based on the
-                        <i>students</i> data set. The sample size is \(n = 256\). Afterwards, we count the number of
-                        students in each religion category using the <code>groupby()</code> function. Recall that this
-                        quantity corresponds to the observed frequencies.
+                        The F-test assumes independent observations within and between groups and normally distributed
+                        populations. Its exact reference distribution depends on both normal-sample variance pivots
+                        having chi-square distributions. For skewed or heavy-tailed populations, the distributions of
+                        the sample variances can differ substantially from those chi-square results, so a nominal 5%
+                        F-test may reject a true null much more or much less often than 5% of the time.
                     </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">n = 256
-
-sample = students.sample(n, random_state = 8).groupby(["religion"])
-
-print(sample.size().to_frame("Observed Frequencies"))</code></pre>
-                    <p>Output:</p>
-                    <pre class="plain stats-code code-output"><code class="nohighlight">            Observed Frequencies
-religion                         
-Catholic                      80
-Muslim                        12
-Orthodox                      21
-Other                        104
-Protestant                    39</code></pre>
                     <p>
-                        Let's combine both pieces of information into a nice-looking table by converting them into a
-                        <code>pandas</code> <code>DataFrame</code> object:
+                        Inspecting histograms, box plots, and Q-Q plots is useful, particularly for detecting pronounced
+                        skewness or extreme observations. Such plots cannot prove normality. A failure to reject a
+                        normality test is not proof of normality either, especially with small samples.
                     </p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">df = pd.DataFrame({'relative frequencies' : data,
-                   'observed frequencies' : sample.size()})
 
-print(df)</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">            relative frequencies  observed frequencies
-Catholic                    0.48                    80
-Muslim                      0.02                    12
-Orthodox                    0.08                    21
-Other                       0.30                   104
-Protestant                  0.12                    39</code></pre>
-                    <p>
-                        In the next step, we calculate the expected frequencies and add this information as a separate
-                        column to our existing DataFrame <code>df</code>
-                        using \(E = n \times p\).
+                    <!-- --- Experiment 86: F-test type I error under nonnormality --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 86: type I error under normal and skewed sampling.</b>
                     </p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">df["expected frequencies"] = df["relative frequencies"] * 256
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import f, levene
 
-print(df)</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">            relative frequencies  observed frequencies  expected frequencies
-Catholic                    0.48                    80                122.88
-Muslim                      0.02                    12                  5.12
-Orthodox                    0.08                    21                 20.48
-Other                       0.30                   104                 76.80
-Protestant                  0.12                    39                 30.72</code></pre>
-                    <p>Once we know the expected frequencies, we must check two assumptions:</p>
-                    <p>
-                        • All expected frequencies must be at least 1.<br />
-                        • At most 20 % of the expected frequencies should be less than 5.
-                    </p>
-                    <p>We can confirm that both assumptions are fulfilled by inspecting the table.</p>
-                    <p>
-                        In order to conduct a χ² goodness-of-fit test in Python using the
-                        <code>stats</code>
-                        module from the
-                        <code>scipy</code> package, we apply the <code>chisquare()</code> function. We only have to
-                        provide the observed and expected frequencies, which we pass as column selections from our
-                        DataFrame.
-                    </p>
-                    <pre class="plain stats-code code-python"><code class="language-python">from scipy import stats
+rng = np.random.default_rng(2026)
+repetitions = 4_000
+n1, n2 = 20, 30
+nu1, nu2 = n1 - 1, n2 - 1
+alpha = 0.05
 
-test_result = stats.chisquare(df["observed frequencies"], df["expected frequencies"])
+rejection_rates = {}
 
-print(test_result)</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">Power_divergenceResult(statistic=np.float64(36.086588541666664), pvalue=np.float64(2.777403262517103e-07))</code></pre>
-                    <p>
-                        At the 1 % significance level, the data provide very strong evidence to conclude that the
-                        religion distribution among students differs from the religion distribution in the population of
-                        the European Union.
+for name in ["Normal", "Lognormal"]:
+    if name == "Normal":
+        a = rng.normal(size=(repetitions, n1))
+        b = rng.normal(size=(repetitions, n2))
+    else:
+        # Same lognormal distribution in both groups:
+        # population variances are therefore equal.
+        a = rng.lognormal(size=(repetitions, n1))
+        b = rng.lognormal(size=(repetitions, n2))
+
+    ratios = a.var(axis=1, ddof=1) / b.var(axis=1, ddof=1)
+    p_f = np.minimum(
+        1.0, 2 * np.minimum(f.cdf(ratios, nu1, nu2),
+                            f.sf(ratios, nu1, nu2))
+    )
+    p_bf = levene(a, b, center="median", axis=1).pvalue
+    rejection_rates[name] = (np.mean(p_f &lt; alpha),
+                             np.mean(p_bf &lt; alpha))
+
+for name, (rate_f, rate_bf) in rejection_rates.items():
+    print(f"{name}: F-test={rate_f:.3f}, Brown-Forsythe={rate_bf:.3f}")
+
+names = list(rejection_rates)
+values = np.array(list(rejection_rates.values()))
+x = np.arange(len(names))
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(x - 0.18, values[:, 0], width=0.36, label="F-test")
+ax.bar(x + 0.18, values[:, 1], width=0.36,
+       label="Brown-Forsythe")
+ax.axhline(alpha, linestyle="--", label="Nominal 5% level")
+ax.set_xticks(x, names)
+ax.set_ylabel("Proportion of false rejections")
+ax.set_title("Equal variances: normal versus skewed populations")
+ax.legend()
+fig.tight_layout()
+fig.savefig("two_sd_type1_nonnormal.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: use heavy-tailed Student t observations
+# instead of lognormal observations.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/two_sd_type1_nonnormal.png"
+                            alt="Simulated false rejection rates for F-test and Brown-Forsythe test under normal and skewed sampling"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Under equal population variances, the F-test can lose its nominal
+                            false-positive rate when the normality assumption fails. Generated by Experiment 86.
+                        </figcaption>
+                    </figure>
+
+                    <!-- --- Experiment 87: confidence interval coverage under nonnormality --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 87: confidence-interval coverage under nonnormality.</b>
                     </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import f
+
+rng = np.random.default_rng(2027)
+repetitions = 5_000
+n1, n2 = 24, 36
+nu1, nu2 = n1 - 1, n2 - 1
+alpha = 0.05
+true_ratio = 4.0  # Population SDs are 2 and 1.
+
+coverage = {}
+
+for name in ["Normal", "Lognormal"]:
+    if name == "Normal":
+        a = rng.normal(scale=2, size=(repetitions, n1))
+        b = rng.normal(scale=1, size=(repetitions, n2))
+    else:
+        # Standardize lognormal samples to known population SD.
+        shape = 0.9
+        population_sd = np.sqrt(
+            (np.exp(shape**2) - 1) * np.exp(shape**2)
+        )
+        a = 2 * rng.lognormal(sigma=shape,
+                             size=(repetitions, n1)) / population_sd
+        b = rng.lognormal(sigma=shape,
+                          size=(repetitions, n2)) / population_sd
+
+    ratios = a.var(axis=1, ddof=1) / b.var(axis=1, ddof=1)
+    lower = ratios / f.isf(alpha / 2, nu1, nu2)
+    upper = ratios / f.ppf(alpha / 2, nu1, nu2)
+    coverage[name] = np.mean((lower &lt;= true_ratio) &amp;
+                             (true_ratio &lt;= upper))
+
+print("Target confidence level: 0.95")
+for name, rate in coverage.items():
+    print(f"{name} coverage: {rate:.3f}")
+
+fig, ax = plt.subplots(figsize=(7.5, 4.5))
+ax.bar(list(coverage), list(coverage.values()))
+ax.axhline(0.95, linestyle="--", label="Nominal 95%")
+ax.set_ylim(0, 1)
+ax.set_ylabel("Observed interval coverage")
+ax.set_title("F confidence-interval coverage")
+ax.legend()
+fig.tight_layout()
+fig.savefig("two_sd_ci_coverage.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: increase sample size. Compare the coverage
+# when the distribution is not normal.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/two_sd_ci_coverage.png"
+                            alt="Coverage of F confidence intervals for variance ratios under normal and lognormal populations"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Nominal 95% F intervals have exact coverage under normal sampling; that
+                            guarantee does not generally extend to nonnormal populations. Generated by Experiment 87.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Robust Alternatives ==================== -->
+
+                    <p><b>Alternatives: Bartlett's test, Levene's test, and Fligner–Killeen.</b></p>
+                    <p>
+                        When an exact normal-theory F-test is not justified, tests based on deviations from group
+                        centers provide useful alternatives. In particular, Levene's test constructs a comparison using
+                        absolute deviations from a center within each group. Choosing the group <i>median</i> produces
+                        the <i>Brown–Forsythe</i> variant, which is less sensitive to nonnormality and outliers than the
+                        classical F-test in many settings. The Fligner–Killeen test uses ranks of scaled absolute
+                        deviations and can also be useful for nonnormal samples.
+                    </p>
+                    <p>
+                        <i>Bartlett's test</i> is another test for equality of population variances and can accommodate
+                        more than two groups. Like the classical F-test, it is sensitive to departures from normality,
+                        so it is not a general-purpose robust substitute. These tests report evidence against equal
+                        variability; they do not by themselves provide the exact F-based variance-ratio confidence
+                        interval derived above.
+                    </p>
+                    <p>
+                        Alternative tests have their own assumptions and finite-sample behavior. They are not guaranteed
+                        to control type I error perfectly under every skewed, heavy-tailed, or unequal-shape
+                        distribution. Equality of variances also does not imply equality of distributions or equality of
+                        means.
+                    </p>
+
+                    <!-- --- Experiment 88: variance tests and an extreme observation --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 88: comparing variance tests and diagnosing outliers.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import bartlett, f, fligner, levene
+
+rng = np.random.default_rng(2027)
+a = rng.normal(loc=0, scale=1, size=40)
+b = rng.normal(loc=0, scale=1, size=40)
+b_with_outlier = b.copy()
+b_with_outlier[-1] = 15.0
+
+def report(group1, group2):
+    n1, n2 = len(group1), len(group2)
+    observed = np.var(group1, ddof=1) / np.var(group2, ddof=1)
+    p_f = min(1.0, 2 * min(f.cdf(observed, n1 - 1, n2 - 1),
+                           f.sf(observed, n1 - 1, n2 - 1)))
+    print(f"SDs: {np.std(group1, ddof=1):.3f}, "
+          f"{np.std(group2, ddof=1):.3f}")
+    print(f"F-test:        {p_f:.5f}")
+    print(f"Bartlett:      {bartlett(group1, group2).pvalue:.5f}")
+    print(f"Brown-Forsythe:{levene(group1, group2, center='median').pvalue:.5f}")
+    print(f"Fligner:       {fligner(group1, group2).pvalue:.5f}")
+
+print("Before adding an outlier:")
+report(a, b)
+print("\nAfter adding an outlier:")
+report(a, b_with_outlier)
+
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.boxplot([a, b, b_with_outlier], whis=1.5)
+ax.set_xticks([1, 2, 3], ["A", "B", "B + outlier"])
+ax.set_ylabel("Observation")
+ax.set_title("A single extreme value can affect variance tests")
+ax.grid(axis="y", alpha=0.25)
+fig.tight_layout()
+fig.savefig("two_sd_outlier_diagnostics.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Experiment: replace 15 by 5, 10, and 30.
+# Do all tests respond in the same way?
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/two_sd_outlier_diagnostics.png"
+                            alt="Box plots of two groups before and after inserting an extreme observation"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> An extreme observation increases the observed variance and may strongly
+                            affect normal-theory tests. Generated by Experiment 88.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Power and Sample Size ==================== -->
+
+                    <p><b>Power to detect a variance difference.</b></p>
+                    <p>
+                        Under normal sampling with a true variance ratio \(R\), the observed sample-variance ratio has
+                        the representation \[ \frac{S_1^2}{S_2^2}=R\,W, \qquad W\sim F_{\nu_1,\nu_2}. \] For the
+                        equal-tailed two-sided test of \(H_0:R=1\), let \(c_L=F_{\alpha/2;\nu_1,\nu_2}\) and
+                        \(c_U=F_{1-\alpha/2;\nu_1,\nu_2}\). Its power at the true ratio \(R\) is \[
+                        \pi(R)=G\left(\frac{c_L}{R}\right) +1-G\left(\frac{c_U}{R}\right). \] This expression equals
+                        \(\alpha\) when \(R=1\), and becomes larger for sufficiently strong differences in variability.
+                        The power of a variance test depends on the sample sizes, significance level, and true variance
+                        ratio; modest samples may yield imprecise ratios.
+                    </p>
+
+                    <!-- --- Experiment 89: power of the two-sided F-test --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 89: power and sample size for the two-sided F-test.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import f
+
+alpha = 0.05
+ratios = np.linspace(0.25, 4, 300)
+sample_sizes = [10, 25, 60]
+
+fig, ax = plt.subplots(figsize=(9, 5))
+
+for n in sample_sizes:
+    nu1 = nu2 = n - 1
+    lower_cutoff = f.ppf(alpha / 2, nu1, nu2)
+    upper_cutoff = f.isf(alpha / 2, nu1, nu2)
+    power = (
+        f.cdf(lower_cutoff / ratios, nu1, nu2)
+        + f.sf(upper_cutoff / ratios, nu1, nu2)
+    )
+    ax.plot(ratios, power, label=f"n1 = n2 = {n}")
+    print(f"n={n}, power at variance ratio 2: "
+          f"{f.cdf(lower_cutoff / 2, nu1, nu2) + f.sf(upper_cutoff / 2, nu1, nu2):.3f}")
+
+ax.axhline(alpha, linestyle="--", label="5% significance level")
+ax.axvline(1, linestyle=":")
+ax.set_xlabel("True variance ratio")
+ax.set_ylabel("Probability of rejection")
+ax.set_title("Power of the equal-tailed two-sided F-test")
+ax.set_ylim(0, 1)
+ax.legend()
+fig.tight_layout()
+fig.savefig("two_sd_f_power.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: determine a sample size giving 80% power
+# for a true variance ratio of 2.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/two_sd_f_power.png"
+                            alt="Power curves for two-sided variance F-tests at different sample sizes"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Larger samples generally make it easier to detect a fixed difference between
+                            two normal population variances. Generated by Experiment 89.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Applied Example: Student Heights ==================== -->
+
+                    <p><b>Application: comparing height variability between two groups.</b></p>
+                    <p>
+                        We return to the SOGA-Py <i>students</i> dataset from the original notes. Let \(\sigma_1\) be
+                        the population standard deviation of height for female students, and \(\sigma_2\) the
+                        corresponding value for male students. The two-sided question is \[ H_0:\sigma_1^2=\sigma_2^2
+                        \qquad\text{against}\qquad H_1:\sigma_1^2\neq\sigma_2^2. \] We draw separate random subsamples
+                        of 25 available heights from each group and calculate a normal-theory F-test along with more
+                        robust alternatives. The grouping and missing-value checks are important: no missing
+                        measurements should enter the test, and the groups should represent independent observations.
+                    </p>
+
+                    <!-- --- Experiment 90: applying F-test and robust alternatives to student heights --- -->
+                    <p class="stats-experiment-title"><b>Experiment 90: SOGA-Py student-height variability.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import f, levene, fligner, probplot
+
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+students = pd.read_csv(url)
+
+# Check group labels and choose nonmissing heights.
+female_heights = students.loc[
+    students["gender"] == "Female", "height"
+].dropna().sample(n=25, random_state=8).to_numpy(dtype=float)
+
+male_heights = students.loc[
+    students["gender"] == "Male", "height"
+].dropna().sample(n=25, random_state=8).to_numpy(dtype=float)
+
+n1, n2 = len(female_heights), len(male_heights)
+nu1, nu2 = n1 - 1, n2 - 1
+s1 = np.std(female_heights, ddof=1)
+s2 = np.std(male_heights, ddof=1)
+ratio = (s1 / s2) ** 2
+
+p_f = min(1.0, 2 * min(f.cdf(ratio, nu1, nu2),
+                       f.sf(ratio, nu1, nu2)))
+p_bf = levene(female_heights, male_heights,
+              center="median").pvalue
+p_fligner = fligner(female_heights, male_heights).pvalue
+
+alpha = 0.05
+variance_ci = (
+    ratio / f.isf(alpha / 2, nu1, nu2),
+    ratio / f.ppf(alpha / 2, nu1, nu2)
+)
+
+print(f"Female sample SD: {s1:.3f}")
+print(f"Male sample SD:   {s2:.3f}")
+print(f"Variance ratio (female/male): {ratio:.4f}")
+print(f"Two-sided F-test p-value: {p_f:.5f}")
+print(f"Brown-Forsythe p-value: {p_bf:.5f}")
+print(f"Fligner-Killeen p-value: {p_fligner:.5f}")
+print("95% F-based CI for variance ratio:", variance_ci)
+print("95% F-based CI for SD ratio:", tuple(np.sqrt(variance_ci)))
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+probplot(female_heights, dist="norm", plot=axes[0])
+probplot(male_heights, dist="norm", plot=axes[1])
+axes[0].set_title("Female height sample: normal Q-Q plot")
+axes[1].set_title("Male height sample: normal Q-Q plot")
+fig.tight_layout()
+fig.savefig("two_sd_student_height_qq.png", dpi=180,
+            bbox_inches="tight")
+plt.show()
+
+# Interpretation requires checking how the original
+# data were collected, not just comparing p-values.
+</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/two_sd_student_height_qq.png"
+                            alt="Normal Q-Q plots of sampled female and male student heights"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Q-Q plots can reveal substantial nonnormality in the observed height samples.
+                            Generated by Experiment 90.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        The original notes used \(F=s_{\mathrm{male}}^2/s_{\mathrm{female}}^2\) but displayed \(G(F)\)
+                        as the p-value for a two-sided hypothesis. That quantity alone is a <i>one-sided tail area</i>,
+                        not the correct equal-tailed two-sided p-value. The revised example explicitly fixes the
+                        numerator order and uses both tails. It also avoids concluding that the populations are normal
+                        merely because the Q-Q plots look approximately linear. Using the numerical values printed in
+                        the earlier version (\(F=1.39014\), with 24 and 24 degrees of freedom), the corrected two-sided
+                        p-value is about \(0.42560\), rather than \(0.78720\). Both calculations lead to non-rejection
+                        at the 5% level, but only the former is the appropriate equal-tailed two-sided p-value.
+                    </p>
+                    <p>
+                        This is an <i>observational</i> comparison of heights within an existing teaching dataset. A
+                        random subsample of that dataset is not necessarily a representative random sample of all
+                        students or of any broader population. Inference depends on the original sampling and
+                        measurement procedures.
+                    </p>
+
+                    <!-- ==================== Practical Interpretation ==================== -->
+
+                    <p><b>Choosing an approach in practice.</b></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Question or setting</th>
+                                <th>Approach</th>
+                                <th>Important limitation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ratio of variances from two independent normal populations</td>
+                                <td>Two-sample F-test and F-based confidence interval</td>
+                                <td>Exact inference requires normality and independence.</td>
+                            </tr>
+                            <tr>
+                                <td>Evidence against equal spread with possible skewness</td>
+                                <td>Median-centered Levene (Brown–Forsythe)</td>
+                                <td>More robust, not universally exact under arbitrary distributions.</td>
+                            </tr>
+                            <tr>
+                                <td>Evidence against equal variability with outliers or heavy tails</td>
+                                <td>Fligner–Killeen</td>
+                                <td>Its interpretation also depends on the underlying group distributions.</td>
+                            </tr>
+                            <tr>
+                                <td>Equality of variances under a convincing normal model</td>
+                                <td>Bartlett's test</td>
+                                <td>Highly sensitive to nonnormality.</td>
+                            </tr>
+                            <tr>
+                                <td>Comparing two means when population variances may differ</td>
+                                <td>Welch's two-sample t-test</td>
+                                <td>A preliminary significant variance test is not required.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        In particular, do not use a preliminary variance test as a mechanical switch between a pooled
+                        t-test and Welch's t-test for comparing means. Such a data-dependent two-stage procedure does
+                        not automatically preserve the claimed error rate. Welch's procedure is commonly a sensible
+                        default for comparing independent population means when equal variances cannot be justified.
+                        Testing equality of variances is worthwhile when
+                        <i>variability itself</i> is the scientific quantity of interest.
+                    </p>
+                    <p>
+                        Likewise, failing to reject \(H_0:R=1\) does not establish equal population variances. To show
+                        that variability is sufficiently similar, specify a practically meaningful interval for the
+                        variance ratio and use an equivalence-oriented analysis. The width of the confidence interval is
+                        often more informative than a yes/no decision alone.
+                    </p>
+
+                    <p>
+                        <b>Try it yourself.</b>
+                        (1) Derive the F-statistic from the two independent chi-square sample-variance pivots. (2) Show
+                        that the two-sided equal-tailed p-value does not change if the two groups and their degrees of
+                        freedom are exchanged. (3) Use Experiment 85 to verify the reciprocal relationship between
+                        confidence intervals for \(\sigma_1^2/\sigma_2^2\) and \(\sigma_2^2/\sigma_1^2\). (4) In
+                        Experiment 86, explain why nonnormality can invalidate an F-test even when the population
+                        variances really are equal. (5) Use Experiment 89 to find the smallest equal group size in
+                        \(10,11,\ldots,200\) giving at least 80% power at a true variance ratio of 2, with
+                        \(\alpha=0.05\). (6) Explain why two-sided F-test p-values cannot be calculated from only the
+                        lower-tail CDF without considering the upper tail.
+                    </p>
+                    <p>
+                        <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 9.7, pp. 597–605, develops the
+                        F-distribution and tests for comparing two normal population variances. In particular, Theorems
+                        9.7.2–9.7.5 describe reciprocal F-distributions, the variance-ratio statistic, critical regions,
+                        and two-sided p-values. The confidence interval above follows by inversion of that exact
+                        variance-ratio pivot. OpenIntro Statistics (4th ed.), Section 2.1.6, p. 51, discusses the
+                        sensitivity of ordinary variability summaries to extreme values. For implementations of the more
+                        robust alternative tests, see the SciPy documentation for <code>scipy.stats.levene</code>,
+                        <code>scipy.stats.fligner</code>, and <code>scipy.stats.bartlett</code>.
+                    </p>
+
                     <hr />
-                    <!-- ========================= MAIN SECTION 15: The Chi-Square
-                                                                        Independence
-                                                                        Test ========================= -->
+                    <!-- ========================= MAIN SECTION 14: Chi-Square Goodness-of-Fit Test ========================= -->
+
+                    <span id="ChiSquareGoodnessofFitTest"><b>Chi-Square Goodness-of-Fit Test</b></span>
+
+                    <p>
+                        Earlier tests concerned parameters such as population means and variances. We now consider a
+                        different question: does the <i>distribution of a categorical variable</i> agree with a
+                        specified probability model? Pearson's <i>chi-square goodness-of-fit test</i> compares the
+                        numbers of observations in several categories with the counts expected under a null hypothesis.
+                    </p>
+                    <p>
+                        Examples include testing whether a die is fair, whether the frequencies of product choices
+                        follow a proposed distribution, or whether observed counts agree with probabilities predicted by
+                        a model. This is a test about the distribution of <i>one categorical variable</i>. The
+                        chi-square test of independence, which investigates two categorical variables, is treated
+                        separately in the next section.
+                    </p>
+
+                    <!-- ==================== Categorical Data and the Multinomial Model ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (categorical probability model).</b></p>
+                        <p>
+                            Suppose each of the independent observations belongs to exactly one of the mutually
+                            exclusive and exhaustive categories \(C_1,\ldots,C_k\), with probabilities \[
+                            p_i=\mathbb{P}(X\in C_i),\qquad p_i\geq0,\qquad\sum_{i=1}^k p_i=1. \] Let \(O_i\) denote the
+                            number of observations in category \(C_i\) in a sample of size \(n\). Then \[
+                            (O_1,\ldots,O_k)\sim \operatorname{Multinomial}(n;p_1,\ldots,p_k), \qquad \sum_{i=1}^k
+                            O_i=n. \]
+                        </p>
+                    </div>
+                    <p>
+                        Suppose the proposed probabilities \(p_{01},\ldots,p_{0k}\) are fully specified before examining
+                        the sample, with every \(p_{0i}&gt;0\) and \(\sum_i p_{0i}=1\). The hypotheses are \[
+                        \begin{aligned} H_0&amp;:p_i=p_{0i}\quad\text{for every }i,\\ H_1&amp;:p_i\neq
+                        p_{0i}\quad\text{for at least one }i. \end{aligned} \] The alternative does not specify which
+                        category differs or in which direction. A goodness-of-fit test looks for a discrepancy in any of
+                        the categories.
+                    </p>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (observed and expected counts).</b></p>
+                        <p>
+                            The <i>observed count</i> for category \(C_i\) is \(O_i\). Under \(H_0\), its
+                            <i>expected count</i> is \[ E_i=\mathbb{E}_{H_0}[O_i]=np_{0i}. \] Expected counts need not
+                            be integers, even though observed counts are.
+                        </p>
+                    </div>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Pearson's chi-square statistic).</b></p>
+                        <p>
+                            For positive expected counts \(E_1,\ldots,E_k\), define \[
+                            Q=\sum_{i=1}^{k}\frac{(O_i-E_i)^2}{E_i}. \] Each term measures a squared discrepancy
+                            relative to the size of the corresponding expected count. The statistic is nonnegative;
+                            larger values represent greater disagreement with \(H_0\).
+                        </p>
+                    </div>
+                    <p>
+                        The statistic itself is <i>not</i> exactly chi-square distributed for a finite multinomial
+                        sample. The chi-square distribution is an approximation to its sampling distribution under the
+                        null hypothesis.
+                    </p>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (Pearson's asymptotic chi-square test).</b></p>
+                        <p>
+                            Under the multinomial model with a fixed number \(k\geq2\) of categories and fixed positive
+                            null probabilities, if \(H_0\) is true, then as \(n\to\infty\), \[ Q\xrightarrow{\mathcal
+                            D}\chi^2_{k-1}. \] Thus, for sufficiently large expected counts, an approximate right-tail
+                            p-value and level-\(\alpha\) rejection rule are \[ \begin{aligned}
+                            p_{\mathrm{value}}&amp;\approx \mathbb{P}(\chi^2_{k-1}\geq Q_{\mathrm{obs}}),\\ \text{reject
+                            }H_0&amp;\text{ if } Q_{\mathrm{obs}}&gt;\chi^2_{1-\alpha,k-1}. \end{aligned} \]
+                        </p>
+                    </div>
+                    <p>
+                        The proof of asymptotic convergence uses the multivariate central limit theorem for multinomial
+                        counts and a quadratic-form argument. The \(k-1\) degrees of freedom arise because the category
+                        counts must add to \(n\): once \(k-1\) counts are known, the last is determined. Unlike a
+                        symmetric t-test, the chi-square goodness-of-fit test always uses the <i>right tail</i>, even
+                        though its alternative is nondirectional.
+                    </p>
+
+                    <!-- ==================== A Worked Example: Fair Die ==================== -->
+
+                    <p><b>Worked example: is a six-sided die fair?</b></p>
+                    <p>
+                        Suppose a die is rolled independently \(n=60\) times. The observed counts for faces 1 through 6
+                        are \[ (O_1,\ldots,O_6)=(15,6,13,9,7,10). \] Under the null hypothesis that the die is fair,
+                        \(p_{0i}=1/6\) for each face, so every expected count equals 10. The statistic is \[
+                        \begin{aligned} Q&amp;=\frac{(15-10)^2+(6-10)^2+(13-10)^2 +(9-10)^2+(7-10)^2+(10-10)^2}{10}\\
+                        &amp;=\frac{25+16+9+1+9+0}{10}=6. \end{aligned} \] With \(k-1=5\) degrees of freedom, the
+                        approximate p-value is \(\mathbb{P}(\chi^2_5\geq6)\approx0.3062\). At significance level
+                        \(\alpha=0.05\), we fail to reject the fair-die model. This does not establish that the die is
+                        fair; the sample is simply not sufficiently inconsistent with that model.
+                    </p>
+
+                    <!-- --- Experiment 91: chi-square test for a six-sided die --- -->
+                    <p class="stats-experiment-title"><b>Experiment 91: chi-square test for a six-sided die.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chisquare, chi2
+
+observed = np.array([15, 6, 13, 9, 7, 10])
+n = observed.sum()
+expected = np.full(6, n / 6)
+
+statistic = np.sum((observed - expected) ** 2 / expected)
+df = len(observed) - 1
+p_value = chi2.sf(statistic, df)
+
+result = chisquare(f_obs=observed, f_exp=expected)
+
+print(f"Pearson statistic: {statistic:.4f}")
+print(f"Degrees of freedom: {df}")
+print(f"Manual p-value: {p_value:.6f}")
+print(f"SciPy p-value: {result.pvalue:.6f}")
+
+assert np.isclose(statistic, result.statistic)
+assert np.isclose(p_value, result.pvalue)
+
+# Experiment: repeat using counts [25, 5, 5, 5, 10, 10].
+# How does the evidence against a fair die change?
+</code></pre>
+
+                    <!-- ==================== Contributions and Diagnostics ==================== -->
+
+                    <p><b>Which categories contribute most to the discrepancy?</b></p>
+                    <p>
+                        The individual terms of Pearson's statistic reveal which categories contribute to the overall
+                        disagreement. Define the
+                        <i>Pearson residual</i>
+                        \[ r_i=\frac{O_i-E_i}{\sqrt{E_i}}, \qquad Q=\sum_{i=1}^k r_i^2. \] A positive residual indicates
+                        more observations than expected; a negative residual indicates fewer. Residual plots are useful
+                        for understanding a rejection, but an individual large residual is not automatically a
+                        separately validated test for that category.
+                    </p>
+
+                    <!-- --- Experiment 92: observed and expected counts, with residuals --- -->
+                    <p class="stats-experiment-title"><b>Experiment 92: observed counts and Pearson residuals.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+categories = np.arange(1, 7)
+observed = np.array([15, 6, 13, 9, 7, 10])
+expected = np.full(6, observed.sum() / 6)
+
+residuals = (observed - expected) / np.sqrt(expected)
+contributions = residuals ** 2
+
+for face, residual, contribution in zip(
+    categories, residuals, contributions
+):
+    print(
+        f"Face {face}: residual={residual:+.3f}, "
+        f"chi-square contribution={contribution:.3f}"
+    )
+
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+width = 0.35
+
+axes[0].bar(categories - width / 2, observed, width, label="Observed")
+axes[0].bar(categories + width / 2, expected, width, label="Expected")
+axes[0].set_xticks(categories)
+axes[0].set_xlabel("Die face")
+axes[0].set_ylabel("Count")
+axes[0].set_title("Observed and expected frequencies")
+axes[0].legend()
+
+axes[1].bar(categories, residuals)
+axes[1].axhline(0, linestyle="--", linewidth=1)
+axes[1].set_xticks(categories)
+axes[1].set_xlabel("Die face")
+axes[1].set_ylabel("Pearson residual")
+axes[1].set_title("Direction of the discrepancies")
+
+fig.tight_layout()
+fig.savefig("gof_counts_residuals.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: compare results for another set of observed counts.
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/gof_counts_residuals.png"
+                            alt="Bar charts comparing observed and expected die counts and their Pearson residuals"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Differences between observed and expected category counts and the
+                            corresponding Pearson residuals. Generated by Experiment 92.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== An Applied Categorical Example ==================== -->
+
+                    <p><b>Illustrative example: student-religion categories and a historical reference.</b></p>
+                    <p>
+                        The earlier version of these notes compared categories from the SOGA-Py
+                        <i>students</i> dataset with percentages quoted from the European Commission's 2012
+                        Eurobarometer report on discrimination (<a
+                            href="https://health.ec.europa.eu/publications/discrimination-eu-2012_en"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Special Eurobarometer 393</a
+                        >, p. 233). The reported eight reference categories were Catholic (48%), non-believer/agnostic
+                        (16%), Protestant (12%), Orthodox (8%), atheist (7%), other Christian (4%), other religion/none
+                        stated (3%), and Muslim (2%).
+                    </p>
+                    <p>
+                        To illustrate the calculation, the original notes combined several reference categories into
+                        <i>Other</i> and listed the following counts from one 256-person subsample of the student
+                        dataset. These are <i>historical example inputs</i>, not newly verified population estimates.
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Reference probability</th>
+                                <th>Observed count</th>
+                                <th>Expected count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Catholic</td>
+                                <td>0.48</td>
+                                <td>80</td>
+                                <td>122.88</td>
+                            </tr>
+                            <tr>
+                                <td>Muslim</td>
+                                <td>0.02</td>
+                                <td>12</td>
+                                <td>5.12</td>
+                            </tr>
+                            <tr>
+                                <td>Orthodox</td>
+                                <td>0.08</td>
+                                <td>21</td>
+                                <td>20.48</td>
+                            </tr>
+                            <tr>
+                                <td>Other</td>
+                                <td>0.30</td>
+                                <td>104</td>
+                                <td>76.80</td>
+                            </tr>
+                            <tr>
+                                <td>Protestant</td>
+                                <td>0.12</td>
+                                <td>39</td>
+                                <td>30.72</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        Every expected count exceeds 5, so the chi-square approximation is reasonable
+                        <i>for this specified multinomial calculation</i>. There are \(k=5\) categories and no
+                        parameters estimated from these counts under the null, giving \(4\) degrees of freedom.
+                    </p>
+
+                    <!-- --- Experiment 93: reproduce the historical worked counts --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 93: reproduce the worked categorical comparison.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+from scipy.stats import chisquare
+
+categories = ["Catholic", "Muslim", "Orthodox", "Other", "Protestant"]
+probabilities = np.array([0.48, 0.02, 0.08, 0.30, 0.12])
+observed = np.array([80, 12, 21, 104, 39])
+
+n = observed.sum()
+expected = n * probabilities
+
+summary = pd.DataFrame({
+    "category": categories,
+    "observed": observed,
+    "expected": expected,
+    "pearson_residual": (observed - expected) / np.sqrt(expected)
+})
+
+result = chisquare(observed, expected)
+print(summary.to_string(index=False))
+print(f"\nChi-square statistic: {result.statistic:.6f}")
+print(f"Approximate p-value: {result.pvalue:.10f}")
+print(f"Degrees of freedom: {len(categories) - 1}")
+
+assert n == 256
+assert np.all(expected &gt;= 5)
+
+# Experiment: compare the contributions of the five categories.
+</code></pre>
+
+                    <p>
+                        The original example produces \(Q\approx36.09\), with an approximate p-value of
+                        \(2.78\times10^{-7}\). The fixed-count calculation rejects the stated distributional null at the
+                        1% level. However, this numerical result does <i>not</i> justify a broad claim about religious
+                        affiliation among all European students. The student dataset is not a representative EU-wide
+                        sample, the reference percentages are historical, and the category labeled <i>Other</i> may not
+                        have identical definitions across the two sources. A valid population comparison requires a
+                        defensible sampling design and matching category definitions.
+                    </p>
+                    <p>
+                        If you wish to reconstruct the example using the live SOGA-Py file, the following independent
+                        script reads it, draws a reproducible subsample, and explicitly checks the supported categories.
+                        It may give different counts if the underlying file has changed.
+                    </p>
+
+                    <!-- --- Experiment 94: categorical counts from the SOGA-Py dataset --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 94: compute category counts from the SOGA-Py dataset.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+from scipy.stats import chisquare
+
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
+students = pd.read_csv(url)
+
+categories = ["Catholic", "Muslim", "Orthodox", "Other", "Protestant"]
+reference = pd.Series(
+    [0.48, 0.02, 0.08, 0.30, 0.12], index=categories
+)
+
+valid = students["religion"].dropna()
+assert len(valid) &gt;= 256, "Not enough non-missing observations"
+
+sample = valid.sample(n=256, random_state=8)
+unexpected = set(sample.unique()) - set(categories)
+if unexpected:
+    raise ValueError(f"Unmatched categories: {sorted(unexpected)}")
+
+observed = sample.value_counts().reindex(categories, fill_value=0)
+expected = len(sample) * reference
+result = chisquare(observed.to_numpy(), expected.to_numpy())
+
+comparison = pd.DataFrame({
+    "observed": observed,
+    "expected": expected,
+    "reference_probability": reference
+})
+
+print(comparison)
+print(f"Chi-square statistic: {result.statistic:.4f}")
+print(f"Approximate p-value: {result.pvalue:.6g}")
+
+# A statistically significant result would still require
+# population and category-comparability checks.
+</code></pre>
+
+                    <!-- ==================== Assumptions and Expected Counts ==================== -->
+
+                    <p><b>Conditions for the chi-square approximation.</b></p>
+                    <p>Several requirements are important for a defensible goodness-of-fit test:</p>
+                    <ul>
+                        <li>
+                            The categories must be mutually exclusive and exhaustive, with each independent
+                            observational unit contributing one count.
+                        </li>
+                        <li>
+                            The observed counts should arise from a sampling or assignment mechanism appropriate to a
+                            multinomial model; repeated measures of the same person or cluster can violate independence.
+                        </li>
+                        <li>
+                            The null probabilities must be valid, sum to 1, and give strictly positive expected counts
+                            in the analyzed categories. The observed and expected totals must agree.
+                        </li>
+                        <li>
+                            The expected counts must be sufficiently large for the asymptotic chi-square distribution to
+                            approximate the statistic's null distribution well.
+                        </li>
+                    </ul>
+                    <p>
+                        A convenient conservative rule of thumb is to aim for an expected count of at least 5 in every
+                        category. Other guidelines tolerate some smaller values, but none is an exact mathematical
+                        boundary separating valid from invalid tests. The quality of the approximation depends on the
+                        entire probability vector and sample size. The condition concerns <i>expected</i>, not observed,
+                        counts: an observed count of zero can be legitimate when its expected count is positive.
+                    </p>
+                    <p>
+                        If some categories have very small expected counts, possibilities include collecting more data,
+                        combining categories when this makes substantive sense and is specified in advance, or using a
+                        Monte Carlo null distribution. Combining categories merely to obtain a smaller p-value is not a
+                        valid strategy.
+                    </p>
+
+                    <!-- ==================== Sampling Distribution and Calibration ==================== -->
+
+                    <p><b>Why does a chi-square distribution appear?</b></p>
+                    <p>
+                        Under the null model, the vector of count differences is constrained by \(\sum_i(O_i-E_i)=0\).
+                        The large-sample distribution of these deviations is approximately multivariate normal.
+                        Pearson's quadratic statistic is then approximately a sum of \(k-1\) squared independent
+                        standard normal components, explaining the \(\chi^2_{k-1}\) limit. We can check this
+                        approximation by repeatedly generating samples from a specified multinomial null model.
+                    </p>
+
+                    <!-- --- Experiment 95: the null distribution of Pearson's statistic --- -->
+                    <p class="stats-experiment-title"><b>Experiment 95: sampling distribution under the null.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import chi2
+
+rng = np.random.default_rng(2026)
+probabilities = np.array([0.40, 0.30, 0.20, 0.10])
+n = 300
+repetitions = 30_000
+
+expected = n * probabilities
+counts = rng.multinomial(n, probabilities, size=repetitions)
+statistics = ((counts - expected) ** 2 / expected).sum(axis=1)
+
+df = len(probabilities) - 1
+alpha = 0.05
+critical = chi2.isf(alpha, df)
+
+print(f"Expected counts: {expected}")
+print(f"Theoretical mean of chi-square: {df}")
+print(f"Simulated mean of statistic: {statistics.mean():.3f}")
+print(f"Nominal Type I error rate: {alpha:.3f}")
+print(f"Simulated rejection rate: {np.mean(statistics &gt; critical):.3f}")
+
+x = np.linspace(0, 18, 500)
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.hist(statistics, bins=70, density=True, alpha=0.55,
+        label="Simulated null statistics")
+ax.plot(x, chi2.pdf(x, df), linewidth=2,
+        label=f"Chi-square density (df={df})")
+ax.axvline(critical, linestyle="--", label="5% critical value")
+ax.set_xlabel("Pearson chi-square statistic")
+ax.set_ylabel("Density")
+ax.set_title("Null sampling distribution of Pearson's statistic")
+ax.legend()
+fig.tight_layout()
+fig.savefig("gof_chi_square_null.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: reduce n from 300 to 30.
+# How well does the chi-square approximation work?
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/gof_chi_square_null.png"
+                            alt="Simulated Pearson statistics compared with the limiting chi-square distribution"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Repeated multinomial samples under a fully specified null model produce
+                            statistics that approach the chi-square reference distribution. Generated by Experiment 95.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Sparse Expected Counts and Monte Carlo Testing ==================== -->
+
+                    <p><b>What if some expected counts are small?</b></p>
+                    <p>
+                        When the expected counts are sparse, we can approximate the distribution of \(Q\) under \(H_0\)
+                        directly by simulation instead of relying on the chi-square approximation. For a
+                        <i>fully specified</i> multinomial null, generate many count vectors with the same \(n\) and
+                        probabilities \(p_{01},\ldots,p_{0k}\), and calculate \(Q\) for each one.
+                    </p>
+                    <p>
+                        If \(B\) simulated statistics are \(Q_1^*,\ldots,Q_B^*\), one useful Monte Carlo p-value
+                        estimate is \[ \widehat p_{\mathrm{MC}}= \frac{1+\#\{b:Q_b^*\geq Q_{\mathrm{obs}}\}}{B+1}. \]
+                        Including the observed statistic in this ranking avoids a reported p-value of zero. With a fully
+                        specified null and independent simulations, this provides a valid conservative Monte Carlo test
+                        up to the randomization associated with the simulation.
+                    </p>
+
+                    <!-- --- Experiment 96: sparse counts and Monte Carlo p-values --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 96: sparse expected counts and Monte Carlo testing.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chi2
+
+rng = np.random.default_rng(2026)
+probabilities = np.array([0.80, 0.15, 0.04, 0.01])
+observed = np.array([28, 9, 3, 0])
+
+n = observed.sum()
+expected = n * probabilities
+observed_q = ((observed - expected) ** 2 / expected).sum()
+
+asymptotic_p = chi2.sf(observed_q, df=len(probabilities) - 1)
+
+B = 100_000
+null_counts = rng.multinomial(n, probabilities, size=B)
+null_q = ((null_counts - expected) ** 2 / expected).sum(axis=1)
+monte_carlo_p = (1 + np.count_nonzero(null_q &gt;= observed_q)) / (B + 1)
+
+print("Expected counts:", expected)
+print(f"Observed statistic: {observed_q:.4f}")
+print(f"Chi-square approximate p-value: {asymptotic_p:.5f}")
+print(f"Monte Carlo p-value: {monte_carlo_p:.5f}")
+
+# Examine Type I error for an asymptotic 5% test.
+critical = chi2.isf(0.05, df=len(probabilities) - 1)
+print(
+    "Simulated rejection rate using chi-square cutoff:",
+    f"{np.mean(null_q &gt; critical):.3f}"
+)
+
+# Experiment: increase n so that every expected count is at least 5.
+</code></pre>
+                    <p>
+                        This simulation uses the same discrepancy statistic as Pearson's test, but obtains its reference
+                        distribution from the specified multinomial model. A Monte Carlo test does not fix incorrect
+                        category definitions, biased sampling, or dependence between observations. If null-model
+                        parameters have been estimated from the data, the simulation must also account for that
+                        estimation procedure.
+                    </p>
+
+                    <!-- ==================== Estimating Parameters from the Counts ==================== -->
+
+                    <p><b>What changes if the null distribution has unknown parameters?</b></p>
+                    <p>
+                        So far, the probabilities \(p_{01},\ldots,p_{0k}\) were completely specified in advance. Suppose
+                        instead that the null model expresses category probabilities as functions \(p_i(\theta)\) of
+                        \(s\) unknown parameters, which are estimated from the same grouped counts. In the usual regular
+                        case, using the multinomial maximum-likelihood estimate \(\widehat\theta\) gives the statistic
+                        \[ Q=\sum_{i=1}^{k} \frac{[O_i-np_i(\widehat\theta)]^2} {np_i(\widehat\theta)}
+                        \quad\overset{\mathrm{approx.}}{\sim}\quad \chi^2_{k-1-s}\quad\text{under }H_0. \] One degree of
+                        freedom is lost because counts add to \(n\), and an additional \(s\) degrees of freedom are
+                        typically lost by fitting the parameters. This adjustment requires regularity conditions,
+                        identifiable parameters, and a suitable fitting method; it is not an automatic correction for
+                        arbitrary data-dependent models.
+                    </p>
+                    <p>
+                        A simple illustration comes from a population genetics model. Suppose the categories are \(AA\),
+                        \(Aa\), and \(aa\), with probabilities \[ p_{AA}=\theta^2,\qquad p_{Aa}=2\theta(1-\theta),\qquad
+                        p_{aa}=(1-\theta)^2. \] These are the Hardy–Weinberg proportions under the model. The single
+                        unknown parameter \(\theta\) is estimated from the three genotype counts. The grouped-data
+                        maximum-likelihood estimator is \[ \widehat\theta= \frac{2O_{AA}+O_{Aa}}{2n}. \] With three
+                        categories and one fitted parameter, the chi-square approximation uses \(3-1-1=1\) degree of
+                        freedom.
+                    </p>
+
+                    <!-- --- Experiment 97: a model with an estimated parameter --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 97: fitted probabilities and degrees of freedom.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chisquare, chi2
+
+# Illustrative genotype counts, not a real population survey.
+observed = np.array([56, 26, 18])  # AA, Aa, aa
+n = observed.sum()
+
+theta_hat = (2 * observed[0] + observed[1]) / (2 * n)
+expected_probabilities = np.array([
+    theta_hat ** 2,
+    2 * theta_hat * (1 - theta_hat),
+    (1 - theta_hat) ** 2
+])
+expected = n * expected_probabilities
+
+# One free parameter is fitted from the same category counts.
+df = len(observed) - 1 - 1
+statistic = ((observed - expected) ** 2 / expected).sum()
+p_value = chi2.sf(statistic, df)
+
+# SciPy's ddof accounts for the fitted parameter here.
+result = chisquare(observed, expected, ddof=1)
+
+print(f"Estimated allele frequency: {theta_hat:.4f}")
+print("Expected counts:", np.round(expected, 3))
+print(f"Degrees of freedom: {df}")
+print(f"Chi-square statistic: {statistic:.4f}")
+print(f"Approximate p-value: {p_value:.6f}")
+assert np.isclose(p_value, result.pvalue)
+
+# Experiment: compare with the incorrect choice df=2.
+</code></pre>
+                    <p>
+                        For continuous distributions grouped into bins, estimating parameters from the original unbinned
+                        observations rather than the grouped counts can change the null distribution of the statistic.
+                        In such cases, blindly subtracting the number of estimated parameters from \(k-1\) need not
+                        yield a valid approximation. Simulation or a more specialized goodness-of-fit procedure may be
+                        preferable.
+                    </p>
+
+                    <!-- ==================== Sample Size and Power ==================== -->
+
+                    <p><b>How do sample size and the true distribution affect power?</b></p>
+                    <p>
+                        A goodness-of-fit test may fail to detect a real discrepancy when the sample is small. To
+                        describe the size of a particular deviation from the null, let \(q=(q_1,\ldots,q_k)\) be a
+                        proposed alternative probability distribution. Cohen's goodness-of-fit effect size is \[
+                        w=\sqrt{\sum_{i=1}^k\frac{(q_i-p_{0i})^2}{p_{0i}}}. \] For fixed \(q\) and \(p_0\), the
+                        large-sample noncentrality parameter is \(\lambda=nw^2\). Thus, as the sample size grows, the
+                        test generally becomes more capable of detecting a fixed nonzero discrepancy. This does not
+                        establish whether the difference matters in practice.
+                    </p>
+
+                    <!-- --- Experiment 98: power and sample size for goodness-of-fit --- -->
+                    <p class="stats-experiment-title"><b>Experiment 98: simulated power and sample size.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import chi2
+
+rng = np.random.default_rng(2026)
+p_null = np.array([0.40, 0.30, 0.20, 0.10])
+p_alternative = np.array([0.45, 0.25, 0.20, 0.10])
+
+sample_sizes = [50, 100, 200, 400, 800]
+repetitions = 10_000
+alpha = 0.05
+
+df = len(p_null) - 1
+critical = chi2.isf(alpha, df)
+w = np.sqrt(np.sum((p_alternative - p_null) ** 2 / p_null))
+
+false_positive_rates = []
+powers = []
+
+for n in sample_sizes:
+    expected = n * p_null
+    under_null = rng.multinomial(n, p_null, size=repetitions)
+    under_alt = rng.multinomial(n, p_alternative, size=repetitions)
+
+    q_null = ((under_null - expected) ** 2 / expected).sum(axis=1)
+    q_alt = ((under_alt - expected) ** 2 / expected).sum(axis=1)
+
+    false_positive_rates.append(np.mean(q_null &gt; critical))
+    powers.append(np.mean(q_alt &gt; critical))
+
+    print(
+        f"n={n:4d} | Type I rate={false_positive_rates[-1]:.3f} "
+        f"| power={powers[-1]:.3f}"
+    )
+
+print(f"Specified alternative effect size w = {w:.4f}")
+
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.plot(sample_sizes, false_positive_rates, marker="o",
+        label="Rejection rate under the null")
+ax.plot(sample_sizes, powers, marker="s",
+        label="Power under the alternative")
+ax.axhline(alpha, linestyle="--", label="Nominal alpha = 0.05")
+ax.set_xlabel("Sample size")
+ax.set_ylabel("Probability of rejection")
+ax.set_ylim(0, 1)
+ax.set_title("Goodness-of-fit test: Type I error and power")
+ax.grid(alpha=0.25)
+ax.legend()
+fig.tight_layout()
+fig.savefig("gof_power_sample_size.png", dpi=180, bbox_inches="tight")
+plt.show()
+
+# Experiment: make the alternative probabilities closer to p_null.
+# How does the power curve change?
+</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/gof_power_sample_size.png"
+                            alt="Simulated Type I error and power of a chi-square goodness-of-fit test versus sample size"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> For a fixed alternative probability distribution, larger samples increase the
+                            chance of detecting the discrepancy. Generated by Experiment 98.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Practical Interpretation ==================== -->
+
+                    <p><b>Interpreting a goodness-of-fit result.</b></p>
+                    <p>
+                        A small p-value provides evidence that at least one category probability differs from the
+                        specified null model, under the sampling assumptions. It does not identify which probabilities
+                        differ, establish causation, or imply that the proposed model is false with a particular
+                        posterior probability. The size and practical importance of discrepancies should be assessed
+                        separately, using frequencies, residuals, sample size, and subject-matter context.
+                    </p>
+                    <p>
+                        Failing to reject \(H_0\) does not prove that the proposed distribution is correct. A weak test
+                        may miss real but modest deviations. Conversely, very large samples can identify differences
+                        that are too small to matter in an application. As with earlier hypothesis tests, data quality
+                        and appropriate sampling are essential for interpreting results.
+                    </p>
+                    <p>
+                        The chi-square goodness-of-fit test compares counts against one probability model. If the
+                        question instead concerns whether two categorical variables are associated, we construct a
+                        contingency table and use the chi-square test of independence developed in the next section.
+                    </p>
+
+                    <p>
+                        <b>Try it yourself.</b>
+                        (1) Verify the manual fair-die calculation in Experiment 91 and state the null and alternative
+                        hypotheses. (2) In Experiment 92, show algebraically that the squared Pearson residuals sum to
+                        the test statistic. (3) Recalculate Experiment 93 after combining two categories using
+                        probabilities and observed counts merged consistently; explain how the degrees of freedom
+                        change. (4) Use Experiment 96 to compare asymptotic and simulated p-values for several samples
+                        with very small expected counts. (5) Explain why Experiment 97 uses one degree of freedom rather
+                        than two. (6) In Experiment 98, find a sample size for which the simulated power is at least 80%
+                        under the specified alternative.
+                    </p>
+                    <p>
+                        <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 10.1, pp. 624–633, develops
+                        Pearson's chi-square goodness-of-fit test and its large-sample justification (Theorem 10.1.1).
+                        Section 10.2, pp. 633–639, addresses composite null hypotheses and fitted category probabilities
+                        (Theorem 10.2.1). OpenIntro Statistics (4th ed.), Chapter 3, introduces categorical probability
+                        models and the multinomial setting; Section 3.5 discusses continuous distributions, which
+                        require grouping into categories before applying this version of Pearson's statistic. The code
+                        uses <code>scipy.stats.chisquare</code>, <code>scipy.stats.chi2</code>, and NumPy's multinomial
+                        generator.
+                    </p>
+
+                    <hr />
+
+                    <!-- ========================= MAIN SECTION 15: Chi-Square Independence Test ========================= -->
                     <span id="ChiSquareIndependenceTest"><b>The Chi-Square Independence Test</b></span>
+
                     <p>
-                        The \(\chi^2\) independence test is an inferential method used to determine whether an
-                        association exists between two variables. As with other hypothesis tests, the null hypothesis
-                        states that the two variables are not associated, whereas the alternative hypothesis states that
-                        the two variables are associated.
+                        The <i>chi-square test of independence</i> examines whether two categorical variables are
+                        statistically independent in a population. Unlike the chi-square goodness-of-fit test, which
+                        studies the distribution of <i>one</i> variable, the independence test studies the joint
+                        distribution of <i>two</i> categorical variables.
                     </p>
                     <p>
-                        Recall that statistically dependent variables are called associated variables, while variables
-                        that are not associated are called statistically independent variables. Also recall the concept
-                        of
-                        <a href="https://en.wikipedia.org/wiki/Contingency_table" target="_blank">contingency tables</a>
-                        (also known as two-way tables, cross-tabulation tables, or cross tabs).
+                        Suppose we record a student's field of study and gender, or a customer's acquisition channel and
+                        whether a purchase occurred. The objective is to determine whether the proportions across
+                        categories differ more than we would expect from random sampling variation under independence.
+                    </p>
+
+                    <!-- ==================== Independence and Contingency Tables ==================== -->
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (independence of categorical variables).</b></p>
+                        <p>
+                            Let \(X\) take categories \(1,\ldots,r\), and let \(Y\) take categories \(1,\ldots,c\).
+                            Write \[ p_{ij}=\mathbb{P}(X=i,Y=j),\quad p_{i+}=\mathbb{P}(X=i),\quad
+                            p_{+j}=\mathbb{P}(Y=j). \] The variables are <i>independent</i> if and only if \[
+                            p_{ij}=p_{i+}p_{+j} \quad\text{for every }i,j. \]
+                        </p>
+                    </div>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (two-way contingency table).</b></p>
+                        <p>
+                            For a sample of \(n\) jointly classified observations, let \(O_{ij}\) be the number
+                            belonging to row category \(i\) and column category \(j\). A table of these counts is called
+                            an \(r\times c\) <i>contingency table</i> (or <i>cross-tabulation</i>). Its row totals,
+                            column totals, and grand total are \[ O_{i+}=\sum_{j=1}^{c}O_{ij},\qquad
+                            O_{+j}=\sum_{i=1}^{r}O_{ij},\qquad n=\sum_{i=1}^{r}\sum_{j=1}^{c}O_{ij}. \]
+                        </p>
+                    </div>
+
+                    <p>
+                        The hypotheses for the independence test are \[ \begin{aligned}
+                        H_0&amp;:p_{ij}=p_{i+}p_{+j}\quad\text{for all }i,j,\\ H_1&amp;:\text{the variables are not
+                        independent}. \end{aligned} \] This is an <i>omnibus test</i>: rejection indicates evidence of
+                        some departure from independence, but it does not identify the particular cells responsible or
+                        establish a causal relationship.
+                    </p>
+
+                    <!-- ==================== Expected Cell Counts ==================== -->
+
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading"><b>Lemma (expected counts under independence).</b></p>
+                        <p>
+                            Using the sample marginal proportions as estimates of the unknown marginal probabilities,
+                            the fitted expected count in cell \((i,j)\) under \(H_0\) is \[
+                            E_{ij}=n\left(\frac{O_{i+}}{n}\right) \left(\frac{O_{+j}}{n}\right) =\frac{O_{i+}O_{+j}}{n}.
+                            \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof. Under independence, the joint probability is the product of the two marginal
+                        probabilities. We estimate these probabilities by their sample proportions \(O_{i+}/n\) and
+                        \(O_{+j}/n\). Multiplying their product by the total sample size gives the fitted cell count.
                     </p>
                     <p>
-                        The basic idea behind the \(\chi^2\) independence test is to compare the observed frequencies in
-                        a contingency table with the expected frequencies, assuming that the null hypothesis of
-                        non-association is true. The expected frequency for each cell of a contingency table is given by
-                        \[ E = \frac{R \times C}{n} \]
+                        An expected count is <i>not</i> a requirement that a cell contain exactly that many
+                        observations. It is the count predicted by the fitted independence model. Expected counts may be
+                        fractional even though observed counts must be nonnegative integers.
                     </p>
-                    <p>where \(R\) is the row total, \(C\) is the column total, and \(n\) is the sample size.</p>
-                    <p>Once we know the expected frequencies, we must check two assumptions:</p>
+
+                    <!-- ==================== Pearson's Statistic and Degrees of Freedom ==================== -->
+
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (Pearson's chi-square independence test).</b></p>
+                        <p>
+                            Let \(O_{ij}\) be the observed counts in an \(r\times c\) table, with positive population
+                            marginal probabilities. For independent, identically distributed observations under \(H_0\),
+                            define \[ Q=\sum_{i=1}^{r}\sum_{j=1}^{c} \frac{(O_{ij}-E_{ij})^2}{E_{ij}}, \quad
+                            E_{ij}=\frac{O_{i+}O_{+j}}{n}. \] Under the usual fixed-category, large-sample conditions,
+                            \[ Q\xrightarrow{\mathcal D} \chi^2_{(r-1)(c-1)}\qquad\text{under }H_0. \]
+                        </p>
+                    </div>
                     <p>
-                        • All expected frequencies must be at least 1.<br />
-                        • At most 20 % of the expected frequencies may be less than 5.
-                    </p>
-                    <p>We can confirm that both assumptions are satisfied by inspecting the table.</p>
-                    <p>
-                        The comparison is based on the \(\chi^2\) test statistic for the observed and expected
-                        frequencies. The \(\chi^2\) test statistic follows the \(\chi^2\) distribution and is given by:
-                        \[ \chi^{2}= \sum \frac{(O - E)^{2}}{E} \]
-                    </p>
-                    <p>
-                        where \(O\) represents the observed frequency and \(E\) represents the expected frequency. Note
-                        that \(\frac{(O - E)^2}{E}\) is calculated for each cell and then summed.
-                    </p>
-                    <p>The number of degrees of freedom is given by: \[ df = (r - 1) \times (c - 1) \]</p>
-                    <p>
-                        where \(r\) and \(c\) are the numbers of possible values for the two variables under
-                        consideration.
+                        The chi-square distribution is a <i>large-sample approximation</i> to the null distribution of
+                        \(Q\); it is not generally an exact finite-sample distribution. Large values of \(Q\) measure a
+                        greater discrepancy between observed and independence-model expected counts. For a chi-square
+                        reference distribution with \(d=(r-1)(c-1)\) degrees of freedom, the approximate p-value is \[
+                        p\text{-value}=\mathbb{P}(\chi^2_d\geq Q_{\mathrm{obs}}). \]
                     </p>
                     <p>
-                        If the null hypothesis is true, the observed and expected frequencies are roughly equal,
-                        resulting in a small value of the \(\chi^2\) test statistic, which supports \(H_0\). However, if
-                        the value of the \(\chi^2\) test statistic is large, the data provide evidence against \(H_0\).
+                        <b>Why \((r-1)(c-1)\) degrees of freedom?</b> An unrestricted \(r\times c\) joint probability
+                        distribution has \(rc-1\) free probabilities because all cell probabilities sum to 1. Under
+                        independence, the row probabilities have \(r-1\) free parameters and the column probabilities
+                        have \(c-1\). The difference is \[ (rc-1)-[(r-1)+(c-1)]=(r-1)(c-1). \] This parameter-count
+                        argument explains the limiting degrees of freedom, but it does not by itself prove the
+                        convergence theorem.
                     </p>
+
+                    <!-- ==================== Worked Example: Customer Channel and Purchase ==================== -->
+
+                    <p><b>Worked example: acquisition channel and purchase status.</b></p>
                     <p>
-                        We want to examine whether there is an association between the variables
-                        <i>gender</i> and <i>major</i>. In other words, we want to know whether male students favor
-                        different fields of study compared to female students.
+                        Consider the following <i>illustrative</i> counts. Every observation represents one independent
+                        customer, classified by acquisition channel and purchase outcome.
                     </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Purchase</th>
+                                <th>Email</th>
+                                <th>Search</th>
+                                <th>Ads</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Yes</td>
+                                <td>45</td>
+                                <td>35</td>
+                                <td>20</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td>No</td>
+                                <td>30</td>
+                                <td>40</td>
+                                <td>30</td>
+                                <td>100</td>
+                            </tr>
+                            <tr>
+                                <td><b>Total</b></td>
+                                <td>75</td>
+                                <td>75</td>
+                                <td>50</td>
+                                <td>200</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        If the variables were independent, the expected count for customers who purchased after arriving
+                        via Email would be \[ E_{11}=\frac{100\cdot75}{200}=37.5. \] The full expected table is \[
+                        E=\begin{pmatrix}37.5&amp;37.5&amp;25\\37.5&amp;37.5&amp;25\end{pmatrix}. \] We calculate \(Q\)
+                        from all six cells and compare it with the \(\chi^2\) distribution with \((2-1)(3-1)=2\) degrees
+                        of freedom.
+                    </p>
+
+                    <!-- --- Experiment 99: manual and SciPy calculations --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 99: calculating the test statistic manually and with SciPy.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chi2, chi2_contingency
+
+observed = np.array([
+    [45, 35, 20],  # Purchased
+    [30, 40, 30]   # Did not purchase
+])
+
+n = observed.sum()
+row_totals = observed.sum(axis=1)
+column_totals = observed.sum(axis=0)
+
+expected = np.outer(row_totals, column_totals) / n
+chi_square = np.sum((observed - expected) ** 2 / expected)
+df = (observed.shape[0] - 1) * (observed.shape[1] - 1)
+p_value = chi2.sf(chi_square, df)
+
+result = chi2_contingency(observed, correction=False)
+
+print("Expected counts:\n", expected)
+print(f"Manual statistic: {chi_square:.5f}")
+print(f"Degrees of freedom: {df}")
+print(f"Manual p-value: {p_value:.6f}")
+print(f"SciPy p-value: {result.pvalue:.6f}")
+
+assert np.isclose(chi_square, result.statistic)
+assert np.isclose(p_value, result.pvalue)
+
+# Experiment: change the Email purchase count, while
+# considering how the other counts should change.</code></pre>
+
+                    <p>
+                        The <code>correction=False</code> argument is deliberate. For a \(2\times2\) table, SciPy's
+                        <code>chi2_contingency</code> otherwise applies Yates' continuity correction by default. The
+                        subsequent calculations use the uncorrected Pearson statistic to match the formula.
+                    </p>
+
+                    <!-- ==================== Applied Example: Student Major and Gender ==================== -->
+
+                    <p><b>Application: field of study and gender in the SOGA-Py example.</b></p>
+                    <p>
+                        The earlier version of these notes used a sample of 865 observations from the SOGA-Py
+                        <i>students</i> dataset. The reported cross-tabulation is reproduced below, so the calculation
+                        can be checked without downloading the original dataset. The category labels reflect the
+                        original dataset; the example describes an observed association, not a causal effect or the
+                        population distribution of all students.
+                    </p>
+
+                    <!-- --- Experiment 100: reproduce the original student example --- -->
+                    <p class="stats-experiment-title"><b>Experiment 100: a 6-by-2 independence test.</b></p>
                     <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
 import numpy as np
+from scipy.stats import chi2_contingency
 
-students = pd.read_csv("https://userpage.fu-berlin.de/soga/data/raw-data/students.csv")
+observed = pd.DataFrame(
+    {
+        "Female": [102, 53, 63, 33, 111, 78],
+        "Male":   [66, 82, 88, 93, 61, 35]
+    },
+    index=[
+        "Biology",
+        "Economics and Finance",
+        "Environmental Sciences",
+        "Mathematics and Statistics",
+        "Political Science",
+        "Social Sciences"
+    ]
+)
 
-n = 865
+result = chi2_contingency(observed, correction=False)
+expected = pd.DataFrame(
+    result.expected_freq,
+    index=observed.index,
+    columns=observed.columns
+)
 
-sample = students.sample(n, random_state = 8)
+print("Observed counts:\n", observed)
+print("\nExpected counts:\n", expected.round(2))
+print(f"\nTotal sample size: {observed.to_numpy().sum()}")
+print(f"Chi-square statistic: {result.statistic:.4f}")
+print(f"Degrees of freedom: {result.dof}")
+print(f"p-value: {result.pvalue:.4g}")
 
-observed_frequencies_table = pd.crosstab(sample.major, sample.gender, margins=False)
+assert observed.to_numpy().sum() == 865
+assert np.isclose(result.statistic, 77.31526633939146)
 
-print(observed_frequencies_table)</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">gender                      Female  Male
-major                                   
-Biology                        102    66
-Economics and Finance           53    82
-Environmental Sciences          63    88
-Mathematics and Statistics      33    93
-Political Science              111    61
-Social Sciences                 78    35</code></pre>
+# Experiment: inspect column proportions, rather
+# than comparing raw counts only.</code></pre>
+
                     <p>
-                        To conduct a \(\chi^2\) independence test in Python using the
-                        <code>stats</code>
-                        module from SciPy, we apply the <code>chi2_contingency()</code>
-                        function. We only need to provide a contingency table of the observed frequencies as either a
-                        pandas DataFrame or a NumPy array.
+                        In this sample, the test gives approximately \(Q=77.3153\), with five degrees of freedom and a
+                        very small p-value. This is evidence against independence in the source population, provided the
+                        sampling and modeling assumptions are appropriate. It does <i>not</i> justify the claim that
+                        gender causes field-of-study choices, nor does it establish that the teaching dataset represents
+                        all students.
                     </p>
-                    <pre
-                        class="plain stats-code code-python"
-                    ><code class="language-python">from scipy.stats import chi2_contingency
 
-test_result = chi2_contingency(observed_frequencies_table)
+                    <!-- ==================== Cell Contributions and Residuals ==================== -->
 
-print(test_result)</code></pre>
-                    <p>Output:</p>
-                    <pre
-                        class="plain stats-code code-output"
-                    ><code class="nohighlight">Chi2ContingencyResult(statistic=np.float64(77.31526633939146), pvalue=np.float64(3.056046255717623e-15), dof=5, expected_freq=array([[85.4566474 , 82.5433526 ],
-       [68.67052023, 66.32947977],
-       [76.80924855, 74.19075145],
-       [64.09248555, 61.90751445],
-       [87.49132948, 84.50867052],
-       [57.47976879, 55.52023121]]))</code></pre>
+                    <p><b>Which cells contribute to the association?</b></p>
                     <p>
-                        We may conclude that, at the 5 % significance level, the data provide very strong evidence of an
-                        association between gender and major field of study.
+                        The global chi-square test does not explain where an association occurs. The contribution of
+                        cell \((i,j)\) to Pearson's statistic is \[ C_{ij}=\frac{(O_{ij}-E_{ij})^2}{E_{ij}}. \] The
+                        <i>Pearson residual</i> retains the direction of that difference: \[
+                        R_{ij}=\frac{O_{ij}-E_{ij}}{\sqrt{E_{ij}}}, \quad Q=\sum_{i,j}R_{ij}^2. \] A positive residual
+                        means the cell contains more observations than independence predicts; a negative residual means
+                        fewer. For exploratory comparison across cells, an <i>adjusted standardized residual</i> can
+                        also be useful: \[ R^{\mathrm{adj}}_{ij} =\frac{O_{ij}-E_{ij}}
+                        {\sqrt{E_{ij}(1-O_{i+}/n)(1-O_{+j}/n)}}. \] The adjusted residual accounts for the margins, but
+                        treating many residuals as separate hypothesis tests creates a multiple-testing problem. The
+                        residuals should initially be regarded as diagnostic.
                     </p>
+
+                    <!-- --- Experiment 101: residuals and their contributions --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 101: examining the cells driving an association.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import chi2_contingency
+
+observed = pd.DataFrame(
+    {
+        "Female": [102, 53, 63, 33, 111, 78],
+        "Male":   [66, 82, 88, 93, 61, 35]
+    },
+    index=[
+        "Biology", "Economics and Finance",
+        "Environmental Sciences", "Mathematics and Statistics",
+        "Political Science", "Social Sciences"
+    ]
+)
+
+result = chi2_contingency(observed, correction=False)
+counts = observed.to_numpy()
+expected = result.expected_freq
+n = counts.sum()
+row_share = counts.sum(axis=1)[:, None] / n
+col_share = counts.sum(axis=0)[None, :] / n
+
+pearson = (counts - expected) / np.sqrt(expected)
+adjusted = (counts - expected) / np.sqrt(
+    expected * (1 - row_share) * (1 - col_share)
+)
+
+print("Pearson residuals:\n", pd.DataFrame(
+    pearson, index=observed.index, columns=observed.columns
+).round(2))
+print("\nAdjusted residuals:\n", pd.DataFrame(
+    adjusted, index=observed.index, columns=observed.columns
+).round(2))
+
+assert np.isclose(np.sum(pearson ** 2), result.statistic)
+
+fig, ax = plt.subplots(figsize=(9, 5.5))
+image = ax.imshow(pearson, aspect="auto", cmap="coolwarm")
+
+ax.set_xticks(np.arange(observed.shape[1]), observed.columns)
+ax.set_yticks(np.arange(observed.shape[0]), observed.index)
+ax.set_title("Pearson residuals: observed versus expected")
+
+for i in range(pearson.shape[0]):
+    for j in range(pearson.shape[1]):
+        ax.text(j, i, f"{pearson[i, j]:.1f}",
+                ha="center", va="center")
+
+fig.colorbar(image, ax=ax, label="Pearson residual")
+fig.tight_layout()
+fig.savefig("chi_square_independence_residuals.png",
+            dpi=180, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/chi_square_independence_residuals.png"
+                            alt="Heatmap of Pearson residuals for gender and major categories"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Positive values mark cells with more observations than predicted by
+                            independence; negative values mark cells with fewer. Generated by Experiment 101.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Effect Size and Interpretation ==================== -->
+
+                    <p><b>Statistical significance versus strength of association.</b></p>
+                    <p>
+                        A p-value measures evidence against the null relative to a statistical model; it is not a
+                        measure of how strong the categorical association is. With a large sample, even a small
+                        departure from independence can be statistically detectable. One common descriptive effect-size
+                        measure is <i>Cramér's V</i>.
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Cramér's V).</b></p>
+                        <p>
+                            For an \(r\times c\) table with total count \(n\) and Pearson statistic \(Q\), define \[
+                            V=\sqrt{\frac{Q}{n\min(r-1,c-1)}}. \] For a two-way table with at least two nonempty rows
+                            and columns, the uncorrected sample value lies between 0 and 1. A value of 0 indicates exact
+                            independence in the observed table. A positive value measures departure from independence,
+                            but does not indicate the direction of association.
+                        </p>
+                    </div>
+                    <p>
+                        Cramér's V should be interpreted with the table's dimensions, category structure and sampling
+                        context in mind. There is no universally valid cutoff that separates weak from strong
+                        associations. For \(2\times2\) tables, other summaries such as conditional proportions, risk
+                        differences and odds ratios may be more interpretable.
+                    </p>
+
+                    <!-- --- Experiment 102: Cramér's V and conditional proportions --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 102: effect size and conditional proportions.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+observed = pd.DataFrame(
+    {
+        "Female": [102, 53, 63, 33, 111, 78],
+        "Male":   [66, 82, 88, 93, 61, 35]
+    },
+    index=[
+        "Biology", "Economics and Finance",
+        "Environmental Sciences", "Mathematics and Statistics",
+        "Political Science", "Social Sciences"
+    ]
+)
+
+result = chi2_contingency(observed, correction=False)
+n = observed.to_numpy().sum()
+r, c = observed.shape
+cramers_v = np.sqrt(result.statistic / (n * min(r - 1, c - 1)))
+
+print(f"Cramer's V: {cramers_v:.4f}")
+print("\nMajor distribution within each gender:")
+print((observed.div(observed.sum(axis=0), axis=1) * 100).round(1))
+
+# Experiment: multiply every cell count by 10.
+# What happens to Cramer's V and the p-value?</code></pre>
+
+                    <p>
+                        Comparing proportions within each column is often more informative than comparing the raw
+                        counts. However, even a large association does not imply that either variable causes the other.
+                    </p>
+
+                    <!-- ==================== Assumptions and Small Counts ==================== -->
+
+                    <p><b>Assumptions and expected-count guidelines.</b></p>
+                    <p>
+                        The key design assumption is that observations are independent at the relevant sampling unit.
+                        Repeated measurements on the same customer, student or household generally cannot be treated as
+                        independent rows without further justification. Categories must be defined consistently, and
+                        each observation should be counted in exactly one cell.
+                    </p>
+                    <p>
+                        The chi-square reference distribution also requires sufficient information in the expected cell
+                        counts. A simple conservative guideline is to aim for expected counts of at least 5 in every
+                        cell. A frequently quoted, more permissive rule allows a small minority of expected counts below
+                        5 but none below 1; it is only a heuristic, not a guarantee of accurate p-values. The
+                        reliability of the approximation depends on the margins and the table's overall structure. These
+                        guidelines concern <i>expected</i>, not observed, counts.
+                    </p>
+                    <p>
+                        Do not remove rare categories or combine them solely because that produces a desirable p-value.
+                        Combining categories should make sense substantively and preferably be specified before
+                        examining the results. When counts are sparse, an exact or conditional Monte Carlo approach may
+                        be preferable.
+                    </p>
+
+                    <!-- --- Experiment 103: Fisher's exact test for a small 2-by-2 table --- -->
+                    <p class="stats-experiment-title"><b>Experiment 103: chi-square versus Fisher's exact test.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chi2_contingency, fisher_exact
+
+# Illustrative small 2-by-2 contingency table.
+observed = np.array([
+    [1, 9],
+    [11, 3]
+])
+
+pearson = chi2_contingency(observed, correction=False)
+yates = chi2_contingency(observed, correction=True)
+fisher = fisher_exact(observed, alternative="two-sided")
+
+print("Expected counts:\n", pearson.expected_freq)
+print(f"Pearson approximation: p={pearson.pvalue:.6f}")
+print(f"Yates correction:       p={yates.pvalue:.6f}")
+print(f"Fisher exact test:      p={fisher.pvalue:.6f}")
+print(f"Sample odds ratio:     {fisher.statistic:.4f}")
+
+# Experiment: multiply every cell by 5.
+# Do the p-values become more similar?</code></pre>
+
+                    <p>
+                        Fisher's exact test computes a conditional p-value for a \(2\times2\) table using its observed
+                        margins. Its two-sided p-value is not generally obtained simply by doubling one tail; the
+                        calculation depends on the exact-test definition. An odds ratio summarizes the association in a
+                        \(2\times2\) table, but its interpretation depends on the sampling design.
+                    </p>
+
+                    <!-- ==================== Conditional Monte Carlo Test ==================== -->
+
+                    <p><b>Conditional Monte Carlo testing for sparse larger tables.</b></p>
+                    <p>
+                        For tables larger than \(2\times2\), conditional Monte Carlo simulation offers one way to avoid
+                        relying solely on the asymptotic chi-square tail. Under independence and conditional on the
+                        observed row and column totals, we can generate many tables with those same margins and compare
+                        their Pearson statistics with the observed one.
+                    </p>
+                    <p>
+                        If \(B\) simulated tables are generated, a useful Monte Carlo estimate of the conditional tail
+                        probability is \[ \widehat p=\frac{1+\#\{b:Q_b\geq Q_{\mathrm{obs}}\}}{B+1}. \] This simulation
+                        approximates a conditional exact test, not an unconditional sampling distribution. The formula
+                        also avoids returning a zero p-value just because no simulated table was as extreme as the
+                        observed one.
+                    </p>
+
+                    <!-- --- Experiment 104: conditional Monte Carlo p-value --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 104: fixed-margin Monte Carlo test for a sparse 2-by-3 table.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chi2_contingency
+
+rng = np.random.default_rng(2026)
+observed = np.array([
+    [8, 0, 2],
+    [1, 4, 5]
+])
+
+result = chi2_contingency(observed, correction=False)
+print("Expected counts:\n", result.expected_freq)
+print(f"Asymptotic p-value: {result.pvalue:.5f}")
+
+# Expand the row and column categories according to the margins.
+# Shuffling column assignments preserves both margins.
+r, c = observed.shape
+row_ids = np.repeat(np.arange(r), observed.sum(axis=1))
+col_ids = np.repeat(np.arange(c), observed.sum(axis=0))
+expected = result.expected_freq
+
+B = 20_000
+extreme_count = 0
+
+for _ in range(B):
+    shuffled_cols = rng.permutation(col_ids)
+    simulated = np.bincount(
+        row_ids * c + shuffled_cols,
+        minlength=r * c
+    ).reshape(r, c)
+
+    simulated_stat = np.sum(
+        (simulated - expected) ** 2 / expected
+    )
+    extreme_count += simulated_stat &gt;= result.statistic - 1e-12
+
+monte_carlo_p = (extreme_count + 1) / (B + 1)
+print(f"Conditional Monte Carlo p-value: {monte_carlo_p:.5f}")
+
+# Experiment: increase B to investigate Monte Carlo accuracy.</code></pre>
+
+                    <!-- ==================== Type I Errors and Power ==================== -->
+
+                    <p><b>Sampling variability, sample size, and statistical power.</b></p>
+                    <p>
+                        A valid test should reject a true null with approximately the nominal probability, but it should
+                        reject increasingly often under a fixed departure from independence as the sample size grows.
+                        The following simulation compares rejection frequencies for two \(2\times3\) joint
+                        distributions, one independent and one associated.
+                    </p>
+
+                    <!-- --- Experiment 105: type I error and power --- -->
+                    <p class="stats-experiment-title">
+                        <b>Experiment 105: Type I error and power of the independence test.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import chi2
+
+rng = np.random.default_rng(2026)
+alpha = 0.05
+B = 3000
+sample_sizes = [50, 100, 200, 500]
+
+# Both models have identical margins, but only the first
+# satisfies statistical independence.
+probabilities_null = np.array([
+    [0.10, 0.20, 0.20],
+    [0.10, 0.20, 0.20]
+])
+probabilities_alt = np.array([
+    [0.17, 0.20, 0.13],
+    [0.03, 0.20, 0.27]
+])
+
+
+def rejection_rate(n, probabilities):
+    tables = rng.multinomial(
+        n, probabilities.ravel(), size=B
+    ).reshape(B, 2, 3)
+
+    row_totals = tables.sum(axis=2, keepdims=True)
+    col_totals = tables.sum(axis=1, keepdims=True)
+    expected = row_totals * col_totals / n
+
+    # All included tables have positive margins in this setup.
+    valid = np.all(expected &gt; 0, axis=(1, 2))
+    tables = tables[valid]
+    expected = expected[valid]
+
+    statistic = np.sum(
+        (tables - expected) ** 2 / expected,
+        axis=(1, 2)
+    )
+    p_values = chi2.sf(statistic, df=2)
+    return np.mean(p_values &lt; alpha)
+
+
+type1_rates = []
+power_rates = []
+
+for n in sample_sizes:
+    type1 = rejection_rate(n, probabilities_null)
+    power = rejection_rate(n, probabilities_alt)
+    type1_rates.append(type1)
+    power_rates.append(power)
+    print(f"n={n:3d}  Type I rate={type1:.3f}  Power={power:.3f}")
+
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.plot(sample_sizes, type1_rates, marker="o", label="Null: Type I error")
+ax.plot(sample_sizes, power_rates, marker="s", label="Alternative: power")
+ax.axhline(alpha, linestyle="--", label="Nominal alpha = 0.05")
+ax.set_xlabel("Sample size")
+ax.set_ylabel("Probability of rejection")
+ax.set_ylim(0, 1)
+ax.set_title("Type I error and power of the chi-square test")
+ax.legend()
+ax.grid(alpha=0.25)
+fig.tight_layout()
+fig.savefig("chi_square_independence_power.png",
+            dpi=180, bbox_inches="tight")
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/chi_square_independence_power.png"
+                            alt="Simulated chi-square test rejection frequencies under independence and association"
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Rejection probabilities under an independent and an associated joint
+                            distribution for several sample sizes. Generated by Experiment 105.
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        The simulation illustrates why statistical significance must not be confused with effect size.
+                        Increasing the sample size can make small departures from independence detectable without
+                        changing the strength of the underlying association.
+                    </p>
+
+                    <!-- ==================== Confounding, Simpson's Paradox and Causality ==================== -->
+
+                    <p><b>Association does not imply causation.</b></p>
+                    <p>
+                        The chi-square test does not establish a causal mechanism. An apparent association can arise
+                        from confounding, selection effects, or other aspects of data collection. Moreover, an
+                        association found after pooling data can differ dramatically from associations within relevant
+                        subgroups. This phenomenon is illustrated by
+                        <i>Simpson's paradox</i>.
+                    </p>
+
+                    <!-- --- Experiment 106: aggregation and Simpson's paradox --- -->
+                    <p class="stats-experiment-title"><b>Experiment 106: Simpson's paradox in categorical data.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import chi2_contingency
+
+# Synthetic counts: each row is a service, each column
+# is success/failure. Services are assigned different
+# proportions of easy and hard cases.
+easy = np.array([
+    [18, 2],   # Service A: 90% success
+    [64, 16]   # Service B: 80% success
+])
+
+hard = np.array([
+    [24, 56],  # Service A: 30% success
+    [2, 8]     # Service B: 20% success
+])
+
+combined = easy + hard
+
+for name, table in [
+    ("Easy cases", easy),
+    ("Hard cases", hard),
+    ("All cases", combined)
+]:
+    success_rates = table[:, 0] / table.sum(axis=1)
+    p_value = chi2_contingency(
+        table, correction=False
+    ).pvalue
+
+    print(name)
+    print(f"  Service A success rate: {success_rates[0]:.1%}")
+    print(f"  Service B success rate: {success_rates[1]:.1%}")
+    print(f"  Chi-square p-value: {p_value:.4f}")
+
+# Experiment: change the mixture of easy and hard cases
+# without changing the within-group success rates.</code></pre>
+
+                    <p>
+                        Service A has the higher success proportion in both difficulty categories, but Service B has the
+                        higher overall success proportion because its cases are concentrated in the easier group. The
+                        reversal is caused by differing group composition. This illustrates why stratification and
+                        thoughtful study design may be essential before interpreting an overall contingency table.
+                    </p>
+
+                    <!-- ==================== Independence versus Homogeneity ==================== -->
+
+                    <p><b>Independence and homogeneity tests.</b></p>
+                    <p>
+                        A <i>test of independence</i> usually arises from one sample in which every observation is
+                        classified by two categorical variables. A <i>test of homogeneity</i> compares the distributions
+                        of a categorical outcome across independently sampled populations or prespecified groups. Both
+                        commonly use the same Pearson statistic and the same approximate \((r-1)(c-1)\) degrees of
+                        freedom, but their sampling designs and interpretations differ.
+                    </p>
+                    <p>
+                        With a \(2\times2\) table, a test of independence also tests equality of the relevant
+                        conditional proportions under an appropriate design. For an A/B experiment, however, differences
+                        in observed conversion rates should be interpreted through the randomization and data collection
+                        process, not solely through a chi-square p-value.
+                    </p>
+
+                    <!-- ==================== Practical Guidance and Exercises ==================== -->
+
+                    <p><b>Practical considerations.</b></p>
+                    <p>
+                        Before performing a chi-square independence test, verify what each row and column represents,
+                        whether the counts are mutually exclusive, whether the observational units are independent, and
+                        whether missing data or weighting changes the interpretation. Use counts, not a table of already
+                        computed percentages, unless an appropriate count-based model has been reconstructed. After the
+                        omnibus test, inspect conditional proportions and residuals; report a useful effect-size summary
+                        and the sample size alongside the p-value.
+                    </p>
+
+                    <p>
+                        <b>Try it yourself.</b>
+                        (1) Compute the expected counts and Pearson contributions for the acquisition-channel table by
+                        hand. (2) Reproduce the six-by-two student example and identify the cells with the largest
+                        absolute Pearson residuals. (3) Multiply every cell count in the student table by 10; explain
+                        the changes to the p-value and Cramér's V. (4) For a sparse two-by-two table, compare Pearson,
+                        Yates-corrected, and Fisher p-values. (5) In Experiment 105, change the alternative distribution
+                        while preserving its margins; examine how the power curve changes. (6) Explain why the
+                        aggregated conclusion in Experiment 106 reverses the conclusions in its subgroups.
+                    </p>
+                    <p>
+                        <b>Further reading.</b>
+                        DeGroot and Schervish (4th ed.), Section 10.3, pp. 641–646, develops the chi-square independence
+                        test for contingency tables; Sections 10.4–10.5, pp. 647–655, discuss homogeneity tests and
+                        Simpson's paradox. OpenIntro Statistics (4th ed.), Section 6.4, pp. 240–247, presents the test
+                        for two-way tables, expected counts, and the interpretation of independence tests. Relevant
+                        exercises appear at the end of Section 6.4. For implementation details, see the SciPy
+                        documentation for
+                        <code>scipy.stats.chi2_contingency</code> and <code>scipy.stats.fisher_exact</code>.
+                    </p>
+
                     <hr />
                     <!-- ========================= MAIN SECTION 16: Inferences About the
                                                                         Slope ========================= -->
