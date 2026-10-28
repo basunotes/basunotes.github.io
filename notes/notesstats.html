@@ -11950,10 +11950,747 @@ print("n:", len(sample))</code></pre>
 
                     <hr />
 
-                    <!-- ========================= MAIN SECTION 19: Polynomial
-                                                                                Regression ========================= -->
+                    <!-- ========================= MAIN SECTION 19: Polynomial Regression ========================= -->
                     <span id="PolynomialRegression"><b>Polynomial Regression</b></span>
-                    <p><i>This section will be completed later!</i></p>
+                    <p>
+                        <i>Polynomial regression</i> extends simple linear regression by allowing the conditional mean
+                        of a numerical response to change nonlinearly with a predictor. It retains the least-squares
+                        framework developed in the Linear Regression section, but expands the feature space from a
+                        straight line to polynomial curves. The central problem is no longer only how to estimate
+                        coefficients: it is also how much model complexity the available data can support.
+                    </p>
+                    <p>
+                        For a concrete data-science application, imagine predicting a measurement or a continuous
+                        outcome from an explanatory variable when a scatterplot shows curvature. A high-degree curve may
+                        reproduce the training observations impressively while making poor predictions on new data. We
+                        will study both the mathematical model and the procedures used to detect and control that
+                        failure.
+                    </p>
+
+                    <!-- ==================== Model and Least-Squares Estimation ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (polynomial regression).</b></p>
+                        <p>
+                            For a single predictor and a degree <i>fixed in advance</i>, the degree-\(d\) regression
+                            model is
+                        </p>
+                        \[Y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\cdots+\beta_dx_i^d+\varepsilon_i, \qquad \mathbb
+                        E(\varepsilon_i\mid x_i)=0.\]
+                        <p>
+                            Equivalently, the conditional mean is \(m(x)=\mathbb E(Y\mid
+                            X=x)=\sum_{j=0}^{d}\beta_jx^j\). The model is <i>nonlinear in the predictor</i> but
+                            <i>linear in the unknown coefficients</i> \(\beta_j\). Consequently, polynomial regression
+                            is a special case of the <i>general linear model</i>, not an example of nonlinear least
+                            squares in the parameters.
+                        </p>
+                    </div>
+                    <p>
+                        For \(d=1\) we recover the usual straight line. For \(d=2\),
+                        \(m(x)=\beta_0+\beta_1x+\beta_2x^2\) is a parabola. For \(d=3\), the curve is cubic and may
+                        change curvature. The polynomial basis provides one way of representing a curved regression
+                        function; it does not imply that the physical relationship is intrinsically polynomial.
+                    </p>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (least-squares polynomial fit).</b></p>
+                        <p>
+                            Let \(X\) be the \(n\times(d+1)\) design matrix with \(i\)-th row
+                            \((1,x_i,x_i^2,\ldots,x_i^d)\), and let \(y=(y_1,\ldots,y_n)^T\). The least-squares problem
+                            is
+                        </p>
+                        \[\hat\beta\in\operatorname*{arg\,min}_{b\in\mathbb R^{d+1}} \|y-Xb\|_2^2.\]
+                        <p>
+                            Every minimizer satisfies the normal equations \(X^TX\hat\beta=X^Ty\). If \(X\) has full
+                            column rank, the minimizer is unique and
+                        </p>
+                        \[\hat\beta=(X^TX)^{-1}X^Ty,\qquad \hat y=X\hat\beta.\]
+                        <p>
+                            A degree-\(d\) Vandermonde design with \(d+1\) or more <i>distinct</i> predictor values has
+                            full column rank.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. Expanding \(\|y-Xb\|^2\) and differentiating gives the gradient \(-2X^T(y-Xb)\), which
+                        vanishes at a minimum. Full column rank makes \(X^TX\) positive definite, so the quadratic
+                        objective has a unique minimizer. For distinct \(x_i\), a polynomial of degree at most \(d\)
+                        that vanishes at \(d+1\) distinct inputs is identically zero, proving linear independence of the
+                        design columns.
+                    </p>
+                    <p>
+                        <b>Computational caution.</b> The inverse formula explains the mathematics; it is <i>not</i> a
+                        recommended numerical implementation. Use a QR- or SVD-based least-squares solver such as
+                        <code>numpy.linalg.lstsq</code> or <code>sklearn.linear_model.LinearRegression</code>. Powers of
+                        an unscaled predictor can become badly conditioned.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 124: fit a quadratic polynomial from its design matrix.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+rng = np.random.default_rng(124)
+x = np.linspace(-2, 2, 45)
+y = 1.5 - 0.8*x + 1.2*x**2 + rng.normal(0, 0.7, x.size)
+
+# Vandermonde matrix: columns 1, x, x^2.
+X = np.column_stack((np.ones_like(x), x, x**2))
+coef, residual_sums, rank, singular_values = np.linalg.lstsq(
+    X, y, rcond=None)
+print(&quot;Quadratic coefficients [intercept, x, x^2]:&quot;, np.round(coef, 4))
+print(&quot;Design rank:&quot;, rank)
+
+# The same model using a feature transformer and an OLS estimator.
+features = PolynomialFeatures(degree=2, include_bias=False)
+XP = features.fit_transform(x.reshape(-1, 1))
+model = LinearRegression().fit(XP, y)
+print(&quot;scikit-learn coefficients:&quot;,
+      np.round(np.r_[model.intercept_, model.coef_], 4))
+assert np.allclose(np.r_[model.intercept_, model.coef_], coef)
+
+grid = np.linspace(-2.2, 2.2, 300)
+grid_X = np.column_stack((np.ones_like(grid), grid, grid**2))
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y, s=24, alpha=0.7, label=&quot;Observed sample&quot;)
+ax.plot(grid, grid_X @ coef, linewidth=2, label=&quot;OLS quadratic&quot;)
+ax.plot(grid, 1.5 - 0.8*grid + 1.2*grid**2,
+        linestyle=&quot;--&quot;, label=&quot;True conditional mean&quot;)
+ax.set(xlabel=&quot;Predictor x&quot;, ylabel=&quot;Response y&quot;,
+       title=&quot;Polynomial regression is linear in its coefficients&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_quadratic_fit.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_quadratic_fit.png"
+                            alt="A simulated quadratic relationship with the ordinary least-squares curve and the true conditional mean."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> A simulated quadratic relationship with the ordinary least-squares curve and
+                            the true conditional mean. Generated by Experiment 124.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Polynomial Complexity and Overfitting ==================== -->
+                    <div class="stats-note stats-lemma">
+                        <p class="stats-note-heading">
+                            <b>Lemma (training SSE cannot increase as degree increases).</b>
+                        </p>
+                        <p>
+                            Let \(\mathrm{SSE}_d\) be the minimum sum of squared residuals among all polynomials of
+                            degree <i>at most</i> \(d\). Then
+                        </p>
+                        \[\mathrm{SSE}_{d+1}\leq\mathrm{SSE}_d.\]
+                        <p>
+                            Proof. Every polynomial of degree at most \(d\) is also a polynomial of degree at most
+                            \(d+1\) (set its highest coefficient to zero). Minimizing over the larger set cannot give a
+                            larger minimum.
+                        </p>
+                    </div>
+                    <p>
+                        This nesting property makes training error a poor standalone criterion for selecting polynomial
+                        degree. As flexibility grows, a model can fit sampling noise rather than stable features of the
+                        conditional mean. <i>Underfitting</i> occurs when the chosen function class is too restrictive;
+                        <i>overfitting</i> occurs when the fitted model reacts too strongly to sample-specific noise.
+                        Evaluation on observations not used for fitting is needed to assess predictive generalization.
+                    </p>
+                    <p>
+                        <b>Parameter count.</b> An univariate degree-\(d\) polynomial has \(d+1\) coefficients. When
+                        \(d\geq n-1\) and all inputs are distinct, a degree-\(n-1\) polynomial can interpolate all \(n\)
+                        observations, giving zero training residuals even when the observed responses contain noise.
+                        This does not imply a good population model.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 125: compare underfitting, useful complexity, and overfitting.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+rng = np.random.default_rng(125)
+def mean_curve(x):
+    return 1 + 1.3*x - 1.8*x**2 + 0.8*x**3
+
+x_train = np.sort(rng.uniform(-1, 1, 28))
+y_train = mean_curve(x_train) + rng.normal(0, 0.28, x_train.size)
+x_test = rng.uniform(-1, 1, 1000)
+y_test = mean_curve(x_test) + rng.normal(0, 0.28, x_test.size)
+grid = np.linspace(-1, 1, 400)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x_train, y_train, s=28, label=&quot;Training observations&quot;)
+ax.plot(grid, mean_curve(grid), linestyle=&quot;--&quot;, label=&quot;True mean&quot;)
+for degree in (1, 3, 16):
+    model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
+                          LinearRegression())
+    model.fit(x_train[:, None], y_train)
+    train_rmse = np.sqrt(mean_squared_error(
+        y_train, model.predict(x_train[:, None])))
+    test_rmse = np.sqrt(mean_squared_error(
+        y_test, model.predict(x_test[:, None])))
+    print(f&quot;Degree {degree:2d}: train RMSE={train_rmse:.3f}, &quot;
+          f&quot;independent test RMSE={test_rmse:.3f}&quot;)
+    ax.plot(grid, model.predict(grid[:, None]),
+            label=f&quot;Degree {degree}&quot;)
+ax.set(xlabel=&quot;x&quot;, ylabel=&quot;y&quot;, ylim=(-4, 5),
+       title=&quot;Training fit and polynomial complexity&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_degree_overfit.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_degree_overfit.png"
+                            alt="Fits of degrees 1, 3, and 16 to noisy observations, illustrating underfitting and unstable high-degree curves."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Fits of degrees 1, 3, and 16 to noisy observations, illustrating underfitting
+                            and unstable high-degree curves. Generated by Experiment 125.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Polynomial Features and Interactions ==================== -->
+                    <p>
+                        For several predictors, polynomial features can also include cross-products. For example, two
+                        predictors and degree two produce the basis \(1,x_1,x_2,x_1^2,x_1x_2,x_2^2\). The \(x_1x_2\)
+                        term is an <i>interaction</i>: its coefficient allows the association between one predictor and
+                        the response to vary with the other predictor. Adding polynomial and interaction features still
+                        yields a linear-in-parameters regression model.
+                    </p>
+                    <p>
+                        For \(p\) original predictors, the number of monomials with total degree at most \(d\),
+                        <i>including the constant term</i>, is \(\binom{p+d}{d}\). This can grow rapidly. In
+                        scikit-learn, <code>PolynomialFeatures(include_bias=False)</code> omits the column of ones
+                        because <code>LinearRegression()</code> already fits an intercept by default.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 126: construct a multivariable polynomial feature matrix with an interaction.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import KFold, cross_val_score
+
+rng = np.random.default_rng(126)
+X = rng.uniform(-1, 1, size=(180, 2))
+y = 2 + X[:, 0] - 0.7*X[:, 1] + 3*X[:, 0]*X[:, 1]
+y = y + rng.normal(0, 0.25, len(y))
+
+poly = PolynomialFeatures(degree=2, include_bias=False)
+XP = poly.fit_transform(X)
+print(&quot;Feature names:&quot;, poly.get_feature_names_out([&quot;x1&quot;, &quot;x2&quot;]))
+print(&quot;Feature-matrix shape:&quot;, XP.shape)
+
+cv = KFold(n_splits=5, shuffle=True, random_state=126)
+for title, estimator in [
+    (&quot;Main effects only&quot;, LinearRegression()),
+    (&quot;Quadratic with interactions&quot;,
+     make_pipeline(PolynomialFeatures(2, include_bias=False),
+                   LinearRegression()))
+]:
+    scores = cross_val_score(estimator, X, y, cv=cv,
+                             scoring=&quot;neg_mean_squared_error&quot;)
+    print(f&quot;{title}: cross-validated RMSE=&quot;
+          f&quot;{np.sqrt(-scores).mean():.3f}&quot;)</code></pre>
+
+                    <!-- ==================== Selecting Degree with Validation ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (validation and cross-validation).</b></p>
+                        <p>
+                            In supervised prediction, the <i>training set</i> estimates model parameters;
+                            <i>validation data</i> compare candidate models or hyperparameters; an
+                            <i>independent test set</i> is reserved for a final evaluation of the chosen procedure. In
+                            \(K\)-fold cross-validation, training data are partitioned into \(K\) folds, and each fold
+                            is predicted using a model trained on the other \(K-1\) folds.
+                        </p>
+                    </div>
+                    <p>
+                        For a regression outcome, one convenient criterion is the root mean squared error,
+                        \(\mathrm{RMSE}=\sqrt{\frac{1}{m}\sum_{i=1}^{m}(y_i-\hat y_i)^2}\), evaluated on observations
+                        not used to fit the corresponding model. Compare candidate degrees on the <i>same</i> splits. In
+                        a preprocessing pipeline, transformations learned from data must be fitted separately within
+                        each training fold. A completely untouched test set avoids reporting the optimistically selected
+                        minimum validation error as though it were independent evidence.
+                    </p>
+                    <p>
+                        These random-split procedures are appropriate only when observations are reasonably independent
+                        and exchangeable for the prediction task. For time-ordered, grouped, or repeated-measures data,
+                        use an appropriate temporal or grouped split instead.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 127: select polynomial degree by cross-validation and evaluate a held-out test
+                            set.</b
+                        >
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, KFold, cross_validate
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+rng = np.random.default_rng(127)
+x = rng.uniform(-1.5, 1.5, 130)
+y = 1 + 0.5*x - 1.3*x**2 + rng.normal(0, 0.5, len(x))
+X_train, X_test, y_train, y_test = train_test_split(
+    x[:, None], y, test_size=0.25, random_state=127)
+cv = KFold(n_splits=5, shuffle=True, random_state=127)
+
+degrees = range(1, 13)
+train_rmse, validation_rmse = [], []
+for degree in degrees:
+    model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
+                          LinearRegression())
+    result = cross_validate(model, X_train, y_train, cv=cv,
+                            scoring=&quot;neg_mean_squared_error&quot;,
+                            return_train_score=True)
+    train_rmse.append(np.sqrt(-result[&quot;train_score&quot;]).mean())
+    validation_rmse.append(np.sqrt(-result[&quot;test_score&quot;]).mean())
+
+best_degree = degrees[int(np.argmin(validation_rmse))]
+final_model = make_pipeline(
+    PolynomialFeatures(best_degree, include_bias=False),
+    LinearRegression()).fit(X_train, y_train)
+held_out_rmse = np.sqrt(mean_squared_error(
+    y_test, final_model.predict(X_test)))
+print(&quot;Selected polynomial degree:&quot;, best_degree)
+print(f&quot;CV RMSE (used for selection): {min(validation_rmse):.3f}&quot;)
+print(f&quot;Independent test RMSE (reported once): {held_out_rmse:.3f}&quot;)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.plot(list(degrees), train_rmse, marker=&quot;o&quot;, label=&quot;CV training folds&quot;)
+ax.plot(list(degrees), validation_rmse, marker=&quot;o&quot;, label=&quot;CV validation folds&quot;)
+ax.axvline(best_degree, linestyle=&quot;--&quot;, label=&quot;Selected degree&quot;)
+ax.set(xlabel=&quot;Polynomial degree&quot;, ylabel=&quot;Average fold RMSE&quot;,
+       title=&quot;Select degree using training-set cross-validation&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_cv_degree.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_cv_degree.png"
+                            alt="Average training and validation RMSE across folds by polynomial degree, with the selected model marked."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Average training and validation RMSE across folds by polynomial degree, with
+                            the selected model marked. Generated by Experiment 127.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Regularization ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Ridge-penalized polynomial regression).</b></p>
+                        <p>
+                            Let \(z_j(x)\) denote a chosen polynomial feature, and let \(b_0\) be an unpenalized
+                            intercept. Ridge regression estimates coefficients by minimizing
+                        </p>
+                        \[\sum_{i=1}^{n}\left(y_i-b_0-\sum_{j=1}^{q}b_jz_j(x_i)\right)^2
+                        +\lambda\sum_{j=1}^{q}b_j^2,\qquad \lambda\geq0.\]
+                        <p>
+                            For \(\lambda=0\), this reduces to ordinary least squares; positive \(\lambda\) penalizes
+                            large non-intercept coefficients. Standardizing nonconstant polynomial features makes the
+                            penalty comparable across feature scales. The intercept is typically not penalized.
+                        </p>
+                    </div>
+                    <p>
+                        Ridge regularization generally introduces bias into coefficient estimates but can reduce
+                        prediction variance and improve predictive error. It does not guarantee that a polynomial model
+                        is scientifically appropriate or that extrapolation is reliable. Degree and regularization
+                        strength are both <i>hyperparameters</i>, ideally selected inside a validation workflow.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 128: control a high-degree polynomial using Ridge regularization.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.metrics import mean_squared_error
+
+rng = np.random.default_rng(128)
+def true_mean(x):
+    return 0.6 + 1.2*x - 0.7*x**2 + 0.2*np.sin(3*x)
+
+x_train = np.sort(rng.uniform(-1, 1, 32))
+y_train = true_mean(x_train) + rng.normal(0, 0.23, len(x_train))
+x_test = rng.uniform(-1, 1, 1000)
+y_test = true_mean(x_test) + rng.normal(0, 0.23, len(x_test))
+grid = np.linspace(-1, 1, 350)
+
+models = {
+    &quot;High-degree OLS&quot;: make_pipeline(
+        PolynomialFeatures(16, include_bias=False),
+        StandardScaler(), LinearRegression()),
+    &quot;High-degree Ridge&quot;: make_pipeline(
+        PolynomialFeatures(16, include_bias=False),
+        StandardScaler(), Ridge(alpha=1.0))
+}
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x_train, y_train, s=25, label=&quot;Training observations&quot;)
+ax.plot(grid, true_mean(grid), linestyle=&quot;--&quot;, label=&quot;True mean&quot;)
+for label, model in models.items():
+    model.fit(x_train[:, None], y_train)
+    rmse = np.sqrt(mean_squared_error(
+        y_test, model.predict(x_test[:, None])))
+    print(f&quot;{label}: independent test RMSE={rmse:.3f}&quot;)
+    ax.plot(grid, model.predict(grid[:, None]), label=label)
+ax.set(xlabel=&quot;x&quot;, ylabel=&quot;y&quot;, ylim=(-2, 3),
+       title=&quot;Ridge shrinks a high-degree polynomial fit&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_ridge_regularization.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_ridge_regularization.png"
+                            alt="High-degree ordinary least squares and Ridge fits compared with the true mean curve."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> High-degree ordinary least squares and Ridge fits compared with the true mean
+                            curve. Generated by Experiment 128.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Numerical Conditioning and Interpretation ==================== -->
+                    <p>
+                        <b>Feature scaling and numerical stability.</b> With raw predictors measured on a large scale,
+                        columns \(x,x^2,\ldots,x^d\) can differ by many orders of magnitude and become highly
+                        correlated. The numerical condition number \(\kappa_2(X)=\sigma_{\max}(X)/\sigma_{\min}(X)\)
+                        summarizes sensitivity to perturbations; large values warn of unstable coefficient estimates.
+                        The normal-equation matrix may be much worse conditioned than the design itself. Centering and
+                        rescaling \(x\), using a stable solver, lowering degree, or adopting alternative polynomial
+                        bases can help.
+                    </p>
+                    <p>
+                        <b>Coefficient interpretation.</b> Unlike the constant slope in simple linear regression, a
+                        fitted polynomial's marginal change is location dependent:
+                    </p>
+                    \[m'(x)=\beta_1+2\beta_2x+3\beta_3x^2+\cdots+d\beta_dx^{d-1}.\]
+                    <p>
+                        Thus \(\beta_1\) alone is not the total effect of increasing \(x\) by one unit when higher
+                        powers are present. The value of the derivative depends on \(x\); an observational derivative is
+                        not automatically a causal effect.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 129: compare raw and centered polynomial design matrices.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(129)
+x = np.linspace(95, 105, 60)
+z = (x - 100) / 5  # centered, dimensionless feature
+true_y = 4 + 0.6*z - 1.2*z**2 + 0.3*z**3
+y = true_y + rng.normal(0, 0.12, len(x))
+
+# Both designs span the same polynomial functions in exact arithmetic.
+X_raw = np.vander(x, N=7, increasing=True)
+X_scaled = np.vander(z, N=7, increasing=True)
+for name, design in [(&quot;Raw x&quot;, X_raw), (&quot;Centered/scaled x&quot;, X_scaled)]:
+    cond = np.linalg.cond(design)
+    coefficients = np.linalg.lstsq(design, y, rcond=None)[0]
+    fitted = design @ coefficients
+    print(f&quot;{name:18s}: condition number={cond:.3e}, &quot;
+          f&quot;SSE={np.sum((y - fitted)**2):.4f}, &quot;
+          f&quot;numerical rank={np.linalg.matrix_rank(design)}&quot;)
+print(&quot;A coordinate change preserves the polynomial space in exact arithmetic,&quot;)
+print(&quot;but a poorly scaled numerical design can lose effective rank.&quot;)</code></pre>
+
+                    <!-- ==================== Inference for a Prespecified Polynomial Degree ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (nested-model F-test for a quadratic term).</b></p>
+                        <p>Consider the <i>prespecified</i> nested models</p>
+                        \[M_R:\ \mathbb E(Y_i\mid x_i)=\beta_0+\beta_1x_i,\qquad M_F:\ \mathbb E(Y_i\mid
+                        x_i)=\beta_0+\beta_1x_i+\beta_2x_i^2.\]
+                        <p>
+                            If the independent errors are normal with common variance \(\sigma^2\), the full design has
+                            rank three, \(n&gt;3\), and the null hypothesis \(H_0:\beta_2=0\) is true, then
+                        </p>
+                        \[F=\frac{(\operatorname{SSE}_R-\operatorname{SSE}_F)/1} {\operatorname{SSE}_F/(n-3)}\sim
+                        F_{1,n-3}.\]
+                        <p>
+                            The numerator measures the reduction in residual sum of squares obtained by adding the
+                            quadratic feature; the denominator estimates error variance from the full model.
+                        </p>
+                    </div>
+                    <p>
+                        Proof sketch. Under the normal full model and \(H_0\), the orthogonal projections onto the
+                        reduced and full regression spaces give independent scaled chi-square sums of squares:
+                        \((\mathrm{SSE}_R-\mathrm{SSE}_F)/\sigma^2\sim\chi^2_1\) and
+                        \(\mathrm{SSE}_F/\sigma^2\sim\chi^2_{n-3}\). Their ratio, divided by the corresponding degrees
+                        of freedom, is F-distributed.
+                    </p>
+                    <p>
+                        <b>Selection warning.</b> This classical reference distribution presumes the compared models
+                        were chosen independently of the observed noise. If polynomial degree was searched using the
+                        <i>same</i> data before reporting the most significant coefficient or F-test, the naive p-values
+                        and intervals generally fail to account for that selection. Separate exploratory model selection
+                        from confirmatory inference.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 130: test a prespecified quadratic term against a straight-line model.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+import statsmodels.api as sm
+
+rng = np.random.default_rng(130)
+x = np.linspace(-2, 2, 90)
+y = 2 + 0.7*x + 1.1*x**2 + rng.normal(0, 1.0, len(x))
+
+reduced = sm.OLS(y, sm.add_constant(x)).fit()
+full = sm.OLS(y, np.column_stack((np.ones(len(x)), x, x**2))).fit()
+sse_r = np.sum(reduced.resid**2)
+sse_f = np.sum(full.resid**2)
+F = ((sse_r - sse_f)/1) / (sse_f/(len(x) - 3))
+p_value = stats.f.sf(F, 1, len(x) - 3)
+print(f&quot;Reduced SSE={sse_r:.3f}; full SSE={sse_f:.3f}&quot;)
+print(f&quot;Quadratic-term F={F:.4f}; p-value={p_value:.5g}&quot;)
+print(&quot;statsmodels comparison (F, p, df difference):&quot;,
+      full.compare_f_test(reduced))
+print(&quot;Quadratic coefficient 95% CI:&quot;,
+      np.round(full.conf_int()[2], 4))
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(x, y, s=18, alpha=0.65, label=&quot;Observed responses&quot;)
+ax.plot(x, reduced.fittedvalues, label=&quot;Reduced: degree 1&quot;)
+ax.plot(x, full.fittedvalues, label=&quot;Full: degree 2&quot;)
+ax.set(xlabel=&quot;x&quot;, ylabel=&quot;y&quot;,
+       title=&quot;Prespecified comparison of nested regression models&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_nested_f_test.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_nested_f_test.png"
+                            alt="Observed outcomes with fitted linear and quadratic models used in a nested F-test."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Observed outcomes with fitted linear and quadratic models used in a nested
+                            F-test. Generated by Experiment 130.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Extrapolation and Model Scope ==================== -->
+                    <p>
+                        <b>Extrapolation.</b> Within the range of observed predictors, smooth polynomial curves may
+                        approximate the conditional mean usefully. Outside that range, polynomial terms with high powers
+                        can dominate, and small coefficient errors can produce extreme predictions. A narrow in-sample
+                        confidence band does not justify extrapolating the functional form into an unobserved region.
+                        Even a correctly computed interval is conditional on model assumptions that are especially hard
+                        to justify outside the training domain.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 131: visualize uncertainty in extrapolation beyond the observed range.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+
+rng = np.random.default_rng(131)
+x = np.sort(rng.uniform(-1, 1, 45))
+y = 0.5 + 0.4*x + 1.6*x**2 + rng.normal(0, 0.22, len(x))
+grid = np.linspace(-2, 2, 500)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.axvspan(-1, 1, alpha=0.10, label=&quot;Training x range&quot;)
+ax.scatter(x, y, s=22, label=&quot;Observed training data&quot;)
+for degree in (2, 5, 10):
+    model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
+                          LinearRegression()).fit(x[:, None], y)
+    pred = model.predict(grid[:, None])
+    ax.plot(grid, pred, label=f&quot;Degree {degree}&quot;)
+ax.set(xlabel=&quot;x&quot;, ylabel=&quot;Predicted y&quot;, ylim=(-4, 13),
+       title=&quot;Polynomial extrapolation outside the observed domain&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_extrapolation.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_extrapolation.png"
+                            alt="Polynomials of degrees 2, 5, and 10 fitted inside a training range but extrapolated beyond its boundaries."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Polynomials of degrees 2, 5, and 10 fitted inside a training range but
+                            extrapolated beyond its boundaries. Generated by Experiment 131.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Applied Student Data Example ==================== -->
+                    <p>
+                        <b>Applied example: predicting student weight from height.</b> We return to the SOGA-Py
+                        <i>students</i> data used in earlier regression sections, and compare a straight line with
+                        quadratic and cubic alternatives. The response is <code>weight</code> and the predictor is
+                        <code>height</code>. This is a descriptive and predictive exercise, not an explanation of why
+                        students have particular weights. An improved test RMSE does not establish a causal
+                        relationship.
+                    </p>
+                    <p>
+                        The code attempts to load the external data. When the download is unavailable, it explicitly
+                        switches to a <i>simulated demonstration dataset</i>, so the example and figure remain runnable
+                        offline. Synthetic fallback results must not be presented as empirical findings about students.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 132: compare polynomial models on the SOGA-Py student dataset.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import KFold, train_test_split, cross_val_score
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+url = &quot;https://userpage.fu-berlin.de/soga/data/raw-data/students.csv&quot;
+try:
+    students = pd.read_csv(url)
+    data_source = &quot;SOGA-Py students (external dataset)&quot;
+except Exception as error:
+    print(&quot;External data unavailable; using a simulated example instead:&quot;,
+          type(error).__name__)
+    rng = np.random.default_rng(132)
+    height = rng.normal(171, 9, 450)
+    weight = 68 + 0.60*(height - 171) + 0.012*(height - 171)**2
+    weight += rng.normal(0, 7.5, height.size)
+    students = pd.DataFrame({&quot;height&quot;: height, &quot;weight&quot;: weight})
+    data_source = &quot;SIMULATED DEMONSTRATION DATA&quot;
+
+clean = students[[&quot;height&quot;, &quot;weight&quot;]].apply(
+    pd.to_numeric, errors=&quot;coerce&quot;).dropna()
+if len(clean) &lt; 25:
+    raise ValueError(&quot;Need at least 25 complete height/weight observations&quot;)
+X = clean[[&quot;height&quot;]].to_numpy()
+y = clean[&quot;weight&quot;].to_numpy()
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=132)
+cv = KFold(n_splits=5, shuffle=True, random_state=132)
+
+models = {}
+for degree in (1, 2, 3):
+    model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
+                          LinearRegression())
+    fold_rmse = np.sqrt(-cross_val_score(
+        model, X_train, y_train, cv=cv,
+        scoring=&quot;neg_mean_squared_error&quot;))
+    models[degree] = (fold_rmse.mean(), model)
+
+selected_degree = min(models, key=lambda d: models[d][0])
+selected_model = models[selected_degree][1].fit(X_train, y_train)
+test_rmse = np.sqrt(mean_squared_error(
+    y_test, selected_model.predict(X_test)))
+print(&quot;Data source:&quot;, data_source, &quot;| complete observations:&quot;, len(clean))
+for degree, (cv_rmse, _) in models.items():
+    print(f&quot;Degree {degree}: 5-fold CV RMSE={cv_rmse:.3f}&quot;)
+print(f&quot;Selected degree: {selected_degree}; held-out RMSE: {test_rmse:.3f}&quot;)
+
+height_grid = np.linspace(X.min(), X.max(), 250).reshape(-1, 1)
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.scatter(X_train[:, 0], y_train, s=13, alpha=0.35,
+           label=&quot;Training observations&quot;)
+ax.scatter(X_test[:, 0], y_test, s=18, alpha=0.50,
+           label=&quot;Held-out observations&quot;)
+ax.plot(height_grid[:, 0], selected_model.predict(height_grid),
+        linewidth=2, label=f&quot;Selected degree {selected_degree}&quot;)
+ax.set(xlabel=&quot;Height&quot;, ylabel=&quot;Weight&quot;,
+       title=f&quot;Height-weight regression: {data_source}&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;poly_students_height_weight.png&quot;, dpi=170,
+            bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/poly_students_height_weight.png"
+                            alt="Height and weight observations with the degree selected by cross-validation; the title identifies whether the data are real or simulated."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Height and weight observations with the degree selected by cross-validation;
+                            the title identifies whether the data are real or simulated. Generated by Experiment 132.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Interpretation, Exercises, and Sources ==================== -->
+                    <p>
+                        <b>Practical checklist.</b> Before fitting a polynomial, inspect the scatterplot and confirm
+                        that the response is numerical. Decide whether the aim is explanation, inference, or prediction.
+                        Establish a simple baseline and choose an evaluation split appropriate to the data collection
+                        process. Fit feature transformations inside the cross-validation pipeline; compare a small,
+                        reasonable set of degrees and regularization strengths; check residual patterns and the
+                        stability of estimates. Report performance on the untouched test set and avoid unsupported
+                        extrapolation. Remember that all results describe associations unless a design supports causal
+                        interpretation.
+                    </p>
+                    <p>
+                        <b>Worked exercise (derivative and turning point).</b> Suppose \(\hat m(x)=3+2x-x^2\). Then
+                        \(\hat m'(x)=2-2x\), so the curve increases for \(x&lt;1\), reaches its maximum at \(x=1\), and
+                        decreases for \(x&gt;1\). The fitted peak is \(\hat m(1)=4\). This describes the shape of the
+                        <i>fitted function</i>, not a guaranteed property of the population function.
+                    </p>
+                    <p>
+                        <b>Further exercises.</b> (1) Prove that \(\mathrm{SSE}_{d+1}\leq\mathrm{SSE}_d\) and give a
+                        counterexample to the claim that the same holds for test error. (2) Show that a degree-\(n-1\)
+                        polynomial interpolates \(n\) observations at distinct predictor values, and explain why this
+                        may be undesirable. (3) Reproduce the \(n=10\) parabola example in DeGroot and Schervish,
+                        Section 11.1, Example 11.1.3, and compare its fitted curve with the straight line. (4) In
+                        Experiment 127, change the random seed and assess how stable the selected degree is; explain why
+                        selecting the minimum CV RMSE makes that minimum optimistic. (5) In Experiment 128, vary
+                        <code>alpha</code> on a logarithmic grid using cross-validation; compare the test RMSE and
+                        coefficient norms. (6) Derive the F-test for adding <i>two</i> polynomial terms simultaneously,
+                        including numerator and denominator degrees of freedom. (7) In Experiment 132, interpret the
+                        predicted weight differences over a chosen height range, clearly separating predictive
+                        associations from causal claims.
+                    </p>
+                    <p>
+                        <b>References.</b> DeGroot and Schervish, <i>Probability and Statistics</i>, 4th ed., Section
+                        11.1, printed pp. 693–695, treats polynomial least squares and includes Examples 11.1.3–11.1.4;
+                        Exercises 10–11 appear on p. 698. Section 11.5, beginning p. 739, develops the general linear
+                        model, which also applies to polynomial feature designs. OpenIntro Statistics, 4th ed., Section
+                        8.2 (least-squares regression) and Section 9.2 (model selection), pp. 353–358, provide useful
+                        related reading; cross-validation and Ridge are additional modern predictive-modeling topics.
+                        Implementation references:
+                        <a
+                            href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html"
+                            >PolynomialFeatures</a
+                        >,
+                        <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.make_pipeline.html"
+                            >scikit-learn pipelines</a
+                        >, and
+                        <a
+                            href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_validate.html"
+                            >cross_validate</a
+                        >.
+                    </p>
+
                     <hr />
                     <!-- ========================= MAIN SECTION 20: Logistic
                                                                                 Regression ========================= -->
