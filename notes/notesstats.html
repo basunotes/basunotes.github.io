@@ -61,6 +61,11 @@
                         <li><a href="#OneWayANOVA">One-Way Analysis of Variance (ANOVA)</a></li>
                         <li><a href="#NonparametricTests">Nonparametric Tests</a></li>
                         <li>
+                            <a href="#BootstrapPermutationResampling">
+                                Bootstrap, Permutation, and Resampling Methods
+                            </a>
+                        </li>
+                        <li>
                             <a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a>
                         </li>
                         <li>
@@ -9959,6 +9964,899 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                             rel="noopener noreferrer"
                             >statsmodels: multiple-testing adjustments</a
                         >.
+                    </p>
+                    <hr />
+
+                    <!-- ========================= Bootstrap, Permutation, and Resampling Methods ========================= -->
+                    <span id="BootstrapPermutationResampling"
+                        ><b>Bootstrap, Permutation, and Resampling Methods</b></span
+                    >
+
+                    <p>
+                        A point estimate is calculated from one observed dataset, but another random sample would
+                        usually produce a different estimate. Resampling approximates <i>sampling variability</i> and,
+                        with the right null hypothesis, can also produce a reference distribution for a test. In data
+                        science these methods are especially useful when a theoretical sampling distribution is
+                        difficult to derive, the statistic is nonlinear, or we want to check a conventional inference
+                        method by simulation.
+                    </p>
+                    <p>
+                        Three questions must be kept separate: <b>what is the statistic?</b>
+                        <b>what random mechanism generates the resamples?</b> and
+                        <b>what quantity does the simulated distribution represent?</b>
+                        Resampling does not correct a biased survey, dependent observations, a poorly chosen estimand,
+                        or violations of the sampling/randomization design.
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Resampling mechanism</th>
+                                    <th>Primary inferential target</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nonparametric bootstrap</td>
+                                    <td>Sample observed units <b>with replacement</b></td>
+                                    <td>Standard error, bias, or confidence interval for an estimator</td>
+                                </tr>
+                                <tr>
+                                    <td>Parametric bootstrap</td>
+                                    <td>Draw new observations from an estimated probability model</td>
+                                    <td>Sampling uncertainty under the specified model</td>
+                                </tr>
+                                <tr>
+                                    <td>Permutation/randomization test</td>
+                                    <td>Reallocate labels or assignments under a valid null mechanism</td>
+                                    <td>Distribution of a statistic <b>under the null</b> and its p-value</td>
+                                </tr>
+                                <tr>
+                                    <td>Monte Carlo simulation</td>
+                                    <td>Draw many repetitions from a specified probability law or design</td>
+                                    <td>Probability, power, coverage, or numerical approximation</td>
+                                </tr>
+                                <tr>
+                                    <td>Block/cluster bootstrap</td>
+                                    <td>Resample dependent <i>units</i>, blocks, or clusters</td>
+                                    <td>Uncertainty accounting for an identified dependence structure</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        We use reproducible pseudo-random draws, but fixing a seed only makes the computation
+                        reproducible; it does not make a resampling procedure statistically valid. The mathematical
+                        model and study design determine validity.
+                    </p>
+
+                    <!-- ========================= Empirical Distribution and Bootstrap ========================= -->
+                    <p><b>The empirical distribution and the nonparametric bootstrap.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading">
+                            <b>Definition (empirical distribution and bootstrap sample).</b>
+                        </p>
+                        <p>
+                            Given an i.i.d. sample \(X_1,\ldots,X_n\) from a population distribution \(F\), its
+                            empirical c.d.f. is \[ \widehat F_n(t)=\frac1n\sum_{i=1}^n\mathbf1\{X_i\le t\}. \] The
+                            <i>nonparametric bootstrap</i> regards \(\widehat F_n\) as a substitute for the unknown
+                            \(F\): conditional on the data, draw \(X_1^*,\ldots,X_n^*\) independently from \(\widehat
+                            F_n\), so that each observed row can be selected again with probability \(1/n\). For a
+                            statistic \(T_n=t(X_1,\ldots,X_n)\), compute \(T_n^*=t(X_1^*,\ldots,X_n^*)\). Conditional on
+                            the original data, the distribution of \(T_n^*-T_n\) approximates that of \(T_n-\theta\)
+                            under suitable regularity conditions.
+                        </p>
+                    </div>
+                    <p>
+                        In particular, the bootstrap estimates a <i>sampling distribution</i>, not the distribution of
+                        individual observations. Repetition of the same observed value in one resample is normal.
+                        Resamples of size \(n\) are drawn from the original dataset, not from the previous resample.
+                    </p>
+                    <p>
+                        <b>Worked example 1 (enumerate every possible bootstrap sample).</b>
+                        We observe \(x=(2,4,6)\) and estimate the population mean with \(\overline x=4\). An ordered
+                        bootstrap resample of size three is formed by choosing among \(2,4,6\) on each draw;
+                        consequently there are \(3^3=27\) equally likely ordered resamples. For example, the resample
+                        \((2,2,6)\) has mean \(10/3\), while \((6,6,6)\) has mean \(6\). Enumerating all resamples
+                        gives:
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bootstrap mean \(\overline x^*\)</th>
+                                    <th>Number of ordered resamples</th>
+                                    <th>Probability</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>\(2\)</td>
+                                    <td>1</td>
+                                    <td>\(1/27\)</td>
+                                </tr>
+                                <tr>
+                                    <td>\(8/3\)</td>
+                                    <td>3</td>
+                                    <td>\(3/27\)</td>
+                                </tr>
+                                <tr>
+                                    <td>\(10/3\)</td>
+                                    <td>6</td>
+                                    <td>\(6/27\)</td>
+                                </tr>
+                                <tr>
+                                    <td>\(4\)</td>
+                                    <td>7</td>
+                                    <td>\(7/27\)</td>
+                                </tr>
+                                <tr>
+                                    <td>\(14/3\)</td>
+                                    <td>6</td>
+                                    <td>\(6/27\)</td>
+                                </tr>
+                                <tr>
+                                    <td>\(16/3\)</td>
+                                    <td>3</td>
+                                    <td>\(3/27\)</td>
+                                </tr>
+                                <tr>
+                                    <td>\(6\)</td>
+                                    <td>1</td>
+                                    <td>\(1/27\)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        The <i>conditional bootstrap expectation</i> is \(\operatorname E_*(\overline X^*)=\overline
+                        x=4\). Since the empirical variance with divisor \(n\) is \(\widehat
+                        v=n^{-1}\sum_i(x_i-\overline x)^2=8/3\), independence of the bootstrap draws gives \[
+                        \operatorname{Var}_*(\overline X^*)=\frac{\widehat v}{n} =\frac{8}{9},\qquad
+                        \operatorname{SE}_*(\overline X^*)=\frac{\sqrt8}{3}\approx0.9428. \] By contrast, the familiar
+                        analytical estimated standard error of the sample mean is \(s/\sqrt n=2/\sqrt3\approx1.1547\)
+                        because \(s^2=\sum_i(x_i-\overline x)^2/(n-1)=4\). The difference in this tiny sample is not a
+                        programming error: the ordinary empirical bootstrap variance uses the plug-in distribution
+                        \(\widehat F_n\), and is not exactly the usual unbiased variance estimate.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 176: enumerate all 27 nonparametric bootstrap samples exactly.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import itertools
+import numpy as np
+
+x = np.array([2., 4., 6.])
+boot_means = np.array([np.mean(sample)
+                       for sample in itertools.product(x, repeat=len(x))])
+
+values, counts = np.unique(np.round(boot_means, 10), return_counts=True)
+print(&quot;Bootstrap mean : count&quot;)
+for mean, count in zip(values, counts):
+    print(f&quot;{mean:8.4f} : {count:2d}&quot;)
+print(&quot;Conditional mean:&quot;, boot_means.mean())
+print(&quot;Conditional standard error:&quot;, boot_means.std(ddof=0))
+
+assert len(boot_means) == 27
+assert counts.tolist() == [1, 3, 6, 7, 6, 3, 1]
+assert np.isclose(boot_means.mean(), 4.)
+assert np.isclose(boot_means.var(ddof=0), 8/9)</code></pre>
+
+                    <p>
+                        <b>From enumeration to Monte Carlo approximation.</b> For \(n\) observations, there are \(n^n\)
+                        ordered bootstrap samples. Exhaustive enumeration becomes infeasible rapidly. Instead we
+                        generate \(B\) independent resamples and calculate \(T_1^*,\ldots,T_B^*\). The estimated
+                        bootstrap standard error is \[ \widehat{\operatorname{SE}}_{\!\mathrm{boot}}(T_n)
+                        =\sqrt{\frac{1}{B-1}\sum_{b=1}^{B} (T_b^*-\overline T^*)^2},\qquad \overline
+                        T^*=\frac1B\sum_{b=1}^{B}T_b^*. \] Here \(B-1\) corrects the Monte Carlo variance estimate of
+                        the simulated bootstrap statistics; it does not change the resampling design.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 177: visualize the bootstrap distribution of a sample mean.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([12, 14, 15, 15, 17, 18, 20, 32], dtype=float)
+rng = np.random.default_rng(2026)
+B = 10_000
+bootstrap_means = rng.choice(x, size=(B, len(x)), replace=True).mean(axis=1)
+print(f&quot;Observed sample mean: {x.mean():.3f}&quot;)
+print(f&quot;Bootstrap standard error: {bootstrap_means.std(ddof=1):.3f}&quot;)
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.hist(bootstrap_means, bins=45, density=True, color=&quot;steelblue&quot;, alpha=0.8)
+ax.axvline(x.mean(), color=&quot;black&quot;, linestyle=&quot;--&quot;, label=&quot;Observed mean&quot;)
+ax.set(xlabel=&quot;Bootstrap sample mean&quot;, ylabel=&quot;Estimated density&quot;,
+       title=&quot;Sampling uncertainty estimated from one dataset&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;resampling_bootstrap_means.png&quot;, dpi=160)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/resampling_bootstrap_means.png"
+                            alt="Histogram of resampled sample means, centered near the observed sample mean"
+                        />
+                        <figcaption>
+                            Experiment 177. Bootstrap means vary even though every resample is drawn from the same eight
+                            observed values.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Bootstrap Confidence Intervals ========================= -->
+                    <p><b>Bootstrap confidence intervals: percentile and basic methods.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (two simple two-sided bootstrap intervals).</b></p>
+                        <p>
+                            Let \(\widehat\theta\) be the original estimate and \(q_p^*\) the \(p\)-quantile of its
+                            bootstrap distribution. For a nominal confidence level \(1-\alpha\), the
+                            <i>percentile interval</i> is \[ I_{\mathrm{perc}}=[q^*_{\alpha/2},q^*_{1-\alpha/2}]. \] The
+                            <i>basic (reverse-percentile) interval</i> reflects these endpoints about
+                            \(\widehat\theta\): \[ I_{\mathrm{basic}} =[2\widehat\theta-q^*_{1-\alpha/2},\;
+                            2\widehat\theta-q^*_{\alpha/2}]. \] They need not agree when the bootstrap distribution is
+                            asymmetric; neither method guarantees nominal coverage in small samples.
+                        </p>
+                    </div>
+                    <p>
+                        <b>Worked example 2 (response times with a long upper tail).</b>
+                        Suppose eight independent tasks have completion times in seconds \(12,14,15,15,17,18,20,32\).
+                        The mean is \(\widehat\mu=143/8=17.875\) seconds, whereas the median is \(16\) seconds. Draw
+                        \(10{,}000\) bootstrap samples of eight tasks each, with replacement. With the fixed random seed
+                        used below, the 2.5% and 97.5% empirical quantiles of the bootstrap means are \(14.625\) and
+                        \(22.375\) seconds. Hence \[ I_{\mathrm{perc}}=[14.625,\;22.375], \qquad
+                        I_{\mathrm{basic}}=[2(17.875)-22.375,\;2(17.875)-14.625] =[13.375,\;21.125]. \] These are
+                        approximate intervals, not mathematical guarantees that the population mean falls in the
+                        displayed range with 95% probability. Coverage refers to the long-run behavior of a
+                        confidence-interval construction under repeated sampling.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 178: calculate percentile and basic bootstrap intervals without a library
+                            wrapper.</b
+                        >
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+x = np.array([12, 14, 15, 15, 17, 18, 20, 32], dtype=float)
+rng = np.random.default_rng(2026)
+B = 10_000
+est = x.mean()
+replicates = rng.choice(x, size=(B, len(x)), replace=True).mean(axis=1)
+low, high = np.quantile(replicates, [0.025, 0.975])
+
+print(f&quot;Point estimate: {est:.3f} seconds&quot;)
+print(f&quot;Percentile 95% CI: ({low:.3f}, {high:.3f})&quot;)
+print(f&quot;Basic 95% CI:      ({2*est-high:.3f}, {2*est-low:.3f})&quot;)
+assert np.allclose([low, high], [14.625, 22.375])</code></pre>
+
+                    <p>
+                        <b>Bias correction and acceleration (BCa).</b> The percentile interval can misbehave when an
+                        estimator is biased or its sampling distribution is appreciably skewed. The
+                        <i>BCa interval</i> adjusts the percentile levels using a bias-correction term \(z_0\) and an
+                        acceleration term \(a\), commonly estimated by jackknife leave-one-out calculations. For
+                        bootstrap estimates \(T_b^*\), one common expression is \[ z_0=\Phi^{-1}\!\left(
+                        \frac{\#\{b:T_b^*&lt;\widehat\theta\}}{B}\right),\qquad a=\frac{\sum_{i=1}^{n}(\overline
+                        T_{(\cdot)}-T_{(i)})^3} {6\left[\sum_{i=1}^{n}(\overline T_{(\cdot)}-T_{(i)})^2\right]^{3/2}},
+                        \] where \(T_{(i)}\) is the estimator with observation \(i\) omitted, \(\overline
+                        T_{(\cdot)}=n^{-1}\sum_i T_{(i)}\), and \(\Phi\) is the standard normal c.d.f. The adjusted
+                        quantile probability for a normal quantile \(z_p=\Phi^{-1}(p)\) is \[
+                        p_{\mathrm{BCa}}=\Phi\!\left(z_0+ \frac{z_0+z_p}{1-a(z_0+z_p)}\right). \] Apply this adjustment
+                        at \(p=\alpha/2\) and \(1-\alpha/2\). The method has stronger asymptotic properties for
+                        sufficiently regular statistics, but can become undefined for degenerate or very discrete
+                        resampling distributions. It is not a remedy for an unrepresentative sample or a broken
+                        dependence assumption.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 179: compare percentile, basic, and BCa confidence intervals using SciPy.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+x = np.array([12, 14, 15, 15, 17, 18, 20, 32], dtype=float)
+
+for method in (&quot;percentile&quot;, &quot;basic&quot;, &quot;BCa&quot;):
+    result = stats.bootstrap(
+        (x,), np.mean, confidence_level=0.95,
+        n_resamples=10_000, method=method,
+        rng=np.random.default_rng(2026)
+    )
+    ci = result.confidence_interval
+    print(f&quot;{method:&gt;10s}: [{ci.low:.3f}, {ci.high:.3f}], &quot;
+          f&quot;bootstrap SE = {result.standard_error:.3f}&quot;)</code></pre>
+
+                    <p>
+                        Interpretation matters more than selecting the narrowest interval. For the deliberately small,
+                        skewed sample in Worked example 2, the BCa interval moves upward relative to the percentile
+                        interval. Report the method, sample size, number of resamples, and the parameter being
+                        estimated. If the bootstrap distribution is degenerate, the BCa endpoints may be undefined.
+                    </p>
+
+                    <p>
+                        <b>Why the statistic matters.</b> The mean uses the magnitude of every observation, while the
+                        median responds mainly to their ordering. A nonparametric bootstrap can approximate uncertainty
+                        for both, but a small sample median yields a <i>discrete</i> bootstrap distribution. For very
+                        small samples, boundary parameters, extremely heavy tails, maxima, rare-event probabilities, and
+                        other nonregular statistics may require specialized methods or stronger assumptions.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 180: compare mean and median uncertainty in the presence of an extreme value.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+original = np.array([12, 14, 15, 15, 17, 18, 20, 32], dtype=float)
+contaminated = original.copy()
+contaminated[-1] = 80  # illustrative data edit, not a real observation
+
+for label, x in ((&quot;Original&quot;, original), (&quot;With extreme value&quot;, contaminated)):
+    rng = np.random.default_rng(2026)
+    idx = rng.integers(0, len(x), size=(10_000, len(x)))
+    samples = x[idx]
+    mean_bs = samples.mean(axis=1)
+    median_bs = np.median(samples, axis=1)
+    print(label)
+    print(&quot;  mean =&quot;, x.mean(), &quot;CI =&quot;, np.quantile(mean_bs, [0.025, 0.975]))
+    print(&quot;  median =&quot;, np.median(x), &quot;CI =&quot;, np.quantile(median_bs, [0.025, 0.975]))</code></pre>
+
+                    <p>
+                        <b>Sampling design must be preserved.</b> In two independent groups, resample observations
+                        <i>within each group</i> and take the difference of the resulting group estimates. With matched
+                        observations, resample entire <i>pairs</i>, not individual measurements independently. Otherwise
+                        the resampling discards the covariance that makes a paired analysis useful.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 181: bootstrap independent-group and paired mean differences correctly.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(2026)
+B = 10_000
+
+# Two independent groups: resample within each group separately.
+a = np.array([10, 11, 12, 13], dtype=float)
+b = np.array([4, 5, 6, 7], dtype=float)
+a_boot = rng.choice(a, (B, len(a)), replace=True).mean(axis=1)
+b_boot = rng.choice(b, (B, len(b)), replace=True).mean(axis=1)
+independent_effect = a_boot - b_boot
+print(&quot;Independent mean difference:&quot;, a.mean() - b.mean())
+print(&quot;Independent percentile CI:&quot;, np.quantile(independent_effect, [.025, .975]))
+
+# Matched before/after measurements: resample the differences/rows together.
+before = np.array([40, 42, 41, 43, 44, 39], dtype=float)
+after = np.array([42, 45, 45, 48, 51, 47], dtype=float)
+differences = after - before
+idx = rng.integers(0, len(differences), size=(B, len(differences)))
+paired_effect = differences[idx].mean(axis=1)
+print(&quot;Paired mean difference:&quot;, differences.mean())
+print(&quot;Paired percentile CI:&quot;, np.quantile(paired_effect, [.025, .975]))</code></pre>
+
+                    <!-- ========================= Permutation Tests ========================= -->
+                    <p><b>Permutation tests: build the distribution under a null hypothesis.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (exact independent-label permutation test).</b></p>
+                        <p>
+                            For independent groups A and B, choose a test statistic \(T=t(A,B)\), such as the difference
+                            of sample means. Under a null hypothesis that justifies <i>exchangeability of labels</i>,
+                            pool the observations and reallocate them to groups of the original sizes. For every
+                            permitted allocation \(\pi\), calculate \(T_\pi\). For a statistic whose positive and
+                            negative values represent opposite departures and whose absolute value measures extremeness,
+                            the exact two-sided p-value is \[ p=\frac{\#\{\pi:|T_\pi|\ge|T_{\mathrm{obs}}|\}}
+                            {\#\{\text{permitted allocations}\}}. \] This is a tail probability
+                            <i>under the specified null mechanism</i>. Other two-sided test statistics or asymmetric
+                            null distributions require a clearly stated tail convention; two-sided p-values are not
+                            uniquely defined for every permutation statistic.
+                        </p>
+                    </div>
+                    <p>
+                        Exchangeability follows, for example, from the sharp no-treatment-effect null in a completely
+                        randomized experiment. For observational independent samples, equality of the full underlying
+                        distributions can justify label exchangeability;
+                        <b>equality of population means alone is generally insufficient</b> when distribution shapes or
+                        variances differ.
+                    </p>
+                    <p>
+                        <b>Worked example 3 (exact two-group randomization test).</b>
+                        Four users assigned to interface A have task scores \((10,11,12,13)\); four assigned to
+                        interface B have scores \((4,5,6,7)\). The observed difference in means is
+                        \(T_{\mathrm{obs}}=11.5-5.5=6\). There are \(\binom84=70\) ways to choose the four scores
+                        assigned to A while preserving group sizes. The allocation containing all four larger scores
+                        gives \(T=6\); its complete reversal gives \(T=-6\). Every other allocation is less extreme.
+                        Therefore \[ p=\frac{2}{\binom84}=\frac2{70}\approx0.02857. \] At the 5% significance level,
+                        this experiment rejects the sharp null of no individual treatment effect under the assumed
+                        random assignment. It does not show that every individual user benefits, and the dataset is
+                        synthetic. The bootstrap interval for the mean difference in Experiment 181 answers a different
+                        question.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 182: enumerate all 70 label allocations and plot the exact null distribution.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import itertools
+import numpy as np
+import matplotlib.pyplot as plt
+
+A = np.array([10., 11., 12., 13.])
+B = np.array([4., 5., 6., 7.])
+pooled = np.concatenate([A, B])
+observed = A.mean() - B.mean()
+
+null = []
+for group_a_idx in itertools.combinations(range(len(pooled)), len(A)):
+    mask = np.zeros(len(pooled), dtype=bool)
+    mask[list(group_a_idx)] = True
+    null.append(pooled[mask].mean() - pooled[~mask].mean())
+null = np.asarray(null)
+extreme = np.count_nonzero(np.abs(null) &gt;= abs(observed) - 1e-12)
+p_value = extreme / len(null)
+print(f&quot;Observed difference: {observed:.1f}&quot;)
+print(f&quot;Extreme allocations: {extreme} / {len(null)}&quot;)
+print(f&quot;Exact two-sided p-value: {p_value:.6f}&quot;)
+assert len(null) == 70 and extreme == 2
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+values, counts = np.unique(null, return_counts=True)
+ax.bar(values, counts, width=0.62, color=&quot;slateblue&quot;, alpha=0.85)
+ax.axvline(observed, color=&quot;firebrick&quot;, linestyle=&quot;--&quot;, label=&quot;Observed +6&quot;)
+ax.axvline(-observed, color=&quot;firebrick&quot;, linestyle=&quot;:&quot;, label=&quot;Opposite -6&quot;)
+ax.set(xlabel=&quot;Mean difference under reallocated labels&quot;,
+       ylabel=&quot;Number of allocations&quot;, title=&quot;Exact permutation null distribution&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;resampling_permutation_null.png&quot;, dpi=160)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/resampling_permutation_null.png"
+                            alt="Exact permutation distribution of differences in group means, with only two allocations as extreme as the observed difference"
+                        />
+                        <figcaption>
+                            Experiment 182. The null distribution is centered at zero and is computed by reassigning
+                            group labels, not by sampling from each group with replacement.
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        <b>Approximate permutation p-values and Monte Carlo error.</b> Enumeration becomes expensive as
+                        \(\binom{m+n}{m}\) grows. If \(B\) independent random permutations are sampled, a standard
+                        conservative approximation is \[ \widehat p=\frac{r+1}{B+1}, \] where \(r\) counts simulated
+                        statistics at least as extreme as the observed one, using the specified tail. The +1 reflects
+                        inclusion of the observed allocation among the randomization possibilities; it prevents
+                        reporting a p-value of zero just because we sampled too few permutations. For a fixed tail
+                        probability \(p\), the ordinary Monte Carlo proportion has approximate standard error
+                        \(\sqrt{p(1-p)/B}\). At \(p=0.05\) and \(B=9999\), this is about \(0.00218\). Monte Carlo error
+                        differs from <i>sampling uncertainty in the original study</i>.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 183: compare a randomized permutation test with a reproducible SciPy
+                            calculation.</b
+                        >
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+# Larger samples: there are C(20,10)=184,756 possible group allocations.
+a = np.array([12, 14, 15, 16, 17, 19, 20, 23, 25, 28], dtype=float)
+b = np.array([9, 13, 14, 15, 16, 17, 19, 20, 21, 23], dtype=float)
+
+def diff_means(x, y):
+    return np.mean(x) - np.mean(y)
+
+for B in (999, 9999):
+    test = stats.permutation_test(
+        (a, b), diff_means,
+        permutation_type=&quot;independent&quot;, alternative=&quot;two-sided&quot;,
+        n_resamples=B, vectorized=False,
+        rng=np.random.default_rng(2026)
+    )
+    print(f&quot;{B:5d} random reallocations: T={test.statistic:.3f}, &quot;
+          f&quot;approximate p={test.pvalue:.5f}&quot;)
+
+# For the tiny teaching example, request exact enumeration instead.
+exact = stats.permutation_test(
+    ([10, 11, 12, 13], [4, 5, 6, 7]), diff_means,
+    permutation_type=&quot;independent&quot;, n_resamples=np.inf,
+    alternative=&quot;two-sided&quot;, vectorized=False
+)
+print(f&quot;Exact p-value for Worked example 3: {exact.pvalue:.8f}&quot;)
+assert np.isclose(exact.pvalue, 2/70)</code></pre>
+
+                    <p>
+                        SciPy's default two-sided permutation convention is twice the smaller one-sided p-value, capped
+                        at one. In Worked example 3 the null distribution is symmetric, so this agrees with counting
+                        absolute-value tails. For other statistics the conventions can differ. State the software method
+                        and resampling count in an applied report.
+                    </p>
+
+                    <!-- ========================= Matched and Restricted Randomization ========================= -->
+                    <p><b>Paired permutations: preserve the experimental design.</b></p>
+                    <p>
+                        Suppose each of six users completes a task before and after an intervention, producing paired
+                        differences \(d=(2,3,4,5,7,8)\). If the assignment of treatment versus control within each pair
+                        is randomized, the sharp no-effect null permits
+                        <i>independent within-pair label swaps</i>. Equivalently, change each difference's sign, giving
+                        \(2^6=64\) sign configurations.
+                    </p>
+                    <p>
+                        <b>Worked example 4 (exact paired sign-flip permutation test).</b>
+                        The observed mean difference is \(29/6\approx4.833\). Only the all-positive assignment and its
+                        all-negative reversal produce absolute mean difference at least this large, because every
+                        magnitude is positive. Hence the two-sided randomization p-value is \(2/64=0.03125\). Ignoring
+                        the pairs and swapping all 12 individual outcomes would represent a different, generally invalid
+                        assignment mechanism. Without randomized within-pair labels, sign flips can instead be justified
+                        by a symmetric distribution of independent differences.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 184: enumerate an exact paired sign-flip test and verify it in SciPy.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import itertools
+import numpy as np
+from scipy import stats
+
+d = np.array([2., 3., 4., 5., 7., 8.])
+observed = d.mean()
+null = np.array([np.mean(d * signs)
+                 for signs in itertools.product((-1, 1), repeat=len(d))])
+p_exact = np.mean(np.abs(null) &gt;= abs(observed) - 1e-12)
+print(f&quot;Observed paired mean change: {observed:.4f}&quot;)
+print(f&quot;Exact sign-flip p-value: {p_exact:.5f}&quot;)
+
+def average_change(x):
+    return np.mean(x)
+
+check = stats.permutation_test(
+    (d,), average_change, permutation_type=&quot;samples&quot;,
+    alternative=&quot;two-sided&quot;, n_resamples=np.inf,
+    vectorized=False
+)
+print(f&quot;SciPy paired permutation p-value: {check.pvalue:.5f}&quot;)
+assert len(null) == 64
+assert np.isclose(p_exact, 2/64)
+assert np.isclose(p_exact, check.pvalue)</code></pre>
+
+                    <!-- ========================= Parametric Bootstrap ========================= -->
+                    <p><b>The parametric bootstrap: simulate from a fitted distribution.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (parametric bootstrap).</b></p>
+                        <p>
+                            Suppose \(X_1,\ldots,X_n\) follow a specified parametric family \(F_\theta\), with estimate
+                            \(\widehat\theta\). Draw new samples \(X_1^*,\ldots,X_n^*\overset{\mathrm{iid}}{\sim}
+                            F_{\widehat\theta}\), and recompute the statistic. Unlike the nonparametric bootstrap, the
+                            simulated observations need not be values seen in the original sample. Accuracy depends on
+                            the adequacy of the assumed family \(F_\theta\).
+                        </p>
+                    </div>
+                    <p>
+                        <b>Worked example 5 (exponentially distributed waiting times).</b>
+                        Suppose waiting times are assumed i.i.d. exponential with scale parameter \(\mu\), so
+                        \(\operatorname E(X)=\mu\) and \(\operatorname{Var}(X)=\mu^2\). The MLE is the sample mean
+                        \(\widehat\mu=\overline x\). Under the fitted model, the estimated standard error of the sample
+                        mean is exactly \(\widehat\mu/\sqrt n\). The parametric bootstrap simulates \(n\) new
+                        exponential waiting times with scale \(\widehat\mu\) and compares the variability of their means
+                        with the analytical value. This is an illustration, not evidence that real waiting times must
+                        follow an exponential model.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 185: contrast parametric and nonparametric bootstrap standard errors.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+x = np.array([0.3, 0.5, 0.6, 1.0, 1.2, 2.4, 3.5])
+n = len(x)
+mu_hat = x.mean()
+rng = np.random.default_rng(2026)
+B = 10_000
+
+# Parametric model: Exponential(scale=mu_hat).
+param_samples = rng.exponential(scale=mu_hat, size=(B, n))
+param_means = param_samples.mean(axis=1)
+
+# Nonparametric: sample from the observed empirical distribution.
+nonparam_samples = rng.choice(x, size=(B, n), replace=True)
+nonparam_means = nonparam_samples.mean(axis=1)
+
+print(f&quot;Estimated exponential mean: {mu_hat:.4f}&quot;)
+print(f&quot;Model-based theoretical SE: {mu_hat/np.sqrt(n):.4f}&quot;)
+print(f&quot;Parametric bootstrap SE: {param_means.std(ddof=1):.4f}&quot;)
+print(f&quot;Nonparametric bootstrap SE: {nonparam_means.std(ddof=1):.4f}&quot;)</code></pre>
+
+                    <!-- ========================= Coverage and Model Validation ========================= -->
+                    <p><b>Does a confidence-interval method achieve its advertised coverage?</b></p>
+                    <p>
+                        A nominal 95% confidence interval aims to contain the fixed population parameter in
+                        approximately 95% of independently repeated studies, under its assumptions. We can study this
+                        with an outer simulation: generate a fresh dataset from a population whose mean is known,
+                        construct a new bootstrap interval, and record whether it covers the true mean. Repeat this over
+                        many simulated datasets. This is a simulation of
+                        <i>frequentist coverage</i>; the inner bootstrap resamples must be rebuilt separately for every
+                        newly generated dataset.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 186: estimate the coverage of percentile bootstrap intervals by simulation.</b>
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(2026)
+n, studies, B = 15, 250, 700
+results = {}
+
+for population in (&quot;normal&quot;, &quot;exponential&quot;):
+    covered = 0
+    lengths = []
+    true_mean = 1.0
+    for _ in range(studies):
+        if population == &quot;normal&quot;:
+            x = rng.normal(loc=true_mean, scale=1.0, size=n)
+        else:
+            x = rng.exponential(scale=true_mean, size=n)
+        boot = rng.choice(x, size=(B, n), replace=True).mean(axis=1)
+        lo, hi = np.quantile(boot, [0.025, 0.975])
+        covered += (lo &lt;= true_mean &lt;= hi)
+        lengths.append(hi - lo)
+    results[population] = (covered / studies, np.mean(lengths))
+    print(f&quot;{population:11s}: coverage={covered/studies:.3f}, &quot;
+          f&quot;mean CI width={np.mean(lengths):.3f}&quot;)
+
+fig, ax = plt.subplots(figsize=(7.2, 4.2))
+labels = list(results)
+coverage = [results[name][0] for name in labels]
+ax.bar(labels, coverage, width=0.52, color=[&quot;steelblue&quot;, &quot;darkorange&quot;])
+ax.axhline(0.95, color=&quot;black&quot;, linestyle=&quot;--&quot;, label=&quot;Nominal 95%&quot;)
+ax.set(ylim=(0, 1.04), ylabel=&quot;Proportion of intervals covering true mean&quot;,
+       title=f&quot;Estimated coverage: {studies} independent datasets, n={n}&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;resampling_coverage.png&quot;, dpi=160)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/resampling_coverage.png"
+                            alt="Bar chart of simulated 95 percent bootstrap confidence interval coverage under normal and exponential populations"
+                        />
+                        <figcaption>
+                            Experiment 186. Coverage is evaluated by repeating the entire sampling-and-bootstrap
+                            procedure; results have Monte Carlo uncertainty.
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        The fraction of intervals that cover the true mean has its own Monte Carlo uncertainty; if the
+                        actual coverage probability were \(0.95\), the standard error of the estimated coverage from
+                        \(250\) studies would be \(\sqrt{0.95(0.05)/250}\approx0.0138\). Skewness, small samples,
+                        outliers, and discrete data can produce systematic coverage errors not fixed merely by
+                        increasing the number \(B\) of bootstrap draws. Higher-order intervals, transformations, or a
+                        more appropriate model may help, but require justification and validation.
+                    </p>
+
+                    <!-- ========================= Dependence and Blocks ========================= -->
+                    <p><b>Dependent observations: resample the correct unit.</b></p>
+                    <p>
+                        Suppose observations are recorded hourly from a persistent process. Neighboring measurements are
+                        correlated. Resampling individual hours independently destroys that dependence, usually
+                        overstating the effective sample size and understating uncertainty in the long-run mean. A
+                        <i>moving-block bootstrap</i> resamples contiguous segments and concatenates them to form a
+                        synthetic series. This preserves short-range dependence within blocks, although the block length
+                        introduces a bias–variance trade-off and stationarity-type assumptions are still needed.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 187: compare an invalid i.i.d. bootstrap with a moving-block bootstrap for
+                            serial data.</b
+                        >
+                    </p>
+
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(2026)
+phi, n, B, L = 0.80, 240, 3500, 12
+innovations = rng.normal(size=n + 150)
+series = np.zeros(n + 150)
+for t in range(1, len(series)):
+    series[t] = phi * series[t - 1] + innovations[t]
+x = series[150:]  # discard initial transient
+
+# Incorrect for serially dependent observations: resample single hours.
+iid_indices = rng.integers(0, n, size=(B, n))
+iid_means = x[iid_indices].mean(axis=1)
+
+# Sample contiguous moving blocks, preserving within-block dependence.
+num_blocks = int(np.ceil(n / L))
+starts = rng.integers(0, n - L + 1, size=(B, num_blocks))
+offsets = np.arange(L)
+block_indices = (starts[:, :, None] + offsets).reshape(B, -1)[:, :n]
+block_means = x[block_indices].mean(axis=1)
+
+print(f&quot;Naive i.i.d. bootstrap SE: {iid_means.std(ddof=1):.4f}&quot;)
+print(f&quot;Moving-block bootstrap SE (L={L}): {block_means.std(ddof=1):.4f}&quot;)
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.hist(iid_means, bins=35, alpha=0.55, density=True, label=&quot;Naive i.i.d. resampling&quot;)
+ax.hist(block_means, bins=35, alpha=0.55, density=True, label=f&quot;Moving-block, L={L}&quot;)
+ax.set(xlabel=&quot;Bootstrapped time-series mean&quot;, ylabel=&quot;Estimated density&quot;,
+       title=&quot;Why temporal dependence changes uncertainty&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;resampling_block_dependence.png&quot;, dpi=160)
+plt.show()</code></pre>
+
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/resampling_block_dependence.png"
+                            alt="Comparison of bootstrap mean distributions using individual observation resampling versus moving blocks from a correlated time series"
+                        />
+                        <figcaption>
+                            Experiment 187. For a positively autocorrelated simulated series, block resampling typically
+                            produces greater uncertainty than an inappropriate i.i.d. bootstrap.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Decision Checklist ========================= -->
+                    <p><b>Choosing the resampling method.</b></p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Situation</th>
+                                    <th>Generally appropriate starting point</th>
+                                    <th>Watch for</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Independent observations; estimate a mean or smooth statistic</td>
+                                    <td>Nonparametric bootstrap, analytical SE where available</td>
+                                    <td>Small sample, skew, extreme values, selection bias</td>
+                                </tr>
+                                <tr>
+                                    <td>Two independent groups; interval for a difference</td>
+                                    <td>Bootstrap within each group</td>
+                                    <td>Do not pool the groups for a confidence interval</td>
+                                </tr>
+                                <tr>
+                                    <td>Randomized A/B experiment; sharp no-effect null</td>
+                                    <td>Permute treatment assignments as actually randomized</td>
+                                    <td>Stratification, clusters, unequal probabilities</td>
+                                </tr>
+                                <tr>
+                                    <td>Matched treatment and control measurements</td>
+                                    <td>Bootstrap pairs for a CI; swap labels within pairs for randomization test</td>
+                                    <td>Do not break pairs</td>
+                                </tr>
+                                <tr>
+                                    <td>Fitted probability model is scientifically defensible</td>
+                                    <td>Parametric bootstrap</td>
+                                    <td>Model misspecification</td>
+                                </tr>
+                                <tr>
+                                    <td>Clustered, longitudinal, or serial observations</td>
+                                    <td>Cluster or block resampling suited to design</td>
+                                    <td>Effective unit of independence; block length; trends</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>What to report.</b> Name the target estimand and statistic, observed value and units,
+                        resampling scheme, confidence-interval method or permutation-tail convention, number of draws,
+                        seed (for reproducibility), and any design restrictions. For a permutation test, explicitly
+                        state the null hypothesis and reason labels are exchangeable. For a bootstrap interval, state
+                        what makes the sampled units representative and sufficiently independent for the chosen method.
+                        Monte Carlo replication counts do not replace genuine independent study observations.
+                    </p>
+
+                    <!-- ========================= Exercises ========================= -->
+                    <p><b>Exercises.</b></p>
+                    <ol>
+                        <li>
+                            <b>Exact bootstrap enumeration.</b> For \(x=(1,3)\), list all four ordered size-two
+                            bootstrap resamples, their means, and the exact bootstrap variance. Compare with
+                            \(s/\sqrt2\).
+                        </li>
+                        <li>
+                            <b>Empirical distribution.</b> Show that sampling an index uniformly with replacement from
+                            \(\{1,\ldots,n\}\) is equivalent to drawing from \(\widehat F_n\). Derive \(\operatorname
+                            E_*(\overline X^*)\) and \(\operatorname{Var}_*(\overline X^*)\) for general \(n\).
+                        </li>
+                        <li>
+                            <b>Hand-calculated interval.</b> Suppose \(\widehat\theta=12\) and the 2.5% and 97.5%
+                            bootstrap quantiles are 9 and 18. Calculate both the percentile and basic 95% intervals.
+                            Explain why they differ.
+                        </li>
+                        <li>
+                            <b>Jackknife and BCa.</b> For \(x=(1,2,3,8,10)\), compute the leave-one-out means, their
+                            grand mean, and the acceleration \(a\) in the BCa formula. Compare the three SciPy interval
+                            methods.
+                        </li>
+                        <li>
+                            <b>Exact permutation test.</b> For A = (5, 7, 9) and B = (2, 3, 4), enumerate all
+                            \(\binom63=20\) reassignments and calculate the exact two-sided p-value for the mean
+                            difference.
+                        </li>
+                        <li>
+                            <b>Paired exchangeability.</b> For differences \(d=(1,-2,3,4)\), enumerate all 16 sign
+                            patterns. Compare an absolute-mean permutation statistic with a sign-count statistic.
+                            Explain their different notions of extremeness.
+                        </li>
+                        <li>
+                            <b>Number of permutations.</b> Calculate \(\binom{30}{15}\). Discuss when exhaustive
+                            enumeration is computationally practical, why randomized sampling is needed otherwise, and
+                            what a finite Monte Carlo p-value means.
+                        </li>
+                        <li>
+                            <b>Coverage.</b> Repeat Experiment 186 with sample sizes \(n=10,30,100\). Use enough
+                            independently simulated studies to estimate uncertainty in your coverage estimates. Explain
+                            why increasing \(B\) alone cannot fix systematic undercoverage.
+                        </li>
+                        <li>
+                            <b>Dependence.</b> Repeat Experiment 187 with \(\phi=0,0.4,0.8\) and block lengths
+                            \(L=5,12,24\). Interpret changes in the estimated standard error and explain why block
+                            bootstrap is not an automatic cure for trends or structural breaks.
+                        </li>
+                        <li>
+                            <b>Design.</b> A product experiment randomizes entire schools but records student-level
+                            outcomes. Propose a permutation scheme and a bootstrap scheme that respect the school-level
+                            randomization and dependence.
+                        </li>
+                    </ol>
+
+                    <!-- ========================= Sources ========================= -->
+                    <p>
+                        <b>Core textbook reference.</b> M. H. DeGroot and M. J. Schervish,
+                        <i>Probability and Statistics</i>, 4th ed., <b>Section 12.6, The Bootstrap</b> (printed pp.
+                        839–849). In particular, review Examples 12.6.1–12.6.2 for the nonparametric and parametric
+                        methods, and Section 12.6 Exercises <b>1–3</b> (printed p. 849) for theoretical practice. The
+                        permutation tests and dependent-data resampling examples developed above extend beyond that
+                        section.
+                    </p>
+                    <p>
+                        <b>Related material.</b> <i>OpenIntro Statistics</i>, 4th ed., Chapter 5 (foundations of
+                        sampling variability and inference) supplies background but is <i>not</i> a dedicated treatment
+                        of bootstrap confidence intervals or permutation tests. Review the earlier notes on sampling
+                        distributions, confidence intervals, hypothesis testing, paired samples, and nonparametric
+                        tests.
+                    </p>
+                    <p>
+                        <b>Software and methodology references.</b>
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: bootstrap confidence intervals</a
+                        >;
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: permutation tests</a
+                        >; B. Efron and R. J. Tibshirani, <i>An Introduction to the Bootstrap</i>
+                        (1993), for more advanced theory and interval construction.
                     </p>
                     <hr />
 
