@@ -59,6 +59,7 @@
                             >
                         </li>
                         <li><a href="#OneWayANOVA">One-Way Analysis of Variance (ANOVA)</a></li>
+                        <li><a href="#NonparametricTests">Nonparametric Tests</a></li>
                         <li>
                             <a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a>
                         </li>
@@ -9032,6 +9033,933 @@ print(f"Permutation p (Monte Carlo): {p_mc:.5f}")</code></pre>
                         subsequent sections rather than treated as interchangeable shortcuts.
                     </p>
 
+                    <hr />
+
+                    <!-- ========================= Nonparametric Tests ========================= -->
+                    <span id="NonparametricTests"><b>Nonparametric Tests</b></span>
+
+                    <p>
+                        Classical t-tests and ANOVA are built around population means and sampling distributions derived
+                        under particular assumptions. In many data-science problems we instead observe ordinal ratings,
+                        skewed waiting times, small samples, or measurements containing substantial outliers.
+                        <i>Nonparametric</i>
+                        procedures are useful when we want to make fewer assumptions about the
+                        <i>functional form</i> of the population distribution. However, they are
+                        <b>not assumption-free</b>, and replacing a t-test with a rank test changes the scientific
+                        question being tested.
+                    </p>
+                    <p>
+                        This section develops the sign test, Mann–Whitney U test, Wilcoxon signed-rank test,
+                        Kruskal–Wallis test, and Friedman test. Each follows from counting signs or assigning ranks. We
+                        will calculate the test statistics by hand, verify them in Python, and learn when the results
+                        can—and cannot—be interpreted as differences between population medians.
+                    </p>
+
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (rank and tied rank).</b></p>
+                        <p>
+                            The <i>rank</i> of an observation is its position when all relevant observations are ordered
+                            from smallest to largest. When several observations have the same value, we usually assign
+                            each their <i>midrank</i>: the average of the positions they would occupy. For example, the
+                            sample \(2,5,5,5,9\) receives ranks \(1,3,3,3,5\), because the three fives occupy positions
+                            \(2,3,4\). Rank tests preserve ordering while discarding the numerical distances between
+                            observations.
+                        </p>
+                    </div>
+                    <p>
+                        <b>How to choose a test.</b> The sampling design matters at least as much as the appearance of
+                        the histogram.
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data and question</th>
+                                    <th>Procedure</th>
+                                    <th>Central distinction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>One sample or paired differences; is the median at a specified value?</td>
+                                    <td>Sign test</td>
+                                    <td>Counts positive versus negative signs; does not use magnitudes</td>
+                                </tr>
+                                <tr>
+                                    <td>Two independent samples; is there a distributional difference?</td>
+                                    <td>Mann–Whitney U (Wilcoxon rank-sum)</td>
+                                    <td>Ranks the pooled observations; not generally a test of means or medians</td>
+                                </tr>
+                                <tr>
+                                    <td>Paired differences; is their distribution symmetric about zero?</td>
+                                    <td>Wilcoxon signed-rank</td>
+                                    <td>Ranks absolute paired differences; stronger symmetry requirement</td>
+                                </tr>
+                                <tr>
+                                    <td>Three or more independent samples</td>
+                                    <td>Kruskal–Wallis</td>
+                                    <td>Omnibus pooled-rank test; does not identify which groups differ</td>
+                                </tr>
+                                <tr>
+                                    <td>Three or more related treatments measured in the same blocks</td>
+                                    <td>Friedman</td>
+                                    <td>Ranks treatments <i>within each block</i>, preserving pairing</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Independence concerns the <i>data-collection process</i>, not a diagnostic plot. A rank test
+                        does not repair clustering, time dependence, selection bias, informative missingness, or an
+                        invalid randomization scheme. All p-values below are two-sided unless another alternative is
+                        stated.
+                    </p>
+
+                    <!-- ========================= Ranks and Ties ========================= -->
+                    <p><b>Why ranks are useful—and what they lose.</b></p>
+                    <p>
+                        Under a strictly increasing transformation \(g\), the order of untied observations is unchanged,
+                        so a rank statistic is unchanged by replacing every \(Y\) with \(g(Y)\). This can make rank
+                        tests less sensitive to the measurement scale and to exceptionally large values. On the other
+                        hand, two datasets with the same order but very different numerical gaps receive the same ranks:
+                        a rank-based p-value alone cannot tell us the practical size of a treatment effect in seconds,
+                        euros, or points.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 164: visualize pooled ranks and midranks for ties.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import rankdata
+
+method_a = np.array([7, 9, 9, 13, 18], dtype=float)
+method_b = np.array([5, 9, 12, 15, 19], dtype=float)
+values = np.concatenate([method_a, method_b])
+ranks = rankdata(values, method=&quot;average&quot;)
+
+print(&quot;Observations:&quot;, values.tolist())
+print(&quot;Pooled midranks:&quot;, ranks.tolist())
+
+fig, axes = plt.subplots(2, 1, figsize=(8, 5), sharex=False)
+colors = [&quot;tab:blue&quot;] * len(method_a) + [&quot;tab:orange&quot;] * len(method_b)
+axes[0].scatter(values, np.arange(len(values)), c=colors, s=55)
+axes[0].set_xlabel(&quot;Observed value&quot;)
+axes[0].set_ylabel(&quot;Observation number&quot;)
+axes[0].set_title(&quot;Original observations (including ties at 9)&quot;)
+axes[1].scatter(ranks, np.arange(len(ranks)), c=colors, s=55)
+axes[1].set_xlabel(&quot;Pooled midrank&quot;)
+axes[1].set_ylabel(&quot;Observation number&quot;)
+axes[1].set_title(&quot;Rank transformation&quot;)
+fig.tight_layout()
+fig.savefig(&quot;nonparametric_ranks.png&quot;, dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/nonparametric_ranks.png"
+                            alt="Comparison of observed values and their pooled midranks, including tied values"
+                        />
+                        <figcaption>
+                            Experiment 164. Equal observed values share a midrank; large gaps between observations
+                            disappear after ranking.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Sign Test ========================= -->
+                    <p><b>The sign test: a distribution-free test for the median.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (one-sample or paired sign test).</b></p>
+                        <p>
+                            Let \(D_1,\ldots,D_n\) be independent observations, or independent differences from matched
+                            pairs. To test a hypothesized median \(m_0\), record the signs of \(D_i-m_0\). After
+                            discarding exact zeros, let \(n^*\) be the number of nonzero differences and \(B\) the
+                            number that are positive. If the population distribution is continuous at \(m_0\), the null
+                            hypothesis that \(m_0\) is a median implies \[ H_0:\Pr(D_i&gt;m_0)=\Pr(D_i&lt;m_0)=\frac12,
+                            \qquad B\sim\operatorname{Binomial}(n^*,\tfrac12). \] For a two-sided test, the exact
+                            p-value is \[ p=\min\!\left\{1,\;2\Pr\bigl[\operatorname{Binomial}(n^*,\tfrac12)
+                            \leq\min(B,n^*-B)\bigr]\right\}. \]
+                        </p>
+                    </div>
+                    <p>
+                        The sign test does not require symmetry; it ignores the sizes of the differences. Dropping zeros
+                        changes the estimand when zeros are genuine point masses, so the standard
+                        continuous-distribution interpretation should not be applied automatically to highly discrete
+                        measurements.
+                    </p>
+                    <p>
+                        <b>Worked example 1 (six matched users).</b> Suppose six independent users each show positive
+                        post-minus-pre improvement, with differences \(D=(1,2,3,4,5,6)\). Then \(B=6\), \(n^*=6\), and
+                        under \(H_0\) all \(2^6=64\) sign sequences have equal probability. Only the all-positive and
+                        all-negative sequences are as extreme: \[ p=2\left(\frac{1}{2}\right)^6=\frac{2}{64}=0.03125. \]
+                        We reject at the 5% level. This test provides evidence of a change in the median paired
+                        difference under the stated sampling assumptions; it does not estimate the average improvement.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 165: derive and verify the exact binomial sign-test p-value.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+d = np.array([1, 2, 3, 4, 5, 6], dtype=float)
+nonzero = d[d != 0]
+positive = np.count_nonzero(nonzero &gt; 0)
+n = len(nonzero)
+
+# Exact two-sided binomial tail calculated directly.
+p_manual = min(1.0, 2 * stats.binom.cdf(min(positive, n-positive), n, 0.5))
+p_scipy = stats.binomtest(positive, n, 0.5).pvalue
+print(f&quot;Positive differences: {positive} of {n}&quot;)
+print(f&quot;Manual p-value: {p_manual:.5f}&quot;)
+print(f&quot;SciPy p-value:  {p_scipy:.5f}&quot;)
+assert np.isclose(p_manual, 0.03125)
+assert np.isclose(p_manual, p_scipy)</code></pre>
+                    <!-- ========================= Mann–Whitney U ========================= -->
+                    <p><b>Mann–Whitney U: two independent groups.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Mann–Whitney U and the Wilcoxon rank sum).</b></p>
+                        <p>
+                            Let \(X_1,\ldots,X_m\) and \(Y_1,\ldots,Y_n\) be independent samples. Rank all \(m+n\)
+                            observations together and let \(R_X\) be the sum of the ranks belonging to the \(X\) sample.
+                            Then \[ U_X=R_X-\frac{m(m+1)}2, \qquad U_Y=mn-U_X. \] Equivalently, \[
+                            U_X=\sum_{i=1}^{m}\sum_{j=1}^{n} \left[\mathbf 1\{X_i&gt;Y_j\} +\tfrac12\mathbf
+                            1\{X_i=Y_j\}\right]. \] Thus \(U_X/(mn)\) estimates \(\theta=\Pr(X&gt;Y)+\tfrac12\Pr(X=Y)\).
+                            The standard test uses the null of <i>equal population distributions</i>.
+                        </p>
+                    </div>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (null mean and variance, without ties).</b></p>
+                        <p>
+                            Under independent random sampling from the same continuous distribution, \[ \mathbb
+                            E(U_X)=\frac{mn}{2},\qquad \operatorname{Var}(U_X)=\frac{mn(m+n+1)}{12}. \] For small
+                            tie-free samples, the null distribution can be enumerated exactly by the \(\binom{m+n}{m}\)
+                            allocations of pooled ranks. For large samples, a normal approximation is commonly used.
+                            With ties, the usual variance and exact null calculation require appropriate adjustments or
+                            permutation methods.
+                        </p>
+                    </div>
+                    <p>
+                        <b>Worked example 2 (two independent training methods).</b> Suppose four people used method A,
+                        producing scores \(4,5,6,8\), and another four people used method B, producing \(9,10,11,12\).
+                        The pooled ranks are:
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Scores</th>
+                                    <th>Pooled ranks</th>
+                                    <th>Rank sum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>4, 5, 6, 8</td>
+                                    <td>1, 2, 3, 4</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>9, 10, 11, 12</td>
+                                    <td>5, 6, 7, 8</td>
+                                    <td>26</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Therefore, \[ U_A=10-\frac{4(5)}2=0,\qquad U_B=16. \] Of the \(\binom84=70\) ways to assign four
+                        pooled ranks to group A, only one gives \(U_A=0\) and one gives \(U_A=16\). Hence the exact
+                        two-sided p-value is \[ p=\frac2{70}\approx0.02857. \] The observed superiority probability for
+                        A over B is \(\widehat\theta=0/16=0\); in this deliberately separated dataset, every observed A
+                        score is lower than every B score. We have evidence against identical distributions, not proof
+                        that every future B score will exceed every future A score.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 166: reproduce the exact Mann–Whitney test by enumerating rank allocations.</b>
+                    </p>
+                    <pre
+                        class="plain stats-code code-python"
+                    ><code class="language-python">from itertools import combinations
+import numpy as np
+from scipy import stats
+
+a = np.array([4, 5, 6, 8])
+b = np.array([9, 10, 11, 12])
+m, n = len(a), len(b)
+
+rank_sum_a = stats.rankdata(np.r_[a, b])[:m].sum()
+u_observed = rank_sum_a - m*(m+1)/2
+
+# Under equal continuous distributions, rank assignments are equiprobable.
+possible_u = np.array([
+    sum(positions) - m*(m+1)/2
+    for positions in combinations(range(1, m+n+1), m)
+])
+p_exact = min(1.0, 2*min(
+    np.mean(possible_u &lt;= u_observed),
+    np.mean(possible_u &gt;= u_observed)
+))
+result = stats.mannwhitneyu(a, b, alternative=&quot;two-sided&quot;, method=&quot;exact&quot;)
+print(f&quot;R_A={rank_sum_a:.0f}; U_A={u_observed:.0f}&quot;)
+print(f&quot;Exact p-value={p_exact:.6f}; SciPy p-value={result.pvalue:.6f}&quot;)
+assert np.isclose(p_exact, result.pvalue)</code></pre>
+                    <p>
+                        <b>Interpretation is crucial.</b> The Mann–Whitney test is often described as a "test of two
+                        medians". That is justified as a location comparison when the groups have the same shape and
+                        differ only by a shift. With different spreads, skewness, or shapes, rejecting equal
+                        distributions does <i>not</i> establish that medians differ. Also, \(\theta=1/2\) is weaker than
+                        equality of the two distributions; the usual U-test calibration assumes the stronger null. This
+                        distinction matters when comparing response times or revenue, where distributions are frequently
+                        skewed.
+                    </p>
+                    <p>
+                        The observed probability of superiority is an interpretable effect measure.
+                        <i>Cliff's delta</i>, with A compared with B, is \[\widehat\delta=2\widehat\theta-1.\] It lies
+                        between \(-1\) and \(1\) and summarizes pairwise ordering; it is not a difference in the
+                        original measurement units.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 167: estimate probability of superiority and compare empirical distributions.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+a = np.array([12, 14, 13, 16, 18, 15, 17, 14], dtype=float)
+b = np.array([15, 19, 18, 22, 20, 17, 21, 19], dtype=float)
+
+u = stats.mannwhitneyu(a, b, alternative=&quot;two-sided&quot;, method=&quot;auto&quot;)
+prob_superiority = u.statistic / (len(a) * len(b))
+cliffs_delta = 2 * prob_superiority - 1
+print(f&quot;U_A={u.statistic:.1f}; p={u.pvalue:.5f}&quot;)
+print(f&quot;P(A &gt; B) + 0.5 P(A = B) = {prob_superiority:.3f}&quot;)
+print(f&quot;Cliff&#x27;s delta (A vs B) = {cliffs_delta:.3f}&quot;)
+
+fig, ax = plt.subplots(figsize=(7.5, 4))
+for vals, label in [(a, &quot;Method A&quot;), (b, &quot;Method B&quot;)]:
+    ordered = np.sort(vals)
+    ax.step(ordered, np.arange(1, len(vals)+1)/len(vals),
+            where=&quot;post&quot;, label=label)
+ax.set_xlabel(&quot;Response time (synthetic units)&quot;)
+ax.set_ylabel(&quot;Empirical cumulative probability&quot;)
+ax.set_title(&quot;Empirical CDFs show distributional differences&quot;)
+ax.legend()
+fig.tight_layout()
+fig.savefig(&quot;nonparametric_ecdf.png&quot;, dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/nonparametric_ecdf.png"
+                            alt="Two empirical cumulative distribution functions for independent samples"
+                        />
+                        <figcaption>
+                            Experiment 167. Empirical CDFs reveal spread and shape information that an omnibus p-value
+                            does not convey.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Wilcoxon Signed-Rank ========================= -->
+                    <p><b>Wilcoxon signed-rank: paired differences.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (signed-rank statistic).</b></p>
+                        <p>
+                            For matched pairs, form \(D_i=Y_{i,\mathrm{after}}-Y_{i,\mathrm{before}}\). Discard exact
+                            zeros under the common <code>zero_method="wilcox"</code> convention, rank the nonzero
+                            \(|D_i|\), and add the ranks separately according to their signs: \[
+                            W_+=\sum_{D_i&gt;0}r_i,\qquad W_-=\sum_{D_i&lt;0}r_i, \qquad W_++W_-=\frac{n^*(n^*+1)}2. \]
+                            The commonly reported two-sided statistic is \(W=\min(W_+,W_-)\). Under independent paired
+                            differences from a continuous distribution <i>symmetric about zero</i>, all \(2^{n^*}\) sign
+                            assignments are equiprobable conditional on the absolute differences. When there are no tied
+                            absolute differences, \[ \mathbb E(W_+)=\frac{n^*(n^*+1)}4, \qquad \operatorname{Var}(W_+)
+                            =\frac{n^*(n^*+1)(2n^*+1)}{24}. \]
+                        </p>
+                    </div>
+                    <p>
+                        The signed-rank test uses more information than the sign test, but needs a symmetry assumption
+                        for its usual location interpretation. If paired differences are strongly asymmetric, the sign
+                        test is more directly associated with the median. With symmetry, the center of symmetry equals
+                        the median; the signed-rank statistic is also related to the Hodges–Lehmann <i>pseudomedian</i>,
+                        not in general an arbitrary median.
+                    </p>
+                    <p>
+                        <b>Worked example 3 (six paired measurements).</b> Reuse differences \(D=(1,2,3,4,5,6)\). Their
+                        absolute ranks are \(1,2,3,4,5,6\), so \[ W_+=1+2+3+4+5+6=21,\qquad W_-=0,\qquad W=0. \] Only
+                        the all-positive and all-negative sign assignments give an equally extreme two-sided statistic.
+                        Consequently \(p=2/2^6=0.03125\). This agrees with the sign-test result here because every
+                        difference has the same sign; with mixed signs, the two tests typically produce different
+                        p-values.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 168: compute the Wilcoxon signed-rank statistic and its exact p-value.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+d = np.array([1, 2, 3, 4, 5, 6], dtype=float)
+rank_abs = stats.rankdata(np.abs(d))
+w_plus = rank_abs[d &gt; 0].sum()
+w_minus = rank_abs[d &lt; 0].sum()
+result = stats.wilcoxon(d, alternative=&quot;two-sided&quot;, method=&quot;exact&quot;)
+
+print(&quot;Absolute-difference ranks:&quot;, rank_abs.tolist())
+print(f&quot;W+={w_plus:.0f}, W-={w_minus:.0f}, W={min(w_plus, w_minus):.0f}&quot;)
+print(f&quot;Exact p-value: {result.pvalue:.5f}&quot;)
+assert np.isclose(result.pvalue, 0.03125)</code></pre>
+                    <p>
+                        <b>Zeros, ties, and floating-point differences.</b> Real data often contain repeated differences
+                        or exactly zero differences. These alter the null distribution and require an explicit
+                        treatment. SciPy offers different zero-handling conventions (<code>"wilcox"</code>,
+                        <code>"pratt"</code>, and <code>"zsplit"</code>) and exact, asymptotic, or permutation-based
+                        methods. If differences are calculated from floating-point measurements, round to the
+                        <i>meaningful measurement precision</i> before ranking; otherwise mathematically equal values
+                        may be given different ranks because of roundoff.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 169: enumerate signed-rank sign flips with ties and a zero difference.</b>
+                    </p>
+                    <pre
+                        class="plain stats-code code-python"
+                    ><code class="language-python">from itertools import product
+import numpy as np
+from scipy import stats
+
+# Recorded to one decimal place; one unchanged pair and tied magnitudes.
+d = np.array([0.0, 0.5, -0.5, 1.2, 1.2, 2.0, -0.8])
+d = np.round(d, 1)
+nonzero = d[d != 0]
+ranks = stats.rankdata(np.abs(nonzero), method=&quot;average&quot;)
+w_plus = ranks[nonzero &gt; 0].sum()
+w_minus = ranks[nonzero &lt; 0].sum()
+observed = min(w_plus, w_minus)
+
+# Under symmetric differences, every sign assignment is equally likely,
+# even though the magnitudes have ties. Condition on their magnitudes.
+null_stats = []
+for signs in product([-1, 1], repeat=len(nonzero)):
+    plus = ranks[np.array(signs) &gt; 0].sum()
+    minus = ranks.sum() - plus
+    null_stats.append(min(plus, minus))
+p_exact_signflip = np.mean(np.array(null_stats) &lt;= observed + 1e-12)
+
+print(f&quot;Nonzero n={len(nonzero)}, W+={w_plus:.1f}, W-={w_minus:.1f}&quot;)
+print(f&quot;Exact conditional sign-flip p={p_exact_signflip:.5f}&quot;)
+print(&quot;SciPy asymptotic p (not exact):&quot;,
+      f&quot;{stats.wilcoxon(nonzero, method=&#x27;asymptotic&#x27;).pvalue:.5f}&quot;)</code></pre>
+                    <p>
+                        This conditional enumeration is exact for the <i>sign-symmetry</i> null, given the observed
+                        nonzero magnitudes and the specified zero convention. The asymptotic p-value is shown only as a
+                        comparison, not as an interchangeable exact result.
+                    </p>
+
+                    <!-- ========================= Kruskal–Wallis ========================= -->
+                    <p><b>Kruskal–Wallis: three or more independent groups.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Kruskal–Wallis H statistic).</b></p>
+                        <p>
+                            Let \(k\geq2\) groups have sizes \(n_1,\ldots,n_k\), with total \(N\). Rank all \(N\)
+                            observations together, and let \(R_i\) be the sum of ranks in group \(i\). With no ties, \[
+                            H=\frac{12}{N(N+1)}\sum_{i=1}^{k}\frac{R_i^2}{n_i} -3(N+1). \] For ties of multiplicity
+                            \(t_j\), divide this value by the tie-correction factor \[
+                            C=1-\frac{\sum_j(t_j^3-t_j)}{N^3-N}. \] Under the null of equal continuous distributions,
+                            \(H\) is often compared with a \(\chi^2_{k-1}\) distribution when sample sizes are
+                            sufficiently large. This is an approximation, not an exact small-sample result.
+                        </p>
+                    </div>
+                    <p>
+                        Like ANOVA, Kruskal–Wallis is an <i>omnibus</i> test; a significant result does not identify
+                        which groups differ. If distributions have the same shape, rejection can be interpreted as
+                        evidence against a common location or median. With different shapes or spreads, it is more
+                        accurately described as a distributional difference.
+                    </p>
+                    <p>
+                        <b>Worked example 4 (three independent course formats).</b> Suppose each group has five scores,
+                        with no ties:
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Format</th>
+                                    <th>Scores</th>
+                                    <th>Pooled ranks</th>
+                                    <th>Rank sum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>2, 3, 5, 6, 8</td>
+                                    <td>1, 2, 4, 5, 7</td>
+                                    <td>19</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>4, 7, 9, 10, 12</td>
+                                    <td>3, 6, 8, 9, 11</td>
+                                    <td>37</td>
+                                </tr>
+                                <tr>
+                                    <td>C</td>
+                                    <td>11, 13, 14, 15, 16</td>
+                                    <td>10, 12, 13, 14, 15</td>
+                                    <td>64</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        The rank sums add to \(19+37+64=120=N(N+1)/2\), as required. Thus \[ \begin{aligned}
+                        H&amp;=\frac{12}{15(16)} \left(\frac{19^2}{5}+\frac{37^2}{5}+\frac{64^2}{5}\right) -3(16)\\
+                        &amp;=10.26. \end{aligned} \] The reference degrees of freedom are \(k-1=2\), giving the
+                        approximate p-value \(\Pr(\chi^2_2\geq10.26)\approx0.00592\). These groups show evidence of a
+                        distributional difference. The approximate rank-based effect measure
+                        \(\epsilon_H^2=(H-k+1)/(N-k)\approx0.688\) is large in this deliberately small synthetic
+                        dataset; it is not a difference in score units or an unbiased population effect estimate.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 170: calculate Kruskal–Wallis from pooled ranks and verify it.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+groups = [
+    np.array([2, 3, 5, 6, 8]),
+    np.array([4, 7, 9, 10, 12]),
+    np.array([11, 13, 14, 15, 16]),
+]
+lengths = [len(g) for g in groups]
+pooled = np.concatenate(groups)
+ranks = stats.rankdata(pooled)
+ranks_by_group = np.split(ranks, np.cumsum(lengths)[:-1])
+rank_sums = [r.sum() for r in ranks_by_group]
+N, k = len(pooled), len(groups)
+H_manual = 12/(N*(N+1))*sum(R**2/n for R,n in zip(rank_sums,lengths)) - 3*(N+1)
+result = stats.kruskal(*groups)
+print(&quot;Rank sums:&quot;, rank_sums)
+print(f&quot;Manual H={H_manual:.2f}; SciPy H={result.statistic:.2f}&quot;)
+print(f&quot;Approximate chi-square p={result.pvalue:.6f}&quot;)
+print(f&quot;Approximate epsilon_H^2={(H_manual-k+1)/(N-k):.3f}&quot;)
+assert np.isclose(H_manual, result.statistic)</code></pre>
+                    <p>
+                        <b>Post-hoc comparisons and multiple testing.</b> Kruskal–Wallis does not tell us which pair
+                        differs. With three groups there are three pairs; with \(k\) groups there are \(\binom{k}{2}\).
+                        The Holm adjustment controls the family-wise error rate under very general dependence
+                        conditions. Pairwise Mann–Whitney tests adjusted by Holm are legitimate pairwise tests, but they
+                        are <i>not the same as Dunn's</i>
+                        pooled-rank post-hoc procedure. The chosen comparisons should be specified in advance when
+                        possible, and an omnibus rejection does not authorize unlimited exploratory tests without
+                        further adjustment.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 171: run pairwise Mann–Whitney comparisons with Holm-adjusted p-values.</b>
+                    </p>
+                    <pre
+                        class="plain stats-code code-python"
+                    ><code class="language-python">from itertools import combinations
+import numpy as np
+from scipy import stats
+from statsmodels.stats.multitest import multipletests
+
+groups = {
+    &quot;A&quot;: [2, 3, 5, 6, 8],
+    &quot;B&quot;: [4, 7, 9, 10, 12],
+    &quot;C&quot;: [11, 13, 14, 15, 16],
+}
+pairs = list(combinations(groups.keys(), 2))
+p_raw = [stats.mannwhitneyu(groups[a], groups[b],
+                          alternative=&quot;two-sided&quot;, method=&quot;exact&quot;).pvalue
+         for a,b in pairs]
+reject, p_adjusted, _, _ = multipletests(p_raw, method=&quot;holm&quot;, alpha=0.05)
+for (a,b), raw, adj, significant in zip(pairs, p_raw, p_adjusted, reject):
+    print(f&quot;{a} vs {b}: raw p={raw:.5f}, Holm p={adj:.5f}, reject={significant}&quot;)</code></pre>
+                    <p>
+                        For this no-tie example, each exact Mann–Whitney test enumerates its own two-group rank
+                        allocations. The Holm-adjusted results answer
+                        <i>pairwise</i> questions, unlike the omnibus Kruskal–Wallis result.
+                    </p>
+
+                    <!-- ========================= Friedman Test ========================= -->
+                    <p><b>Friedman test: three or more matched conditions.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Friedman Q statistic).</b></p>
+                        <p>
+                            Suppose \(n\) independent blocks (for example, users or patients) each produce one
+                            measurement under each of \(k\) conditions. Assign ranks \(1,\ldots,k\)
+                            <i>within each block</i>, then let \(R_j\) denote the rank sum for condition \(j\). When
+                            there are no ties within blocks, Friedman's statistic is \[ Q=\frac{12}{nk(k+1)}\sum_{j=1}^k
+                            R_j^2-3n(k+1). \] An asymptotic reference is \(\chi^2_{k-1}\); it can be inaccurate with few
+                            blocks or few conditions. The common descriptive concordance measure <i>Kendall's W</i> is
+                            \[ W=\frac{Q}{n(k-1)},\qquad 0\leq W\leq1, \] with appropriate tie adjustments when
+                            required.
+                        </p>
+                    </div>
+                    <p>
+                        Blocks should be independent of one another; observations within a block are deliberately
+                        related. A suitable null for an exact within-block randomization calculation makes condition
+                        labels exchangeable within each block. This is a stronger statement than merely asserting that
+                        the condition medians are equal.
+                    </p>
+                    <p>
+                        <b>Worked example 5 (five participants test three interfaces).</b>
+                        Each row is one participant, and lower completion time is better:
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Participant</th>
+                                    <th>A</th>
+                                    <th>B</th>
+                                    <th>C</th>
+                                    <th>Within-person ranks (A, B, C)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>12</td>
+                                    <td>15</td>
+                                    <td>21</td>
+                                    <td>(1, 2, 3)</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>14</td>
+                                    <td>17</td>
+                                    <td>20</td>
+                                    <td>(1, 2, 3)</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>13</td>
+                                    <td>18</td>
+                                    <td>19</td>
+                                    <td>(1, 2, 3)</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>16</td>
+                                    <td>15</td>
+                                    <td>23</td>
+                                    <td>(2, 1, 3)</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>11</td>
+                                    <td>14</td>
+                                    <td>18</td>
+                                    <td>(1, 2, 3)</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Rank sum</b></td>
+                                    <td><b>6</b></td>
+                                    <td><b>9</b></td>
+                                    <td><b>15</b></td>
+                                    <td>Each row sums to 6</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        With \(n=5\), \(k=3\), the statistic is \[ Q=\frac{12}{5\cdot3\cdot4}(6^2+9^2+15^2)
+                        -3\cdot5\cdot4 =8.40. \] The chi-square approximation gives \(p\approx0.0150\), but five blocks
+                        are too few to rely on that approximation without checking. An exact conditional permutation
+                        distribution can be constructed by independently permuting the three condition ranks in each of
+                        the five blocks: \((3!)^5=7776\) equally likely arrangements. Exactly 66 are at least as extreme
+                        as the observed statistic, so \(p_{\mathrm{exact}}=66/7776\approx0.00849\). The rank agreement
+                        is \(W=8.4/[5(3-1)]=0.84\). Neither p-value identifies a particular pair of interfaces.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 172: calculate Friedman Q and enumerate its exact small-sample null
+                            distribution.</b
+                        >
+                    </p>
+                    <pre
+                        class="plain stats-code code-python"
+                    ><code class="language-python">from itertools import permutations, product
+import numpy as np
+from scipy import stats
+
+# Rows are participants (blocks), columns are conditions.
+data = np.array([
+    [12, 15, 21],
+    [14, 17, 20],
+    [13, 18, 19],
+    [16, 15, 23],
+    [11, 14, 18],
+], dtype=float)
+n, k = data.shape
+ranks = np.array([stats.rankdata(row) for row in data])
+rank_sums = ranks.sum(axis=0)
+q = 12/(n*k*(k+1)) * np.sum(rank_sums**2) - 3*n*(k+1)
+asymptotic = stats.friedmanchisquare(*data.T)
+
+# Enumerate all 6^5 possible within-person condition rank assignments.
+rank_orders = np.array(list(permutations(range(1, k+1))), dtype=float)
+indices = np.array(list(product(range(len(rank_orders)), repeat=n)))
+null_rank_sums = rank_orders[indices].sum(axis=1)
+null_q = 12/(n*k*(k+1))*np.sum(null_rank_sums**2, axis=1)-3*n*(k+1)
+p_exact = np.mean(null_q &gt;= q - 1e-12)
+
+print(&quot;Rank sums:&quot;, rank_sums)
+print(f&quot;Q={q:.2f}, asymptotic p={asymptotic.pvalue:.6f}&quot;)
+print(f&quot;Exact p={p_exact:.6f}, Kendall W={q/(n*(k-1)):.2f}&quot;)
+assert np.isclose(q, 8.4)
+assert np.isclose(p_exact, 66/7776)</code></pre>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 173: visualize matched observations without losing participant identities.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+completion = np.array([
+    [12, 15, 21],
+    [14, 17, 20],
+    [13, 18, 19],
+    [16, 15, 23],
+    [11, 14, 18],
+])
+fig, ax = plt.subplots(figsize=(7.5, 4.5))
+for person, row in enumerate(completion, start=1):
+    ax.plot(range(3), row, marker=&quot;o&quot;, label=f&quot;Participant {person}&quot;)
+ax.set_xticks(range(3), [&quot;Interface A&quot;, &quot;Interface B&quot;, &quot;Interface C&quot;])
+ax.set_ylabel(&quot;Task completion time (synthetic units)&quot;)
+ax.set_title(&quot;Matched observations: follow each participant&quot;)
+ax.legend(fontsize=8)
+fig.tight_layout()
+fig.savefig(&quot;nonparametric_matched_profiles.png&quot;, dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/nonparametric_matched_profiles.png"
+                            alt="Five participants each measured under three interface conditions, linked across conditions"
+                        />
+                        <figcaption>
+                            Experiment 173. Connecting repeated observations makes the blocking structure explicit; a
+                            test that treats all 15 observations as independent would ignore that structure.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Important Interpretation Caveats ========================= -->
+                    <p><b>A nonparametric test is not automatically a median test.</b></p>
+                    <p>
+                        It is possible for two populations to share a median while having different shapes and different
+                        probabilities of one observation exceeding another. For instance, \(X=E-\log 2\), where
+                        \(E\sim\operatorname{Exponential}(1)\), has median zero, as does \(Y\sim N(0,1)\). But \(X\) is
+                        strongly right-skewed and \(Y\) is symmetric. We can estimate their pairwise superiority
+                        probability using independent draws. It need not be \(1/2\) merely because the medians agree.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 174: show why equal population medians do not imply equal distributions.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(2026)
+N = 300_000
+x = rng.exponential(scale=1.0, size=N) - np.log(2.0)
+y = rng.normal(0.0, 1.0, size=N)
+
+print(f&quot;Sample median X: {np.median(x):.4f}&quot;)
+print(f&quot;Sample median Y: {np.median(y):.4f}&quot;)
+print(f&quot;P(X &gt; Y) estimated from independent pairs: {np.mean(x &gt; y):.4f}&quot;)
+print(&quot;Theoretical population medians are both zero.&quot;)</code></pre>
+                    <p>
+                        The population medians in Experiment 174 are exactly equal by construction. If the estimated
+                        superiority probability differs from \(0.5\), this is evidence of a genuine difference in
+                        distributional shape, not a contradiction. Do not translate a Mann–Whitney p-value into a claim
+                        about median differences without additional assumptions.
+                    </p>
+
+                    <!-- ========================= Practical Workflow and Tied Discrete Data ========================= -->
+                    <p><b>Practical example: ratings with repeated values.</b></p>
+                    <p>
+                        A product analyst compares satisfaction ratings on a five-point scale between two independently
+                        randomized versions of an app. The ratings contain many ties, and the response is ordinal.
+                        Rather than using the tie-free <code>method="exact"</code> approximation as though there were no
+                        ties, one can build an exact label-permutation distribution for a small sample, preserving group
+                        sizes. This tests <i>exchangeability of treatment labels</i> under the relevant null.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 175: perform an exact label-permutation rank comparison with tied ratings.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+# Independent users; small ordinal samples with repeated ratings.
+a = np.array([2, 3, 3, 4, 4])
+b = np.array([3, 4, 4, 5, 5])
+
+def superiority_count(x, y):
+    # Exactly matches Mann–Whitney U with midrank handling of ties.
+    return np.sum(x[:, None] &gt; y[None, :]) + 0.5*np.sum(x[:, None] == y[None, :])
+
+result = stats.permutation_test(
+    (a, b), superiority_count,
+    permutation_type=&quot;independent&quot;,
+    n_resamples=np.inf,     # all C(10, 5) = 252 reallocations
+    alternative=&quot;two-sided&quot;,
+    vectorized=False,
+)
+theta = superiority_count(a, b) / (len(a) * len(b))
+print(f&quot;Observed P(A &gt; B) + 0.5 P(tie) = {theta:.3f}&quot;)
+print(f&quot;Exact permutation p-value = {result.pvalue:.6f}&quot;)
+print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
+                    <p>
+                        Exact permutation inference is justified when the treatment labels are exchangeable under the
+                        null—for example, in a suitable randomized design. Matching, clusters, and stratified
+                        randomization require permutations that preserve their respective assignment restrictions. Rank
+                        tests and permutation tests are related tools, but one does not automatically replace the
+                        other's assumptions.
+                    </p>
+
+                    <!-- ========================= Practical Interpretation ========================= -->
+                    <p><b>Reporting and decision checklist.</b></p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>What to report</th>
+                                    <th>Common mistake to avoid</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Are observations independent or matched?</td>
+                                    <td>Study design, unit of observation, number of groups or blocks</td>
+                                    <td>Using an independent-groups test on repeated measurements</td>
+                                </tr>
+                                <tr>
+                                    <td>What null and alternative are tested?</td>
+                                    <td>Distributional equality, sign balance, or paired symmetry as applicable</td>
+                                    <td>Automatically calling every rank test a test of medians</td>
+                                </tr>
+                                <tr>
+                                    <td>How were ties and zeros handled?</td>
+                                    <td>Rank convention, zero convention, exact/permutation/asymptotic method</td>
+                                    <td>Reporting a tie-free exact p-value in a tied dataset</td>
+                                </tr>
+                                <tr>
+                                    <td>How large is the effect?</td>
+                                    <td>Original-unit summaries, distributions, and suitable effect measure</td>
+                                    <td>Equating statistical significance with practical importance</td>
+                                </tr>
+                                <tr>
+                                    <td>Were multiple groups compared?</td>
+                                    <td>Prespecified contrasts and adjusted pairwise p-values</td>
+                                    <td>Inspecting many unadjusted pairs after an omnibus test</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>Example of careful reporting.</b> “In an independent-groups comparison of eight observations
+                        per condition, a two-sided Mann–Whitney test was applied to the synthetic data. We report the U
+                        statistic, the p-value method, both empirical distributions, and the probability of superiority.
+                        Because the group shapes may differ, we interpret the result as a rank-based distributional
+                        comparison rather than a test that their population medians differ.” A real report should add
+                        uncertainty intervals for the main effect, prespecified hypotheses, and a discussion of design
+                        and missing data.
+                    </p>
+
+                    <!-- ========================= Exercises ========================= -->
+                    <p><b>Exercises.</b></p>
+                    <ol>
+                        <li>
+                            <b>Signs and exactness.</b> A paired study has differences \((-2,4,0,3,5,-1,6)\). Identify
+                            the zero-handling decision, compute \(B\), \(n^*\), and the two-sided sign-test p-value;
+                            verify with <code>scipy.stats.binomtest</code>.
+                        </li>
+                        <li>
+                            <b>Manual U statistic.</b> For A = (3, 7, 9) and B = (5, 8, 10), write the six pooled ranks,
+                            calculate \(R_A\), \(U_A\), and \(U_B\), and enumerate the exact two-sided p-value from all
+                            \(\binom{6}{3}\) rank allocations.
+                        </li>
+                        <li>
+                            <b>Ties.</b> For A = (3, 4, 4, 5) and B = (4, 5, 5, 5), compute midranks and \(U_A\)
+                            manually. Explain why the tie-free exact U distribution is not the right conditional
+                            reference.
+                        </li>
+                        <li>
+                            <b>Signed ranks.</b> For paired differences \((2,-1,3,-4,5,6)\), calculate signed ranks and
+                            the smaller of \(W_+\) and \(W_-\). Discuss whether symmetry is defensible with only six
+                            pairs.
+                        </li>
+                        <li>
+                            <b>Kruskal–Wallis.</b> Repeat Worked example 4 with B replaced by \((4,7,9,10,11)\), thereby
+                            introducing a tie with C. Calculate the tie correction and verify the statistic with SciPy.
+                        </li>
+                        <li>
+                            <b>Friedman.</b> Recompute Worked example 5 after changing participant 4's B time from 15 to
+                            18. Determine the new within-block ranks, \(Q\), and Kendall's \(W\), and explain why the
+                            rows must remain intact.
+                        </li>
+                        <li>
+                            <b>Interpretation.</b> Construct two distributions with equal medians but different shapes.
+                            Describe why a rank test may detect differences without demonstrating a difference in
+                            medians.
+                        </li>
+                        <li>
+                            <b>Study design.</b> A website collects ratings from each visitor on four consecutive days
+                            after a product change. Describe why neither Kruskal–Wallis nor Friedman automatically
+                            handles serial dependence and a temporal intervention.
+                        </li>
+                    </ol>
+
+                    <!-- ========================= References ========================= -->
+                    <p>
+                        <b>Core reference.</b> M. H. DeGroot and M. J. Schervish, <i>Probability and Statistics</i>, 4th
+                        ed., <b>Section 10.8, Sign and Rank Tests</b> (printed pp. 678–685). In particular, Exercises
+                        <b>1, 11, 15, and 16</b> address the sign test, U/rank-sum identity, the signed-rank statistic,
+                        and a paired application. The Kruskal–Wallis and Friedman extensions here are developed as
+                        additional applied material.
+                    </p>
+                    <p>
+                        <b>Software references.</b>
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: Mann–Whitney U</a
+                        >;
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: Wilcoxon signed-rank</a
+                        >;
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: Kruskal–Wallis</a
+                        >;
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: Friedman</a
+                        >;
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >statsmodels: multiple-testing adjustments</a
+                        >.
+                    </p>
                     <hr />
 
                     <!-- ========================= MAIN SECTION 12: Inferences for One Population Standard Deviation ========================= -->
