@@ -58,6 +58,7 @@
                                 >Inferences for Two Population Means Using Paired Samples</a
                             >
                         </li>
+                        <li><a href="#OneWayANOVA">One-Way Analysis of Variance (ANOVA)</a></li>
                         <li>
                             <a href="#InferencesOnePopulationSD">Inferences for One Population Standard Deviation</a>
                         </li>
@@ -78,7 +79,6 @@
                         <li><a href="#PolynomialRegression">Polynomial Regression</a></li>
                         <li><a href="#LogisticRegression">Logistic Regression</a></li>
                         <li><a href="#MaximumLikelihoodEstimation">Maximum Likelihood Estimation</a></li>
-
                     </ul>
                 </nav>
             </aside>
@@ -8016,6 +8016,1020 @@ print(f"Wilcoxon signed-rank p-value: {wilcoxon.pvalue:.5f}")
                         matched injury measurements. The tutorial example follows the topic and dataset used in SOGA-Py;
                         the additional comparison of changes and cautions about causal interpretation expand the
                         original discussion.
+                    </p>
+
+                    <hr />
+
+                    <!-- ========================= One-Way Analysis of Variance (ANOVA) ========================= -->
+                    <span id="OneWayANOVA"><b>One-Way Analysis of Variance (ANOVA)</b></span>
+
+                    <p>
+                        Our earlier two-sample t-tests compared two population means. We now consider
+                        <i>one-way analysis of variance</i> (ANOVA), which tests whether the population means of
+                        <i>two or more independent groups</i> are equal. For example, a product team may compare the
+                        average performance score of users randomly assigned to three onboarding tutorials. One overall
+                        ANOVA test asks whether there is evidence of <i>any</i> difference among the group means, rather
+                        than first performing many unadjusted pairwise t-tests.
+                    </p>
+                    <p>
+                        Although its name refers to variance, standard ANOVA is a test about
+                        <i>means</i>. Its central idea is to compare how much the <i>group means</i> differ with how
+                        much individual observations vary <i>within</i> groups. We will derive that comparison,
+                        calculate it by hand, and then verify it in Python.
+                    </p>
+
+                    <!-- ==================== Model, Hypotheses, and Assumptions ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (one-way layout).</b></p>
+                        <p>
+                            Suppose we observe measurements from \(k\geq2\) groups. Group \(i\) contains \(n_i\geq2\)
+                            observations \(Y_{i1},\ldots,Y_{in_i}\), and the total sample size is
+                            \(N=\sum_{i=1}^{k}n_i\). The classical one-way ANOVA model is \[
+                            Y_{ij}=\mu_i+\varepsilon_{ij},\qquad
+                            \varepsilon_{ij}\overset{\mathrm{ind}}{\sim}N(0,\sigma^2), \] with a common positive
+                            variance \(\sigma^2\). We treat the group memberships and sample sizes as fixed for the
+                            analysis.
+                        </p>
+                    </div>
+                    <p>
+                        Thus, observations are independent within and across groups; their conditional distributions are
+                        normal; and all groups have the same population variance. The means \(\mu_i\) may differ. In a
+                        randomized experiment, independence and group assignment come from the <i>design</i>, not from a
+                        normality test. Repeated measurements on the same individual generally require a different
+                        model.
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (ANOVA hypotheses).</b></p>
+                        <p>
+                            The usual null and alternative hypotheses are \[ H_0:\mu_1=\mu_2=\cdots=\mu_k, \qquad
+                            H_1:\text{not all }\mu_i\text{ are equal}. \] The alternative does <i>not</i> say that every
+                            pair of population means differs. ANOVA is an <i>omnibus</i> test: it can detect evidence of
+                            some difference without determining which groups differ.
+                        </p>
+                    </div>
+                    <p>
+                        One-way ANOVA concerns <i>one categorical explanatory variable</i> (the group or factor) and
+                        <i>one numerical response variable</i>. A three-arm experiment on a binary conversion outcome is
+                        generally better handled by methods for proportions or binary regression; a count or strongly
+                        skewed response may call for a different model or sensitivity analysis.
+                    </p>
+
+                    <!-- ==================== Decomposing the Variation ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (group means and grand mean).</b></p>
+                        <p>
+                            Write \[ \overline Y_i=\frac{1}{n_i}\sum_{j=1}^{n_i}Y_{ij}, \qquad \overline
+                            Y=\frac{1}{N}\sum_{i=1}^{k}\sum_{j=1}^{n_i}Y_{ij} =\frac{1}{N}\sum_{i=1}^{k}n_i\overline
+                            Y_i. \] The grand mean weights each group mean by its sample size; for unequal group sizes
+                            it is <i>not</i> the simple average of the group means.
+                        </p>
+                    </div>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (ANOVA sums of squares).</b></p>
+                        <p>
+                            The total variation around the grand mean can be divided into variation <i>between</i> the
+                            group means and residual variation <i>within</i> the groups: \[ \begin{aligned}
+                            SS_{\mathrm{total}} &amp;=\sum_{i=1}^{k}\sum_{j=1}^{n_i} (Y_{ij}-\overline Y)^2,\\
+                            SS_{\mathrm{between}} &amp;=\sum_{i=1}^{k}n_i(\overline Y_i-\overline Y)^2,\\
+                            SS_{\mathrm{within}} &amp;=\sum_{i=1}^{k}\sum_{j=1}^{n_i} (Y_{ij}-\overline Y_i)^2
+                            =\sum_{i=1}^{k}(n_i-1)S_i^2. \end{aligned} \] Here \(S_i^2\) denotes the ordinary sample
+                            variance in group \(i\), calculated with divisor \(n_i-1\).
+                        </p>
+                    </div>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (ANOVA decomposition).</b></p>
+                        <p>
+                            For <i>any</i> numerical group observations, without a normality assumption, \[
+                            SS_{\mathrm{total}}=SS_{\mathrm{between}}+SS_{\mathrm{within}}. \] The corresponding degrees
+                            of freedom satisfy \[ N-1=(k-1)+(N-k). \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof. For an observation in group \(i\), write \[ Y_{ij}-\overline Y =(Y_{ij}-\overline
+                        Y_i)+(\overline Y_i-\overline Y). \] Squaring and summing produces two sums of squares and a
+                        cross-term \(2\sum_i(\overline Y_i-\overline Y)\sum_j(Y_{ij}-\overline Y_i)\). The inner sum is
+                        zero in every group by the definition of its sample mean; hence the cross-term vanishes.
+                        Estimating one grand mean leaves \(N-1\) degrees of freedom; estimating \(k\) separate group
+                        means leaves \(N-k\) residual degrees of freedom. Their difference is \(k-1\).
+                    </p>
+
+                    <!-- ==================== The F-Test ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (mean squares and the F-statistic).</b></p>
+                        <p>
+                            For \(N&gt;k\), define \[ MS_{\mathrm{between}}=\frac{SS_{\mathrm{between}}}{k-1}, \qquad
+                            MS_{\mathrm{within}}=\frac{SS_{\mathrm{within}}}{N-k}, \qquad
+                            F=\frac{MS_{\mathrm{between}}}{MS_{\mathrm{within}}}. \] The quantity
+                            \(MS_{\mathrm{within}}\), also called the <i>mean squared error</i> (MSE), is the pooled
+                            estimator of \(\sigma^2\) under the common-variance model.
+                        </p>
+                    </div>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (exact null distribution of the ANOVA F-statistic).</b>
+                        </p>
+                        <p>
+                            Under the independent normal, common-variance model and the null hypothesis \(H_0\), \[
+                            \frac{SS_{\mathrm{between}}}{\sigma^2} \sim\chi^2_{k-1},\qquad
+                            \frac{SS_{\mathrm{within}}}{\sigma^2} \sim\chi^2_{N-k}, \] and these two random variables
+                            are independent. Consequently, \[ F\sim F_{k-1,N-k}\qquad\text{under }H_0. \] Large observed
+                            \(F\) values contradict the equal-means hypothesis. The p-value and level-\(\alpha\)
+                            rejection region are \[ p=P\!\left(F_{k-1,N-k}\geq F_{\mathrm{obs}}\right), \qquad
+                            F_{\mathrm{obs}}&gt;F_{k-1,N-k;1-\alpha}. \]
+                        </p>
+                    </div>
+                    <p>
+                        Proof (outline). In the normal model, fitted group means and residuals are orthogonal
+                        projections of the observation vector onto complementary subspaces. Under \(H_0\), the
+                        between-group projection has dimension \(k-1\), and the residual projection has dimension
+                        \(N-k\). Their squared standardized lengths are independent chi-square variables (Cochran's
+                        theorem). Dividing each by its degrees of freedom gives the F-ratio. The test is therefore
+                        <i>right-tailed</i>, even though the alternative permits group means to differ in either
+                        direction.
+                    </p>
+                    <p>
+                        This exact distribution requires the stated model. Standard one-way ANOVA often tolerates
+                        moderate departures from normality, particularly with sufficiently large, reasonably balanced
+                        groups. However, unequal variances combined with unequal group sizes can materially distort its
+                        significance level. We will address this with Welch ANOVA below.
+                    </p>
+
+                    <!-- ==================== Worked Example 1: Standard ANOVA by Hand ==================== -->
+                    <p><b>Worked example 1 (three training methods; complete calculation).</b></p>
+                    <p>
+                        Suppose three independent groups of four participants each complete the same assessment after
+                        using different training methods. Their scores (out of 20) are shown below.
+                        <i>These numbers are synthetic and chosen to make the calculation transparent.</i> Assume the
+                        standard ANOVA model is appropriate for illustration, and test at \(\alpha=0.05\).
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Method A</th>
+                                    <th>Method B</th>
+                                    <th>Method C</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>6</td>
+                                    <td>10</td>
+                                    <td>8</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>12</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>11</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>13</td>
+                                    <td>11</td>
+                                </tr>
+                                <tr>
+                                    <th>Mean: 7.5</th>
+                                    <th>Mean: 11.5</th>
+                                    <th>Mean: 9.5</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>Step 1 — Hypotheses.</b> \(H_0:\mu_A=\mu_B=\mu_C\) versus \(H_1:\) at least one population
+                        mean differs. There are \(k=3\) groups and \(N=12\) observations.
+                    </p>
+                    <p>
+                        <b>Step 2 — Grand mean.</b> Because all group sizes are four, \[ \overline
+                        y=\frac{4(7.5)+4(11.5)+4(9.5)}{12}=9.5. \]
+                    </p>
+                    <p>
+                        <b>Step 3 — Between-group sum of squares.</b>
+                        \[ SS_{\mathrm{between}} =4(7.5-9.5)^2+4(11.5-9.5)^2+4(9.5-9.5)^2 =16+16+0=32. \]
+                    </p>
+                    <p>
+                        <b>Step 4 — Within-group sum of squares.</b> Each group has centered deviations
+                        \((-1.5,-0.5,0.5,1.5)\), in some order. Their squared sum is \(2.25+0.25+0.25+2.25=5\).
+                        Therefore, \[ SS_{\mathrm{within}}=5+5+5=15,\qquad SS_{\mathrm{total}}=32+15=47. \]
+                    </p>
+                    <p>
+                        <b>Step 5 — Mean squares and F-statistic.</b>
+                        \[ \begin{aligned} df_{\mathrm{between}}&amp;=3-1=2,\\ df_{\mathrm{within}}&amp;=12-3=9,\\
+                        MS_{\mathrm{between}}&amp;=32/2=16,\\ MS_{\mathrm{within}}&amp;=15/9=5/3,\\
+                        F_{\mathrm{obs}}&amp;=16/(5/3)=9.6. \end{aligned} \]
+                    </p>
+                    <p>The calculations are summarized in the ANOVA table:</p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Sum of squares</th>
+                                    <th>Degrees of freedom</th>
+                                    <th>Mean square</th>
+                                    <th>F</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Between groups</td>
+                                    <td>32</td>
+                                    <td>2</td>
+                                    <td>16</td>
+                                    <td>9.6</td>
+                                </tr>
+                                <tr>
+                                    <td>Within groups (error)</td>
+                                    <td>15</td>
+                                    <td>9</td>
+                                    <td>1.6667</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Total</td>
+                                    <td>47</td>
+                                    <td>11</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>Step 6 — Decision.</b> Under \(H_0\), the reference distribution is \(F_{2,9}\). The upper 5%
+                        critical value is about \(4.2565\) and \[ p=P(F_{2,9}\geq9.6)\approx0.00586. \] Since
+                        \(9.6&gt;4.2565\) and \(p&lt;0.05\), reject \(H_0\). The results provide evidence that not all
+                        three population means are equal. This conclusion does <i>not</i> identify the differing
+                        methods, establish causality without a suitable study design, or guarantee that the population
+                        differences are practically important.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 153: reproduce the entire ANOVA table from first principles.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+groups = {
+    "A": np.array([6, 8, 7, 9], dtype=float),
+    "B": np.array([10, 12, 11, 13], dtype=float),
+    "C": np.array([8, 10, 9, 11], dtype=float),
+}
+k = len(groups)
+N = sum(len(x) for x in groups.values())
+grand_mean = np.concatenate(list(groups.values())).mean()
+
+ss_between = sum(len(x) * (x.mean() - grand_mean)**2
+                 for x in groups.values())
+ss_within = sum(np.sum((x - x.mean())**2)
+                for x in groups.values())
+ss_total = sum(np.sum((x - grand_mean)**2)
+               for x in groups.values())
+df_between, df_within = k - 1, N - k
+ms_between = ss_between / df_between
+ms_within = ss_within / df_within
+F = ms_between / ms_within
+p = stats.f.sf(F, df_between, df_within)
+critical = stats.f.ppf(0.95, df_between, df_within)
+
+for label, x in groups.items():
+    print(f"{label}: n={len(x)}, mean={x.mean():.2f}, "
+          f"variance={x.var(ddof=1):.4f}")
+print(f"Grand mean = {grand_mean:.2f}")
+print(f"SS_between={ss_between:.2f}, SS_within={ss_within:.2f}, "
+      f"SS_total={ss_total:.2f}")
+print(f"Degrees of freedom: {df_between}, {df_within}, {N-1}")
+print(f"F={F:.4f}, p={p:.6f}, critical value={critical:.4f}")
+
+library_result = stats.f_oneway(*groups.values())
+assert np.isclose(ss_total, ss_between + ss_within)
+assert np.isclose(F, library_result.statistic)
+assert np.isclose(p, library_result.pvalue)</code></pre>
+                    <p>
+                        Expected checks: \(SS_{\mathrm{between}}=32\), \(SS_{\mathrm{within}}=15\), \(F=9.6\), and
+                        \(p\approx0.005861\). The code explicitly verifies the sums-of-squares identity and the SciPy
+                        result.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 154: visualize between-group and within-group variation.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+groups = [np.array([6, 8, 7, 9]),
+          np.array([10, 12, 11, 13]),
+          np.array([8, 10, 9, 11])]
+names = ["Method A", "Method B", "Method C"]
+grand = np.concatenate(groups).mean()
+
+fig, ax = plt.subplots(figsize=(8, 4.8))
+for i, x in enumerate(groups, start=1):
+    m = x.mean()
+    ax.scatter(np.full(len(x), i), x, s=55, zorder=3)
+    ax.hlines(m, i - 0.22, i + 0.22, linewidth=2.5)
+    for value in x:
+        ax.plot([i, i], [m, value], alpha=0.35, linewidth=1)
+    ax.plot([i - 0.29, i - 0.29], [grand, m], linewidth=3)
+ax.axhline(grand, linestyle="--", linewidth=1.5,
+           label=f"Grand mean = {grand:.1f}")
+ax.set(xticks=range(1, 4), xticklabels=names,
+       ylabel="Assessment score", title="Variation within and between groups")
+ax.legend()
+fig.tight_layout()
+fig.savefig("anova_between_within.png", dpi=170, bbox_inches="tight")
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/anova_between_within.png"
+                            alt="Individual scores, group means, grand mean, within-group deviations, and between-group deviations for three methods."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Vertical segments at the observations show deviations from each group mean
+                            (within-group variation). Thick segments offset to the left of each group show the
+                            separation between group means and the grand mean. Generated by Experiment 154.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Why the Null F Distribution Matters ==================== -->
+                    <p>
+                        If the group means are equal in the population, sampling variability will nevertheless produce
+                        unequal sample means and positive \(SS_{\mathrm{between}}\). We therefore need a
+                        <i>sampling distribution</i>
+                        for the ratio, rather than rejecting the null whenever the sample means are not identical.
+                    </p>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 155: simulate F-statistics under the null and under unequal means.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+rng = np.random.default_rng(153)
+n_reps, n_each = 4000, 12
+k, N = 3, 3 * n_each
+
+# Rows represent independent experiments; columns represent observations.
+null_data = rng.normal(loc=0, scale=1, size=(n_reps, k, n_each))
+alt_data = rng.normal(loc=np.array([0.0, 0.6, 1.2])[None, :, None],
+                      scale=1, size=(n_reps, k, n_each))
+
+def simulated_F(samples):
+    group_means = samples.mean(axis=2)
+    grand_means = samples.mean(axis=(1, 2))
+    ssb = n_each * np.sum((group_means - grand_means[:, None])**2, axis=1)
+    ssw = np.sum((samples - group_means[:, :, None])**2, axis=(1, 2))
+    return (ssb / (k - 1)) / (ssw / (N - k))
+
+f_null = simulated_F(null_data)
+f_alt = simulated_F(alt_data)
+cutoff = stats.f.ppf(0.95, k - 1, N - k)
+print(f"Estimated type-I error: {np.mean(f_null > cutoff):.3f}")
+print(f"Estimated power for chosen means: {np.mean(f_alt > cutoff):.3f}")
+
+x = np.linspace(0, 8, 350)
+fig, ax = plt.subplots(figsize=(8, 4.8))
+ax.hist(f_null, bins=55, density=True, alpha=0.35, label="Simulated null")
+ax.hist(f_alt, bins=55, density=True, alpha=0.25, label="Simulated alternative")
+ax.plot(x, stats.f.pdf(x, k - 1, N - k), linewidth=2,
+        label="Theoretical null F density")
+ax.axvline(cutoff, linestyle="--", linewidth=2, label="5% upper-tail cutoff")
+ax.set(xlim=(0, 8), xlabel="F-statistic", ylabel="Density",
+       title="Sampling distribution of the one-way ANOVA statistic")
+ax.legend()
+fig.tight_layout()
+fig.savefig("anova_null_alternative_f.png", dpi=170,
+            bbox_inches="tight")
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/anova_null_alternative_f.png"
+                            alt="Empirical F-statistic distributions under equal and unequal population means against the theoretical F reference density."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> Under equal means, the rejection probability should be close to the nominal
+                            5%. Under the specified unequal means, large F-values occur more often. Generated by
+                            Experiment 155.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== Connection with the Two-Sample t-Test ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading">
+                            <b>Theorem (two groups: ANOVA equals the pooled two-sample t-test).</b>
+                        </p>
+                        <p>
+                            If \(k=2\), the independent observations share a common population variance, and \(t\)
+                            denotes the usual pooled-variance two-sample t-statistic for \(H_0:\mu_1=\mu_2\), then \[
+                            F=t^2, \qquad t\sim t_{n_1+n_2-2}\text{ under }H_0, \qquad F\sim F_{1,n_1+n_2-2}. \] The
+                            ANOVA p-value coincides with the <i>two-sided</i> pooled t-test p-value. The sign of the
+                            difference is lost when \(t\) is squared.
+                        </p>
+                    </div>
+                    <p>
+                        Proof. For two groups, \(SS_{\mathrm{between}}=\frac{n_1n_2}{n_1+n_2} (\overline Y_1-\overline
+                        Y_2)^2\), while \(MS_{\mathrm{within}}=S_p^2\). Therefore, \[ F=\frac{(\overline Y_1-\overline
+                        Y_2)^2} {S_p^2(1/n_1+1/n_2)}=t^2. \]
+                    </p>
+                    <p class="stats-experiment-title"><b>Experiment 156: verify the identity F = t squared.</b></p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+A = np.array([6, 8, 7, 9], dtype=float)
+B = np.array([10, 12, 11, 13], dtype=float)
+t = stats.ttest_ind(A, B, equal_var=True)
+f = stats.f_oneway(A, B)
+print(f"t = {t.statistic:.6f}")
+print(f"t^2 = {t.statistic**2:.6f}")
+print(f"F = {f.statistic:.6f}")
+print(f"Two-sided t-test p = {t.pvalue:.6f}")
+print(f"ANOVA p = {f.pvalue:.6f}")
+assert np.isclose(t.statistic**2, f.statistic)
+assert np.isclose(t.pvalue, f.pvalue)</code></pre>
+
+                    <!-- ==================== Multiple Comparisons and Tukey HSD ==================== -->
+                    <p>
+                        A significant omnibus F-test tells us that not all population means are equal, but it does not
+                        identify the differing groups. Testing all \(\binom{k}{2}=k(k-1)/2\) pairs at unadjusted level
+                        0.05 can increase the probability of making at least one false rejection. For
+                        <i>all pairwise comparisons</i> under the equal-variance model, Tukey's HSD procedure controls
+                        the family-wise error rate. It also supplies simultaneous confidence intervals; the unequal-size
+                        extension is often called Tukey–Kramer.
+                    </p>
+                    <p>
+                        For our first example, the observed differences in sample means are \(\overline y_B-\overline
+                        y_A=4\), \(\overline y_C-\overline y_A=2\), and \(\overline y_B-\overline y_C=2\). Tukey's
+                        procedure will assess these differences with an adjustment for examining all three pairs.
+                    </p>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 157: identify differing groups with Tukey's multiple-comparison procedure.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+A = np.array([6, 8, 7, 9], dtype=float)
+B = np.array([10, 12, 11, 13], dtype=float)
+C = np.array([8, 10, 9, 11], dtype=float)
+values = np.concatenate([A, B, C])
+labels = np.repeat(["A", "B", "C"], [len(A), len(B), len(C)])
+
+result = pairwise_tukeyhsd(endog=values, groups=labels, alpha=0.05)
+print(result.summary())</code></pre>
+                    <p>
+                        Expected interpretation: the A–B difference is significant after adjustment (adjusted
+                        \(p\approx0.005\)); neither A–C nor B–C is significant (each adjusted \(p\approx0.126\)). The
+                        nonsignificant comparisons do <i>not</i> establish that those means are equal. Post-hoc methods
+                        do not compensate for invalid independence assumptions.
+                    </p>
+
+                    <!-- ==================== Effect Sizes and Practical Meaning ==================== -->
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (eta-squared and omega-squared).</b></p>
+                        <p>
+                            For a one-way fixed-group ANOVA, two commonly reported measures of the importance of the
+                            group factor are \[ \eta^2=\frac{SS_{\mathrm{between}}}{SS_{\mathrm{total}}}, \qquad
+                            \omega^2= \frac{SS_{\mathrm{between}}-(k-1)MS_{\mathrm{within}}}
+                            {SS_{\mathrm{total}}+MS_{\mathrm{within}}}. \] The first is the fraction of
+                            <i>observed sample variation</i>
+                            accounted for by the group labels. The second adjusts for estimation bias under the
+                            common-variance model and can be negative as an estimate (even though the corresponding
+                            population effect size is nonnegative).
+                        </p>
+                    </div>
+                    <p>
+                        <b>Worked calculation.</b> For our data, \[ \eta^2=\frac{32}{47}\approx0.681, \qquad
+                        \omega^2=\frac{32-2(5/3)}{47+5/3}\approx0.589. \] The difference between these measures is
+                        noticeable with only 12 observations. Neither is a probability that a treatment is effective,
+                        and neither establishes a causal effect without suitable assignment and control of confounding.
+                    </p>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 158: calculate effect sizes and a prespecified contrast.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+groups = [np.array([6, 8, 7, 9], dtype=float),
+          np.array([10, 12, 11, 13], dtype=float),
+          np.array([8, 10, 9, 11], dtype=float)]
+means = np.array([x.mean() for x in groups])
+ns = np.array([len(x) for x in groups])
+k, N = len(groups), sum(ns)
+grand = np.concatenate(groups).mean()
+ssb = sum(n * (m - grand)**2 for n, m in zip(ns, means))
+ssw = sum(np.sum((x - x.mean())**2) for x in groups)
+mse = ssw / (N - k)
+eta2 = ssb / (ssb + ssw)
+omega2 = (ssb - (k - 1) * mse) / (ssb + ssw + mse)
+
+# Illustration of a contrast specified BEFORE inspecting the outcomes:
+# "Method B minus Method A"; no post-hoc multiplicity claim is made.
+contrast = np.array([-1., 1., 0.])
+estimate = np.dot(contrast, means)
+se = np.sqrt(mse * np.sum(contrast**2 / ns))
+t_stat = estimate / se
+df = N - k
+p_two_sided = 2 * stats.t.sf(abs(t_stat), df)
+ci = estimate + stats.t.ppf([0.025, 0.975], df) * se
+print(f"eta^2 = {eta2:.4f}; omega^2 = {omega2:.4f}")
+print(f"Prespecified B - A = {estimate:.3f}")
+print(f"t({df}) = {t_stat:.3f}, unadjusted p = {p_two_sided:.4f}")
+print(f"Unadjusted 95% CI = ({ci[0]:.3f}, {ci[1]:.3f})")</code></pre>
+                    <p>
+                        A planned contrast can be scientifically useful when the comparison was specified before
+                        examining the data. It should not be relabeled
+                        <i>planned</i> after exploring many outcomes. For multiple exploratory comparisons, adjust the
+                        inferential procedure appropriately.
+                    </p>
+
+                    <!-- ==================== Welch ANOVA for Unequal Variances ==================== -->
+                    <p>
+                        The common-variance assumption is sometimes implausible. In a business experiment, one group may
+                        contain highly variable completion times while another is relatively consistent.
+                        <i>Welch ANOVA</i> tests the same equal-means null without assuming identical population
+                        variances. Its reference distribution is approximate rather than the exact F law obtained under
+                        the classical normal, common-variance model.
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Welch's one-way ANOVA).</b></p>
+                        <p>
+                            For each group compute its sample mean \(\overline Y_i\), variance \(S_i^2&gt;0\), and size
+                            \(n_i&gt;1\). Define \[ w_i=\frac{n_i}{S_i^2},\qquad W=\sum_iw_i,\qquad \overline
+                            Y_w=\frac{\sum_iw_i\overline Y_i}{W}, \] and \[ A=\frac{1}{k-1}\sum_iw_i(\overline
+                            Y_i-\overline Y_w)^2, \qquad T=\sum_i\frac{(1-w_i/W)^2}{n_i-1}. \] The Welch statistic and
+                            approximate denominator degrees of freedom are \[ F_W=\frac{A}{1+\frac{2(k-2)}{k^2-1}T},
+                            \qquad \nu_W=\frac{k^2-1}{3T}. \] Under \(H_0\), the Welch approximation compares \(F_W\)
+                            with an \(F_{k-1,\nu_W}\) distribution. In general, \(\nu_W\) need not be an integer.
+                        </p>
+                    </div>
+                    <p>
+                        The weights give more influence to groups whose sample means have smaller estimated variances.
+                        Welch's procedure is not a cure for dependence, severe outliers, or every kind of nonnormality.
+                        It can be much more reliable than classical ANOVA when variances and group sizes differ.
+                    </p>
+
+                    <!-- ==================== Worked Example 2: Welch by Hand ==================== -->
+                    <p><b>Worked example 2 (unequal variances and unequal group sizes).</b></p>
+                    <p>
+                        Consider three independent groups receiving different versions of a performance-training module.
+                        The outcome is a numerical performance score. The following <i>synthetic</i> data deliberately
+                        have different group sizes and markedly different within-group variances:
+                    </p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Observed scores</th>
+                                    <th>Size</th>
+                                    <th>Mean</th>
+                                    <th>Sample variance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A</td>
+                                    <td>48, 51, 50, 49, 52</td>
+                                    <td>5</td>
+                                    <td>50.0</td>
+                                    <td>2.5</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>45, 55, 60, 40, 50, 65</td>
+                                    <td>6</td>
+                                    <td>52.5</td>
+                                    <td>87.5</td>
+                                </tr>
+                                <tr>
+                                    <td>C</td>
+                                    <td>55, 58, 57, 56</td>
+                                    <td>4</td>
+                                    <td>56.5</td>
+                                    <td>1.6667</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>Step 1 — Estimate the inverse-variance weights.</b>
+                        \[ w_A=5/2.5=2,\quad w_B=6/87.5\approx0.06857,\quad w_C=4/(5/3)=2.4. \] Notice that Group B
+                        receives little weight: its estimated mean is much less precise because of its large variance.
+                    </p>
+                    <p>
+                        <b>Step 2 — Compute the weighted mean.</b>
+                        \[ \overline y_w =\frac{2(50)+0.06857(52.5)+2.4(56.5)}{2+0.06857+2.4} \approx53.5294. \]
+                    </p>
+                    <p>
+                        <b>Step 3 — Apply Welch's correction.</b> Using the preceding definitions, \[
+                        A\approx23.0824,\qquad T\approx0.34163,\qquad 1+\frac{2(k-2)}{k^2-1}T\approx1.08541. \] With
+                        \(k=3\), \[ F_W\approx\frac{23.0824}{1.08541}=21.2661, \qquad \nu_W\approx7.8056. \]
+                    </p>
+                    <p>
+                        <b>Step 4 — Calculate the p-value.</b>
+                        \[ p=P(F_{2,7.8056}\geq21.2661)\approx0.000693. \] Welch ANOVA rejects the equal-means null at
+                        \(\alpha=0.05\). In contrast, applying ordinary ANOVA mechanically gives approximately
+                        \(F=1.2522\) and \(p=0.3207\). The two methods answer the same mean-comparison question under
+                        <i>different variance assumptions</i>; the striking discrepancy here illustrates why checking
+                        the study design and scale of variation matters. With these small synthetic groups, the assumed
+                        sampling models remain important.
+                    </p>
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 159: calculate Welch ANOVA by hand in Python and compare it with classical
+                            ANOVA.</b
+                        >
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+from statsmodels.stats.oneway import anova_oneway
+
+groups = [np.array([48, 51, 50, 49, 52], dtype=float),
+          np.array([45, 55, 60, 40, 50, 65], dtype=float),
+          np.array([55, 58, 57, 56], dtype=float)]
+k = len(groups)
+ns = np.array([len(x) for x in groups], dtype=float)
+means = np.array([x.mean() for x in groups])
+variances = np.array([x.var(ddof=1) for x in groups])
+weights = ns / variances
+W = weights.sum()
+weighted_mean = np.dot(weights, means) / W
+T = np.sum((1 - weights / W)**2 / (ns - 1))
+A = np.sum(weights * (means - weighted_mean)**2) / (k - 1)
+F_welch = A / (1 + 2 * (k - 2) / (k**2 - 1) * T)
+df_welch = (k**2 - 1) / (3 * T)
+p_welch = stats.f.sf(F_welch, k - 1, df_welch)
+
+library_welch = anova_oneway(groups, use_var="unequal")
+ordinary = stats.f_oneway(*groups)
+print("Means:", means)
+print("Sample variances:", variances)
+print(f"Welch F({k-1}, {df_welch:.4f}) = {F_welch:.4f}")
+print(f"Welch p = {p_welch:.6f}")
+print(f"Classical F = {ordinary.statistic:.4f}, p = {ordinary.pvalue:.6f}")
+assert np.isclose(F_welch, library_welch.statistic)
+assert np.isclose(p_welch, library_welch.pvalue)</code></pre>
+                    <p>
+                        This experiment uses <code>statsmodels.stats.oneway.anova_oneway</code> with
+                        <code>use_var="unequal"</code>, which supports Welch ANOVA in earlier statsmodels versions as
+                        well. In SciPy 1.16 or newer, the alternative call
+                        <code>stats.f_oneway(*groups, equal_var=False)</code>
+                        also performs Welch ANOVA. No newer SciPy API is required by the code above.
+                    </p>
+
+                    <!-- ==================== Games–Howell Post-hoc Comparisons ==================== -->
+                    <p>
+                        Tukey's usual equal-variance comparison should not automatically be applied following Welch
+                        ANOVA. <i>Games–Howell</i> pairwise comparisons allow different variances and sample sizes, use
+                        Welch–Satterthwaite degrees of freedom, and calibrate against the studentized-range
+                        distribution. As with Welch ANOVA itself, their small-sample performance depends on the sampling
+                        distributions.
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Games–Howell pairwise ingredients).</b></p>
+                        <p>
+                            For a comparison between groups \(i\) and \(j\), put \[ a_i=\frac{S_i^2}{n_i},\qquad
+                            a_j=\frac{S_j^2}{n_j},\qquad \nu_{ij}=\frac{(a_i+a_j)^2} {a_i^2/(n_i-1)+a_j^2/(n_j-1)}. \]
+                            The studentized-range statistic for this pair is \[ q_{ij}=\frac{|\overline Y_i-\overline
+                            Y_j|} {\sqrt{(a_i+a_j)/2}}. \] Its multiplicity-adjusted p-value is obtained from the upper
+                            tail of the studentized-range distribution with \(k\) groups and \(\nu_{ij}\) degrees of
+                            freedom.
+                        </p>
+                    </div>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 160: calculate Games–Howell adjusted p-values and intervals.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import studentized_range
+from itertools import combinations
+
+groups = {
+    "A": np.array([48, 51, 50, 49, 52], dtype=float),
+    "B": np.array([45, 55, 60, 40, 50, 65], dtype=float),
+    "C": np.array([55, 58, 57, 56], dtype=float),
+}
+k, alpha = len(groups), 0.05
+for (name_i, x), (name_j, y) in combinations(groups.items(), 2):
+    difference = x.mean() - y.mean()
+    a = x.var(ddof=1) / len(x)
+    b = y.var(ddof=1) / len(y)
+    df = (a + b)**2 / (a*a/(len(x)-1) + b*b/(len(y)-1))
+    se_q = np.sqrt((a + b) / 2)
+    q = abs(difference) / se_q
+    p_adjusted = studentized_range.sf(q, k, df)
+    margin = studentized_range.ppf(1-alpha, k, df) * se_q
+    lower, upper = difference - margin, difference + margin
+    print(f"{name_i} - {name_j}: difference={difference:.2f}, "
+          f"df={df:.2f}, adjusted p={p_adjusted:.5f}, "
+          f"simultaneous CI=({lower:.2f}, {upper:.2f})")</code></pre>
+                    <p>
+                        For this example, the adjusted p-values are approximately 0.8033 (A–B), 0.00065 (A–C), and
+                        0.5887 (B–C). Only A–C is identified as significantly different at the 5% family-wise level.
+                        This implementation uses SciPy's studentized-range distribution directly, so it does not require
+                        the newer <code>use_var="unequal"</code> option of <code>pairwise_tukeyhsd</code>.
+                    </p>
+
+                    <!-- ==================== Checking Assumptions and Diagnostics ==================== -->
+                    <p><b>Checking model assumptions.</b> Before reporting a result, consider:</p>
+                    <ul>
+                        <li>
+                            <b>Independence:</b> users, patients, schools, or machines may contribute multiple
+                            observations. Repeated or clustered data do not become independent because they are divided
+                            into groups.
+                        </li>
+                        <li>
+                            <b>Conditional distribution:</b> inspect the shape of each group's observations or model
+                            residuals. With tiny groups, normality is difficult to assess reliably; a normality-test
+                            p-value is not proof of normality.
+                        </li>
+                        <li>
+                            <b>Variance:</b> compare sample spreads and plot residuals against group fitted means.
+                            Levene's test with median centering is a useful diagnostic, but selecting an analysis only
+                            by a preliminary variance-test p-value is not a sound general strategy.
+                        </li>
+                        <li>
+                            <b>Outliers and skew:</b> check whether conclusions are driven by a few observations.
+                            Consider appropriate robust procedures or a carefully justified alternative model.
+                        </li>
+                        <li>
+                            <b>Design and interpretation:</b> random assignment can support causal claims; observational
+                            group differences can reflect confounding. Statistical significance does not establish
+                            substantive importance.
+                        </li>
+                    </ul>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 161: examine residuals, group spreads, and a robust variance diagnostic.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+groups = [np.array([48, 51, 50, 49, 52], dtype=float),
+          np.array([45, 55, 60, 40, 50, 65], dtype=float),
+          np.array([55, 58, 57, 56], dtype=float)]
+means = [x.mean() for x in groups]
+residuals = np.concatenate([x - x.mean() for x in groups])
+fitted = np.concatenate([np.full(len(x), x.mean()) for x in groups])
+
+levene = stats.levene(*groups, center="median")
+print(f"Median-centered Levene statistic={levene.statistic:.3f}, "
+      f"p={levene.pvalue:.4f}")
+print("Sample standard deviations:",
+      [round(x.std(ddof=1), 3) for x in groups])
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4.2))
+axes[0].scatter(fitted, residuals)
+axes[0].axhline(0, linestyle="--", linewidth=1)
+axes[0].set(xlabel="Group fitted mean", ylabel="Within-group residual",
+            title="Residuals versus fitted values")
+stats.probplot(residuals, dist="norm", plot=axes[1])
+axes[1].set_title("Normal Q–Q plot of pooled residuals")
+fig.tight_layout()
+fig.savefig("anova_residual_diagnostics.png", dpi=170,
+            bbox_inches="tight")
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/anova_residual_diagnostics.png"
+                            alt="Residuals-versus-fitted and normal quantile plot for the unequal-variance training data."
+                            loading="lazy"
+                        />
+                        <figcaption>
+                            <b>Figure.</b> The spread varies substantially across the groups. These plots are diagnostic
+                            evidence, not formal proof of a distributional assumption. Generated by Experiment 161.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ==================== ANOVA as Linear Regression ==================== -->
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Theorem (ANOVA as a special case of linear regression).</b></p>
+                        <p>
+                            A one-way ANOVA model with \(k\) groups can be written as linear regression with \(k-1\)
+                            group-indicator variables. Taking group A as a reference in a three-group example, write \[
+                            Y_j=\beta_0+\beta_B\,I(\text{group}_j=B) +\beta_C\,I(\text{group}_j=C)+\varepsilon_j. \] The
+                            ordinary least squares estimates are \(\widehat\beta_0=\overline y_A\),
+                            \(\widehat\beta_B=\overline y_B-\overline y_A\), and \(\widehat\beta_C=\overline
+                            y_C-\overline y_A\). The overall regression F-test of \(H_0:\beta_B=\beta_C=0\) equals the
+                            one-way ANOVA F-test.
+                        </p>
+                    </div>
+                    <p>
+                        This equivalence is useful for data science: it connects ANOVA to regression coefficients,
+                        fitted values, residual diagnostics, contrasts, and extensions with additional explanatory
+                        variables. Adding covariates, interactions, or multiple factors changes the model and the
+                        hypotheses being tested; those procedures are not automatically the same as one-way ANOVA.
+                    </p>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 162: recover the ANOVA F-test from ordinary least squares.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import pandas as pd
+from scipy import stats
+import statsmodels.formula.api as smf
+from statsmodels.stats.anova import anova_lm
+
+A = np.array([6, 8, 7, 9], dtype=float)
+B = np.array([10, 12, 11, 13], dtype=float)
+group_c = np.array([8, 10, 9, 11], dtype=float)
+df = pd.DataFrame({
+    "score": np.concatenate([A, B, group_c]),
+    "group": np.repeat(["A", "B", "C"], [len(A), len(B), len(group_c)])
+})
+
+model = smf.ols("score ~ C(group)", data=df).fit()
+print("OLS coefficients:")
+print(model.params)
+print("\nANOVA table from regression:")
+print(anova_lm(model, typ=2))
+print(f"Regression overall F = {model.fvalue:.4f}")
+print(f"Classical one-way F = {stats.f_oneway(A, B, group_c).statistic:.4f}")
+assert np.isclose(model.fvalue, stats.f_oneway(A, B, group_c).statistic)</code></pre>
+                    <p>
+                        With A as the reference, the intercept is \(7.5\), the B indicator coefficient is \(4\), and the
+                        C indicator coefficient is \(2\). The overall regression F-statistic is again \(9.6\).
+                    </p>
+
+                    <!-- ==================== Randomization and Permutation Perspective ==================== -->
+                    <p>
+                        A complementary approach in randomized studies is to compare the observed F-statistic with
+                        values obtained by repeatedly reshuffling group labels. This is a <i>permutation</i> test.
+                        Permutation calibration is exact under appropriate exchangeability or a randomization-based
+                        sharp null; equal population means <i>alone</i> do not make observations exchangeable when the
+                        group distributions differ.
+                    </p>
+                    <p class="stats-experiment-title">
+                        <b>Experiment 163: approximate a permutation p-value for the omnibus F-statistic.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(163)
+groups = [np.array([6, 8, 7, 9], dtype=float),
+          np.array([10, 12, 11, 13], dtype=float),
+          np.array([8, 10, 9, 11], dtype=float)]
+lengths = [len(x) for x in groups]
+values = np.concatenate(groups)
+F_observed = stats.f_oneway(*groups).statistic
+
+B = 9999
+exceedances = 0
+for _ in range(B):
+    shuffled = rng.permutation(values)
+    reassigned = np.split(shuffled, np.cumsum(lengths)[:-1])
+    F_permuted = stats.f_oneway(*reassigned).statistic
+    exceedances += (F_permuted >= F_observed)
+
+# Monte Carlo correction: the observed arrangement counts as one draw.
+p_mc = (exceedances + 1) / (B + 1)
+print(f"Observed F: {F_observed:.4f}")
+print(f"Parametric ANOVA p: {stats.f.sf(F_observed, 2, 9):.5f}")
+print(f"Permutation p (Monte Carlo): {p_mc:.5f}")</code></pre>
+                    <p>
+                        For a completely randomized experiment, label permutations that preserve group sizes reproduce
+                        the assignment mechanism under the sharp null of no treatment effect on any unit. In an
+                        observational study, the stronger exchangeability assumption must be justified. A small
+                        permutation p-value does not establish that the observations are exchangeable, nor does a
+                        permutation test automatically correct for unequal variances.
+                    </p>
+
+                    <!-- ==================== Extensions and Practical Interpretation ==================== -->
+                    <p><b>Which procedure should be used?</b></p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Situation</th>
+                                    <th>Typical starting point</th>
+                                    <th>Important qualification</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Independent groups with roughly comparable variances</td>
+                                    <td>One-way ANOVA; Tukey for all-pair comparisons</td>
+                                    <td>Assess shape, outliers, and independence</td>
+                                </tr>
+                                <tr>
+                                    <td>Independent groups with unequal variances</td>
+                                    <td>Welch ANOVA; Games–Howell for all-pair comparisons</td>
+                                    <td>Normality approximation and small-sample limitations remain</td>
+                                </tr>
+                                <tr>
+                                    <td>Same participants measured under multiple conditions</td>
+                                    <td>Repeated-measures ANOVA or a mixed-effects model</td>
+                                    <td>Ordinary independent-groups ANOVA is usually inappropriate</td>
+                                </tr>
+                                <tr>
+                                    <td>Two categorical explanatory variables</td>
+                                    <td>Two-way or factorial ANOVA</td>
+                                    <td>Main effects and interactions require explicit interpretation</td>
+                                </tr>
+                                <tr>
+                                    <td>Strongly skewed or ordinal observations</td>
+                                    <td>Consider a suitable rank-based, robust, or outcome-specific model</td>
+                                    <td>Kruskal–Wallis is not, in general, a test of equality of means or medians</td>
+                                </tr>
+                                <tr>
+                                    <td>Randomized multi-arm A/B/C experiment</td>
+                                    <td>Specify primary outcome, omnibus test, and planned contrasts</td>
+                                    <td>Account for multiple comparisons and practical effect sizes</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>Practical reporting example.</b> For the first, synthetic study one might write: “A one-way
+                        ANOVA indicated a difference among the three training conditions, \(F(2,9)=9.60\), \(p=0.0059\),
+                        \(\eta^2=0.681\). Tukey-adjusted comparisons identified a difference between methods A and B
+                        (adjusted \(p\approx0.005\)); the other two pairwise differences were not statistically
+                        significant.” Such reporting should also include the group means, sample sizes, measurement
+                        units, study design, and assumptions or diagnostics. The unusually large sample effect size
+                        comes from a deliberately small teaching dataset and should not be extrapolated to real
+                        performance interventions.
+                    </p>
+
+                    <!-- ==================== Exercises ==================== -->
+                    <p><b>Exercises.</b></p>
+                    <ol>
+                        <li>
+                            <b>Manual ANOVA.</b> For the groups A = (5, 7, 6), B = (8, 10, 9), and C = (6, 8, 7),
+                            compute the group means, grand mean, all three sums of squares, degrees of freedom,
+                            F-statistic, and upper-tail p-value. Verify the result with
+                            <code>scipy.stats.f_oneway</code>.
+                        </li>
+                        <li>
+                            <b>Interpretation.</b> Explain why a significant omnibus F-test does not imply that every
+                            pair of means is different, and why three unadjusted 5% tests do not generally maintain a 5%
+                            family-wise error rate.
+                        </li>
+                        <li>
+                            <b>Algebra.</b> Prove the sum-of-squares decomposition for arbitrary unequal group sizes.
+                            Derive \(SS_{\mathrm{between}}=n_1n_2(\overline Y_1-\overline Y_2)^2/(n_1+n_2)\) when
+                            \(k=2\).
+                        </li>
+                        <li>
+                            <b>Distribution theory.</b> Under the normal equal-variance model, state which orthogonal
+                            subspaces produce the degrees of freedom \(k-1\) and \(N-k\). Explain why the F-test is
+                            right-tailed.
+                        </li>
+                        <li>
+                            <b>Welch versus classical.</b> Use the data in Worked example 2. Calculate \(w_i\),
+                            \(\overline y_w\), \(F_W\), and \(\nu_W\); then explain how unequal sample sizes and
+                            variances can affect classical ANOVA.
+                        </li>
+                        <li>
+                            <b>Post hoc inference.</b> Reproduce the Games–Howell comparisons in Experiment 160.
+                            Interpret the direction and size of the A–C difference and its simultaneous confidence
+                            interval.
+                        </li>
+                        <li>
+                            <b>Study design.</b> A company observes 200 daily measurements from each of three machines,
+                            but the measurements are serially correlated. Explain why the sample size alone does not
+                            justify an ordinary independent-groups ANOVA and suggest a model or design adjustment.
+                        </li>
+                        <li>
+                            <b>Extension.</b> Propose a two-factor experiment with onboarding method and device type.
+                            State the main-effect and interaction questions. Identify why the one-way model does not
+                            answer all three questions.
+                        </li>
+                    </ol>
+
+                    <!-- ==================== References and Further Reading ==================== -->
+                    <p>
+                        <b>Core references.</b> M. H. DeGroot and M. J. Schervish, <i>Probability and Statistics</i>,
+                        4th ed., <b>Section 11.6, Analysis of Variance</b> (printed pp. 754–763), especially Exercises
+                        <b>2–5, 7–8, and 10–13</b> (printed pp. 761–762) for the distribution theory, ANOVA
+                        calculations, and the equivalence with the two-sample t-test. <i>OpenIntro Statistics</i>, 4th
+                        ed., <b>Section 7.5, Comparing Many Means with ANOVA</b> (beginning printed p. 285), especially
+                        Exercises <b>7.35–7.40</b> (printed pp. 295–296).
+                    </p>
+                    <p>
+                        <b>Software reference.</b>
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f_oneway.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: one-way ANOVA</a
+                        >;
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.stats.oneway.anova_oneway.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >statsmodels: standard and Welch one-way ANOVA</a
+                        >;
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.stats.multicomp.pairwise_tukeyhsd.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >statsmodels: Tukey comparisons</a
+                        >. The nonparametric, resampling, and A/B testing methods mentioned here will be developed in
+                        subsequent sections rather than treated as interchangeable shortcuts.
                     </p>
 
                     <hr />
