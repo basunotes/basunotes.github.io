@@ -10860,6 +10860,797 @@ plt.show()</code></pre>
                     </p>
                     <hr />
 
+                    <!-- ========================= Inference for Proportions and A/B Testing ========================= -->
+                    <span id="InferenceProportionsABTesting"><b>Inference for Proportions and A/B Testing</b></span>
+
+                    <p>
+                        Many product, policy, and data-science questions concern <i>binary outcomes</i>: did a user
+                        convert, complete a signup, experience a failure, or renew a subscription? The population
+                        quantity is a success probability (or proportion). In an A/B test, randomized groups permit us
+                        to compare these probabilities and, if the design is valid, to estimate the causal effect of
+                        assigning one version rather than another. We distinguish the <b>estimand</b> (what effect we
+                        want), the <b>estimator</b> (what we calculate), and the <b>decision rule</b> (how we act on
+                        uncertainty).
+                    </p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (Bernoulli and binomial model).</b></p>
+                        <p>
+                            For independent binary outcomes \(Y_i\in\{0,1\}\) with \(P(Y_i=1)=p\),
+                            \(Y_i\sim\operatorname{Bernoulli}(p)\), and \[
+                            X=\sum_{i=1}^nY_i\sim\operatorname{Binomial}(n,p),\qquad P(X=k)=\binom nk p^k(1-p)^{n-k}. \]
+                            The estimator \(\widehat p=X/n\) satisfies \(\operatorname E(\widehat p)=p\) and
+                            \(\operatorname{Var}(\widehat p)=p(1-p)/n\). The plug-in estimated standard error is
+                            \(\widehat{\mathrm{SE}}=\sqrt{\widehat p(1-\widehat p)/n}\).
+                        </p>
+                    </div>
+                    <p>
+                        The binomial model assumes a fixed number of effectively independent, identically distributed
+                        trials. Repeated sessions from one user, shared households, spillovers between users, missing
+                        outcomes, and time-varying assignment can violate this simplification. An experiment may be
+                        randomized while its <i>analysis</i> still uses the wrong independent unit.
+                    </p>
+                    <p>
+                        <b>Likelihood connection.</b> For observed \(X=k\), \(L(p)\propto p^k(1-p)^{n-k}\).
+                        Differentiating \(\ell(p)=k\log p+(n-k)\log(1-p)\) gives \(\ell'(p)=k/p-(n-k)/(1-p)\), hence
+                        \(\widehat p=k/n\) (including boundary solutions for \(k=0,n\)). This connects the chapter with
+                        maximum likelihood estimation.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 188: simulate a Bernoulli conversion experiment and verify the standard error.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(188)
+p, n, repetitions = 0.20, 400, 20_000
+counts = rng.binomial(n, p, size=repetitions)
+phats = counts / n
+
+print(f"Mean estimated conversion: {phats.mean():.4f} (true {p:.4f})")
+print(f"Simulated SD of estimates: {phats.std(ddof=1):.5f}")
+print(f"Theoretical SE:           {np.sqrt(p * (1-p) / n):.5f}")</code></pre>
+
+                    <!-- ========================= Confidence Intervals for One Proportion ========================= -->
+                    <p><b>Confidence intervals for a single conversion probability.</b></p>
+                    <p>
+                        The simplest interval is the Wald (normal) interval \[\widehat p\pm z_{1-\alpha/2}
+                        \sqrt{\frac{\widehat p(1-\widehat p)}{n}}.\] It can perform badly in small samples or near \(0\)
+                        and \(1\), even returning limits outside \([0,1]\). A preferable general-purpose alternative is
+                        the <b>Wilson score interval</b>, obtained by inverting \(|(\widehat
+                        p-p_0)/\sqrt{p_0(1-p_0)/n}|\le z_{1-\alpha/2}\): \[ \frac{\widehat p+z^2/(2n)}{1+z^2/n} \;\pm\;
+                        \frac{z}{1+z^2/n} \sqrt{\frac{\widehat p(1-\widehat p)}{n}+\frac{z^2}{4n^2}}, \quad
+                        z=z_{1-\alpha/2}. \] The Clopper–Pearson interval instead inverts the exact binomial tails; it
+                        has at least its nominal coverage under the binomial model, but can be conservative.
+                    </p>
+                    <p>
+                        <b>Worked example 1 (two successful signups out of twelve).</b> Here \(\widehat p=2/12=0.1667\).
+                        At 95% confidence, the Wald interval is approximately \([-0.044,0.378]\), an impossible negative
+                        lower probability. The Wilson interval is approximately \([0.0470,0.4480]\); the Clopper–Pearson
+                        interval is approximately \([0.0209,0.4841]\). A 95% confidence procedure covers the fixed true
+                        probability in 95% of repeated samples under its stated conditions; it does <i>not</i> assign a
+                        95% frequentist probability to the parameter lying in the observed interval.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 189: compare Wald, Wilson, and exact intervals at every possible count.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm, binomtest
+from statsmodels.stats.proportion import proportion_confint
+
+n = 12
+k = np.arange(n + 1)
+phat = k / n
+z = norm.ppf(0.975)
+wald_low = phat - z * np.sqrt(phat * (1-phat) / n)
+wald_high = phat + z * np.sqrt(phat * (1-phat) / n)
+wilson = np.array([proportion_confint(int(x), n, alpha=0.05,
+                                     method="wilson") for x in k])
+exact = np.array([binomtest(int(x), n).proportion_ci(method="exact")
+                  for x in k], dtype=float)
+
+print("For 2/12:")
+for name, low, high in [("Wald", wald_low[2], wald_high[2]),
+                        ("Wilson", *wilson[2]), ("Exact", *exact[2])]:
+    print(f"{name:6s}: [{low:.4f}, {high:.4f}]")
+
+fig, ax = plt.subplots(figsize=(8.5, 4.5))
+ax.plot(phat, wald_low, "--", label="Wald lower")
+ax.plot(phat, wald_high, "--", label="Wald upper")
+ax.plot(phat, wilson[:, 0], label="Wilson lower")
+ax.plot(phat, wilson[:, 1], label="Wilson upper")
+ax.plot(phat, exact[:, 0], ":", label="Exact lower")
+ax.plot(phat, exact[:, 1], ":", label="Exact upper")
+ax.axhline(0, color="gray", lw=0.7)
+ax.axhline(1, color="gray", lw=0.7)
+ax.set(xlabel="Observed proportion k/12", ylabel="95% CI endpoint",
+       title="Binary-proportion intervals: small samples")
+ax.legend(ncol=3, fontsize=8)
+fig.tight_layout()
+fig.savefig("ab_single_proportion_intervals.png", dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/ab_single_proportion_intervals.png"
+                            alt="The Wald method fails at the boundaries; Wilson and exact limits remain within the parameter space."
+                        />
+                        <figcaption>
+                            Experiment 189. The Wald method fails at the boundaries; Wilson and exact limits remain
+                            within the parameter space.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Exact Binomial Tests ========================= -->
+                    <p><b>Testing one proportion.</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (one-sample proportion test).</b></p>
+                        <p>
+                            For \(H_0:p=p_0\) against \(H_1:p\ne p_0\), a large-sample score statistic is \[
+                            Z=\frac{\widehat p-p_0}{\sqrt{p_0(1-p_0)/n}} \quad\overset{H_0}{\approx}\quad N(0,1). \]
+                            Notice the standard error in the test uses \(p_0\), not \(\widehat p\). For small \(n\) or
+                            rare successes, the <i>exact binomial test</i> uses the Binomial\((n,p_0)\) probabilities
+                            directly. Its two-sided convention is to sum probabilities of outcomes no more likely under
+                            the null than the observed count; for a symmetric null \(p_0=1/2\), this equals twice the
+                            smaller tail, capped at 1.
+                        </p>
+                    </div>
+                    <p>
+                        <b>Worked example 2 (ten of twelve users complete an action).</b> Test \(H_0:p=0.5\) two-sided.
+                        By binomial symmetry, \[
+                        P_{0.5}(X\ge10)=\frac{\binom{12}{10}+\binom{12}{11}+\binom{12}{12}}{2^{12}} =\frac{79}{4096}. \]
+                        Thus the exact two-sided p-value is \(158/4096=0.0385742\). At the prespecified 5% level we
+                        reject \(H_0\). This does not establish that the probability is close to 0.8333; report an
+                        interval as well.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 190: calculate an exact binomial p-value by hand and with SciPy.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">from math import comb
+from scipy.stats import binomtest, norm
+
+n, k, p0 = 12, 10, 0.5
+upper = sum(comb(n, j) * p0**j * (1-p0)**(n-j)
+            for j in range(k, n+1))
+manual_p = 2 * upper  # Valid here because p0 = 1/2 is symmetric.
+result = binomtest(k, n, p=p0, alternative="two-sided")
+zhat = (k/n - p0) / ((p0*(1-p0)/n)**0.5)
+print(f"Exact p:  {manual_p:.8f} (SciPy: {result.pvalue:.8f})")
+print(f"Normal score approximation p: {2*norm.sf(abs(zhat)):.8f}")
+print(f"95% Wilson CI: {result.proportion_ci(method='wilson')}")
+assert abs(manual_p - result.pvalue) &lt; 1e-12</code></pre>
+
+                    <!-- ========================= Comparing Independent Proportions ========================= -->
+                    <p><b>Two independent conversion probabilities.</b></p>
+                    <p>
+                        Let the control group A have \(X_A\sim\mathrm{Binomial}(n_A,p_A)\) and treatment group B have
+                        \(X_B\sim\mathrm{Binomial}(n_B,p_B)\). The <i>risk difference</i> (absolute uplift) is
+                        \(\Delta=p_B-p_A\), estimated by \(\widehat\Delta=\widehat p_B-\widehat p_A\). For positive
+                        baseline risk one may also report the <i>risk ratio</i> \(RR=p_B/p_A\), and the relative uplift
+                        \(RR-1\). They describe different scales.
+                    </p>
+                    <div class="stats-note stats-theorem">
+                        <p class="stats-note-heading"><b>Two-proportion z-test and difference interval.</b></p>
+                        <p>
+                            Under \(H_0:p_A=p_B\), the pooled null estimate is \(\widehat p=(X_A+X_B)/(n_A+n_B)\). Then
+                            \[ Z_{\rm pooled}=\frac{\widehat p_B-\widehat p_A} {\sqrt{\widehat p(1-\widehat
+                            p)(1/n_A+1/n_B)}} \quad\overset{H_0}{\approx}\quad N(0,1). \] For estimating the difference,
+                            an unpooled normal interval is \[ \widehat\Delta\pm z_{1-\alpha/2} \sqrt{\frac{\widehat
+                            p_A(1-\widehat p_A)}{n_A} +\frac{\widehat p_B(1-\widehat p_B)}{n_B}}. \] Unlike the test,
+                            the interval uses separately estimated variances. A Newcombe score interval combines the
+                            Wilson limits for the individual proportions and often has better finite-sample behavior.
+                        </p>
+                    </div>
+                    <p><b>Worked example 3 (checkout redesign, illustrative randomized experiment).</b></p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Conversions</th>
+                                    <th>Users</th>
+                                    <th>Estimated rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A: control</td>
+                                    <td>80</td>
+                                    <td>400</td>
+                                    <td>\(0.200\)</td>
+                                </tr>
+                                <tr>
+                                    <td>B: treatment</td>
+                                    <td>110</td>
+                                    <td>400</td>
+                                    <td>\(0.275\)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        The absolute uplift is \(0.275-0.200=0.075\) or <b>7.5 percentage points</b>. The risk ratio is
+                        \(0.275/0.200=1.375\), a <b>37.5% relative increase</b>. Under the null, \(\widehat
+                        p=190/800=0.2375\), so \[ \mathrm{SE}_0=\sqrt{0.2375(0.7625)(1/400+1/400)}\approx0.03009, \quad
+                        Z\approx2.4924,\quad p_{\rm two\,sided}\approx0.01269. \] The unpooled SE is about 0.02997,
+                        giving a 95% Wald interval for \(p_B-p_A\) of <b>[0.0163, 0.1337]</b>, or 1.63 to 13.37
+                        percentage points; a Newcombe interval is about <b>[0.0160, 0.1334]</b>. These results describe
+                        sampling uncertainty assuming independent randomized units and complete, correctly measured
+                        outcomes. Statistical significance does not by itself establish business value or absence of
+                        harm to guardrail metrics.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 191: reproduce the pooled two-proportion z-test and effect measures.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import norm
+from statsmodels.stats.proportion import proportions_ztest
+
+xA, nA = 80, 400
+xB, nB = 110, 400
+pA, pB = xA / nA, xB / nB
+pooled = (xA + xB) / (nA + nB)
+se0 = np.sqrt(pooled * (1-pooled) * (1/nA + 1/nB))
+z = (pB-pA) / se0
+pvalue = 2 * norm.sf(abs(z))
+sm_z, sm_p = proportions_ztest([xB, xA], [nB, nA])
+print(f"Risk difference:     {pB-pA:.4f} ({100*(pB-pA):.2f} pp)")
+print(f"Risk ratio:          {pB/pA:.3f} ({100*(pB/pA-1):.1f}% relative uplift)")
+print(f"Pooled z: {z:.4f}; two-sided p: {pvalue:.6f}")
+print(f"statsmodels: z={sm_z:.4f}; p={sm_p:.6f}")
+assert np.isclose(z, sm_z)</code></pre>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 192: compare Wald and Newcombe confidence intervals for absolute uplift.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+from statsmodels.stats.proportion import confint_proportions_2indep
+
+xA, nA, xB, nB = 80, 400, 110, 400
+pA, pB = xA/nA, xB/nB
+uplift = pB-pA
+se = np.sqrt(pA*(1-pA)/nA + pB*(1-pB)/nB)
+wald = (uplift - norm.ppf(.975)*se, uplift + norm.ppf(.975)*se)
+newcombe = confint_proportions_2indep(xB, nB, xA, nA,
+                                     compare="diff", method="newcomb")
+print(f"Wald difference CI:    {wald}")
+print(f"Newcombe difference CI: {newcombe}")
+
+fig, ax = plt.subplots(figsize=(7.5, 3.2))
+for i, (name, (lo, hi)) in enumerate([("Wald", wald),
+                                      ("Newcombe", newcombe)]):
+    ax.plot([100*lo, 100*hi], [i, i], marker="|", lw=3, markersize=15)
+    ax.plot(100*uplift, i, marker="o")
+ax.axvline(0, color="gray", ls="--", lw=1)
+ax.set(yticks=[0, 1], yticklabels=["Wald", "Newcombe"],
+       xlabel="Treatment - control (percentage points)",
+       title="Estimated absolute uplift and 95% intervals")
+ax.set_ylim(-0.6, 1.6)
+fig.tight_layout()
+fig.savefig("ab_uplift_intervals.png", dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/ab_uplift_intervals.png"
+                            alt="Both intervals express uncertainty in the absolute conversion uplift; neither is a confidence interval for relative uplift."
+                        />
+                        <figcaption>
+                            Experiment 192. Both intervals express uncertainty in the absolute conversion uplift;
+                            neither is a confidence interval for relative uplift.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Sparse Data ========================= -->
+                    <p><b>Small samples and sparse events.</b></p>
+                    <p>
+                        The normal approximations need reasonably large expected success and failure counts in each
+                        relevant group. When counts are sparse, consider an exact or appropriately calibrated test. For
+                        a \(2\times2\) table, Fisher's exact test conditions on both row and column margins and
+                        evaluates the hypergeometric reference distribution. This conditioning is a statistical choice;
+                        it need not match a design in which only the treatment allocation was fixed. Its default
+                        two-sided p-value also need not equal twice a one-sided p-value.
+                    </p>
+                    <p>
+                        <b>Worked example 4 (rare failures).</b> Among 12 independent observations in each group, A has
+                        one failure and B has six. The observed table is
+                        \(\bigl(\begin{smallmatrix}1&amp;11\\6&amp;6\end{smallmatrix}\bigr)\). The Fisher exact
+                        two-sided p-value is approximately <b>0.06865</b>. This does not mean that the true rates are
+                        equal; the small study provides limited evidence and imprecise estimates. For count data, always
+                        report the estimated difference and uncertainty as well.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 193: use Fisher exact testing when the contingency table is sparse.</b>
+                    </p>
+                    <pre
+                        class="plain stats-code code-python"
+                    ><code class="language-python">from scipy.stats import fisher_exact, chi2_contingency
+
+# Rows are groups; columns are failures and non-failures.
+table = [[1, 11], [6, 6]]
+odds_ratio, p_fisher = fisher_exact(table, alternative="two-sided")
+chi2, p_chi2, *_ = chi2_contingency(table, correction=False)
+print(f"Fisher conditional odds ratio: {odds_ratio:.4f}")
+print(f"Fisher exact two-sided p:      {p_fisher:.6f}")
+print(f"Chi-square approximation p:   {p_chi2:.6f}")</code></pre>
+
+                    <!-- ========================= Designing an Experiment ========================= -->
+                    <p><b>Designing a trustworthy A/B test.</b></p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Before launch</th>
+                                    <th>Why it matters</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Specify the treatment and randomization unit</td>
+                                    <td>
+                                        Assignments and standard errors must respect users, households, schools, or
+                                        other clusters
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Define the eligible population and exposure trigger</td>
+                                    <td>
+                                        Changing inclusion rules after looking at outcomes can create selection bias
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Define the primary outcome and observation window</td>
+                                    <td>
+                                        A conversion denominator, attribution window, and unit of analysis must be
+                                        unambiguous
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Choose practical minimum effect and required power</td>
+                                    <td>A statistically detectable effect may be too small to matter in practice</td>
+                                </tr>
+                                <tr>
+                                    <td>Decide stopping and multiplicity rules</td>
+                                    <td>Unplanned repeated looks and trying many metrics inflate false discoveries</td>
+                                </tr>
+                                <tr>
+                                    <td>Monitor implementation</td>
+                                    <td>
+                                        Sample-ratio mismatch, missing events, and imbalanced exposure indicate possible
+                                        problems
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        Randomization supports causal inference for the population actually randomized, under
+                        consistency, no meaningful treatment interference, and correctly measured outcomes. It does not
+                        automatically ensure generalization to all future users. Consider rollout risks, heterogeneous
+                        effects, and metric tradeoffs separately.
+                    </p>
+                    <p>
+                        <b>A/A validation.</b> Randomize users into two versions that are in fact identical. Under a
+                        well-calibrated continuous p-value test with a true null, p-values should be approximately
+                        uniform on \([0,1]\), so about 5% fall below 0.05. Discreteness and approximation affect this
+                        idealization; an A/A test also helps detect assignment and instrumentation bugs, though a finite
+                        sample cannot guarantee correctness.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 194: simulate many A/A experiments and inspect false-positive calibration.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import norm
+
+rng = np.random.default_rng(194)
+trials, n, p = 5000, 500, 0.15
+xA = rng.binomial(n, p, size=trials)
+xB = rng.binomial(n, p, size=trials)
+pool = (xA+xB)/(2*n)
+se0 = np.sqrt(pool*(1-pool)*(2/n))
+z = np.divide(xB/n-xA/n, se0, out=np.zeros(trials), where=se0&gt;0)
+pvalues = 2 * norm.sf(abs(z))
+print(f"A/A rejection fraction at alpha=.05: {np.mean(pvalues&lt;.05):.3f}")
+print("Expected Monte Carlo SE near 0.05:",
+      round(np.sqrt(.05*.95/trials), 4))</code></pre>
+
+                    <!-- ========================= Statistical Power and Sample Size ========================= -->
+                    <p><b>Power and the minimum detectable effect (MDE).</b></p>
+                    <div class="stats-note stats-definition">
+                        <p class="stats-note-heading"><b>Definition (power for an A/B test).</b></p>
+                        <p>
+                            For an alternative with \(p_A\ne p_B\), power is the probability that our prespecified test
+                            rejects the null. We choose the nominal false-positive rate \(\alpha\), target power
+                            \(1-\beta\), meaningful effect \(\delta=p_B-p_A\), allocation, and expected baseline rate
+                            <i>before</i> running the experiment. Sample-size calculations concern the design; post hoc
+                            "observed power" calculated from the observed p-value adds little information.
+                        </p>
+                    </div>
+                    <p>
+                        For two equally sized independent groups, a useful normal approximation to sample size
+                        <i>per group</i> is \[ n\approx\frac{\left[ z_{1-\alpha/2}\sqrt{2\bar p(1-\bar p)}
+                        +z_{1-\beta}\sqrt{p_A(1-p_A)+p_B(1-p_B)} \right]^2}{(p_B-p_A)^2},\qquad \bar p=(p_A+p_B)/2. \]
+                        This assumes a fixed-horizon, two-sided comparison and uses a normal approximation; exact power,
+                        unequal allocations, sequential procedures, and cluster designs require corresponding methods.
+                    </p>
+                    <p>
+                        <b>Worked example 5 (planning a 2-percentage-point uplift).</b> Suppose baseline conversion is
+                        \(p_A=0.10\), the smallest worthwhile improvement is \(p_B=0.12\), \(\alpha=0.05\) (two-sided),
+                        and target power is 80%. The formula gives approximately <b>3,841 users per group</b>. A related
+                        arcsine-normal power calculation gives about <b>3,835 per group</b>. Planning for about 3,900
+                        evaluable users per arm (and adjusting for noncompliance, attrition, and any clustered
+                        allocation) is more defensible than stopping as soon as the p-value first drops below 0.05.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 195: calculate power and approximate sample size for a planned uplift.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+from statsmodels.stats.proportion import proportion_effectsize
+from statsmodels.stats.power import NormalIndPower
+
+pA, pB, alpha, target_power = .10, .12, .05, .80
+pbar = (pA+pB)/2
+delta = pB-pA
+approx_n = ((norm.ppf(1-alpha/2)*np.sqrt(2*pbar*(1-pbar))
+             +norm.ppf(target_power)*np.sqrt(pA*(1-pA)+pB*(1-pB)))
+            /delta)**2
+h = abs(proportion_effectsize(pA, pB))
+model = NormalIndPower()
+arcsine_n = model.solve_power(effect_size=h, power=target_power,
+                              alpha=alpha, alternative="two-sided")
+print(f"Approximate n/arm:  {np.ceil(approx_n):.0f}")
+print(f"Arcsine n/arm:      {np.ceil(arcsine_n):.0f}")
+
+sizes = np.arange(250, 7001, 125)
+powers = model.power(effect_size=h, nobs1=sizes, ratio=1,
+                     alpha=alpha, alternative="two-sided")
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(sizes, powers)
+ax.axhline(.8, color="gray", ls="--", label="80% power")
+ax.axvline(np.ceil(arcsine_n), color="gray", ls=":", label="Required n/arm")
+ax.set(xlabel="Independent users per arm", ylabel="Approximate power",
+       ylim=(0, 1), title="Detecting 10% to 12% conversion improvement")
+ax.legend()
+fig.tight_layout()
+fig.savefig("ab_power_sample_size.png", dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/ab_power_sample_size.png"
+                            alt="Power increases with the number of independent randomized units; these calculations assume a fixed-horizon two-sided test."
+                        />
+                        <figcaption>
+                            Experiment 195. Power increases with the number of independent randomized units; these
+                            calculations assume a fixed-horizon two-sided test.
+                        </figcaption>
+                    </figure>
+
+                    <!-- ========================= Peeking and Multiple Testing ========================= -->
+                    <p><b>Repeated looks and optional stopping.</b></p>
+                    <p>
+                        A fixed-horizon test with nominal \(\alpha=0.05\) does <i>not</i> generally retain a 5% chance
+                        of a false discovery if we inspect the p-value repeatedly and declare success whenever it first
+                        crosses 0.05. The accumulating tests are correlated, but the overall probability of at least one
+                        false alarm can still substantially exceed 5%. A prespecified group-sequential design with
+                        appropriate spending boundaries, or valid always-valid inference, addresses this; an ordinary
+                        fixed-sample confidence interval does not.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 196: simulate repeated significance peeking under a true null.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+rng = np.random.default_rng(196)
+trials, looks, users_per_look, p = 3500, 5, 200, .15
+# Independent new users enter in each look; the same users remain in later looks.
+A = rng.binomial(users_per_look, p, size=(trials, looks))
+B = rng.binomial(users_per_look, p, size=(trials, looks))
+xA, xB = A.cumsum(axis=1), B.cumsum(axis=1)
+n = users_per_look * np.arange(1, looks+1)[None, :]
+pool = (xA+xB)/(2*n)
+se = np.sqrt(pool*(1-pool)*2/n)
+z = np.divide(xB/n-xA/n, se, out=np.zeros_like(pool, dtype=float),
+              where=se&gt;0)
+pvals = 2 * norm.sf(abs(z))
+false_alarm = np.any(pvals &lt; .05, axis=1)
+print(f"False positives at final look: {np.mean(pvals[:, -1]&lt;.05):.3f}")
+print(f"False positives if stopped at any look: {false_alarm.mean():.3f}")
+
+fig, ax = plt.subplots(figsize=(7.5, 4.0))
+ax.plot(np.arange(1, looks+1),
+        [np.mean(np.any(pvals[:, :k]&lt;.05, axis=1))
+         for k in range(1, looks+1)], marker="o")
+ax.axhline(.05, ls="--", color="gray", label="Nominal 5% (single fixed look)")
+ax.set(xlabel="Number of opportunities to stop", ylabel="False-positive probability",
+       xticks=np.arange(1, looks+1), title="Repeated unadjusted peeking")
+ax.legend()
+fig.tight_layout()
+fig.savefig("ab_optional_stopping.png", dpi=160)
+plt.show()</code></pre>
+                    <figure class="stats-figure">
+                        <img
+                            src="../images/ab_optional_stopping.png"
+                            alt="Under no real treatment effect, stopping at the first nominally significant result increases the overall false-positive probability."
+                        />
+                        <figcaption>
+                            Experiment 196. Under no real treatment effect, stopping at the first nominally significant
+                            result increases the overall false-positive probability.
+                        </figcaption>
+                    </figure>
+
+                    <p>
+                        <b>Many metrics and comparisons.</b> Testing many hypotheses and then selecting the most
+                        flattering p-value is another form of multiplicity. Bonferroni and Holm control the family-wise
+                        error rate under valid individual p-values (Holm is often preferable); Benjamini–Hochberg
+                        controls the false-discovery rate under its usual dependence conditions. These target different
+                        error criteria. Prefer a primary metric and a small prespecified set of hypotheses; exploratory
+                        results should be labeled as such.
+                    </p>
+                    <p>
+                        <b>Worked example 6 (four metrics).</b> Suppose the unadjusted p-values are 0.009, 0.021, 0.040,
+                        and 0.20. At \(\alpha=0.05\), Holm's method rejects only the first hypothesis; BH's FDR
+                        procedure at \(q=0.05\) rejects the first two. The difference is intentional: controlling the
+                        chance of <i>any</i> false rejection is a stricter target than controlling the expected
+                        proportion of false discoveries among rejections.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 197: control multiplicity with Holm and Benjamini–Hochberg.</b>
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from statsmodels.stats.multitest import multipletests
+
+metrics = ["Primary conversion", "Retention", "Signup", "Complaint rate"]
+pvalues = np.array([.009, .021, .040, .20])
+for method in ["holm", "fdr_bh"]:
+    reject, adjusted, _, _ = multipletests(pvalues, alpha=.05,
+                                         method=method)
+    print(method)
+    for name, raw, adj, decision in zip(metrics, pvalues, adjusted, reject):
+        print(f"  {name:21s} raw={raw:.3f}, adjusted={adj:.3f}, reject={decision}")</code></pre>
+
+                    <!-- ========================= Sample Ratio Mismatch ========================= -->
+                    <p><b>Sample ratio mismatch (SRM).</b></p>
+                    <p>
+                        Before interpreting an A/B result, compare actual allocation counts with the prespecified
+                        assignment probabilities. For a nominal 50:50 allocation, \(N_A\mid
+                        N\sim\operatorname{Binomial}(N,0.5)\) under independent correct assignment and unfiltered
+                        observation. A very small SRM p-value may flag assignment bugs, unequal inclusion, data loss,
+                        exposure-logging errors, or other issues; it is a <i>diagnostic</i>, not proof of the cause. In
+                        particular, filtering to only users who converted can create SRM even if assignment was correct,
+                        because conversion itself depends on treatment.
+                    </p>
+                    <p>
+                        <b>Worked example 7 (unexpected imbalance).</b> A 50:50 experiment records 4,800 users in
+                        control and 5,200 in treatment. With \(N=10,000\), the exact two-sided binomial SRM p-value is
+                        about <b>0.00006594</b>. This is strong evidence against the simple expected allocation model:
+                        investigate before interpreting the treatment effect.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b>Experiment 198: detect sample-ratio mismatch using the exact binomial test.</b>
+                    </p>
+                    <pre
+                        class="plain stats-code code-python"
+                    ><code class="language-python">from scipy.stats import binomtest
+
+n_control, n_treatment = 4800, 5200
+n_total = n_control+n_treatment
+result = binomtest(n_treatment, n_total, p=.5, alternative="two-sided")
+print(f"Observed treatment share: {n_treatment/n_total:.4f}")
+print(f"Expected treatment share: .5000")
+print(f"Exact SRM p-value:         {result.pvalue:.8f}")
+print("Investigate logging, randomization, and analysis eligibility first.")</code></pre>
+
+                    <!-- ========================= Correct Unit of Analysis ========================= -->
+                    <p><b>The unit of randomization is not always the event row.</b></p>
+                    <p>
+                        Suppose each person is assigned once but can generate eight sessions. Session outcomes for the
+                        same person tend to correlate. Treating all sessions as independent exaggerates the effective
+                        sample size and often understates uncertainty. When the estimand is mean session conversion per
+                        user, aggregate sessions by user and compare <i>user-level outcomes</i>, or use appropriate
+                        cluster-robust methods. With user-specific numbers of sessions, the user-average and
+                        session-weighted rates answer different questions.
+                    </p>
+                    <p>
+                        Within a randomized experiment, analyze the metric and population defined up front.
+                        Randomization does not rescue post-treatment exclusions, nor make a statistically significant
+                        but economically tiny effect worthwhile. Interpret the <i>confidence interval</i>, costs, and
+                        guardrail metrics together.
+                    </p>
+
+                    <p class="stats-experiment-title">
+                        <b
+                            >Experiment 199: simulate how treating repeated sessions as independent inflates false
+                            positives.</b
+                        >
+                    </p>
+                    <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+from scipy.stats import norm, ttest_ind
+
+rng = np.random.default_rng(199)
+trials, users, sessions = 1500, 180, 8
+# Under the null, both arms have identically distributed user propensities.
+# Strong within-user correlation comes from heterogeneous propensities.
+propensity = rng.beta(.5, 1.5, size=(trials, 2, users, 1))
+successes = rng.binomial(1, propensity, size=(trials, 2, users, sessions))
+
+# INCORRECT: consider every session an independent Bernoulli observation.
+session_rate = successes.mean(axis=(2, 3))
+pooled = successes.sum(axis=(1, 2, 3)) / (2*users*sessions)
+naive_se = np.sqrt(pooled*(1-pooled)*2/(users*sessions))
+naive_z = np.divide(session_rate[:, 1]-session_rate[:, 0], naive_se,
+                    out=np.zeros(trials), where=naive_se&gt;0)
+naive_p = 2*norm.sf(abs(naive_z))
+
+# CORRECT FOR THIS DESIGN: independent users, each summarized by a rate.
+user_rates = successes.mean(axis=3)
+proper_p = ttest_ind(user_rates[:, 1, :], user_rates[:, 0, :],
+                     axis=1, equal_var=False).pvalue
+print(f"Session-naive false-positive rate: {(naive_p&lt;.05).mean():.3f}")
+print(f"User-level false-positive rate:    {(proper_p&lt;.05).mean():.3f}")</code></pre>
+
+                    <!-- ========================= A/B Test Interpretation and Checklist ========================= -->
+                    <p><b>Practical interpretation checklist.</b></p>
+                    <div class="scrollable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>What to check or report</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>What was randomized?</td>
+                                    <td>User, household, session, school, or cluster; assignment and exposure</td>
+                                </tr>
+                                <tr>
+                                    <td>What is the estimand?</td>
+                                    <td>
+                                        Absolute difference, relative uplift, or a different well-defined causal effect
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>How certain is the estimate?</td>
+                                    <td>Effect estimate, compatible confidence interval, and preselected test</td>
+                                </tr>
+                                <tr>
+                                    <td>Was the trial adequately designed?</td>
+                                    <td>Power, sample-size plan, stopping, valid analysis population</td>
+                                </tr>
+                                <tr>
+                                    <td>Are there measurement issues?</td>
+                                    <td>SRM, missing/duplicated events, attribution delay, data-quality checks</td>
+                                </tr>
+                                <tr>
+                                    <td>How many hypotheses were evaluated?</td>
+                                    <td>Primary metric and guardrails; multiplicity adjustment as appropriate</td>
+                                </tr>
+                                <tr>
+                                    <td>Should the change ship?</td>
+                                    <td>Benefits, costs, harms, generalizability, and operational risks</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <b>Further connections.</b> For binary outcomes, logistic regression models conditional log
+                        odds, but a regression odds ratio is not generally identical to the marginal risk ratio or
+                        absolute uplift of an A/B test. Stratified randomization, covariate adjustment, heterogeneous
+                        treatment effects, switchback experiments, and sequential/e-values methods extend the simple
+                        two-group framework. Do not mechanically use a logistic-regression coefficient as a
+                        percentage-point treatment effect.
+                    </p>
+
+                    <p><b>Exercises.</b></p>
+                    <ol>
+                        <li>
+                            <b>Bernoulli inference.</b> For 7 successes in 50 attempts, compute the likelihood, MLE,
+                            plug-in SE, 95% Wald and Wilson confidence intervals, and an exact two-sided test of
+                            \(p=0.10\). Explain why the test SE differs from the interval SE.
+                        </li>
+                        <li>
+                            <b>Exact test by hand.</b> Test \(H_0:p=0.5\) when 9 of 10 trials succeed. Enumerate the
+                            relevant binomial outcomes and report the exact two-sided p-value.
+                        </li>
+                        <li>
+                            <b>A/B calculation.</b> Control has 45/300 conversions and treatment 65/300. Calculate
+                            absolute uplift (percentage points), relative uplift, pooled z-test, 95% unpooled CI, and a
+                            Newcombe CI. State a business decision and what additional information it requires.
+                        </li>
+                        <li>
+                            <b>Sparse data.</b> Compare 0/20 and 4/20 successes using Fisher's exact test. Discuss the
+                            limits of normal approximations, and distinguish a p-value from an effect-size confidence
+                            interval.
+                        </li>
+                        <li>
+                            <b>Design.</b> Plan a two-sided 5%-level experiment with baseline conversion 5%, MDE 1
+                            percentage point, and 90% power. Estimate the required independent users per arm; evaluate
+                            how a 20% loss of eligible outcomes affects your target.
+                        </li>
+                        <li>
+                            <b>Sequential monitoring.</b> Repeat Experiment 196 with 2, 5, 10, and 20 equally spaced
+                            looks at fixed maximum sample size. Explain how your simulated false-alarm rate differs from
+                            a valid group-sequential design.
+                        </li>
+                        <li>
+                            <b>Multiplicity.</b> Apply Holm and BH to p-values \((0.004,0.014,0.026,0.048,0.16)\) and
+                            explain which error criterion is appropriate for a single primary metric versus exploratory
+                            metrics.
+                        </li>
+                        <li>
+                            <b>SRM and eligibility.</b> Why might selecting only users who clicked the purchase button
+                            cause sample ratio mismatch? Explain using a simple causal diagram or conditional
+                            probability argument.
+                        </li>
+                        <li>
+                            <b>Independence.</b> Repeat Experiment 199 with one session per user, then with 4 and 16
+                            sessions. Explain the difference between the user-average conversion rate and the
+                            session-weighted conversion rate when users have different numbers of sessions.
+                        </li>
+                        <li>
+                            <b>Reporting.</b> Draft a short A/B report stating randomization unit, users per arm,
+                            conversion rates, absolute difference, 95% CI, p-value, primary metric, guardrail outcomes,
+                            and a qualified rollout recommendation.
+                        </li>
+                    </ol>
+
+                    <p>
+                        <b>Textbook references.</b> <i>OpenIntro Statistics</i>, 4th ed.: Sections
+                        <b>5.2</b> (confidence intervals for a proportion), <b>5.3</b> (hypothesis testing for a
+                        proportion), <b>6.1</b> (inference for a single proportion), and <b>6.2</b> (difference of two
+                        proportions). See also DeGroot &amp; Schervish, <i>Probability and Statistics</i>, 4th ed.,
+                        Section <b>5.2</b> for Bernoulli and binomial distributions, and earlier sections of these notes
+                        on hypothesis testing, MLE, and logistic regression. Practical experiment design, SRM, repeated
+                        peeking, and clustering extend beyond the above textbook sections.
+                    </p>
+                    <p>
+                        <b>Software documentation.</b>
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: binomial test and confidence intervals</a
+                        >;
+                        <a
+                            href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fisher_exact.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >SciPy: Fisher exact test</a
+                        >;
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.confint_proportions_2indep.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >statsmodels: intervals for differences of proportions</a
+                        >;
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.stats.power.NormalIndPower.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >statsmodels: normal-theory power</a
+                        >;
+                        <a
+                            href="https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >statsmodels: multiple testing</a
+                        >.
+                    </p>
+                    <hr />
+
                     <!-- ========================= MAIN SECTION 12: Inferences for One Population Standard Deviation ========================= -->
 
                     <span id="InferencesOnePopulationSD"><b>Inferences for One Population Standard Deviation</b></span>
