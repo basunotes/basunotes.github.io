@@ -1,0 +1,18 @@
+
+# Statistics experiment notebooks — Python 3.10.5
+
+# Numerical analysis and data handling
+numpy==1.26.4
+pandas==2.3.3
+scipy==1.15.3
+
+# Visualizations
+matplotlib==3.10.9
+
+# Statistical modelling and machine learning
+statsmodels==0.14.6
+scikit-learn==1.7.2
+
+# Jupyter
+notebook==7.5.5
+ipykernel==6.30.1

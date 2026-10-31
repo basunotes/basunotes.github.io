@@ -1,0 +1,16 @@
+# Ignore everything by default
+*
+
+# Allow folders and notebooks
+!*/
+!*.ipynb
+
+# Track this gitignore file
+!.gitignore
+
+# Track requirements.txt
+!requirements.txt
+
+# Ignore the virtual environment and checkpoints
+.venv/
+.ipynb_checkpoints/
