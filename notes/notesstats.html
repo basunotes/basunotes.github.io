@@ -132,7 +132,8 @@
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (arithmetic mean).</b></p>
                     <p>
-                        For observations \(x_1,\ldots,x_n\) with \(n\geq 1\), the <i>sample arithmetic mean</i> is
+                        For observations \(x_1,\ldots,x_n\) with \(n\geq 1\), the <i>sample arithmetic mean</i> or
+                        simply average is
                         \[ \bar{x}=\frac{1}{n}\sum_{i=1}^n x_i. \]
                     </p>
                 </div>
@@ -164,53 +165,56 @@
                 </p>
                 <p>
                     This least-squares property is why arithmetic means appear naturally in squared-error loss and
-                    least-squares estimation. However, an extreme observation can shift the mean substantially.
+                    least-squares estimation. The mean is extremely sensitive to outliers; adding one unusually large
+                    observation pulls the arithmetic mean upward considerably, as the following experiment shows.
                 </p>
-                <!-- --- Experiment 1: an outlier and the sample mean --- -->
-                <p class="stats-experiment-title"><b>Experiment 1: an outlier and the sample mean.</b></p>
+                <!-- --- Experiment: an outlier and the sample mean --- -->
+                <p class="stats-experiment-title"><b>Experiment: an outlier and the sample mean.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
 
 data = np.array([42, 47, 50, 51, 55, 58, 60, 62, 65, 70], dtype=float)
 with_outlier = np.append(data, 200)
 
 means = [np.mean(data), np.mean(with_outlier)]
-medians = [np.median(data), np.median(with_outlier)]
-print(f"Mean: {means[0]:.2f} -&gt; {means[1]:.2f}")
-print(f"Median: {medians[0]:.2f} -&gt; {medians[1]:.2f}")
+print(f"Mean: {means[0]:.2f} -> {means[1]:.2f}")
 
 x = np.arange(2)
+
 fig, ax = plt.subplots(figsize=(8.5, 4.8))
-ax.plot(x, means, marker="o", linewidth=2.1, markersize=8,
-        label="Arithmetic mean")
-ax.plot(x, medians, marker="s", linewidth=2.1, markersize=7,
-        label="Median")
+
+ax.plot(x, means, marker="o", linewidth=2.1, markersize=8)
+
 for i, value in enumerate(means):
     ax.annotate(f"{value:.1f}", (i, value), xytext=(0, -20 if i == 0 else 10),
                 textcoords="offset points", ha="center", fontsize=10)
-for i, value in enumerate(medians):
-    ax.annotate(f"{value:.1f}", (i, value), xytext=(0, 10 if i == 0 else -17),
-                textcoords="offset points", ha="center", fontsize=10)
+
 ax.set_xticks(x, ["Original dataset", "After adding one outlier (200)"])
 ax.set_xlim(-0.2, 1.2)
 ax.set_ylim(50, 75)
-ax.set_ylabel("Central value")
-ax.set_title("One extreme observation shifts the mean much more than the median")
+ax.set_ylabel("Arithmetic mean")
+ax.set_title("One extreme observation can shift the mean substantially")
 ax.grid(axis="y", alpha=0.25)
-ax.legend(loc="upper left")
+
 fig.tight_layout()
-fig.savefig("means_outlier_experiment.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/means_outlier_experiment.png", dpi=180, bbox_inches="tight")
 plt.show()
 </code></pre>
                 <figure class="stats-figure">
-                    <img alt="The sample mean increases from 56.0 to 69.1 after adding an outlier of 200, while the median only increases from 56.5 to 58.0."
-                        loading="lazy" src="means_outlier_experiment.png" />
-                    <figcaption>
-                        <b>Figure 1.</b> Adding one unusually large observation pulls the arithmetic mean upward
-                        considerably. The median, which we discuss next, changes much less. The chart is reproduced
-                        by Experiment 1 and can be saved as means_outlier_experiment.png by running Experiment 1.
-                    </figcaption>
+                    <img alt="The sample mean increases from 56.0 to 69.1 after adding an outlier of 200."
+                        loading="lazy" src="../images/means_outlier_experiment.png" />
                 </figure>
+                <p>
+                    In some contexts, we want certain values to contribute more towards the mean. For example, if a
+                    technical college values
+                    incoming applicants' mathematics skills more than their skills in other subjects, it may double the
+                    weight of a
+                    mathematics score relative to an English score. A student scoring 70 in mathematics and 55 in
+                    English has a weighted
+                    score of \((2\cdot70+55)/3=65\). An equally weighted average would be 62.5. More generally, we have
+                    the following definition.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (weighted arithmetic mean).</b></p>
                     <p>
@@ -220,20 +224,15 @@ plt.show()
                     </p>
                 </div>
                 <p>
-                    For example, if a college doubles the weight of a mathematics score relative to English, a
-                    student scoring 70 in mathematics and 55 in English has a weighted score of
-                    \((2\cdot70+55)/3=65\). An equally weighted average would be 62.5.
-                </p>
-                <p>
                     Weighting is particularly important when combining summaries of groups of different sizes. If
                     one group has 10 individuals with mean 80 and another has 90 individuals with mean 60, the
                     combined mean is \((10\cdot80+90\cdot60)/100=62\), <i>not</i> 70. This is a common
                     data-aggregation pitfall: the overall mean is not generally the simple mean of subgroup means.
-                    Here the weights are subgroup sizes, but other weighting schemes (for example, survey weights)
-                    have different interpretations.
+                    Here, the weights are subgroup sizes, but other weighting schemes (for example, those used in
+                    the technical college example above or in survey weighting) have different interpretations.
                 </p>
-                <!-- --- Experiment 2: averaging subgroup means correctly --- -->
-                <p class="stats-experiment-title"><b>Experiment 2: averaging subgroup means correctly.</b></p>
+                <!-- --- Experiment: averaging subgroup means correctly --- -->
+                <p class="stats-experiment-title"><b>Experiment: averaging subgroup means correctly.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 
 group_sizes = np.array([10, 90])
@@ -244,22 +243,20 @@ overall_mean = np.average(group_means, weights=group_sizes)
 
 print(f"Unweighted mean of group means: {naive_mean:.1f}")
 print(f"Mean over all individuals:    {overall_mean:.1f}")
-assert np.isclose(overall_mean, 62.0)
-
-# Experiment: change the group sizes and observe the overall mean.
 </code></pre>
-                <p><b>Data science application: aggregating ratios and KPIs.</b></p>
+
                 <p>
                     Dashboard metrics such as conversion rates, defect rates, click-through rates, and average
-                    revenue per transaction are ratios. To combine them over groups, recompute the ratio from its
+                    revenue per transaction are ratios. To combine them over groups, one has to recompute the ratio from its
                     total numerator and total denominator. Taking the unweighted mean of group rates generally gives
-                    the wrong overall metric. For example, the overall conversion rate is \[ \frac{\text{total
-                    conversions}}{\text{total sessions}}, \] not generally the mean of daily or channel-specific
+                    the wrong overall metric. For example, the overall conversion rate is
+                    \[ \frac{\text{total conversions}}{\text{total sessions}}, \] not generally the mean of daily or
+                    channel-specific
                     conversion rates. This is a useful distinction when interpreting
                     <code>pandas.groupby</code> output or aggregating SQL tables.
                 </p>
-                <!-- --- Experiment 3: conversion rates in a Pandas DataFrame --- -->
-                <p class="stats-experiment-title"><b>Experiment 3: conversion rates in a Pandas DataFrame.</b></p>
+                <!-- --- Experiment: conversion rates in a Pandas DataFrame --- -->
+                <p class="stats-experiment-title"><b>Experiment: conversion rates in a Pandas DataFrame.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
 
 # Counts and conversion rates reported for four days/channels.
@@ -285,35 +282,35 @@ by_channel["conversion_rate"] = (
 
 print(f"Naive mean of four rates: {average_of_rates:.2%}")
 print(f"Overall session conversion rate: {overall_rate:.2%}")
-print(by_channel.to_string(index=False))
-assert abs(overall_rate - 0.056) &lt; 1e-12
+print(by_channel.to_string(index=False))</code></pre>
 
-# Experiment: make Ads sessions 1000 each and recompute.
-</code></pre>
+                <p>
+                    In probability theory, the expected value is a generalization of the arithmetic mean.
+                    Indeed,
+                    if X is a random variable that has the discrete uniform distribution on a finite set \(S \subseteq
+                    \mathbb{R}\), then
+                    \(\mathbb{E}(X)\) is simply the arithmetic mean of the numbers in \(S\).
+                </p>
+
+                <p>
+                    Suppose a population grows by 2% in the first year and by 5% in the second. What is the average
+                    population growth rate over the two years? It is not 3.5%. Suppose we start with one million people.
+                    The final population is \(1{,}000{,}000\cdot1.02\cdot1.05=1{,}071{,}000\). The arithmetic average of
+                    the two annual percentage changes is indeed 3.5%, but applying 3.5% in each year gives us a
+                    different result: 1,071,225. The correct answer is obtained by taking the geometric mean of the
+                    <i>growth factors</i>. In our example, \(\sqrt{1.02\cdot1.05}\approx1.0348913\), which corresponds
+                    to a growth rate of 3.4891% per year. More generally, we have the following definition.
+                </p>
+
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (geometric mean).</b></p>
                     <p>
-                        For strictly positive \(a_1,\ldots,a_n\), the <i>geometric mean</i> is \[
+                        For strictly positive real numbers \(a_1,\ldots,a_n\), the <i>geometric mean</i> is \[
                         G=\left(\prod_{i=1}^n a_i\right)^{1/n}. \]
                     </p>
                 </div>
-                <p>
-                    It is appropriate when equal-length periods contribute <i>multiplicative factors</i>. Suppose a
-                    population grows by 2% in the first year and by 5% in the second. Starting with one million
-                    people, the final population is \(1{,}000{,}000\cdot1.02\cdot1.05=1{,}071{,}000\). The
-                    arithmetic average of the two annual percentage changes is indeed 3.5%, but applying 3.5% in
-                    each year gives the slightly different result 1,071,225.
-                </p>
-                <p>
-                    The <i>equivalent constant annual compound rate</i> is obtained by taking the geometric mean of
-                    the <i>growth factors</i>, not of the percentage changes themselves: \[ r_{\mathrm{compound}}=
-                    \left(\prod_{i=1}^n(1+r_i)\right)^{1/n}-1. \] In our example,
-                    \(\sqrt{1.02\cdot1.05}-1\approx0.0348913\), or about 3.4891% per year. The rates \(r_i\) can be
-                    negative, but this calculation assumes each growth factor \(1+r_i\) is positive; a -100% return
-                    is a special case and can never be recovered by subsequent ordinary percentage growth.
-                </p>
-                <!-- --- Experiment 4: the annualized compound growth rate --- -->
-                <p class="stats-experiment-title"><b>Experiment 4: the annualized compound growth rate.</b></p>
+                <!-- --- Experiment: the annualized compound growth rate --- -->
+                <p class="stats-experiment-title"><b>Experiment: the annualized compound growth rate.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">from math import prod
 from scipy.stats import gmean
 
@@ -329,9 +326,9 @@ reproduced_final = initial_population * equivalent_factor ** len(annual_rates)
 print(f"Final population: {actual_final:,.0f}")
 print(f"Equivalent annual growth: {100 * equivalent_rate:.4f}%")
 print(f"Reproduced final population: {reproduced_final:,.0f}")
-assert abs(actual_final - reproduced_final) &lt; 1e-8
 
-# Experiment: try [0.40, -0.20]. The rates are not averaged directly.
+# The rates can also be negative, as long as each growth factor is positive.
+# Try [0.40, -0.20].
 </code></pre>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (harmonic mean).</b></p>
