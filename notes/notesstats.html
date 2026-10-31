@@ -285,7 +285,7 @@ print(f"Overall session conversion rate: {overall_rate:.2%}")
 print(by_channel.to_string(index=False))</code></pre>
 
                 <p>
-                    In probability theory, the expected value is a generalization of the arithmetic mean.
+                    In probability theory, the <a href="https://www.randomservices.org/random/expect/Properties.html" target="_blank">expected value</a> is a generalization of the arithmetic mean.
                     Indeed,
                     if X is a random variable that has the discrete uniform distribution on a finite set \(S \subseteq
                     \mathbb{R}\), then
@@ -330,23 +330,27 @@ print(f"Reproduced final population: {reproduced_final:,.0f}")
 # The rates can also be negative, as long as each growth factor is positive.
 # Try [0.40, -0.20].
 </code></pre>
+                <p>
+                    Suppose we go on a road trip, and the two legs of the trip each cover 100 km. We cover the two legs at speeds of 50
+                    km/h and 40 km/h, respectively. The average speed over the entire journey is then the total distance divided by the
+                    total time:
+                    \[
+                    \frac{200}{100/50+100/40}=\frac{2}{1/50+1/40} \approx44.44\ \text{km/h}.
+                    \]
+                    The arithmetic mean of the speeds (45 km/h) is <i>not</i> the journey's average speed. Taking the harmonic mean of
+                    50 and 40 is appropriate here because the distances are equal, whereas the amount of time spent at each speed
+                    is not.
+                </p>
+
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (harmonic mean).</b></p>
                     <p>
-                        For positive values \(a_1,\ldots,a_n\), the <i>harmonic mean</i> is \[
+                        For strictly positive real numbers \(a_1,\ldots,a_n\), the <i>harmonic mean</i> is \[
                         H=\frac{n}{\displaystyle\sum_{i=1}^n 1/a_i}. \]
                     </p>
                 </div>
                 <p>
-                    If two legs of a trip each cover 100 km, with speeds 50 km/h and 40 km/h, the average speed over
-                    the entire journey is total distance divided by total time: \[
-                    \frac{200}{100/50+100/40}=\frac{2}{1/50+1/40} \approx44.44\ \text{km/h}. \] The arithmetic mean
-                    of the speeds (45 km/h) is <i>not</i> the journey's average speed. The harmonic mean is
-                    appropriate here because <i>distances are equal</i>, whereas the amount of time spent at each
-                    speed is not.
-                </p>
-                <p>
-                    If the distances differ, use the <i>distance-weighted harmonic mean</i>: \[
+                    If the distances differ, one can use the <i>distance-weighted harmonic mean</i>: \[
                     H_w=\frac{\sum_{i=1}^n d_i}{\displaystyle\sum_{i=1}^n d_i/v_i}, \] where \(d_i\) and \(v_i\) are
                     the distance and speed of segment \(i\). The same structure appears when aggregating densities.
                     If city A has 1,000 people and density 50 people/km\(^2\), and city B has 3,000 people and
@@ -354,8 +358,8 @@ print(f"Reproduced final population: {reproduced_final:,.0f}")
                     \((1000+3000)/(1000/50+3000/40)\approx42.1053\) people/km\(^2\). This is the population-weighted
                     harmonic mean of the cities' densities.
                 </p>
-                <!-- --- Experiment 5: equal distances and population density --- -->
-                <p class="stats-experiment-title"><b>Experiment 5: equal distances and population density.</b></p>
+                <!-- --- Experiment: equal distances and population density --- -->
+                <p class="stats-experiment-title"><b>Experiment: equal distances and population density.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import hmean
 
 # Equal distances: the harmonic mean of the speeds is appropriate.
@@ -375,34 +379,38 @@ combined_density = sum(populations) / sum(areas)
 weighted_harmonic = hmean(densities, weights=populations)
 print(f"Combined density: {combined_density:.4f} people/km^2")
 print(f"Weighted harmonic mean: {weighted_harmonic:.4f} people/km^2")
-assert abs(combined_density - weighted_harmonic) &lt; 1e-10
 </code></pre>
+                <p>
+                    There is also the notion of the quadratic mean, whose interpretation we might go into later.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (quadratic mean).</b></p>
                     <p>For real numbers \(a_1,\ldots,a_n\), the quadratic mean, or root mean square (RMS), is</p>
                     <p>\[\mathrm{QM}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}a_i^2}.\]</p>
                 </div>
+                <p>
+                    Our main purpose in stating the above definition is that it allows us to introduce the following very important
+                    inequalities, which often appear when we want to estimate quantities.
+                </p>
                 <div class="stats-note stats-theorem">
                     <p class="stats-note-heading"><b>Theorem (QM–AM–GM–HM inequalities).</b></p>
                     <p>
-                        For strictly positive \(a_1,\ldots,a_n\), the quadratic mean (root mean square), arithmetic
+                        For strictly positive real numbers \(a_1,\ldots,a_n\), the quadratic mean, arithmetic
                         mean, geometric mean, and harmonic mean satisfy \[ \underbrace{\sqrt{\frac1n\sum_{i=1}^n
                         a_i^2}}_{\mathrm{QM}} \;\geq\; \underbrace{\frac1n\sum_{i=1}^n a_i}_{\mathrm{AM}} \;\geq\;
                         \underbrace{\left(\prod_{i=1}^n a_i\right)^{1/n}}_{\mathrm{GM}} \;\geq\;
                         \underbrace{\frac{n}{\sum_{i=1}^n 1/a_i}}_{\mathrm{HM}}. \] Equality throughout occurs if
-                        and only if all the values are equal. The quadratic mean, often called RMS, also appears in
-                        the calculation of root mean squared error.
+                        and only if all the values are equal.
                     </p>
                 </div>
                 <p>
-                    Proof (optional). By the Cauchy–Schwarz inequality, \((\sum_i a_i)^2\leq n\sum_i a_i^2\), which
-                    gives \(\mathrm{QM}\geq\mathrm{AM}\). Since \(\log\) is concave, Jensen's inequality gives
+                    Proof (rough). By a version of <a href="https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality" target="_blank">Cauchy–Schwarz inequality</a>, \((\sum_i a_i)^2\leq n\sum_i a_i^2\), which
+                    gives \(\mathrm{QM}\geq\mathrm{AM}\). Since \(\log\) is concave, a version of <a href="https://en.wikipedia.org/wiki/Jensen%27s_inequality" target="_blank">Jensen's inequality</a> gives
                     \(\frac1n\sum_i\log a_i\leq\log(\frac1n\sum_i a_i)\), so \(\mathrm{GM}\leq\mathrm{AM}\).
                     Applying AM–GM to the positive reciprocals \(1/a_i\) yields \(\mathrm{HM}\leq\mathrm{GM}\).
-                    Equality throughout holds precisely when all values are equal.
                 </p>
-                <!-- --- Experiment 6: compare the four means --- -->
-                <p class="stats-experiment-title"><b>Experiment 6: compare the four means.</b></p>
+                <!-- --- Experiment: compare the four means --- -->
+                <p class="stats-experiment-title"><b>Experiment: compare the four means.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import gmean, hmean
 
@@ -416,84 +424,23 @@ print(f"QM = {quadratic:.4f}")
 print(f"AM = {arithmetic:.4f}")
 print(f"GM = {geometric:.4f}")
 print(f"HM = {harmonic:.4f}")
-assert harmonic &lt;= geometric &lt;= arithmetic &lt;= quadratic
-
-# Experiment: set all entries equal, then introduce more variation.
 </code></pre>
-                <p><b>Practical considerations when working with data.</b></p>
                 <p>
+                    There are certain practical considerations when working with data.
                     Before computing an average, check the units, missing observations, weights, and whether the
                     quantity is additive or multiplicative. In NumPy, <code>np.mean</code> ordinarily propagates a
                     missing value encoded as <code>np.nan</code>. The function <code>np.nanmean</code> ignores these
-                    values, but it does not address why the data are missing: excluding observations can bias an
+                    values. It is important to remember that excluding observations can bias an
                     estimate if missingness is systematic.
                 </p>
-                <!-- --- Experiment 7: missing observations and the mean --- -->
-                <p class="stats-experiment-title"><b>Experiment 7: missing observations and the mean.</b></p>
+                <!-- --- Experiment: missing observations and the mean --- -->
+                <p class="stats-experiment-title"><b>Experiment: missing observations and the mean.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 
 observations = np.array([42.0, 48.0, np.nan, 60.0])
 print("Ordinary mean:", np.mean(observations))  # nan
 print("Mean of observed values:", np.nanmean(observations))  # 50.0
-
-# np.nanmean excludes NaNs; this is not a remedy for biased missing data.
 </code></pre>
-                <p><b>Choosing a mean in practice.</b></p>
-                <table class="stats-means-table">
-                    <thead>
-                        <tr>
-                            <th>Task</th>
-                            <th>Appropriate summary</th>
-                            <th>Reason</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Average test score across students</td>
-                            <td>Arithmetic</td>
-                            <td>Each student contributes one observation.</td>
-                        </tr>
-                        <tr>
-                            <td>Combined average from groups of unequal size</td>
-                            <td>Weighted arithmetic</td>
-                            <td>Weight subgroup means by their sizes.</td>
-                        </tr>
-                        <tr>
-                            <td>Overall conversion rate from grouped reports</td>
-                            <td>Ratio of sums</td>
-                            <td>Weight rates by their denominators (sessions).</td>
-                        </tr>
-                        <tr>
-                            <td>Annualized growth over equal-length periods</td>
-                            <td>Geometric (of growth factors)</td>
-                            <td>Successive changes compound.</td>
-                        </tr>
-                        <tr>
-                            <td>Overall speed for equal-distance legs</td>
-                            <td>Harmonic</td>
-                            <td>Total time is a sum of distance/speed terms.</td>
-                        </tr>
-                        <tr>
-                            <td>Overall density across areas</td>
-                            <td>Total population / total area</td>
-                            <td>Equivalently, population-weighted harmonic density.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p>
-                    <b>Try it yourself.</b> (1) Replace 200 in Experiment 1 by 500: which summary changes more? (2)
-                    Reverse the group sizes in Experiment 2. (3) In the Pandas experiment, increase the number of ad
-                    sessions and recompute the overall rate. (4) Verify that two consecutive returns of +40% and
-                    -20% do not correspond to a +10% constant compound rate. (5) Change one trip leg in the
-                    harmonic-mean experiment to 200 km and determine why the unweighted harmonic mean is no longer
-                    appropriate.
-                </p>
-                <p>
-                    <b>Further reading.</b> OpenIntro Statistics (4th ed.), §2.1.2, pp. 42–44, introduces the sample
-                    mean, population mean, and group-size weighting. DeGroot &amp; Schervish (4th ed.), §4.5, pp.
-                    241–245, discusses the mean, median, and squared-error criterion. The compounding, journey, and
-                    density examples extend examples from the earlier version of these notes.
-                </p>
 
                 <!-- ==================== Median ==================== -->
 
