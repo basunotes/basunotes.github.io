@@ -247,7 +247,8 @@ print(f"Mean over all individuals:    {overall_mean:.1f}")
 
                 <p>
                     Dashboard metrics such as conversion rates, defect rates, click-through rates, and average
-                    revenue per transaction are ratios. To combine them over groups, one has to recompute the ratio from its
+                    revenue per transaction are ratios. To combine them over groups, one has to recompute the ratio from
+                    its
                     total numerator and total denominator. Taking the unweighted mean of group rates generally gives
                     the wrong overall metric. For example, the overall conversion rate is
                     \[ \frac{\text{total conversions}}{\text{total sessions}}, \] not generally the mean of daily or
@@ -285,7 +286,8 @@ print(f"Overall session conversion rate: {overall_rate:.2%}")
 print(by_channel.to_string(index=False))</code></pre>
 
                 <p>
-                    In probability theory, the <a href="https://www.randomservices.org/random/expect/Properties.html" target="_blank">expected value</a> is a generalization of the arithmetic mean.
+                    In probability theory, the <a href="https://www.randomservices.org/random/expect/Properties.html"
+                        target="_blank">expected value</a> is a generalization of the arithmetic mean.
                     Indeed,
                     if X is a random variable that has the discrete uniform distribution on a finite set \(S \subseteq
                     \mathbb{R}\), then
@@ -331,14 +333,18 @@ print(f"Reproduced final population: {reproduced_final:,.0f}")
 # Try [0.40, -0.20].
 </code></pre>
                 <p>
-                    Suppose we go on a road trip, and the two legs of the trip each cover 100 km. We cover the two legs at speeds of 50
-                    km/h and 40 km/h, respectively. The average speed over the entire journey is then the total distance divided by the
+                    Suppose we go on a road trip, and the two legs of the trip each cover 100 km. We cover the two legs
+                    at speeds of 50
+                    km/h and 40 km/h, respectively. The average speed over the entire journey is then the total distance
+                    divided by the
                     total time:
                     \[
                     \frac{200}{100/50+100/40}=\frac{2}{1/50+1/40} \approx44.44\ \text{km/h}.
                     \]
-                    The arithmetic mean of the speeds (45 km/h) is <i>not</i> the journey's average speed. Taking the harmonic mean of
-                    50 and 40 is appropriate here because the distances are equal, whereas the amount of time spent at each speed
+                    The arithmetic mean of the speeds (45 km/h) is <i>not</i> the journey's average speed. Taking the
+                    harmonic mean of
+                    50 and 40 is appropriate here because the distances are equal, whereas the amount of time spent at
+                    each speed
                     is not.
                 </p>
 
@@ -389,7 +395,8 @@ print(f"Weighted harmonic mean: {weighted_harmonic:.4f} people/km^2")
                     <p>\[\mathrm{QM}=\sqrt{\frac{1}{n}\sum_{i=1}^{n}a_i^2}.\]</p>
                 </div>
                 <p>
-                    Our main purpose in stating the above definition is that it allows us to introduce the following very important
+                    Our main purpose in stating the above definition is that it allows us to introduce the following
+                    very important
                     inequalities, which often appear when we want to estimate quantities.
                 </p>
                 <div class="stats-note stats-theorem">
@@ -404,8 +411,12 @@ print(f"Weighted harmonic mean: {weighted_harmonic:.4f} people/km^2")
                     </p>
                 </div>
                 <p>
-                    Proof (rough). By a version of <a href="https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality" target="_blank">Cauchy–Schwarz inequality</a>, \((\sum_i a_i)^2\leq n\sum_i a_i^2\), which
-                    gives \(\mathrm{QM}\geq\mathrm{AM}\). Since \(\log\) is concave, a version of <a href="https://en.wikipedia.org/wiki/Jensen%27s_inequality" target="_blank">Jensen's inequality</a> gives
+                    Proof (rough). By a version of <a
+                        href="https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality"
+                        target="_blank">Cauchy–Schwarz inequality</a>, \((\sum_i a_i)^2\leq n\sum_i a_i^2\), which
+                    gives \(\mathrm{QM}\geq\mathrm{AM}\). Since \(\log\) is concave, a version of <a
+                        href="https://en.wikipedia.org/wiki/Jensen%27s_inequality" target="_blank">Jensen's
+                        inequality</a> gives
                     \(\frac1n\sum_i\log a_i\leq\log(\frac1n\sum_i a_i)\), so \(\mathrm{GM}\leq\mathrm{AM}\).
                     Applying AM–GM to the positive reciprocals \(1/a_i\) yields \(\mathrm{HM}\leq\mathrm{GM}\).
                 </p>
@@ -444,6 +455,10 @@ print("Mean of observed values:", np.nanmean(observations))  # 50.0
 
                 <!-- ==================== Median ==================== -->
 
+                <p>
+                    Another important measure of central tendency is the median.
+                </p>
+
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading">
                         <b>Definition (sample median).</b>
@@ -454,22 +469,24 @@ print("Mean of observed values:", np.nanmean(observations))  # 50.0
                         and at least half are greater than or equal to \(m\).
                     </p>
                     <p>
-                        Equivalently, if \(x_{(1)}\leq\cdots\leq x_{(n)}\) denote the ordered observations, we
-                        commonly define the sample median as \[ \widetilde{x}= \begin{cases} x_{((n+1)/2)}, &amp; n
+                        Let \(x_{(1)}\leq\cdots\leq x_{(n)}\) denote the ordered observations, we
+                        usually define the sample median as \[ \widetilde{x}= \begin{cases} x_{((n+1)/2)}, &amp; n
                         \text{ odd},\\[4pt] \dfrac{x_{(n/2)}+x_{(n/2+1)}}{2}, &amp; n \text{ even}. \end{cases} \]
                     </p>
                 </div>
 
                 <p>
-                    When \(n\) is odd, the median is the middle observation. When \(n\) is even, every number
-                    between the two middle observations satisfies the defining inequalities. Taking their arithmetic
-                    mean is the usual convention for obtaining a unique numerical summary.
+                    When the number of observations is odd, the middle observation is one such median. When the number
+                    of observations
+                    is even, every number between the two middle observations satisfies the defining inequalities.
+                    Taking their
+                    arithmetic mean is the usual convention for obtaining a unique numerical summary.
                 </p>
 
-                <!-- --- Experiment 8: computing the sample median --- -->
+                <!-- --- Experiment: computing the sample median --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 8: computing the sample median.</b>
+                    <b>Experiment: computing the sample median.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -482,13 +499,10 @@ print("Median:", np.median(odd_sample))
 
 print("Even sample:", np.sort(even_sample))
 print("Median:", np.median(even_sample))
-
-# Experiment: add repeated values or extreme observations.
 </code></pre>
 
                 <p>
-                    Like the mean, the median measures central location, but the two summaries behave differently
-                    when the distribution is skewed or contains extreme observations.
+                    Just as we have the least-squares characterization of the mean, we have the following characterization of the median.
                 </p>
 
                 <div class="stats-note stats-theorem">
@@ -512,21 +526,21 @@ print("Median:", np.median(even_sample))
                     \(|a-c|+|b-c|\) is minimized precisely when \(c\in[a,b]\). The intersection of the minimizing
                     intervals of all pairs is the interval between the two middle observations. For odd \(n\), the
                     remaining middle observation contributes an additional term, which is minimized at that
-                    observation.
+                    observation. To become more comfortable with this proof, try applying its reasoning to the sum \(\left|2-c\right|+\left|3-c\right|+\left|4-c\right|+\left|5-c\right|\).
                 </p>
 
                 <p>
-                    Consequently, the mean and median solve two different optimization problems: \[ \begin{aligned}
+                    So to summarize, the mean and median solve two different optimization problems: \[ \begin{aligned}
                     \bar{x} &amp;=\underset{c\in\mathbb{R}} {\operatorname{argmin}} \sum_{i=1}^{n}(x_i-c)^2,\\[6pt]
                     \widetilde{x} &amp;\in\underset{c\in\mathbb{R}} {\operatorname{argmin}} \sum_{i=1}^{n}|x_i-c|.
                     \end{aligned} \] The first uses <i>squared-error loss</i>, while the second uses
                     <i>absolute-error loss</i>. These are commonly called L2 and L1 loss, respectively.
                 </p>
 
-                <!-- --- Experiment 9: absolute and squared loss --- -->
+                <!-- --- Experiment: absolute and squared loss --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 9: absolute and squared loss.</b>
+                    <b>Experiment: absolute and squared loss.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -535,15 +549,9 @@ import matplotlib.pyplot as plt
 data = np.array([1.0, 2.0, 3.0, 20.0])
 centers = np.linspace(0, 22, 500)
 
-absolute_loss = np.sum(
-    np.abs(data[:, None] - centers[None, :]),
-    axis=0
-)
+absolute_loss = np.sum(np.abs(data[:, None] - centers[None, :]), axis=0)
 
-squared_loss = np.sum(
-    (data[:, None] - centers[None, :]) ** 2,
-    axis=0
-)
+squared_loss = np.sum((data[:, None] - centers[None, :]) ** 2, axis=0)
 
 mean = np.mean(data)
 median = np.median(data)
@@ -570,22 +578,25 @@ for ax in axes:
 
 fig.tight_layout()
 fig.savefig(
-    "median_absolute_vs_squared_loss.png",
+    "../../images/median_absolute_vs_squared_loss.png",
     dpi=180,
     bbox_inches="tight"
 )
 plt.show()
 </code></pre>
-
+                <figure class="stats-figure">
+                    <img alt="Median absolute vs squared Loss." loading="lazy"
+                        src="../images/median_absolute_vs_squared_loss.png" />
+                    <figcaption style="font-size: smaller;">
+                        <b>Figure.</b> Notice that the absolute-error loss has a flat minimum between 2 and 3, whereas the
+                        squared-error loss has a unique minimum at 6.5. The unusually large observation has a much
+                        stronger influence on squared-error loss.
+                    </figcaption>
+                </figure>
                 <p>
-                    Notice that the absolute-error loss has a flat minimum between 2 and 3, whereas the
-                    squared-error loss has a unique minimum at 6.5. The unusually large observation has a much
-                    stronger influence on squared-error loss.
                 </p>
 
                 <!-- ==================== Robustness of the Median ==================== -->
-
-                <p><b>Robustness of the median.</b></p>
 
                 <p>
                     A statistic is called <i>robust</i> when its value is relatively insensitive to certain
@@ -601,21 +612,16 @@ plt.show()
                 </p>
 
                 <p>
-                    For example, consider the observations \(1,2,3,4,5\). Their mean and median are both 3.
-                    Replacing the final observation by 1000 changes the mean to 202, while the median remains 3.
-                </p>
-
-                <p>
                     This distinction is particularly useful for skewed variables such as income, house prices,
                     transaction values, and waiting times. In these settings, the median often better represents a
                     typical observation, while the mean remains important when totals or expected values are of
                     interest.
                 </p>
 
-                <!-- --- Experiment 10: mean and median in grouped data --- -->
+                <!-- --- Experiment: mean and median in grouped data --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 10: mean and median in grouped data.</b>
+                    <b>Experiment: mean and median in grouped data.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
@@ -633,9 +639,6 @@ summary = transactions.groupby("store")["amount"].agg(
 )
 
 print(summary)
-
-# Experiment: replace 500 with 5000.
-# Which statistics change, and by how much?
 </code></pre>
 
                 <p>
@@ -645,24 +648,14 @@ print(summary)
                     multiplied by their mean value.
                 </p>
 
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 4.5, pp. 241–245, compares the
-                    mean and median and their optimization properties. OpenIntro Statistics (4th ed.), Sections
-                    2.1.5–2.1.6, pp. 49–51, discusses medians, quartiles, and robustness.
-                </p>
-
                 <!-- ==================== Empirical Quantiles and Percentiles ==================== -->
 
                 <p>
-                    The median divides an ordered dataset into two halves. More generally, <i>quantiles</i> describe
+                    The median helps us answer questions like <i>To which income bracket does 50% of a particular population belong?</i>
+                    To answer more general questions like <i>To which income group does the top 15% belong?</i>, we need the more
+                    general notion of quantiles. Quantiles describe
                     the distribution of observations by identifying values associated with specified proportions of
-                    the data.
-                </p>
-
-                <p>
-                    For example, the 90th percentile of a response-time distribution provides a threshold associated
-                    with the fastest 90% of observations. Quantiles are widely used to summarize income
-                    distributions, transaction values, customer behavior, and system performance.
+                    the data. There are several definitions of a quantile, which all share certain common features, we start with the most obvious one.
                 </p>
 
                 <div class="stats-note stats-definition">
@@ -687,16 +680,15 @@ print(summary)
                     dataset \[ D=(10,20,30,40). \] Every number in the interval \([10,20]\) satisfies the defining
                     inequalities for \(p=0.25\). Similarly, every number in \([20,30]\) is a median according to the
                     general quantile definition.
-                </p>
-
-                <p>
-                    At the endpoints \(p=0\) and \(p=1\), it is customary to select the minimum and maximum of the
+                    At the endpoints, \(p=0\) and \(p=1\), it is customary to select the minimum and maximum of the
                     dataset, respectively.
                 </p>
 
                 <!-- ==================== Empirical Distribution Function ==================== -->
-
-                <p><b>Connection with the empirical distribution function.</b></p>
+                <p>
+                    In the next section, we will discuss the general notion of a cumulative distribution function. For now, let us state
+                    the following definition, which will help us understand what the <code>inverted_cdf</code> method in NumPy means.
+                </p>
 
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading">
@@ -727,10 +719,13 @@ print(summary)
                         <b>Definition (inverse empirical CDF).</b>
                     </p>
                     <p>
-                        For \(p\in(0,1]\), define \[ Q_n(p)=\min\{x\in\mathbb{R}:F_n(x)\geq p\}. \] This is the
-                        smallest value at which the ECDF reaches or exceeds \(p\).
+                        For \(p\in(0,1]\), define \[ Q_n(p)=\min\{x\in\mathbb{R}:F_n(x)\geq p\}. \]
                     </p>
                 </div>
+
+                <p>
+                    This is the smallest value at which the ECDF reaches or exceeds \(p\).
+                </p>
 
                 <div class="stats-note stats-lemma">
                     <p class="stats-note-heading">
@@ -757,37 +752,69 @@ print(summary)
 
                 <!-- ==================== Interpolated Quantiles ==================== -->
 
-                <p><b>Interpolated quantiles.</b></p>
-
                 <p>
                     Statistical software often uses interpolation to estimate quantiles between observed data
-                    values. There are several such conventions, and their results need not agree.
+                    values. Several interpolation conventions exist, and they need not produce the same results.
                 </p>
 
                 <p>
-                    NumPy's default method, called <code>linear</code>, uses the position \[ h=(n-1)p \] in the
-                    zero-indexed ordered data. If \(h=j+\gamma\), where \(j=\lfloor h\rfloor\) and
-                    \(0&lt;\gamma&lt;1\), the estimate is \[ Q_{\mathrm{linear}}(p) =(1-\gamma)x_{(j+1)} +\gamma
-                    x_{(j+2)}. \] If \(h\) is an integer, the corresponding observation is used directly.
+                    NumPy's default method, called <code>linear</code>, first sorts the observations in
+                    ascending order and calculates the position
+                    \[
+                        h=(n-1)p,
+                    \]
+                    where \(n\) is the number of observations and \(p\in[0,1]\) is the desired quantile level.
+                    The position \(h\) is <i>zero-indexed</i>, meaning that the first ordered observation
+                    has position 0, the second has position 1, and so on.
                 </p>
 
                 <p>
-                    For \(D=(10,20,30,40)\) and \(p=0.25\), \[ h=3(0.25)=0.75, \] and therefore \[
-                    Q_{\mathrm{linear}}(0.25) =0.25(10)+0.75(20)=17.5. \] By contrast, the inverse-ECDF convention
-                    gives 10.
+                    This differs from the usual mathematical notation for order statistics,
+                    \(x_{(1)}\leq x_{(2)}\leq\cdots\leq x_{(n)}\), which starts counting at 1.
+                    Thus, zero-indexed position \(j\) corresponds to the order statistic \(x_{(j+1)}\).
                 </p>
+
+                <p>
+                    If \(h=j+\gamma\), where \(j=\lfloor h\rfloor\) and \(0&lt;\gamma&lt;1\),
+                    NumPy interpolates between the observations at positions \(j\) and \(j+1\):
+                    \[
+                        Q_{\mathrm{linear}}(p)
+                        =(1-\gamma)x_{(j+1)}+\gamma x_{(j+2)}.
+                    \]
+                    Here, \(\gamma\) determines how far the estimate lies between the two observations.
+                    If \(h\) is an integer, the observation at that position is used directly.
+                </p>
+
+                <p>
+                    Consider the ordered dataset \(D=(10,20,30,40)\).
+                    Its zero-indexed positions are 0, 1, 2, and 3, respectively.
+                    To estimate the 25th percentile, set \(p=0.25\). Then
+                    \[
+                        h=(4-1)(0.25)=0.75.
+                    \]
+                    Since \(h=0+0.75\), the estimate lies between the first observation (10)
+                    and the second observation (20), with 75% of the weight assigned to 20:
+                    \[
+                        Q_{\mathrm{linear}}(0.25)
+                        =(1-0.75)(10)+0.75(20)
+                        =17.5.
+                    \]
+                    By contrast, the inverse-ECDF convention selects the smallest observed value
+                    whose empirical cumulative probability is at least 0.25, giving 10.
+                </p>
+
 
                 <p>
                     The interpolated method is a sample-based estimate of a population quantile. Unlike the inverse
                     ECDF, it does not necessarily return an observed data value. For some probability levels, the
                     interpolated result may not even satisfy the exact empirical coverage inequalities stated
-                    earlier. These are different conventions, not contradictory calculations.
+                    earlier, as we will see in the following experiment. These are different conventions, not contradictory calculations.
                 </p>
 
-                <!-- --- Experiment 11: comparing quantile conventions --- -->
+                <!-- --- Experiment: comparing quantile conventions --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 11: comparing quantile conventions.</b>
+                    <b>Experiment: comparing quantile conventions.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -797,12 +824,8 @@ data = np.array([10, 20, 30, 40])
 probabilities = [0.25, 0.50, 0.75]
 
 for p in probabilities:
-    inverse_cdf = np.quantile(
-        data, p, method="inverted_cdf"
-    )
-    linear = np.quantile(
-        data, p, method="linear"
-    )
+    inverse_cdf = np.quantile(data, p, method="inverted_cdf")
+    linear = np.quantile(data, p, method="linear")
 
     print(
         f"p={p:.2f}: "
@@ -815,10 +838,10 @@ print("25th percentile:", np.percentile(data, 25))
 
 
 def satisfies_coverage(values, p, y):
-    below = np.mean(values &lt; y)
-    above = np.mean(values &gt; y)
+    below = np.mean(values < y)
+    above = np.mean(values > y)
 
-    return below &lt;= p and above &lt;= 1 - p
+    return below <= p and above <= 1 - p
 
 
 # At p=0.20, the linear method returns 16,
@@ -835,7 +858,7 @@ for method in ["inverted_cdf", "linear"]:
         f"{satisfies_coverage(data, p, y)}"
     )
 
-# Experiment: repeat with [10, 20, 30, 1000].
+# Repeat the experiment with [10, 20, 30, 1000].
 # Compare several probabilities and methods.
 </code></pre>
 
@@ -846,6 +869,10 @@ for method in ["inverted_cdf", "linear"]:
                 </p>
 
                 <!-- ==================== Percentiles and Quartiles ==================== -->
+
+                <p>
+                    Quantiles are often expressed in terms of percentiles rather than values between 0 and 1.
+                </p>
 
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading">
@@ -876,37 +903,40 @@ for method in ["inverted_cdf", "linear"]:
                 </div>
 
                 <p>
-                    Percentiles describe thresholds, not probabilities assigned to individual observations. Saying
-                    that a response time is at the 95th percentile does not mean that this particular response has a
-                    probability of 95%.
+                    Quantiles and percentiles describe thresholds, not probabilities assigned to individual
+                    observations. Saying that a response time is at the 95th percentile does not mean that
+                    this particular response has a probability of 95%.
                 </p>
 
                 <p>
-                    For a continuous population distribution, the 95th percentile marks a threshold below which 95%
-                    of probability lies. In a finite sample, ties and quantile conventions can prevent exactly 95%
-                    of observations from lying below the reported threshold.
+                    For a continuous population distribution, the 95th percentile is a threshold at or below
+                    which 95% of the distribution lies. In a finite sample, however, the proportion of
+                    observations at or below the reported threshold need not be exactly 95%, because of
+                    the sample size, ties, and the quantile convention used.
                 </p>
 
-                <!-- ==================== Percentiles in Data Science ==================== -->
 
-                <p><b>Application: monitoring response times.</b></p>
+
+                <!-- ==================== Monitoring application's response time ==================== -->
 
                 <p>
-                    A system's mean response time may look satisfactory even when some users experience substantial
-                    delays. For this reason, performance monitoring often reports the median and high percentiles,
-                    such as p95 or p99.
+                    Let us consider the example of monitoring an application's response time.
+                    A system's mean response time may appear satisfactory even when some users
+                    experience substantial delays. For this reason, performance monitoring often
+                    reports the median and higher percentiles, such as the 95th and 99th percentiles.
                 </p>
 
                 <p>
-                    These summaries answer different questions. The median describes a typical response, whereas p95
-                    and p99 describe the upper tail. They should be interpreted together with the sample size and
-                    observation period.
+                    These summaries answer different questions. The median describes a typical
+                    response time, whereas the 95th and 99th percentiles describe thresholds
+                    associated with the upper tail of the response-time distribution.
+                    They should be interpreted together with the sample size and observation period.
                 </p>
 
-                <!-- --- Experiment 12: grouped response-time percentiles --- -->
+                <!-- --- Experiment: grouped response-time percentiles --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 12: grouped response-time percentiles.</b>
+                    <b>Experiment: grouped response-time percentiles.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
@@ -952,8 +982,6 @@ print(f"Overall p95: {overall_p95:.2f} ms")
 
                 <!-- ==================== Sampling Variability of Quantiles ==================== -->
 
-                <p><b>Sampling variability of estimated quantiles.</b></p>
-
                 <p>
                     An empirical quantile is calculated from a sample and is therefore subject to sampling
                     variability. Different random samples from the same population generally give different
@@ -968,15 +996,15 @@ print(f"Overall p95: {overall_p95:.2f} ms")
                 </p>
 
                 <p>
-                    We can investigate this by repeatedly sampling from a lognormal distribution, which is
+                    We can investigate this by repeatedly sampling from a <a href="https://en.wikipedia.org/wiki/Log-normal_distribution" target="_blank">lognormal distribution</a>, which is
                     positively skewed. We compare the variability of estimated medians and 95th percentiles for two
                     sample sizes.
                 </p>
 
-                <!-- --- Experiment 13: sampling variability of quantiles --- -->
+                <!-- --- Experiment: sampling variability of quantiles --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 13: sampling variability of quantiles.</b>
+                    <b>Experiment: sampling variability of quantiles.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -1028,7 +1056,7 @@ ax.legend()
 
 fig.tight_layout()
 fig.savefig(
-    "quantile_sampling_variability.png",
+    "../../images/quantile_sampling_variability.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -1042,10 +1070,10 @@ plt.show()
                     <img src="../images/quantile_sampling_variability.png"
                         alt="Sampling distributions of estimated 95th percentiles for two sample sizes"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Repeated samples from the same lognormal distribution produce different
                         percentile estimates. The distribution of estimates becomes more concentrated as the sample
-                        size increases. Generated by Experiment 13.
+                        size increases.
                     </figcaption>
                 </figure>
 
@@ -1056,29 +1084,21 @@ plt.show()
                 </p>
 
                 <p>
-                    In applied data science, a reported percentile should be accompanied by enough context to assess
+                    A reported percentile should be accompanied by enough context to assess
                     its reliability. Particularly for high percentiles, we should consider sample size,
                     distributional shape, data quality, and whether the observations represent the target
                     population.
                 </p>
 
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Compare the inverse-ECDF and linear methods for a dataset containing repeated values. (2)
-                    Check whether the overall p95 in Experiment 12 equals the average of the subgroup p95 values.
-                    (3) Repeat Experiment 13 with p99 and sample sizes 100, 1000, and 5000. (4) Investigate how the
-                    quantile estimates behave when the underlying distribution is normal instead of lognormal.
-                </p>
-
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 3.3, pp. 107–117, introduces
-                    distribution functions and quantiles. OpenIntro Statistics (4th ed.), Section 2.1.5, pp. 49–50,
-                    discusses quartiles and their interpretation in descriptive statistics. For the precise
-                    implementation of sample quantile conventions, consult the NumPy documentation for
-                    <code>numpy.quantile</code>.
-                </p>
-
                 <!-- ==================== The Mode ==================== -->
+
+                <p>
+                    Let us now come to the discussion of mode.
+                    The mode identifies the most frequently occurring value in a dataset. Unlike the mean and
+                    median, it is also meaningful for categorical data. For example, we can determine the most
+                    common payment method, product category, or customer preference. More formally, we have the 
+                    following definition.
+                </p>
 
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading">
@@ -1090,12 +1110,6 @@ plt.show()
                         \]
                     </p>
                 </div>
-
-                <p>
-                    The mode identifies the most frequently occurring value in a dataset. Unlike the mean and
-                    median, it is also meaningful for categorical data. For example, we can determine the most
-                    common payment method, product category, or customer preference.
-                </p>
 
                 <p>
                     A dataset can have more than one mode. If exactly two values share the highest frequency, the
@@ -1110,10 +1124,10 @@ plt.show()
                     modeless by convention.
                 </p>
 
-                <!-- --- Experiment 14: modes of numerical and categorical data --- -->
+                <!-- --- Experiment: modes of numerical and categorical data --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 14: modes of numerical and categorical data.</b>
+                    <b>Experiment: modes of numerical and categorical data.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
@@ -1141,8 +1155,6 @@ print(categorical.value_counts())
 
                 <!-- ==================== Mode of a Distribution ==================== -->
 
-                <p><b>Mode of a probability distribution.</b></p>
-
                 <p>
                     The sample mode should be distinguished from the mode of an underlying probability distribution.
                     For a discrete random variable, a mode is a value at which the probability mass function attains
@@ -1162,10 +1174,10 @@ print(categorical.value_counts())
                     modes.
                 </p>
 
-                <!-- --- Experiment 15: histogram bin widths and modes --- -->
+                <!-- --- Experiment: histogram bin widths and modes --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 15: histogram bin widths and modes.</b>
+                    <b>Experiment: histogram bin widths and modes.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -1189,7 +1201,7 @@ for ax, bins in zip(axes, [10, 45]):
 
 fig.tight_layout()
 fig.savefig(
-    "histogram_bin_width_and_modes.png",
+    "../../images/histogram_bin_width_and_modes.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -1204,7 +1216,7 @@ plt.show()
                         alt="Two histograms of the same dataset with different bin widths" loading="lazy" />
                     <figcaption>
                         <b>Figure.</b> The same dataset displayed using two different numbers of histogram bins. The
-                        apparent peaks depend partly on the chosen binning. Generated by Experiment 15.
+                        apparent peaks depend partly on the chosen binning.
                     </figcaption>
                 </figure>
 
@@ -1239,10 +1251,10 @@ plt.show()
                     different quantile methods can produce different values, especially in small datasets.
                 </p>
 
-                <!-- --- Experiment 16: computing the five-number summary --- -->
+                <!-- --- Experiment: computing the five-number summary --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 16: computing the five-number summary.</b>
+                    <b>Experiment: computing the five-number summary.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -1333,8 +1345,6 @@ print(
 
                 <!-- ==================== Box Plots ==================== -->
 
-                <p><b>Box plots.</b></p>
-
                 <p>
                     A <i>box plot</i> visualizes numerical data using the median, quartiles, whiskers, and possible
                     outliers. It is particularly useful for comparing distributions across groups.
@@ -1376,10 +1386,10 @@ print(
                     confused with the actual whisker endpoints.
                 </p>
 
-                <!-- --- Experiment 17: IQR fences and box plots --- -->
+                <!-- --- Experiment: IQR fences and box plots --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 17: IQR fences and box plots.</b>
+                    <b>Experiment: IQR fences and box plots.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -1424,7 +1434,7 @@ ax.grid(axis="y", alpha=0.25)
 
 fig.tight_layout()
 fig.savefig(
-    "iqr_boxplots.png",
+    "../../images/iqr_boxplots.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -1437,9 +1447,9 @@ plt.show()
                 <figure class="stats-figure">
                     <img src="../images/iqr_boxplots.png"
                         alt="Box plots comparing two datasets, including a flagged outlier" loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Box plots comparing the central tendency, spread, and potential outliers of
-                        two numerical datasets. Generated by Experiment 17.
+                        two numerical datasets.
                     </figcaption>
                 </figure>
 
@@ -1455,8 +1465,6 @@ plt.show()
                 </p>
 
                 <!-- ==================== Limitations of the 1.5-IQR Rule ==================== -->
-
-                <p><b>Interpreting outliers carefully.</b></p>
 
                 <p>
                     Tukey's 1.5-IQR rule is a useful exploratory heuristic, but a flagged observation is not
@@ -1480,14 +1488,18 @@ plt.show()
                 <p>
                     Even observations generated from a normal distribution can fall outside the 1.5-IQR fences. For
                     a standard normal distribution, the population quartiles are approximately \(-0.6745\) and
-                    \(0.6745\). Consequently, the corresponding population fences are approximately \(-2.698\) and
-                    \(2.698\). There is a small but positive probability of observing values outside these limits.
+                    \(0.6745\) (obtained from \(Q_1=\Phi^{-1}(0.25)\) and \(Q_3=\Phi^{-1}(0.75)\), where
+                    \(\Phi\) is the standard normal CDF). Consequently, the corresponding population fences
+                    are approximately \(-2.698\) and \(2.698\) (using
+                    \(\mathrm{IQR}=Q_3-Q_1\approx1.349\) and the fences
+                    \(Q_1-1.5\,\mathrm{IQR}\) and \(Q_3+1.5\,\mathrm{IQR}\)).
+                    There is a small but positive probability of observing values outside these limits.
                 </p>
 
-                <!-- --- Experiment 18: false outlier flags in normal data --- -->
+                <!-- --- Experiment: false outlier flags in normal data --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 18: outlier flags in normally distributed data.</b>
+                    <b>Experiment: outlier flags in normally distributed data.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -1551,8 +1563,6 @@ for n in sample_sizes:
 
                 <!-- ==================== Median Absolute Deviation ==================== -->
 
-                <p><b>An additional robust measure of spread.</b></p>
-
                 <p>
                     The IQR measures dispersion using the first and third quartiles. Another useful robust measure
                     is the <i>median absolute deviation</i>, or MAD. It measures the typical absolute distance from
@@ -1576,16 +1586,48 @@ for n in sample_sizes:
                 </p>
 
                 <p>
-                    For a normal population, multiplying the raw MAD by approximately \(1.4826\) produces a scale
-                    measure that is consistent for the population standard deviation. This adjustment is specific to
-                    the normal reference distribution and should not be interpreted as a universal identity between
-                    MAD and standard deviation.
+                    For a normal population \(X\sim N(\mu,\sigma^2)\), the population MAD is
+                    approximately \(0.6745\) times the standard deviation. Indeed, the 
+                    MAD is the median of the absolute deviations from the population median,
+                    which is \(\mu\) for a normal distribution. Writing \(d=\operatorname{MAD}(X)\),
+                    we therefore have
+                    \[
+                        P(|X-\mu|\leq d)= P(\mu - d \leq X \leq \mu + d) = P( -\frac{d}{\sigma} \leq \frac{X -\mu}{\sigma} \leq \frac{d}{\sigma}) =  0.5.
+                    \]
+                    Now \( \dfrac{X -\mu}{\sigma}  \approx N(0,1)\) and using the symmetry of the normal distribution we get
+                    \[
+                        2\Phi\left(\frac{d}{\sigma}\right)-1=0.5,
+                    \]
+                    where \(\Phi\) is the standard normal CDF. Consequently,
+                    \[
+                        \frac{d}{\sigma}=\Phi^{-1}(0.75)\approx0.6745,
+                    \]
+                    and hence
+                    \[
+                        \operatorname{MAD}(X)\approx0.6745\sigma.
+                    \]
                 </p>
 
-                <!-- --- Experiment 19: MAD versus standard deviation --- -->
+                <p>
+                    Therefore, multiplying the raw MAD by
+                    \(1/0.6745\approx1.4826\) gives the <i>normal-scaled MAD</i>.
+                    For example, if a sample has a raw MAD of \(2\), its normal-scaled MAD is
+                    approximately
+                    \[
+                        1.4826\times2=2.9652.
+                    \]
+                    Under normality, the normal-scaled sample MAD is a consistent estimator of
+                    the population standard deviation. This adjustment changes only the numerical
+                    scale of the MAD, not its resistance to outliers. The factor is specific to
+                    the normal distribution and does not imply that MAD and standard deviation
+                    are generally equal.
+                </p>
+
+
+                <!-- --- Experiment: MAD versus standard deviation --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 19: MAD versus standard deviation.</b>
+                    <b>Experiment: MAD versus standard deviation.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -1636,8 +1678,6 @@ for name, data in [
 
                 <!-- ==================== Practical Guidance ==================== -->
 
-                <p><b>Choosing descriptive statistics in practice.</b></p>
-
                 <p>
                     A single numerical summary rarely describes a distribution adequately. For approximately
                     symmetric data without substantial outliers, the mean and standard deviation are often
@@ -1657,24 +1697,6 @@ for name, data in [
                     analysis, feature engineering, data-quality checks, and model evaluation. However, summary
                     statistics should be interpreted in the context of the actual observations and the process that
                     generated them.
-                </p>
-
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Construct a dataset with two equally frequent modes and examine how the result changes when
-                    a new observation is added. (2) Compare the five-number summaries of two datasets with identical
-                    medians but different dispersions. (3) Investigate how the box plot changes when the maximum
-                    observation is multiplied by 100. (4) Repeat the normal-data outlier experiment using a
-                    lognormal distribution. (5) Compare the standard deviation, IQR, and MAD after replacing several
-                    observations with extreme values.
-                </p>
-
-                <p>
-                    <b>Further reading.</b>
-                    OpenIntro Statistics (4th ed.), Sections 2.1.5–2.1.6, pp. 49–51, covers quartiles, box plots,
-                    outliers, and robust descriptive statistics. Useful exercises include 2.8, 2.13, 2.16, and 2.17.
-                    DeGroot and Schervish (4th ed.), Section 10.7, pp. 666–678, provides a more mathematical
-                    discussion of robust estimation, including quantiles, IQR, and median absolute deviation.
                 </p>
 
                 <hr />
