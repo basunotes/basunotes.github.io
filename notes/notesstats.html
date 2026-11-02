@@ -30,6 +30,7 @@
                 <ul>
                     <li><a href="#intro">Introduction</a></li>
                     <li><a href="#CentralTendency">Measures of Central Tendency</a></li>
+                    <li><a href="#Dispersion">Measures of Dispersion</a></li>
                     <li><a href="#CDFQuantile">Distribution and quantile functions</a></li>
                     <li><a href="#Hypotheses">Hypotheses</a></li>
                     <li><a href="#ErrorSignificance">Error and Significance Level</a></li>
@@ -502,7 +503,8 @@ print("Median:", np.median(even_sample))
 </code></pre>
 
                 <p>
-                    Just as we have the least-squares characterization of the mean, we have the following characterization of the median.
+                    Just as we have the least-squares characterization of the mean, we have the following
+                    characterization of the median.
                 </p>
 
                 <div class="stats-note stats-theorem">
@@ -526,7 +528,8 @@ print("Median:", np.median(even_sample))
                     \(|a-c|+|b-c|\) is minimized precisely when \(c\in[a,b]\). The intersection of the minimizing
                     intervals of all pairs is the interval between the two middle observations. For odd \(n\), the
                     remaining middle observation contributes an additional term, which is minimized at that
-                    observation. To become more comfortable with this proof, try applying its reasoning to the sum \(\left|2-c\right|+\left|3-c\right|+\left|4-c\right|+\left|5-c\right|\).
+                    observation. To become more comfortable with this proof, try applying its reasoning to the sum
+                    \(\left|2-c\right|+\left|3-c\right|+\left|4-c\right|+\left|5-c\right|\).
                 </p>
 
                 <p>
@@ -588,7 +591,8 @@ plt.show()
                     <img alt="Median absolute vs squared Loss." loading="lazy"
                         src="../images/median_absolute_vs_squared_loss.png" />
                     <figcaption style="font-size: smaller;">
-                        <b>Figure.</b> Notice that the absolute-error loss has a flat minimum between 2 and 3, whereas the
+                        <b>Figure.</b> Notice that the absolute-error loss has a flat minimum between 2 and 3, whereas
+                        the
                         squared-error loss has a unique minimum at 6.5. The unusually large observation has a much
                         stronger influence on squared-error loss.
                     </figcaption>
@@ -651,11 +655,14 @@ print(summary)
                 <!-- ==================== Empirical Quantiles and Percentiles ==================== -->
 
                 <p>
-                    The median helps us answer questions like <i>To which income bracket does 50% of a particular population belong?</i>
-                    To answer more general questions like <i>To which income group does the top 15% belong?</i>, we need the more
+                    The median helps us answer questions like <i>To which income bracket does 50% of a particular
+                        population belong?</i>
+                    To answer more general questions like <i>To which income group does the top 15% belong?</i>, we need
+                    the more
                     general notion of quantiles. Quantiles describe
                     the distribution of observations by identifying values associated with specified proportions of
-                    the data. There are several definitions of a quantile, which all share certain common features, we start with the most obvious one.
+                    the data. There are several definitions of a quantile, which all share certain common features, we
+                    start with the most obvious one.
                 </p>
 
                 <div class="stats-note stats-definition">
@@ -686,8 +693,10 @@ print(summary)
 
                 <!-- ==================== Empirical Distribution Function ==================== -->
                 <p>
-                    In the next section, we will discuss the general notion of a cumulative distribution function. For now, let us state
-                    the following definition, which will help us understand what the <code>inverted_cdf</code> method in NumPy means.
+                    In the next section, we will discuss the general notion of a cumulative distribution function. For
+                    now, let us state
+                    the following definition, which will help us understand what the <code>inverted_cdf</code> method in
+                    NumPy means.
                 </p>
 
                 <div class="stats-note stats-definition">
@@ -761,7 +770,7 @@ print(summary)
                     NumPy's default method, called <code>linear</code>, first sorts the observations in
                     ascending order and calculates the position
                     \[
-                        h=(n-1)p,
+                    h=(n-1)p,
                     \]
                     where \(n\) is the number of observations and \(p\in[0,1]\) is the desired quantile level.
                     The position \(h\) is <i>zero-indexed</i>, meaning that the first ordered observation
@@ -778,8 +787,8 @@ print(summary)
                     If \(h=j+\gamma\), where \(j=\lfloor h\rfloor\) and \(0&lt;\gamma&lt;1\),
                     NumPy interpolates between the observations at positions \(j\) and \(j+1\):
                     \[
-                        Q_{\mathrm{linear}}(p)
-                        =(1-\gamma)x_{(j+1)}+\gamma x_{(j+2)}.
+                    Q_{\mathrm{linear}}(p)
+                    =(1-\gamma)x_{(j+1)}+\gamma x_{(j+2)}.
                     \]
                     Here, \(\gamma\) determines how far the estimate lies between the two observations.
                     If \(h\) is an integer, the observation at that position is used directly.
@@ -790,14 +799,14 @@ print(summary)
                     Its zero-indexed positions are 0, 1, 2, and 3, respectively.
                     To estimate the 25th percentile, set \(p=0.25\). Then
                     \[
-                        h=(4-1)(0.25)=0.75.
+                    h=(4-1)(0.25)=0.75.
                     \]
                     Since \(h=0+0.75\), the estimate lies between the first observation (10)
                     and the second observation (20), with 75% of the weight assigned to 20:
                     \[
-                        Q_{\mathrm{linear}}(0.25)
-                        =(1-0.75)(10)+0.75(20)
-                        =17.5.
+                    Q_{\mathrm{linear}}(0.25)
+                    =(1-0.75)(10)+0.75(20)
+                    =17.5.
                     \]
                     By contrast, the inverse-ECDF convention selects the smallest observed value
                     whose empirical cumulative probability is at least 0.25, giving 10.
@@ -808,7 +817,8 @@ print(summary)
                     The interpolated method is a sample-based estimate of a population quantile. Unlike the inverse
                     ECDF, it does not necessarily return an observed data value. For some probability levels, the
                     interpolated result may not even satisfy the exact empirical coverage inequalities stated
-                    earlier, as we will see in the following experiment. These are different conventions, not contradictory calculations.
+                    earlier, as we will see in the following experiment. These are different conventions, not
+                    contradictory calculations.
                 </p>
 
                 <!-- --- Experiment: comparing quantile conventions --- -->
@@ -996,7 +1006,9 @@ print(f"Overall p95: {overall_p95:.2f} ms")
                 </p>
 
                 <p>
-                    We can investigate this by repeatedly sampling from a <a href="https://en.wikipedia.org/wiki/Log-normal_distribution" target="_blank">lognormal distribution</a>, which is
+                    We can investigate this by repeatedly sampling from a <a
+                        href="https://en.wikipedia.org/wiki/Log-normal_distribution" target="_blank">lognormal
+                        distribution</a>, which is
                     positively skewed. We compare the variability of estimated medians and 95th percentiles for two
                     sample sizes.
                 </p>
@@ -1096,7 +1108,7 @@ plt.show()
                     Let us now come to the discussion of mode.
                     The mode identifies the most frequently occurring value in a dataset. Unlike the mean and
                     median, it is also meaningful for categorical data. For example, we can determine the most
-                    common payment method, product category, or customer preference. More formally, we have the 
+                    common payment method, product category, or customer preference. More formally, we have the
                     following definition.
                 </p>
 
@@ -1587,24 +1599,26 @@ for n in sample_sizes:
 
                 <p>
                     For a normal population \(X\sim N(\mu,\sigma^2)\), the population MAD is
-                    approximately \(0.6745\) times the standard deviation. Indeed, the 
+                    approximately \(0.6745\) times the standard deviation. Indeed, the
                     MAD is the median of the absolute deviations from the population median,
                     which is \(\mu\) for a normal distribution. Writing \(d=\operatorname{MAD}(X)\),
                     we therefore have
                     \[
-                        P(|X-\mu|\leq d)= P(\mu - d \leq X \leq \mu + d) = P( -\frac{d}{\sigma} \leq \frac{X -\mu}{\sigma} \leq \frac{d}{\sigma}) =  0.5.
+                    P(|X-\mu|\leq d)= P(\mu - d \leq X \leq \mu + d) = P( -\frac{d}{\sigma} \leq \frac{X -\mu}{\sigma}
+                    \leq \frac{d}{\sigma}) = 0.5.
                     \]
-                    Now \( \dfrac{X -\mu}{\sigma}  \approx N(0,1)\) and using the symmetry of the normal distribution we get
+                    Now \( \dfrac{X -\mu}{\sigma} \approx N(0,1)\) and using the symmetry of the normal distribution we
+                    get
                     \[
-                        2\Phi\left(\frac{d}{\sigma}\right)-1=0.5,
+                    2\Phi\left(\frac{d}{\sigma}\right)-1=0.5,
                     \]
                     where \(\Phi\) is the standard normal CDF. Consequently,
                     \[
-                        \frac{d}{\sigma}=\Phi^{-1}(0.75)\approx0.6745,
+                    \frac{d}{\sigma}=\Phi^{-1}(0.75)\approx0.6745,
                     \]
                     and hence
                     \[
-                        \operatorname{MAD}(X)\approx0.6745\sigma.
+                    \operatorname{MAD}(X)\approx0.6745\sigma.
                     \]
                 </p>
 
@@ -1614,7 +1628,7 @@ for n in sample_sizes:
                     For example, if a sample has a raw MAD of \(2\), its normal-scaled MAD is
                     approximately
                     \[
-                        1.4826\times2=2.9652.
+                    1.4826\times2=2.9652.
                     \]
                     Under normality, the normal-scaled sample MAD is a consistent estimator of
                     the population standard deviation. This adjustment changes only the numerical
@@ -1701,6 +1715,180 @@ for name, data in [
 
                 <hr />
 
+                <!-- ==================== MAIN SECTION: Measures of Dispersion ==================== -->
+
+                <span id="Dispersion"><b>Measures of Dispersion</b></span>
+
+                <p>
+                    Measures of central tendency describe the center of a dataset, but they
+                    do not tell us how widely the observations are spread around that center.
+                    Two datasets can have the same mean or median while exhibiting very
+                    different amounts of variability. Measures of <i>dispersion</i>, also
+                    called measures of <i>spread</i>, help us quantify these differences.
+                </p>
+
+                <p>
+                    Consider the following two datasets:
+                    \[
+                    A=(4,5,6,7,8), \qquad B=(0,3,6,9,12).
+                    \]
+                    Both have a mean and median of \(6\), but the observations in \(B\)
+                    are more widely dispersed than those in \(A\). We will use these datasets
+                    to illustrate several measures of dispersion.
+                </p>
+
+                <!-- ==================== Range ==================== -->
+
+                <div class="stats-note stats-definition">
+                    <p class="stats-note-heading">
+                        <b>Definition (range).</b>
+                    </p>
+                    <p>
+                        The <i>range</i> of a dataset \(x_1,\ldots,x_n\) is the difference
+                        between its largest and smallest observations:
+                        \[
+                        R=\max_i x_i-\min_i x_i.
+                        \]
+                    </p>
+                </div>
+
+                <p>
+                    For our two datasets,
+                    \[
+                    R_A=8-4=4, \qquad R_B=12-0=12.
+                    \]
+                    Thus, the range of \(B\) is three times that of \(A\). Although the
+                    range is easy to calculate and interpret, it depends only on the two
+                    extreme observations and is therefore highly sensitive to outliers.
+                </p>
+
+                <!-- ==================== Variance ==================== -->
+
+                <p>
+                    Unlike the range, variance takes every observation into account.
+                    It measures dispersion by considering the squared deviations of
+                    observations from their mean.
+                </p>
+
+                <div class="stats-note stats-definition">
+                    <p class="stats-note-heading">
+                        <b>Definition (population variance).</b>
+                    </p>
+                    <p>
+                        For a random variable \(X\) with finite mean
+                        \(\mu=E[X]\), the <i>population variance</i> is
+                        \[
+                        \operatorname{Var}(X)
+                        =E[(X-\mu)^2]
+                        =\sigma^2.
+                        \]
+                        It is the expected squared deviation of \(X\) from its mean.
+                    </p>
+                </div>
+
+                <p>
+                    If a finite population consists of \(N\) values
+                    \(x_1,\ldots,x_N\), its variance is
+                    \[
+                    \sigma^2=\frac{1}{N}
+                    \sum_{i=1}^{N}(x_i-\mu)^2,
+                    \qquad
+                    \mu=\frac{1}{N}\sum_{i=1}^{N}x_i.
+                    \]
+                </p>
+
+                <div class="stats-note stats-definition">
+                    <p class="stats-note-heading">
+                        <b>Definition (sample variance).</b>
+                    </p>
+                    <p>
+                        For a sample \(x_1,\ldots,x_n\), the usual
+                        <i>sample variance</i> is
+                        \[
+                        s^2=\frac{1}{n-1}
+                        \sum_{i=1}^{n}(x_i-\bar{x})^2,
+                        \]
+                        where \(\bar{x}\) is the sample mean.
+                    </p>
+                </div>
+
+                <p>
+                    The denominator \(n-1\), rather than \(n\), accounts for the fact
+                    that the population mean is unknown and estimated by the sample mean.
+                    Under independent and identically distributed sampling with finite
+                    variance, this correction makes \(s^2\) an unbiased estimator of
+                    the population variance. When describing the dispersion of the
+                    observed dataset itself, we may instead use the average squared
+                    deviation with denominator \(n\).
+                </p>
+
+                <p>
+                    Returning to our datasets, both have sample mean \(6\). Therefore,
+                    \[
+                    \begin{aligned}
+                    s_A^2
+                    &=\frac{(4-6)^2+(5-6)^2+(6-6)^2
+                    +(7-6)^2+(8-6)^2}{5-1}\\
+                    &=\frac{4+1+0+1+4}{4}=2.5,
+                    \end{aligned}
+                    \]
+                    whereas
+                    \[
+                    \begin{aligned}
+                    s_B^2
+                    &=\frac{(0-6)^2+(3-6)^2+(6-6)^2
+                    +(9-6)^2+(12-6)^2}{5-1}\\
+                    &=\frac{36+9+0+9+36}{4}=22.5.
+                    \end{aligned}
+                    \]
+                </p>
+
+                <p>
+                    Thus, although the two datasets have the same mean, the sample
+                    variance of \(B\) is nine times that of \(A\). Notice that
+                    variance is expressed in squared units, which can make its
+                    numerical value difficult to interpret directly.
+                </p>
+
+                <!-- ==================== Standard Deviation ==================== -->
+
+                <div class="stats-note stats-definition">
+                    <p class="stats-note-heading">
+                        <b>Definition (standard deviation).</b>
+                    </p>
+                    <p>
+                        The <i>standard deviation</i> is the nonnegative square root
+                        of the variance. The population and sample standard deviations
+                        are respectively
+                        \[
+                        \sigma=\sqrt{\operatorname{Var}(X)},
+                        \qquad s=\sqrt{s^2}.
+                        \]
+                    </p>
+                </div>
+
+                <p>
+                    For our datasets, the sample standard deviations are
+                    \[
+                    s_A=\sqrt{2.5}\approx1.58,
+                    \qquad
+                    s_B=\sqrt{22.5}\approx4.74.
+                    \]
+                    The standard deviation of \(B\) is three times that of \(A\).
+                    Unlike variance, standard deviation is expressed in the same
+                    units as the observations, making it easier to interpret.
+                </p>
+
+                <p>
+                    Standard deviation measures the overall spread of observations
+                    around their mean, but it should not be interpreted as the
+                    average absolute distance from the mean. Since it is based on
+                    squared deviations, observations far from the mean contribute
+                    disproportionately to its value.
+                </p>
+
+                <hr>
+
                 <!-- ========================= MAIN SECTION 03: Distribution and Quantile Functions ========================= -->
 
                 <span id="CDFQuantile"><b>Distribution and Quantile Functions</b></span>
@@ -1719,8 +1907,10 @@ for name, data in [
                 </p>
 
                 <p>
-                    Unlike the empirical quantiles discussed earlier, we now consider the distribution of a random variable itself. This
-                    mathematical definition applies to every real-valued random variable, regardless of whether its distribution is
+                    Unlike the empirical quantiles discussed earlier, we now consider the distribution of a random
+                    variable itself. This
+                    mathematical definition applies to every real-valued random variable, regardless of whether its
+                    distribution is
                     discrete, continuous, or mixed.
                 </p>
 
@@ -1738,11 +1928,11 @@ for name, data in [
                 </div>
 
                 <p>
-                    Thus, \(F(x)\) is the probability that \(X\) takes a value less than or equal to \(x\). 
+                    Thus, \(F(x)\) is the probability that \(X\) takes a value less than or equal to \(x\).
                 </p>
 
                 <p>
-                    A few basic properties completely characterize distribution functions. 
+                    A few basic properties completely characterize distribution functions.
                 </p>
 
                 <div class="stats-note stats-theorem">
@@ -1788,7 +1978,8 @@ for name, data in [
                 </p>
 
                 <p>
-                    To handle strict and non-strict inequalities correctly, we introduce the <i>left limit</i> which does exist
+                    To handle strict and non-strict inequalities correctly, we introduce the <i>left limit</i> which
+                    does exist
                     \[ F(x^-)=\lim_{t\uparrow x}F(t) =\mathbb{P}(X&lt;x). \]
                 </p>
 
@@ -1807,7 +1998,8 @@ for name, data in [
                 <!-- ==================== Continuous Distributions and Densities ==================== -->
 
                 <p>
-                    Suppose \(X\) is a continuous distribution that has a probability density function \(f:\mathbb{R}\to[0,\infty)\). Then \[
+                    Suppose \(X\) is a continuous distribution that has a probability density function
+                    \(f:\mathbb{R}\to[0,\infty)\). Then \[
                     F(x)=\int_{-\infty}^{x}f(t)\,dt. \] At points where \(f\) is continuous, we also have \[
                     F'(x)=f(x). \]
                 </p>
@@ -1825,7 +2017,9 @@ for name, data in [
 
                 <p>
                     A continuous CDF does not necessarily possess a density. The integral representation above
-                    applies to distributions that are <i><a href="https://www.randomservices.org/random/dist/Continuous.html" target="_blank">absolutely continuous</a></i>. This distinction is
+                    applies to distributions that are <i><a
+                            href="https://www.randomservices.org/random/dist/Continuous.html" target="_blank">absolutely
+                            continuous</a></i>. This distinction is
                     mathematically important, even though most standard continuous distributions used in
                     introductory statistics have densities.
                 </p>
@@ -2564,8 +2758,8 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
                     For example, suppose \(X\) is normally distributed with an unknown mean
                     \(\mu\) and variance \(\sigma^2\). We can write the statistical model as
                     \[
-                        \mathcal{P}=
-                        \{N(\mu,\sigma^2):\mu\in\mathbb{R},\ \sigma^2>0\}.
+                    \mathcal{P}=
+                    \{N(\mu,\sigma^2):\mu\in\mathbb{R},\ \sigma^2>0\}.
                     \]
                     Here, the parameter is \(\theta=(\mu,\sigma^2)\), and the parameter space
                     is \(\Theta=\mathbb{R}\times(0,\infty)\). Each choice of \(\mu\) and
@@ -2577,8 +2771,8 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
                     \(X=1\) for heads and \(X=0\) for tails. We can model \(X\) using the
                     Bernoulli family
                     \[
-                        \mathcal{P}=
-                        \{\operatorname{Bernoulli}(\theta):\theta\in[0,1]\},
+                    \mathcal{P}=
+                    \{\operatorname{Bernoulli}(\theta):\theta\in[0,1]\},
                     \]
                     where \(\theta\) is the unknown probability of heads. Here, the parameter
                     space is \(\Theta=[0,1]\), and each value of \(\theta\) specifies a
@@ -3028,11 +3222,11 @@ plt.show()
 
                 <figure class="stats-figure">
                     <img src="../images/hypothesis_sampling_variability.png"
-                        alt="Sampling variability under a true null hypothesis"
-                        loading="lazy" />
+                        alt="Sampling variability under a true null hypothesis" loading="lazy" />
                     <figcaption style="font-size: smaller;">
-                        <b>Figure.</b> The simulated sample means cluster around the null population mean, but most do not equal it
-                    exactly. This is expected even though the null hypothesis is true.
+                        <b>Figure.</b> The simulated sample means cluster around the null population mean, but most do
+                        not equal it
+                        exactly. This is expected even though the null hypothesis is true.
                     </figcaption>
                 </figure>
 
@@ -3092,7 +3286,7 @@ plt.show()
                     </li>
                     <li>
                         Study design:
-                       <i>How were observations collected? Are they independent, paired, or clustered?</i>
+                        <i>How were observations collected? Are they independent, paired, or clustered?</i>
                     </li>
                     <li>
                         Model:
