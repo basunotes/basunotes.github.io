@@ -292,6 +292,20 @@ pre.stats-code .hljs-params {
     color: #334155;
 }
 
+/* ===== PYTHON F-STRING INTERPOLATIONS ===== */
+/* Keep replacement expressions distinct from the surrounding string. */
+pre.stats-code .hljs-string .hljs-subst {
+    color: #172435;
+    font-weight: normal;
+}
+
+/* Highlight.js may tokenize .2 in {value:.2f} as a number.
+   Make that token inherit the expression color rather than orange. */
+pre.stats-code .hljs-string .hljs-subst .hljs-number {
+    color: inherit;
+    font-weight: inherit;
+}
+
 /* ===== MATHJAX AND IMAGES ===== */
 /* Do not turn every inline formula into an inline-flex scroll container. */
 article mjx-container[display="true"],
