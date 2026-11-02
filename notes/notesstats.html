@@ -2525,8 +2525,6 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
 
                 <!-- ==================== Statistical Models and Parameters ==================== -->
 
-                <p><b>From a research question to a statistical parameter.</b></p>
-
                 <p>
                     Before formulating hypotheses, we must identify the population of interest and the unknown
                     quantity about which we want to draw conclusions. Such a quantity is called a <i>parameter</i>.
@@ -2562,16 +2560,39 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
                 </div>
 
                 <p>
-                    The model describes the distributions considered possible for the observations. The assumptions
-                    defining this family are separate from the hypotheses about the unknown parameter.
+                    The model describes the distributions considered possible for the observations.
+                    For example, suppose \(X\) is normally distributed with an unknown mean
+                    \(\mu\) and variance \(\sigma^2\). We can write the statistical model as
+                    \[
+                        \mathcal{P}=
+                        \{N(\mu,\sigma^2):\mu\in\mathbb{R},\ \sigma^2>0\}.
+                    \]
+                    Here, the parameter is \(\theta=(\mu,\sigma^2)\), and the parameter space
+                    is \(\Theta=\mathbb{R}\times(0,\infty)\). Each choice of \(\mu\) and
+                    \(\sigma^2\) specifies a particular normal distribution within the model.
                 </p>
 
                 <p>
-                    For example, we may assume that observations are independent and normally distributed with mean
-                    \(\mu\) and variance \(\sigma^2\). We might then formulate a hypothesis about \(\mu\). The
-                    hypothesis concerns the mean; the normality and independence assumptions describe the model used
-                    to investigate it.
+                    As another example, suppose \(X\) represents a single coin toss, with
+                    \(X=1\) for heads and \(X=0\) for tails. We can model \(X\) using the
+                    Bernoulli family
+                    \[
+                        \mathcal{P}=
+                        \{\operatorname{Bernoulli}(\theta):\theta\in[0,1]\},
+                    \]
+                    where \(\theta\) is the unknown probability of heads. Here, the parameter
+                    space is \(\Theta=[0,1]\), and each value of \(\theta\) specifies a
+                    particular Bernoulli distribution. For instance, \(\theta=0.5\)
+                    describes a fair coin, whereas \(\theta=0.7\) describes a coin with
+                    a 70% probability of landing heads.
                 </p>
+
+                <p>
+                    If we collect several observations, we may additionally assume that they
+                    are independent and follow the same normal distribution. These assumptions
+                    describe the statistical model.
+                </p>
+
 
                 <!-- ==================== Null and Alternative Hypotheses ==================== -->
 
@@ -2684,8 +2705,6 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
 
                 <!-- ==================== Observations and Test Statistics ==================== -->
 
-                <p><b>From observations to a test statistic.</b></p>
-
                 <p>
                     Suppose we observe a random vector \(X=(X_1,\ldots,X_n)\), with realized values
                     \(\mathbf{x}=(x_1,\ldots,x_n)\). A <i>test statistic</i> is a function of the observations, \[
@@ -2760,8 +2779,6 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
 
                 <!-- ==================== Example: Student Weights ==================== -->
 
-                <p><b>Example: comparing a population mean with a reference value.</b></p>
-
                 <p>
                     Consider the <i>students</i> dataset used in SOGA-Py. Let \(\mu\) denote the population mean
                     weight of the population we wish to study. Suppose that \(70.8\,\mathrm{kg}\) is a proposed
@@ -2774,10 +2791,10 @@ print(f"Empirical p95: {empirical_p95:.2f} ms")
                     mean, and sample standard deviation.
                 </p>
 
-                <!-- --- Experiment 26: descriptive statistics before hypothesis testing --- -->
+                <!-- --- Experiment: descriptive statistics before hypothesis testing --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 26: descriptive statistics before hypothesis testing.</b>
+                    <b>Experiment: descriptive statistics before hypothesis testing.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
@@ -2828,8 +2845,6 @@ print(f"Difference from benchmark: {difference:.2f} kg")
 
                 <!-- ==================== Hypotheses in A/B Testing ==================== -->
 
-                <p><b>Application: comparing conversion rates in an A/B test.</b></p>
-
                 <p>
                     Hypothesis testing is widely used in data science to compare products, algorithms, interfaces,
                     and business processes. An A/B test is a common example: users are randomly assigned to two
@@ -2854,10 +2869,10 @@ print(f"Difference from benchmark: {difference:.2f} kg")
                     This direction should be specified before examining the experimental outcome.
                 </p>
 
-                <!-- --- Experiment 27: an illustrative A/B experiment --- -->
+                <!-- --- Experiment: an illustrative A/B experiment --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 27: formulating hypotheses for an A/B test.</b>
+                    <b>Experiment: formulating hypotheses for an A/B test.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -2917,8 +2932,6 @@ print(
 
                 <!-- ==================== Sampling Variability under the Null ==================== -->
 
-                <p><b>Why observed differences do not automatically contradict a null hypothesis.</b></p>
-
                 <p>
                     Suppose the null hypothesis about a population mean is true: \[ H_0:\mu=100. \] Even under this
                     hypothesis, a random sample will generally not have mean exactly 100. The sample mean fluctuates
@@ -2936,10 +2949,10 @@ print(
                     hypothesis.
                 </p>
 
-                <!-- --- Experiment 28: sampling variability under a true null --- -->
+                <!-- --- Experiment: sampling variability under a true null --- -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 28: sampling variability under a true null hypothesis.</b>
+                    <b>Experiment: sampling variability under a true null hypothesis.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -3002,7 +3015,7 @@ ax.legend()
 fig.tight_layout()
 
 fig.savefig(
-    "hypothesis_sampling_variability.png",
+    "../../images/hypothesis_sampling_variability.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -3013,10 +3026,15 @@ plt.show()
 # Compare the variability of the sample means.
 </code></pre>
 
-                <p>
-                    The simulated sample means cluster around the null population mean, but most do not equal it
+                <figure class="stats-figure">
+                    <img src="../images/hypothesis_sampling_variability.png"
+                        alt="Sampling variability under a true null hypothesis"
+                        loading="lazy" />
+                    <figcaption style="font-size: smaller;">
+                        <b>Figure.</b> The simulated sample means cluster around the null population mean, but most do not equal it
                     exactly. This is expected even though the null hypothesis is true.
-                </p>
+                    </figcaption>
+                </figure>
 
                 <p>
                     A statistical test must therefore distinguish ordinary sampling variation from deviations that
@@ -3025,8 +3043,6 @@ plt.show()
                 </p>
 
                 <!-- ==================== Assumptions and Interpretation ==================== -->
-
-                <p><b>Hypotheses, assumptions, and interpretation.</b></p>
 
                 <p>
                     A statistical hypothesis is not the same as a model assumption. For example, testing
@@ -3059,54 +3075,34 @@ plt.show()
                     negligible difference.
                 </p>
 
-                <p><b>Questions to answer before performing a test.</b></p>
+                <p>The following questions need to be answered before performing the test.</p>
 
                 <ul>
                     <li>
-                        <b>Population:</b>
-                        Which population or data-generating process is the conclusion intended to describe?
+                        Population:
+                        <i>Which population or data-generating process is the conclusion intended to describe?</i>
                     </li>
                     <li>
-                        <b>Parameter:</b>
-                        What unknown numerical quantity is being investigated?
+                        Parameter:
+                        <i>What unknown numerical quantity is being investigated?</i>
                     </li>
                     <li>
-                        <b>Hypotheses:</b>
-                        What are \(H_0\) and \(H_1\), and is the alternative one-sided or two-sided?
+                        Hypotheses:
+                        <i>What are \(H_0\) and \(H_1\), and is the alternative one-sided or two-sided?</i>
                     </li>
                     <li>
-                        <b>Study design:</b>
-                        How were observations collected? Are they independent, paired, or clustered?
+                        Study design:
+                       <i>How were observations collected? Are they independent, paired, or clustered?</i>
                     </li>
                     <li>
-                        <b>Model:</b>
-                        Which distributional assumptions are needed for the chosen procedure?
+                        Model:
+                        <i>Which distributional assumptions are needed for the chosen procedure?</i>
                     </li>
                     <li>
-                        <b>Practical importance:</b>
-                        What magnitude of difference would matter in the application?
+                        Practical importance:
+                        <i>What magnitude of difference would matter in the application?</i>
                     </li>
                 </ul>
-
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Formulate one-sided and two-sided hypotheses for a company investigating whether average
-                    delivery times have changed from a reference value. (2) Explain why \(H_0:\mu=100\) is simple
-                    under a normal model with known variance but composite when the variance is unknown. (3) In
-                    Experiment 27, double the number of users in both groups and compare the observed
-                    conversion-rate differences. (4) In Experiment 28, increase the sample size and investigate how
-                    the standard error changes. (5) Explain why failing to reject a difference does not establish
-                    practical equivalence.
-                </p>
-
-                <p>
-                    <b>Further reading.</b>
-                    DeGroot and Schervish (4th ed.), Section 9.1, beginning on p. 530, introduces null and
-                    alternative hypotheses, simple and composite hypotheses, test statistics, and critical regions.
-                    OpenIntro Statistics (4th ed.), Section 5.3.1, beginning on p. 189, introduces the
-                    hypothesis-testing framework and emphasizes the distinction between rejecting and failing to
-                    reject the null. The A/B testing example extends these concepts to a data science application.
-                </p>
 
                 <hr />
 
