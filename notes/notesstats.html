@@ -4419,8 +4419,6 @@ plt.show()
 
                 <!-- ==================== Other Null Distributions ==================== -->
 
-                <p><b>Student's t, chi-square, and F-distributions.</b></p>
-
                 <p>
                     Critical values and p-values are not restricted to normal tests. The relevant null distribution
                     depends on the statistic and on the assumptions used to derive its sampling law. For example:
@@ -4448,7 +4446,7 @@ plt.show()
                 </p>
 
                 <p>
-                    <b>Worked examples.</b> For a two-sided t-test with 9 degrees of freedom and
+                    Let us look at some concrete values. For a two-sided t-test with 9 degrees of freedom and
                     \(t_{\mathrm{obs}}=2.30\), the p-value is approximately \(0.04700\). For a right-tailed
                     chi-square test with 4 degrees of freedom and observed statistic \(13.28\), the p-value is
                     approximately \(0.00999\). For a right-tailed F-test with numerator and denominator degrees of
@@ -4456,10 +4454,10 @@ plt.show()
                     rejects at the 5% level for its stated test.
                 </p>
 
-                <!-- Experiment 36: p-values from other null distributions -->
+                <!-- Experiment: p-values from other null distributions -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 36: p-values from other null distributions.</b>
+                    <b>Experiment: p-values from other null distributions.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import t, chi2, f
@@ -4485,49 +4483,72 @@ print(f"t-test: p={t_p:.5f}, upper cutoff={t_cutoff:.4f}")
 print(f"Chi-square: p={chi_p:.5f}, cutoff={chi_cutoff:.4f}")
 print(f"F-test: p={f_p:.5f}, cutoff={f_cutoff:.4f}")
 
-assert t_p &lt; alpha
-assert chi_p &lt; alpha
-assert f_p &lt; alpha
-
 # Experiment: change the degrees of freedom and compare p-values.</code></pre>
 
                 <!-- ==================== Exact Discrete Tests ==================== -->
 
-                <p><b>Discrete tests and conservative significance levels.</b></p>
-
                 <p>
-                    For a discrete statistic, the possible rejection probabilities occur in steps. A non-randomized
-                    test may therefore have actual size strictly smaller than the nominal level \(\alpha\). Recall
-                    the example of 10 independent fair coin tosses under \(H_0:p=0.5\), with
-                    \(X\sim\operatorname{Binomial}(10,0.5)\), against \(H_1:p&gt;0.5\).
+                    For a discrete statistic, rejection probabilities occur in steps. A non-randomized
+                    test may therefore have an actual size smaller than the nominal level \(\alpha\).
+                    Consider 10 independent coin tosses, with
+                    \[
+                        H_0:p=0.5 \qquad\text{against}\qquad H_1:p>0.5.
+                    \]
+                    Under \(H_0\), the number of heads follows
+                    \(X\sim\operatorname{Binomial}(10,0.5)\).
                 </p>
 
                 <p>
-                    If we reject for \(X\geq8\), the type I error probability is \[
-                    P_{0.5}(X\geq8)=\frac{56}{1024}\approx0.05469, \] which exceeds \(0.05\). If instead we reject
-                    for \(X\geq9\), the probability is \[ P_{0.5}(X\geq9)=\frac{11}{1024}\approx0.01074. \] Thus,
-                    the latter rule is a valid level-0.05 test, but its actual size is approximately 1.07%.
+                    If we reject for \(X\geq8\), the Type I error probability is
+                    \[
+                        P_{0.5}(X\geq8)
+                        =\frac{\binom{10}{8}+\binom{10}{9}+\binom{10}{10}}{2^{10}}
+                        =\frac{56}{1024}\approx0.05469,
+                    \]
+                    which exceeds \(0.05\). If instead we reject for \(X\geq9\), it is
+                    \[
+                        P_{0.5}(X\geq9)=\frac{11}{1024}\approx0.01074.
+                    \]
+                    Thus, the latter rule is a valid level-0.05 test, but its actual
+                    size is only approximately \(1.07\%\).
                 </p>
 
                 <p>
-                    If 8 heads are observed, the right-tailed p-value is \(P_{0.5}(X\geq8)\approx0.05469\), so we
-                    fail to reject at the 5% level. With 9 observed heads, the p-value is
-                    \(P_{0.5}(X\geq9)\approx0.01074\), so we reject. Notice the importance of including equality:
-                    for a discrete variable, \(P(X\geq k)\) and \(P(X&gt;k)\) differ.
+                    For an observed number of heads \(x_{\mathrm{obs}}\), the right-tailed
+                    p-value is
+                    \[
+                        p(x_{\mathrm{obs}})=P_{0.5}(X\geq x_{\mathrm{obs}}).
+                    \]
+                    This is the same as the Type I error probability of a hypothetical
+                    test that rejects for \(X\geq x_{\mathrm{obs}}\). The difference is
+                    that the p-value uses the observed value as the threshold, whereas
+                    the Type I error probability of a fixed test uses its predetermined
+                    rejection threshold.
                 </p>
 
                 <p>
-                    A two-sided test requires an additional convention for what counts as more extreme. For 8
-                    observed heads under the fair-coin null, symmetry gives \[
-                    P_{0.5}(X\leq2)+P_{0.5}(X\geq8)=0.109375. \] For an asymmetric binomial null, doubling a
-                    one-sided tail is not generally the same as a two-sided exact p-value. For example, SciPy's
-                    <code>binomtest</code> two-sided procedure sums the null probabilities of outcomes no more
-                    probable than the observed one.
+                    For 8 observed heads, the p-value is \(0.05469\), so we fail to
+                    reject at the 5% level. For 9 observed heads, it is \(0.01074\),
+                    so we reject. Notice that \(P(X\geq k)\) and \(P(X>k)\) differ
+                    for a discrete random variable.
                 </p>
 
-                <!-- Experiment 37: exact binomial p-values -->
+                <p>
+                    A two-sided test requires a convention for what counts as more
+                    extreme. For 8 observed heads under the fair-coin null, symmetry gives
+                    \[
+                        P_{0.5}(X\leq2)+P_{0.5}(X\geq8)=0.109375.
+                    \]
+                    For an asymmetric binomial null, doubling a one-sided tail is not
+                    generally equivalent to a two-sided exact p-value. SciPy's
+                    <code>binomtest</code> instead sums the null probabilities of
+                    outcomes no more probable than the observed one.
+                </p>
 
-                <p class="stats-experiment-title"><b>Experiment 37: exact binomial p-values.</b></p>
+
+                <!-- Experiment: exact binomial p-values -->
+
+                <p class="stats-experiment-title"><b>Experiment: exact binomial p-values.</b></p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import binom, binomtest
 
@@ -4556,8 +4577,6 @@ print(
 
                 <!-- ==================== Confidence Intervals and Test Inversion ==================== -->
 
-                <p><b>The relationship with confidence intervals.</b></p>
-
                 <p>
                     A confidence set can be constructed by retaining parameter values that the corresponding tests
                     do not reject. In particular, for a two-sided normal z-test with known \(\sigma\), the null
@@ -4569,7 +4588,7 @@ print(
                 </p>
 
                 <p>
-                    <b>Worked example.</b> Suppose \(\bar{x}=54.5\), \(n=25\), \(\sigma=10\), and \(H_0:\mu=50\) is
+                    Suppose \(\bar{x}=54.5\), \(n=25\), \(\sigma=10\), and \(H_0:\mu=50\) is
                     tested against \(H_1:\mu\neq50\). The observed statistic is \(z=2.25\), giving the two-sided
                     p-value \(p\approx0.02445\). The corresponding 95% confidence interval is \[
                     54.5\pm1.9600\cdot2\approx(50.58,58.42). \] Because the interval excludes 50, both methods
@@ -4577,10 +4596,10 @@ print(
                     the observed data under this model.
                 </p>
 
-                <!-- Experiment 38: confidence interval and z-test decision -->
+                <!-- Experiment: confidence interval and z-test decision -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 38: confidence interval and z-test decision.</b>
+                    <b>Experiment: confidence interval and z-test decision.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import norm
@@ -4614,12 +4633,11 @@ assert reject_by_p == reject_by_ci
 
                 <!-- ==================== Distribution of p-Values ==================== -->
 
-                <p><b>How are p-values distributed under the null hypothesis?</b></p>
-
                 <p>
-                    Before the data are collected, the p-value is itself a random variable. For an exactly
-                    calibrated test with a continuous null distribution, the p-value is uniformly distributed on
-                    \([0,1]\) under the simple null hypothesis.
+                    Since the p-value depends on the outcome of an experiment, it is itself a random variable.
+                    Therefore, one may ask how p-values are distributed under the null hypothesis.
+                    For an exactly calibrated test with a continuous null distribution, the p-value
+                    is uniformly distributed on \([0,1]\) under the simple null hypothesis.
                 </p>
 
                 <div class="stats-note stats-theorem">
@@ -4627,35 +4645,112 @@ assert reject_by_p == reject_by_ci
                         <b>Theorem (uniformity of the two-sided normal p-value).</b>
                     </p>
                     <p>
-                        Let \(Z\sim N(0,1)\) and define \(P=2[1-\Phi(|Z|)]\). Then \[
-                        P\sim\operatorname{Uniform}(0,1). \]
+                        Let \(Z\sim N(0,1)\) and define the random p-value
+                        \[
+                            P=2[1-\Phi(|Z|)].
+                        \]
+                        Then
+                        \[
+                            P\sim\operatorname{Uniform}(0,1).
+                        \]
                     </p>
                 </div>
 
                 <p>
-                    Proof. For \(0&lt;u&lt;1\), symmetry of the standard normal distribution gives \[
-                    \begin{aligned} \mathbb{P}(P\leq u) &amp;=\mathbb{P}\!\left(|Z|\geq\Phi^{-1}(1-u/2)\right)\\
-                    &amp;=2\left[1-\Phi\!\left(\Phi^{-1}(1-u/2)\right)\right]\\ &amp;=u. \end{aligned} \] Hence the
-                    CDF of \(P\) is the uniform CDF on \([0,1]\).
+                    Before proving this, recall that the p-value is calculated from the
+                    observed test statistic. For example, if we observe \(z=2.10\), the
+                    two-sided p-value is approximately \(0.03573\). However, before
+                    collecting data, \(Z\) is random, and therefore \(P\) is also random.
+                    We want to determine the distribution of \(P\) when \(H_0\) is true.
                 </p>
 
                 <p>
-                    Consequently, under a true null and the stated test assumptions, approximately 5% of independent
-                    repetitions produce p-values at most 0.05. This statement does <i>not</i> mean that a particular
-                    observed p-value of 0.05 assigns 5% probability to the null hypothesis being true or false.
+                    Proof. To find the CDF of \(P\), we calculate
+                    \(\mathbb{P}(P\leq u)\) for \(0&lt;u&lt;1\). Using the definition
+                    of \(P\), we have
+                    \[
+                        \begin{aligned}
+                        \mathbb{P}(P\leq u)
+                        &=\mathbb{P}\left(2[1-\Phi(|Z|)]\leq u\right)\\
+                        &=\mathbb{P}\left(1-\Phi(|Z|)\leq\frac{u}{2}\right)\\
+                        &=\mathbb{P}\left(\Phi(|Z|)\geq1-\frac{u}{2}\right)\\
+                        &=\mathbb{P}\left(|Z|\geq\Phi^{-1}(1-u/2)\right).
+                        \end{aligned}
+                    \]
+                    The last step follows because \(\Phi\) is strictly increasing.
                 </p>
 
                 <p>
-                    For a valid conservative or discrete test, the appropriate general property is often
-                    <i>super-uniformity</i>: \[ \mathbb{P}_{\theta}(P\leq u)\leq u \qquad\text{for all
-                    }\theta\in\Theta_0,\;0\leq u\leq1. \] The inequality may be strict because the p-value cannot
-                    assume every possible number between 0 and 1.
+                    Now let \(c=\Phi^{-1}(1-u/2)\). Since \(0&lt;u&lt;1\), we have
+                    \(c&gt;0\). By symmetry of the standard normal distribution,
+                    \[
+                        \begin{aligned}
+                        \mathbb{P}(|Z|\geq c)
+                        &=\mathbb{P}(Z\leq-c)+\mathbb{P}(Z\geq c)\\
+                        &=2[1-\Phi(c)].
+                        \end{aligned}
+                    \]
+                    Substituting the value of \(c\), we obtain
+                    \[
+                        \begin{aligned}
+                        \mathbb{P}(P\leq u)
+                        &=2\left[1-\Phi\left(\Phi^{-1}(1-u/2)\right)\right]\\
+                        &=2\left[1-(1-u/2)\right]\\
+                        &=u.
+                        \end{aligned}
+                    \]
+                    Thus, the CDF of \(P\) is \(F_P(u)=u\) for
+                    \(0&lt;u&lt;1\), which is the CDF of a uniform distribution
+                    on \([0,1]\).
                 </p>
 
-                <!-- Experiment 39: p-value calibration under a true null -->
+                <p>
+                    For example, take \(u=0.05\). A two-sided p-value is at most
+                    \(0.05\) precisely when
+                    \[
+                        |Z|\geq\Phi^{-1}(0.975)\approx1.96.
+                    \]
+                    Under \(H_0\), the probability of this event is
+                    \[
+                        \begin{aligned}
+                        \mathbb{P}(P\leq0.05)
+                        &=\mathbb{P}(|Z|\geq1.96)\\
+                        &\approx2[1-\Phi(1.96)]\\
+                        &\approx0.05.
+                        \end{aligned}
+                    \]
+                    Therefore, if we repeat the experiment many times under the true
+                    null hypothesis, approximately 5% of the resulting p-values will
+                    be at most \(0.05\). This does not mean that an observed p-value
+                    of \(0.05\) assigns a 5% probability to the null hypothesis
+                    being true or false.
+                </p>
+
+                <p>
+                    For a valid conservative or discrete test, p-values need not be
+                    uniformly distributed. Instead, they generally satisfy the
+                    <i>super-uniformity</i> condition
+                    \[
+                        \mathbb{P}_{\theta}(P\leq u)\leq u
+                        \qquad
+                        \text{for all }\theta\in\Theta_0,\quad 0\leq u\leq1.
+                    \]
+                    For example, in our earlier experiment with 10 fair coin tosses,
+                    the right-tailed p-value is at most \(0.05\) only when at least
+                    9 heads are observed. Hence,
+                    \[
+                        \mathbb{P}_{0.5}(P\leq0.05)
+                        =\mathbb{P}_{0.5}(X\geq9)
+                        =\frac{11}{1024}\approx0.01074&lt;0.05.
+                    \]
+                    The inequality is strict because the discrete test can produce
+                    only certain p-values, rather than every value between 0 and 1.
+                </p>
+
+                <!-- Experiment: p-value calibration under a true null -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 39: p-value calibration under a true null.</b>
+                    <b>Experiment: p-value calibration under a true null.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -4692,7 +4787,7 @@ axes[1].set_xlabel("p-value")
 axes[1].set_ylabel("Frequency")
 
 fig.tight_layout()
-fig.savefig("pvalue_uniformity.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/pvalue_uniformity.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: change alpha to 0.01 and 0.10.</code></pre>
@@ -4700,16 +4795,13 @@ plt.show()
                 <figure class="stats-figure">
                     <img alt="Uniform p-values for a continuous calibrated test compared with discrete binomial p-values"
                         loading="lazy" src="../images/pvalue_uniformity.png" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Under a true null, continuous exactly calibrated p-values are approximately
-                        uniform; discrete exact-test p-values take only a limited set of values. Generated by
-                        Experiment 39.
+                        uniform; discrete exact-test p-values take only a limited set of values.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Applying a p-Value to Observed Data ==================== -->
-
-                <p><b>Application: a one-sample test using real observations.</b></p>
 
                 <p>
                     In practice, a statistic is computed from observations rather than supplied as a number. The
@@ -4720,10 +4812,10 @@ plt.show()
                     sampling design, independence, and the suitability of the t-test assumptions.
                 </p>
 
-                <!-- Experiment 40: one-sample t-test from data -->
+                <!-- Experiment: one-sample t-test from data -->
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 40: one-sample t-test from data.</b>
+                    <b>Experiment: one-sample t-test from data.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
@@ -4767,73 +4859,36 @@ else:
                     guarantee that the remaining observations are representative.
                 </p>
 
-                <!-- ==================== Interpretation and Exercises ==================== -->
+                <!-- ==================== Interpretation ==================== -->
 
-                <p><b>Common interpretation errors.</b></p>
+                <p>Here are a few common interpretation errors.</p>
 
                 <ul>
                     <li>
-                        <b>A p-value is not \(\mathbb{P}(H_0\text{ is true}\mid\text{data})\).</b>
+                        A p-value is not \(\mathbb{P}(H_0\text{ is true}\mid\text{data})\).
                         It is calculated from a specified null model. Hypothesis probabilities require additional
                         modeling assumptions.
                     </li>
                     <li>
-                        <b>A large p-value does not establish that the null is true.</b>
+                        A large p-value does not establish that the null is true.
                         It may reflect an effect too small to detect with the available sample, or a test with low
                         power.
                     </li>
                     <li>
-                        <b>A small p-value does not measure effect size.</b>
+                        A small p-value does not measure effect size.
                         Report an estimate and an uncertainty measure where possible, and assess whether the effect
                         matters in practice.
                     </li>
                     <li>
-                        <b>The p-value depends on the entire testing procedure.</b>
+                        The p-value depends on the entire testing procedure.
                         The null model, alternative, statistic, and definition of extremeness all matter.
                     </li>
                     <li>
-                        <b>Selective testing and repeated analyses affect calibration.</b>
+                        Selective testing and repeated analyses affect calibration.
                         If many tests are performed and only the smallest p-value is reported without adjustment,
                         the nominal single-test error interpretation can be misleading.
                     </li>
                 </ul>
-
-                <p><b>Try it yourself.</b></p>
-
-                <ol>
-                    <li>
-                        For \(z_{\mathrm{obs}}=-1.80\), calculate the left-tailed and two-sided normal p-values.
-                        Compare the decisions at \(\alpha=0.05\).
-                    </li>
-                    <li>
-                        Find the two-sided standard normal critical values for \(\alpha=0.01\). Verify them using
-                        <code>norm.ppf</code>.
-                    </li>
-                    <li>
-                        Under \(H_0:p=0.5\) with 10 coin tosses, find the smallest integer \(k\) such that rejecting
-                        for \(X\geq k\) has significance level at most 0.05.
-                    </li>
-                    <li>
-                        For \(\bar{x}=12\), known \(\sigma=4\), \(n=16\), test \(H_0:\mu=10\) against
-                        \(H_1:\mu\neq10\), and construct the matching 95% confidence interval.
-                    </li>
-                    <li>
-                        Explain why the numerical result \(T=2.3\) is insufficient to calculate a p-value without
-                        knowing the null distribution and the alternative hypothesis.
-                    </li>
-                </ol>
-
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Chapter 9, especially Section 9.1,
-                    introduces significance tests, rejection regions, and p-values. OpenIntro Statistics (4th ed.),
-                    Chapter 5, develops hypothesis testing with applied examples. See also
-                    <a href="https://www.randomservices.org/random/hypothesis/Introduction.html" target="_blank"
-                        rel="noopener noreferrer">Random Services: Introduction to Hypothesis Testing</a>
-                    and the
-                    <a href="https://docs.scipy.org/doc/scipy/reference/stats.html" target="_blank"
-                        rel="noopener noreferrer">SciPy statistics reference</a>. The numerical examples here are
-                    illustrative rather than reproduced from the textbooks.
-                </p>
 
                 <hr />
 
