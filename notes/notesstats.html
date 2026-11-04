@@ -4899,14 +4899,13 @@ else:
                     We now apply hypothesis tests and confidence intervals to a specific inference problem:
                     estimating and testing a population mean \(\mu\) when the population standard deviation
                     \(\sigma&gt;0\) is <i>known independently of the current sample</i>. This leads to the
-                    <b>one-sample z-test</b> and the <b>z-confidence interval</b>. A genuinely known population
+                    <i>one-sample z-test</i> and the <i>z-confidence interval</i>. A genuinely known population
                     standard deviation is uncommon in observational work, but it may be defensible for a stable
                     measurement or manufacturing process with carefully validated historical variability. The model
                     is also a useful foundation for understanding inference when \(\sigma\) must be estimated.
                 </p>
 
                 <!-- ==================== Statistical Model and Sampling Distribution ==================== -->
-                <p><b>Model, parameter, and standard error.</b></p>
 
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (known-sigma normal-mean model).</b></p>
@@ -4956,7 +4955,6 @@ else:
                 </p>
 
                 <!-- ==================== Hypothesis Tests ==================== -->
-                <p><b>One-sided and two-sided z-tests.</b></p>
                 <p>
                     Let \(\Phi\) be the CDF of the standard normal distribution and \(z_q=\Phi^{-1}(q)\). For an
                     observed sample mean, define \[ z_{\mathrm{obs}}=\frac{\bar{x}-\mu_0}{\sigma/\sqrt{n}}. \] At
@@ -5006,7 +5004,6 @@ else:
                 </p>
 
                 <!-- ==================== Confidence Intervals ==================== -->
-                <p><b>Confidence interval for the population mean.</b></p>
 
                 <div class="stats-note stats-theorem">
                     <p class="stats-note-heading"><b>Theorem (known-sigma confidence interval).</b></p>
@@ -5058,40 +5055,40 @@ else:
                 </p>
 
                 <!-- ==================== Complete Worked Example ==================== -->
-                <p><b>Worked example: a package-filling process.</b></p>
+
                 <p>
+                    Let us work through a hypothetical example.
                     Suppose the fill weights of a manufacturing process are independent normal observations with a
                     separately calibrated standard deviation \(\sigma=12\) g. A random sample of \(n=36\) packages
                     has mean \(\bar{x}=505\) g. We want to determine whether the current population mean differs
-                    from the target \(\mu_0=500\) g, using a preselected level \(\alpha=0.05\). This is a
-                    hypothetical example, not a report of factory measurements.
+                    from the target \(\mu_0=500\) g, using a preselected level \(\alpha=0.05\).
                 </p>
 
                 <p>
-                    <b>Test statistic.</b> We specify \(H_0:\mu=500\) against \(H_1:\mu\neq500\). Then \[
+                    Let us compute the test statistic. We specify \(H_0:\mu=500\) against \(H_1:\mu\neq500\). Then \[
                     \operatorname{SE}(\overline{X})=\frac{12}{\sqrt{36}}=2\ \mathrm{g}, \qquad
                     z_{\mathrm{obs}}=\frac{505-500}{2}=2.50. \]
                 </p>
                 <p>
-                    <b>Critical-value approach.</b> The two-sided critical values are \(\pm
+                    Under the critical-value approach, the two-sided critical values are \(\pm
                     z_{0.975}\approx\pm1.960\), corresponding to the sample-mean rejection region \[
                     \bar{x}&lt;500-1.960(2)\approx496.08 \quad\text{or}\quad \bar{x}&gt;500+1.960(2)\approx503.92.
                     \] Since \(505&gt;503.92\), we reject \(H_0\).
                 </p>
                 <p>
-                    <b>p-value approach.</b> The two-sided p-value is \[ p=\mathbb{P}_{H_0}(|Z|\geq2.50)
+                    Under the p-value approach, the two-sided p-value is \[ p=\mathbb{P}_{H_0}(|Z|\geq2.50)
                     =2[1-\Phi(2.50)]\approx0.01242. \] The same decision follows because \(p&lt;0.05\).
                 </p>
                 <p>
-                    <b>Confidence interval and effect size.</b> The observed 95% confidence interval is \[
-                    505\pm1.960\cdot2\approx[501.08,508.92]\ \mathrm{g}. \] It excludes 500 g, agreeing with the
-                    test. The estimated difference is \(\bar{x}-\mu_0=5\) g. Whether this shift is operationally
+                    The observed 95% confidence interval is \[505\pm1.960\cdot2\approx[501.08,508.92]\ \mathrm{g}. \] 
+                    It excludes 500 g, agreeing with the test.
+                    The estimated difference is \(\bar{x}-\mu_0=5\) g. Whether this shift is operationally
                     important requires a practical tolerance, not merely a statistical threshold.
                 </p>
 
-                <!-- --- Experiment 41: test and interval from summary statistics --- -->
+                <!-- --- Experiment: test and interval from summary statistics --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 41: test and interval from summary statistics.</b>
+                    <b>Experiment: test and interval from summary statistics.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import norm
@@ -5120,15 +5117,11 @@ print(f"Left-sided p-value: {p_left:.6f}")
 print(f"95% CI: [{ci_low:.3f}, {ci_high:.3f}] g")
 print(f"Reject H0 at 5%: {p_two_sided &lt; alpha}")
 
-assert np.isclose(p_two_sided, 0.01241933065)
-assert (mu_0 &lt; ci_low) == (p_two_sided &lt; alpha)
-
 # Experiment: change the observed mean to 502 g.
 # How do the p-value and confidence interval change?
 </code></pre>
 
                 <!-- ==================== Other Alternatives and Small Samples ==================== -->
-                <p><b>Left-sided example and a small normal sample.</b></p>
                 <p>
                     Suppose \(X_i\overset{\mathrm{iid}}{\sim}N(\mu,8^2)\), and we wish to test \(H_0:\mu\geq40\)
                     against \(H_1:\mu&lt;40\). For \(n=64\) and \(\bar{x}=38\), we obtain \(z_{\mathrm{obs}}=-2\)
@@ -5143,8 +5136,8 @@ assert (mu_0 &lt; ci_low) == (p_two_sided &lt; alpha)
                     though \(n=4\). But four observations cannot establish that the assumptions are reasonable.
                 </p>
 
-                <!-- --- Experiment 42: directional tests and a small sample --- -->
-                <p class="stats-experiment-title"><b>Experiment 42: directional tests and a small sample.</b></p>
+                <!-- --- Experiment: directional tests and a small sample --- -->
+                <p class="stats-experiment-title"><b>Experiment: directional tests and a small sample.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import norm
 
@@ -5178,42 +5171,82 @@ print(f"Small-sample two-sided p-value: {p_small:.5f}")
 </code></pre>
 
                 <!-- ==================== Assumptions and Counterexample ==================== -->
-                <p><b>Assumptions and their consequences.</b></p>
+
+                <p>Let us go over the assumptions and their consequences.</p>
                 <ul>
                     <li>
-                        <b>Independently known \(\sigma\).</b> The standard deviation in the denominator must be
-                        justified independently of the current sample. Replacing it with the sample standard
-                        deviation \(s\) is a different statistical procedure, discussed in the next section.
+                        The population standard deviation \(\sigma\) must be known independently of the
+                        current sample. Replacing it with the sample standard deviation \(s\) requires
+                        a different statistical procedure, discussed in the next section.
                     </li>
                     <li>
-                        <b>Independent sampling.</b> Repeated measurements on one subject, clustered observations,
-                        and autocorrelated time series may not have variance \(\sigma^2/n\). Sampling without
-                        replacement from a finite population may require a finite-population correction or
-                        design-based analysis.
+                        The observations must be sampled independently. Repeated measurements on the same
+                        subject, clustered observations, and autocorrelated time series may not have a
+                        sample mean with variance \(\sigma^2/n\). Sampling without replacement from a
+                        finite population may require a finite-population correction or design-based analysis.
                     </li>
                     <li>
-                        <b>Normality or a justified approximation.</b> Independent normal observations yield an
-                        exact normal sampling distribution. Otherwise, use a CLT approximation only when its
-                        conditions and accuracy are plausible.
+                        The observations must be normally distributed, or a normal approximation must be
+                        justified. Independent normal observations yield an exact normal sampling
+                        distribution. Otherwise, a CLT approximation should be used only when its
+                        conditions are satisfied and its accuracy is reasonable.
                     </li>
                     <li>
-                        <b>Representative data and meaningful target.</b> Statistical calibration does not repair
-                        selection bias, missing-data bias, or an inappropriate reference value \(\mu_0\).
+                        The data must be representative of the population of interest, and the reference
+                        value \(\mu_0\) must be meaningful. Statistical calibration does not correct
+                        selection bias, missing-data bias, or an inappropriate reference value.
                     </li>
                 </ul>
 
                 <p>
-                    <b>Counterexample: using the wrong population standard deviation.</b>
-                    Suppose the observations really are normal with \(\sigma=12\), but a two-sided 5% z-test is
-                    performed with \(\sigma_{\mathrm{used}}=8\). Under the true null, the incorrectly standardized
-                    statistic has standard deviation \(12/8=1.5\), rather than 1. Its actual rejection probability
-                    is \[ 2\left[1-\Phi\!\left(z_{0.975}\frac{8}{12}\right)\right] \approx0.1913. \] Thus a nominal
-                    5% procedure rejects a true null about 19.1% of the time under this misspecification. The
-                    reliability of \(\sigma\) is central to the validity of the test.
+                    Suppose \(X_1,\ldots,X_n\) are independent and normally distributed
+                    with true population standard deviation \(\sigma=15\), but we perform
+                    a two-sided 5% z-test using the incorrect value \(\sigma_0=10\).
+                    Under \(H_0:\mu=\mu_0\), we know that
+                    \[
+                        \overline{X}\sim N\left(\mu_0,\frac{15^2}{n}\right).
+                    \]
+                    However, the test statistic is incorrectly calculated as
+                    \[
+                        Z=\frac{\overline{X}-\mu_0}{10/\sqrt{n}}.
+                    \]
+                    Its variance under the true null hypothesis is
+                    \[
+                        \begin{aligned}
+                        \operatorname{Var}(Z)
+                        &=\frac{\operatorname{Var}(\overline{X})}{10^2/n}\\
+                        &=\frac{15^2/n}{10^2/n}\\
+                        &=2.25.
+                        \end{aligned}
+                    \]
+                    Therefore, \(Z\sim N(0,2.25)\), so its standard deviation is
+                    \(1.5\), rather than \(1\).
                 </p>
 
-                <!-- --- Experiment 43: actual type I error under misspecification --- -->
-                <p class="stats-experiment-title"><b>Experiment 43: type I error when sigma is misspecified.</b></p>
+                <p>
+                    The two-sided test rejects \(H_0\) when \(|Z|>1.96\), assuming
+                    incorrectly that \(Z\sim N(0,1)\). To calculate the actual Type I
+                    error probability, we standardize using the true standard deviation
+                    of \(Z\):
+                    \[
+                        \begin{aligned}
+                        P_{H_0}(|Z|>1.96)
+                        &=P_{H_0}\left(\left|\frac{Z}{1.5}\right|>
+                        \frac{1.96}{1.5}\right)\\
+                        &=P_{H_0}(|W|>1.3067)\\
+                        &=2[1-\Phi(1.3067)]\\
+                        &\approx0.1913,
+                        \end{aligned}
+                    \]
+                    where \(W=Z/1.5\sim N(0,1)\).
+                    Thus, the nominal 5% test actually rejects a true null hypothesis
+                    approximately 19.1% of the time. The incorrect standard deviation
+                    makes the test statistic more variable than assumed, leading to
+                    substantially more false rejections.
+                </p>
+
+                <!-- --- Experiment: actual type I error under misspecification --- -->
+                <p class="stats-experiment-title"><b>Experiment: type I error when sigma is misspecified.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import norm
 
@@ -5250,7 +5283,7 @@ print(
 </code></pre>
 
                 <!-- ==================== Nonnormal Populations and the CLT ==================== -->
-                <p><b>What if the population is not normal?</b></p>
+
                 <p>
                     Consider independent observations from an exponential distribution with mean 1 and variance 1.
                     The population is strongly right-skewed, but \(\sqrt{n}(\overline{X}-1)\) approaches a standard
@@ -5258,9 +5291,9 @@ print(
                     sample size, and it does not rescue problems such as strong dependence or infinite variance.
                 </p>
 
-                <!-- --- Experiment 44: CLT accuracy for a skewed population --- -->
+                <!-- --- Experiment: CLT accuracy for a skewed population --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 44: normal approximation for skewed observations.</b>
+                    <b>Experiment: normal approximation for skewed observations.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -5297,7 +5330,7 @@ ax.legend()
 
 fig.tight_layout()
 fig.savefig(
-    "known_sigma_clt_comparison.png",
+    "../../images/known_sigma_clt_comparison.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -5310,23 +5343,22 @@ plt.show()
                     <img src="../images/known_sigma_clt_comparison.png"
                         alt="Distributions of standardized sample means for exponential observations and sample sizes 5 and 50"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Standardized sample means from a skewed population become approximately
                         normal as the sample size increases. Generated by Experiment 44.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Coverage of Confidence Intervals ==================== -->
-                <p><b>Repeated-sampling coverage of confidence intervals.</b></p>
                 <p>
                     The coverage statement for a 95% interval concerns repeated studies. With \(\mu=100\),
                     \(\sigma=10\), and \(n=25\), different samples produce different intervals. Most of these
                     intervals contain the same fixed population mean, but a small proportion do not.
                 </p>
 
-                <!-- --- Experiment 45: Monte Carlo coverage of z-intervals --- -->
+                <!-- --- Experiment: Monte Carlo coverage of z-intervals --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 45: coverage of known-sigma confidence intervals.</b>
+                    <b>Experiment: coverage of known-sigma confidence intervals.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -5368,7 +5400,7 @@ ax.legend()
 
 fig.tight_layout()
 fig.savefig(
-    "known_sigma_confidence_interval_coverage.png",
+    "../../images/known_sigma_confidence_interval_coverage.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -5382,41 +5414,134 @@ plt.show()
                     <img src="../images/known_sigma_confidence_interval_coverage.png"
                         alt="Forty simulated confidence intervals, some containing the fixed true mean and some missing it"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Each horizontal interval comes from a different random study. The dashed line
                         marks the fixed true mean; intervals missing that value are distinguished by color.
-                        Generated by Experiment 45.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Power and Sample-Size Design ==================== -->
-                <p><b>Power of a two-sided z-test.</b></p>
+
                 <p>
-                    Under a true population mean \(\mu\), the statistic computed relative to \(\mu_0\) has
-                    distribution \[ Z\sim N(\delta,1),\qquad \delta=\frac{\sqrt{n}(\mu-\mu_0)}{\sigma}. \] For a
-                    two-sided test with cutoff \(c=z_{1-\alpha/2}\), the power is \[ \begin{aligned} \pi(\mu)
-                    &amp;=\mathbb{P}_{\mu}(|Z|\geq c)\\ &amp;=\Phi(-c-\delta)+1-\Phi(c-\delta). \end{aligned} \] The
-                    formula follows by splitting the rejection region into two tails and standardizing with
-                    \(Z-\delta\sim N(0,1)\). At the null boundary, \(\delta=0\) and \(\pi(\mu_0)=\alpha\).
-                </p>
-                <p>
-                    In the package example, if the true mean is 505 g, then \(\delta=2.5\) for \(n=36\). At the 5%
-                    significance level, the probability of rejecting \(H_0\) is about \(0.7054\). This
-                    <i>power</i> is a property of a proposed sampling design at a specified alternative; it is not
-                    the posterior probability that the alternative is true.
+                    Consider the hypotheses
+                    \[
+                        H_0:\mu=\mu_0
+                        \qquad\text{against}\qquad
+                        H_1:\mu\neq\mu_0.
+                    \]
+                    Recall that the test statistic is
+                    \[
+                        Z=\frac{\bar{X}-\mu_0}{\sigma/\sqrt{n}}.
+                    \]
+                    Under the true population mean \(\mu\), we can rewrite it as
+                    \[
+                        Z=
+                        \frac{\bar{X}-\mu}{\sigma/\sqrt{n}}
+                        +\frac{\mu-\mu_0}{\sigma/\sqrt{n}}.
+                    \]
+                    Since the first term follows \(N(0,1)\), the statistic has distribution
+                    \[
+                        Z\sim N(\delta,1),
+                        \qquad
+                        \delta=\frac{\sqrt{n}(\mu-\mu_0)}{\sigma}.
+                    \]
+                    Thus, when \(\mu\neq\mu_0\), the statistic is still normally distributed
+                    with variance \(1\), but its mean is \(\delta\) rather than \(0\).
                 </p>
 
                 <p>
-                    To plan for a meaningful difference \(\Delta=|\mu_1-\mu_0|&gt;0\) and target power \(1-\beta\),
-                    a useful approximation to the required sample size is \[ n\approx\left(
-                    \frac{\sigma(z_{1-\alpha/2}+z_{1-\beta})}{\Delta} \right)^2. \] For \(\sigma=12\), \(\Delta=5\),
-                    \(\alpha=0.05\), and 80% target power, this gives \(n\approx45.21\), suggesting 46 observations
-                    after rounding upward. Since the approximation neglects the opposite rejection tail, the exact
-                    normal-model power should be checked for the final integer \(n\).
+                    For a two-sided test at significance level \(\alpha\), let
+                    \(c=z_{1-\alpha/2}\). We reject \(H_0\) when \(Z\leq-c\) or
+                    \(Z\geq c\). Therefore, the power at a true mean \(\mu\) is
+                    \[
+                        \begin{aligned}
+                        \pi(\mu)
+                        &amp;=\mathbb{P}_{\mu}(|Z|\geq c)\\
+                        &amp;=\mathbb{P}_{\mu}(Z\leq-c)
+                        +\mathbb{P}_{\mu}(Z\geq c).
+                        \end{aligned}
+                    \]
+                    Since \(Z-\delta\sim N(0,1)\), standardizing each tail gives
+                    \[
+                        \begin{aligned}
+                        \pi(\mu)
+                        &amp;=\mathbb{P}_{\mu}(Z-\delta\leq-c-\delta)
+                        +\mathbb{P}_{\mu}(Z-\delta\geq c-\delta)\\
+                        &amp;=\Phi(-c-\delta)+1-\Phi(c-\delta).
+                        \end{aligned}
+                    \]
+                    Under \(H_0\), we have \(\mu=\mu_0\), so \(\delta=0\).
+                    Consequently, \(\pi(\mu_0)=2[1-\Phi(c)]=\alpha\).
                 </p>
 
-                <!-- --- Experiment 46: power and sample-size planning --- -->
-                <p class="stats-experiment-title"><b>Experiment 46: power and sample-size planning.</b></p>
+                <p>
+                    In the package example, suppose the true population mean is
+                    \(\mu=505\,\mathrm{g}\), while \(\mu_0=500\,\mathrm{g}\),
+                    \(\sigma=12\,\mathrm{g}\), and \(n=36\). Then
+                    \[
+                        \delta=\frac{\sqrt{36}(505-500)}{12}
+                        =\frac{6\cdot5}{12}=2.5.
+                    \]
+                    At the 5% significance level, \(c=z_{0.975}\approx1.96\).
+                    Hence,
+                    \[
+                        \begin{aligned}
+                        \pi(505)
+                        &amp;=\Phi(-1.96-2.5)+1-\Phi(1.96-2.5)\\
+                        &amp;=\Phi(-4.46)+1-\Phi(-0.54)\\
+                        &amp;\approx0.7054.
+                        \end{aligned}
+                    \]
+                    Thus, approximately \(70.5\%\) of repeated studies would reject
+                    \(H_0\) if the true mean were \(505\,\mathrm{g}\). This power is
+                    a property of the sampling design at a specified alternative,
+                    not the probability that the alternative hypothesis is true.
+                </p>
+
+                <p>
+                    We can also use the power function to approximate the sample size
+                    needed to detect a meaningful difference
+                    \(\Delta=|\mu_1-\mu_0|>0\) with target power \(1-\beta\).
+                    Because the test is symmetric, consider \(\mu_1>\mu_0\), so that
+                    \(\delta=\Delta\sqrt{n}/\sigma\). Neglecting the small probability
+                    of rejection in the opposite tail gives
+                    \[
+                        1-\Phi\left(c-\frac{\Delta\sqrt{n}}{\sigma}\right)
+                        \approx1-\beta.
+                    \]
+                    Rearranging and using \(z_\beta=-z_{1-\beta}\), we obtain
+                    \[
+                        c-\frac{\Delta\sqrt{n}}{\sigma}
+                        \approx-z_{1-\beta},
+                    \]
+                    and therefore
+                    \[
+                        n\approx
+                        \left(
+                            \frac{\sigma(z_{1-\alpha/2}+z_{1-\beta})}{\Delta}
+                        \right)^2.
+                    \]
+                </p>
+
+                <p>
+                    For \(\sigma=12\), \(\Delta=5\), \(\alpha=0.05\), and
+                    80% target power, we obtain
+                    \[
+                        \begin{aligned}
+                        n
+                        &amp;\approx
+                        \left(\frac{12(1.96+0.8416)}{5}\right)^2\\
+                        &amp;\approx45.21.
+                        \end{aligned}
+                    \]
+                    Rounding upward gives \(n=46\). Substituting this value into
+                    the exact two-sided power function gives approximately \(0.8068\),
+                    or \(80.7\%\) power. The exact power should always be checked
+                    because the sample-size formula neglects the opposite rejection tail.
+                </p>
+
+                <!-- --- Experiment: power and sample-size planning --- -->
+                <p class="stats-experiment-title"><b>Experiment: power and sample-size planning.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
@@ -5470,7 +5595,7 @@ ax.grid(alpha=0.25)
 
 fig.tight_layout()
 fig.savefig(
-    "known_sigma_power_sample_size.png",
+    "../../images/known_sigma_power_sample_size.png",
     dpi=180,
     bbox_inches="tight"
 )
@@ -5483,14 +5608,13 @@ plt.show()
                     <img src="../images/known_sigma_power_sample_size.png"
                         alt="Power of a two-sided z-test increasing with sample size, showing an 80 percent power target"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> The probability of detecting a five-gram departure increases with sample size
-                        when the model, significance level, and effect size are fixed. Generated by Experiment 46.
+                        when the model, significance level, and effect size are fixed.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== The SOGA-Py Example and a Modeling Caveat ==================== -->
-                <p><b>Application: interpreting the SOGA-Py student-weight example.</b></p>
                 <p>
                     The original SOGA-Py material considers a mean-weight comparison using its
                     <i>students</i> dataset and a reference value of 70.8 kg. It is tempting to treat the standard
@@ -5501,9 +5625,9 @@ plt.show()
                     or European adults.
                 </p>
 
-                <!-- --- Experiment 47: illustrative z-calculation using SOGA-Py --- -->
+                <!-- --- Experiment: illustrative z-calculation using SOGA-Py --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 47: illustrative z-calculation with student weights.</b>
+                    <b>Experiment: illustrative z-calculation with student weights.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
@@ -5532,9 +5656,6 @@ print(f"Recorded-dataset SD: {sigma_from_dataset:.3f}")
 print(f"Subsample mean: {sample_mean:.3f}")
 print(f"Illustrative z: {z_illustrative:.3f}")
 print(f"Illustrative two-sided p-value: {p_illustrative:.4f}")
-
-# This is NOT an independently calibrated known-sigma test.
-# Next section: infer a mean when sigma must be estimated.
 </code></pre>
 
                 <p>
@@ -5543,8 +5664,8 @@ print(f"Illustrative two-sided p-value: {p_illustrative:.4f}")
                     population and study design; changing the test statistic does not remove sampling bias.
                 </p>
 
-                <!-- ==================== Reporting and Exercises ==================== -->
-                <p><b>Reporting a known-sigma mean analysis.</b></p>
+                <!-- ==================== Reporting ==================== -->
+
                 <p>
                     A good report identifies the population, the parameter and reference value, the source of the
                     known standard deviation, the sample size, the observed mean, the estimated effect, the test
@@ -5555,45 +5676,6 @@ print(f"Illustrative two-sided p-value: {p_illustrative:.4f}")
                         500 g gave z = 2.50 and p = 0.0124. The 95% confidence interval for the mean was [501.08,
                         508.92] g.</i>
                     Practical acceptability of the deviation is a separate decision.
-                </p>
-
-                <p><b>Exercises with solutions.</b></p>
-                <p>
-                    <b>Exercise 1 (deriving the statistic).</b> Suppose nine independent normal observations have
-                    known \(\sigma=4\) and observed mean \(\bar{x}=12\). Test \(H_0:\mu=10\) against
-                    \(H_1:\mu\neq10\) at the 5% level. <i>Solution.</i> The standard error is \(4/3\), so \(z=1.5\)
-                    and \(p=2[1-\Phi(1.5)]\approx0.1336\). We fail to reject.
-                </p>
-                <p>
-                    <b>Exercise 2 (direction matters).</b> If \(z_{\mathrm{obs}}=-2.1\), find the left-sided,
-                    right-sided, and two-sided p-values. <i>Solution.</i> They are \(\Phi(-2.1)\approx0.01786\),
-                    \(1-\Phi(-2.1)\approx0.98214\), and \(2\Phi(-2.1)\approx0.03573\), respectively.
-                </p>
-                <p>
-                    <b>Exercise 3 (confidence interval).</b> Suppose \(n=25\), \(\sigma=10\), and \(\bar{x}=52\).
-                    Construct a 95% confidence interval and test \(H_0:\mu=50\) against a two-sided alternative.
-                    <i>Solution.</i> The standard error is 2, giving an interval
-                    \(52\pm1.960(2)\approx[48.08,55.92]\). Since 50 lies inside, the two-sided 5% test does not
-                    reject.
-                </p>
-                <p>
-                    <b>Exercise 4 (wrong standard deviation).</b> A two-sided 5% z-test uses \(\sigma=8\) although
-                    the true value is 12. Compute its actual type I error probability under a normal null.
-                    <i>Solution.</i> It is \(2[1-\Phi(z_{0.975}\cdot8/12)]\approx0.1913\), not 0.05.
-                </p>
-                <p>
-                    <b>Exercise 5 (designing for power).</b> Suppose \(\sigma=12\), \(\Delta=5\), \(\alpha=0.05\),
-                    and the target power is 80%. Approximate the required \(n\) and verify it using the exact power
-                    function. <i>Solution.</i> The approximation gives \(n\approx45.21\). The smallest integer
-                    achieving at least 80% exact power is 46, with power approximately 0.8068.
-                </p>
-
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Chapter 9, especially the treatment of
-                    hypothesis testing and the normal-mean model; OpenIntro Statistics (4th ed.), Chapters 5 and 7,
-                    for inference and standard errors; and SOGA-Py, <i>Sigma Is Known</i>, for the original applied
-                    example. The normal CDF, survival-function, and quantile methods used in the experiments are
-                    documented in the SciPy probability-distribution tutorial.
                 </p>
 
                 <hr />
