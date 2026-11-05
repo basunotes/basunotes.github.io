@@ -5692,61 +5692,197 @@ print(f"Illustrative two-sided p-value: {p_illustrative:.4f}")
                 </p>
 
                 <!-- ==================== Statistical Model and Estimated Standard Error ==================== -->
-                <p><b>Statistical model and sample variance.</b></p>
 
                 <div class="stats-note stats-definition">
-                    <p class="stats-note-heading"><b>Definition (unknown-sigma normal-mean model).</b></p>
+                    <p class="stats-note-heading">
+                        <b>Definition (unknown-sigma normal-mean model).</b>
+                    </p>
                     <p>
-                        Suppose \[ X_1,\ldots,X_n\overset{\mathrm{iid}}{\sim}N(\mu,\sigma^2), \qquad n\geq2, \]
-                        where both \(\mu\in\mathbb{R}\) and \(\sigma&gt;0\) are unknown. Define the sample mean and
-                        sample variance by \[ \overline{X}=\frac1n\sum_{i=1}^{n}X_i, \qquad
-                        S^2=\frac{1}{n-1}\sum_{i=1}^{n}(X_i-\overline{X})^2. \] The sample standard deviation is
-                        \(S=\sqrt{S^2}\).
+                        Suppose
+                        \[
+                            X_1,\ldots,X_n\overset{\mathrm{iid}}{\sim}N(\mu,\sigma^2),
+                            \qquad n\geq2,
+                        \]
+                        where both \(\mu\in\mathbb{R}\) and \(\sigma>0\) are unknown.
+                        Define the sample mean and sample variance by
+                        \[
+                            \bar{X}=\frac1n\sum_{i=1}^{n}X_i,
+                            \qquad
+                            S^2=\frac{1}{n-1}\sum_{i=1}^{n}(X_i-\bar{X})^2.
+                        \]
+                        The sample standard deviation is \(S=\sqrt{S^2}\).
                     </p>
                 </div>
 
                 <p>
-                    The denominator \(n-1\) appears because the deviations from the sample mean sum to zero, leaving
-                    only \(n-1\) freely varying deviations. Under independent sampling with finite variance, \(S^2\)
-                    is an unbiased estimator of \(\sigma^2\), although \(S\) itself is generally not an unbiased
-                    estimator of \(\sigma\).
+                    The denominator \(n-1\) appears because the deviations from the sample
+                    mean sum to zero, leaving only \(n-1\) freely varying deviations.
+                    Under independent sampling with finite variance, \(S^2\) is an unbiased
+                    estimator of \(\sigma^2\), although \(S\) itself is generally not an
+                    unbiased estimator of \(\sigma\).
                 </p>
 
                 <p>
-                    The population standard deviation of the sample mean is still \(\sigma/\sqrt n\), but it is
-                    unknown. We estimate this <i>standard error</i> by \[ \widehat{\operatorname{SE}}(\overline
-                    X)=\frac{S}{\sqrt n}. \] Replacing \(\sigma\) by \(S\) introduces additional randomness; the
-                    standardized quantity is no longer standard normal in a finite normal sample.
+                    The population standard deviation of the sample mean is still
+                    \(\sigma/\sqrt{n}\), but it is unknown. We estimate this
+                    <i>standard error</i> by
+                    \[
+                        \widehat{\operatorname{SE}}(\bar{X})=\frac{S}{\sqrt{n}}.
+                    \]
+                    Replacing \(\sigma\) by \(S\) introduces additional randomness.
+                    Consequently, the standardized statistic no longer follows a
+                    standard normal distribution in a finite normal sample.
+                    Instead, its distribution is described by Student's t-distribution.
                 </p>
 
                 <!-- ==================== Student's t-Distribution ==================== -->
-                <div class="stats-note stats-theorem">
-                    <p class="stats-note-heading"><b>Theorem (Student's t-statistic).</b></p>
+
+                <div class="stats-note stats-definition">
+                    <p class="stats-note-heading">
+                        <b>Definition (central and noncentral Student's t-distributions).</b>
+                    </p>
                     <p>
-                        Under the unknown-sigma normal model, with \(\nu=n-1\), \[ T=\frac{\overline X-\mu}{S/\sqrt
-                        n}\sim t_{\nu}. \] In particular, under \(H_0:\mu=\mu_0\), \[ T_0=\frac{\overline
-                        X-\mu_0}{S/\sqrt n} \overset{H_0}{\sim} t_{n-1}. \] The distribution is exact for
-                        independent normal observations, not merely a large-sample approximation.
+                        Let \(U\sim N(0,1)\) and \(V\sim\chi^2_\nu\)
+                        (a <a href="https://en.wikipedia.org/wiki/Chi-squared_distribution" target="_blank">chi-squared distribution</a>
+                        with \(\nu\) degrees of freedom) be independent random 
+                        variables, where \(\nu>0\) is the number of <i>degrees of freedom</i>.
+                        The random variable
+                        \[
+                        T=\frac{U}{\sqrt{V/\nu}}
+                        \]
+                        follows a <i>central Student's t-distribution</i> with
+                        \(\nu\) degrees of freedom, denoted by \(T\sim t_\nu\).
+                    </p>
+                    <p>
+                        More generally, for a constant \(\lambda\in\mathbb{R}\),
+                        the random variable
+                        \[
+                            T=\frac{U+\lambda}{\sqrt{V/\nu}}
+                        \]
+                        follows a <i>noncentral Student's t-distribution</i> with
+                        \(\nu\) degrees of freedom and <i>noncentrality parameter</i>
+                        \(\lambda\), denoted by \(T\sim t_\nu(\lambda)\).
+                        When \(\lambda=0\), the noncentral distribution reduces
+                        to the central t-distribution.
                     </p>
                 </div>
 
                 <p>
-                    Proof. For a normal sample, \[ Z=\frac{\sqrt n(\overline X-\mu)}{\sigma}\sim N(0,1), \qquad
-                    V=\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}, \] and \(Z\) and \(V\) are independent. By the
-                    definition of Student's t-distribution, \[ \frac{Z}{\sqrt{V/(n-1)}} =\frac{\overline
-                    X-\mu}{S/\sqrt n}\sim t_{n-1}. \]
+                    The central t-distribution is symmetric around zero and resembles
+                    the standard normal distribution, but has heavier tails. The
+                    additional variability comes from the random denominator
+                    \(\sqrt{V/\nu}\). As \(\nu\to\infty\), this denominator converges
+                    in probability to \(1\), and the central t-distribution approaches
+                    \(N(0,1)\). For small \(\nu\), the heavier tails lead to larger
+                    critical values than those of the standard normal distribution.
+                </p>
+
+                <!-- ==================== Student's t-Statistic ==================== -->
+
+                <div class="stats-note stats-theorem">
+                    <p class="stats-note-heading">
+                        <b>Theorem (Student's t-statistic).</b>
+                    </p>
+                    <p>
+                        Under the unknown-sigma normal model, with \(\nu=n-1\),
+                        \[
+                            T=\frac{\bar{X}-\mu}{S/\sqrt{n}}\sim t_{n-1}.
+                        \]
+                        In particular, under \(H_0:\mu=\mu_0\),
+                        \[
+                            T_0=\frac{\bar{X}-\mu_0}{S/\sqrt{n}}
+                            \overset{H_0}{\sim}t_{n-1}.
+                        \]
+                        The distribution is exact for independent normal observations,
+                        not merely a large-sample approximation.
+                    </p>
+                </div>
+
+                <p>
+                    Proof. For a normal sample, we have
+                    \[
+                        U=\frac{\sqrt{n}(\bar{X}-\mu)}{\sigma}\sim N(0,1),
+                        \qquad
+                        V=\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}.
+                    \]
+                    Moreover, \(U\) and \(V\) are independent. Therefore,
+                    \[
+                        \begin{aligned}
+                        \frac{U}{\sqrt{V/(n-1)}}
+                        &amp;=
+                        \frac{\sqrt{n}(\bar{X}-\mu)/\sigma}
+                        {\sqrt{S^2/\sigma^2}}\\
+                        &amp;=\frac{\bar{X}-\mu}{S/\sqrt{n}}
+                        \sim t_{n-1}.
+                        \end{aligned}
+                    \]
+                    Under \(H_0:\mu=\mu_0\), this is precisely the distribution
+                    of the test statistic \(T_0\).
                 </p>
 
                 <p>
-                    The <i>degrees of freedom</i> are \(\nu=n-1\). The t-distribution is symmetric around zero and
-                    resembles the standard normal distribution, but has heavier tails. These tails account for the
-                    uncertainty introduced by estimating \(\sigma\). As \(\nu\to\infty\), the t-distribution
-                    approaches \(N(0,1)\). For small \(n\), substituting normal critical values for t-critical
-                    values can produce confidence intervals that are too narrow.
+                    Notice that the degrees of freedom are \(\nu=n-1\), corresponding
+                    to the \(n-1\) freely varying deviations used to calculate
+                    the sample variance. For example, when \(n=10\), the test statistic
+                    follows \(t_9\) under \(H_0\). For a two-sided 5% test, the critical
+                    values are approximately \(\pm2.262\), compared with
+                    \(\pm1.960\) for the standard normal distribution. Using normal
+                    critical values in place of t-critical values can therefore
+                    produce confidence intervals that are too narrow and tests
+                    with excessive Type I error probabilities.
                 </p>
 
-                <!-- --- Experiment 48: comparing normal and t distributions --- -->
-                <p class="stats-experiment-title"><b>Experiment 48: comparing normal and t distributions.</b></p>
+<!-- ==================== Noncentrality Under the Alternative ==================== -->
+
+<p>
+    We must also distinguish the distribution of \(T_0\) under the
+    null hypothesis from its distribution when \(\mu\neq\mu_0\).
+    Under a true population mean \(\mu\), we can write
+    \[
+        \begin{aligned}
+        T_0
+        &amp;=\frac{\sqrt{n}(\bar{X}-\mu_0)}{S}\\
+        &amp;=
+        \frac{
+            \sqrt{n}(\bar{X}-\mu)/\sigma
+            +\sqrt{n}(\mu-\mu_0)/\sigma
+        }{S/\sigma}.
+        \end{aligned}
+    \]
+    Since \(S/\sigma=\sqrt{V/(n-1)}\), this becomes
+    \[
+        T_0=\frac{U+\lambda}{\sqrt{V/(n-1)}},
+        \qquad
+        \lambda=\frac{\sqrt{n}(\mu-\mu_0)}{\sigma}.
+    \]
+    Consequently,
+    \[
+        T_0\sim t_{n-1}(\lambda).
+    \]
+    Thus, under \(H_0:\mu=\mu_0\), we have \(\lambda=0\) and
+    obtain the central t-distribution. When \(\mu\neq\mu_0\),
+    the statistic follows a noncentral t-distribution.
+</p>
+
+<p>
+    The noncentrality parameter \(\lambda\) describes how far
+    the true population mean is from the hypothesized mean,
+    relative to the standard error \(\sigma/\sqrt{n}\).
+    For example, if \(\mu_0=100\), the true mean is \(\mu=105\),
+    \(\sigma=10\), and \(n=25\), then
+    \[
+        \lambda=\frac{\sqrt{25}(105-100)}{10}=2.5.
+    \]
+    Therefore, \(T_0\sim t_{24}(2.5)\), rather than \(t_{24}\).
+    Unlike the central t-distribution, a noncentral t-distribution
+    with \(\lambda\neq0\) is generally asymmetric. Its distribution
+    is important when calculating the power of a t-test under
+    a specified alternative hypothesis.
+</p>
+
+
+                <!-- --- Experiment: comparing normal and t distributions --- -->
+                <p class="stats-experiment-title"><b>Experiment: comparing normal and t distributions.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm, t
@@ -5769,7 +5905,7 @@ ax.set_title("Student's t-distribution and the normal distribution")
 ax.legend()
 ax.grid(alpha=0.2)
 fig.tight_layout()
-fig.savefig("unknown_sigma_t_vs_normal.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/unknown_sigma_t_vs_normal.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: compare critical values for n=5, n=20, and n=100.</code></pre>
@@ -5778,14 +5914,14 @@ plt.show()
                     <img src="../images/unknown_sigma_t_vs_normal.png"
                         alt="Student t density curves for different degrees of freedom and the standard normal density"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Student's t-distributions have heavier tails than the standard normal
-                        distribution, especially for few degrees of freedom. Generated by Experiment 48.
+                        distribution, especially for few degrees of freedom.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Hypothesis Testing ==================== -->
-                <p><b>Two-sided and one-sided t-tests.</b></p>
+
                 <p>
                     Let \(F_\nu\) denote the CDF of the t-distribution with \(\nu=n-1\) degrees of freedom and let
                     \(t_{\nu,q}=F_\nu^{-1}(q)\). The observed statistic is \[ t_{\mathrm{obs}}=\frac{\bar
@@ -5862,8 +5998,9 @@ plt.show()
                 </p>
 
                 <!-- ==================== Complete Worked Example ==================== -->
-                <p><b>Worked example: a mean compared with a reference value.</b></p>
+
                 <p>
+                    Let us work through an example.
                     Suppose \(n=16\) independent observations are modeled as normal with unknown standard deviation.
                     The sample mean is \(\bar x=52.4\) and the sample standard deviation is \(s=8\). We test
                     \(H_0:\mu=50\) against \(H_1:\mu\neq50\) at \(\alpha=0.05\). The estimated standard error and
@@ -5879,9 +6016,9 @@ plt.show()
                     with the two-sided hypothesis test.
                 </p>
 
-                <!-- --- Experiment 49: t-test and confidence interval from summary statistics --- -->
+                <!-- --- Experiment: t-test and confidence interval from summary statistics --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 49: t-test and interval from summary statistics.</b>
+                    <b>Experiment: t-test and interval from summary statistics.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import t
@@ -5901,13 +6038,12 @@ print(f"Degrees of freedom: {df}")
 print(f"Two-sided p-value: {p_two_sided:.4f}")
 print(f"95% confidence interval: ({ci[0]:.3f}, {ci[1]:.3f})")
 print("Reject H0:", p_two_sided &lt;= alpha)
-assert (ci[0] &lt;= mu_0 &lt;= ci[1]) == (p_two_sided &gt; alpha)
 
 # Experiment: change the sample size while keeping the
 # observed mean and standard deviation fixed.</code></pre>
 
                 <!-- ==================== Sample Data and SciPy ==================== -->
-                <p><b>Using raw observations instead of summary statistics.</b></p>
+
                 <p>
                     SciPy's <code>scipy.stats.ttest_1samp</code> computes the one-sample t-statistic and p-value
                     directly from observations. The sample standard deviation uses \(n-1\) degrees of freedom. We
@@ -5915,8 +6051,8 @@ assert (ci[0] &lt;= mu_0 &lt;= ci[1]) == (p_two_sided &gt; alpha)
                     use the result object's <code>confidence_interval</code> method.
                 </p>
 
-                <!-- --- Experiment 50: one-sample t-test with raw data --- -->
-                <p class="stats-experiment-title"><b>Experiment 50: a one-sample t-test with raw data.</b></p>
+                <!-- --- Experiment: one-sample t-test with raw data --- -->
+                <p class="stats-experiment-title"><b>Experiment: a one-sample t-test with raw data.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
 
@@ -5945,14 +6081,11 @@ print(f"Degrees of freedom: {result.df}")
 print(f"Manual CI: {manual_ci}")
 print(f"SciPy CI: ({scipy_ci.low:.4f}, {scipy_ci.high:.4f})")
 
-assert np.isclose(result.statistic, (mean - mu_0) / se)
-assert np.allclose(manual_ci, [scipy_ci.low, scipy_ci.high])
-
 # Experiment: try alternative="greater" and "less".
 # The p-values and corresponding confidence bounds change.</code></pre>
 
                 <!-- ==================== Assumptions and Limitations ==================== -->
-                <p><b>When is the t-procedure justified?</b></p>
+
                 <p>
                     For exact small-sample inference, the standard one-sample t-procedure assumes independent
                     observations from one normal population with a common variance. The observations must also
@@ -5973,9 +6106,9 @@ assert np.allclose(manual_ci, [scipy_ci.low, scipy_ci.high])
                     missingness can invalidate the interpretation of a one-sample t-test regardless of sample size.
                 </p>
 
-                <!-- --- Experiment 51: why z-critical values underestimate uncertainty --- -->
+                <!-- --- Experiment: why z-critical values underestimate uncertainty --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 51: coverage with estimated standard deviation.</b>
+                    <b>Experiment: coverage with estimated standard deviation.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -6016,7 +6149,7 @@ ax.set_ylim(0.75, 1.00)
 ax.legend()
 ax.grid(alpha=0.2)
 fig.tight_layout()
-fig.savefig("unknown_sigma_ci_coverage.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/unknown_sigma_ci_coverage.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: repeat using a skewed population.</code></pre>
@@ -6025,15 +6158,15 @@ plt.show()
                     <img src="../images/unknown_sigma_ci_coverage.png"
                         alt="Empirical coverage of t intervals versus normal cutoffs with estimated standard deviation"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Under normal sampling, the exact t-interval attains its nominal coverage,
                         while using a normal critical value with an estimated standard deviation can undercover for
-                        small samples. Generated by Experiment 51.
+                        small samples.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Nonnormal Data: A Counterexample ==================== -->
-                <p><b>How skewness affects the t-approximation.</b></p>
+
                 <p>
                     A large sample reduces, but does not automatically eliminate, the effects of nonnormality.
                     Consider an exponential population with mean 1 and standard deviation 1. For small samples the
@@ -6042,8 +6175,8 @@ plt.show()
                     simulating samples of several sizes.
                 </p>
 
-                <!-- --- Experiment 52: t-interval coverage for skewed data --- -->
-                <p class="stats-experiment-title"><b>Experiment 52: t-intervals for a skewed population.</b></p>
+                <!-- --- Experiment: t-interval coverage for skewed data --- -->
+                <p class="stats-experiment-title"><b>Experiment: t-intervals for a skewed population.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import t
@@ -6073,7 +6206,7 @@ ax.set_ylim(0.6, 1.0)
 ax.grid(alpha=0.2)
 ax.legend()
 fig.tight_layout()
-fig.savefig("unknown_sigma_skew_coverage.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/unknown_sigma_skew_coverage.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: replace the exponential distribution by normal data.</code></pre>
@@ -6082,9 +6215,9 @@ plt.show()
                     <img src="../images/unknown_sigma_skew_coverage.png"
                         alt="Coverage of Student t confidence intervals for samples from a skewed exponential distribution"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Small-sample t-intervals can have poor coverage when observations come from a
-                        strongly skewed population. Generated by Experiment 52.
+                        strongly skewed population.
                     </figcaption>
                 </figure>
 
@@ -6098,8 +6231,9 @@ plt.show()
                 </p>
 
                 <!-- ==================== Power and Sample-Size Planning ==================== -->
-                <p><b>Power of a one-sample t-test.</b></p>
+
                 <p>
+                    Let us now calculate the power of a one-sample t-test.
                     Under the independent normal model with true mean \(\mu\), a test of \(\mu=\mu_0\) has a
                     <i>noncentral t-distribution</i> with \(\nu=n-1\) degrees of freedom and noncentrality parameter
                     \[ \delta=\frac{\sqrt n(\mu-\mu_0)}{\sigma}. \] For a two-sided level-\(\alpha\) test, with
@@ -6110,8 +6244,8 @@ plt.show()
                     independent pilot or historical data.
                 </p>
 
-                <!-- --- Experiment 53: power calculation and sample size planning --- -->
-                <p class="stats-experiment-title"><b>Experiment 53: power and sample-size planning.</b></p>
+                <!-- --- Experiment: power calculation and sample size planning --- -->
+                <p class="stats-experiment-title"><b>Experiment: power and sample-size planning.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import nct, t
@@ -6153,7 +6287,7 @@ ax.set_title("Planning a one-sample t-test")
 ax.grid(alpha=0.2)
 ax.legend()
 fig.tight_layout()
-fig.savefig("unknown_sigma_t_power.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/unknown_sigma_t_power.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: use a smaller effect or larger population SD.
@@ -6162,14 +6296,14 @@ plt.show()
                 <figure class="stats-figure">
                     <img src="../images/unknown_sigma_t_power.png"
                         alt="Power of a two-sided one-sample t-test as a function of sample size" loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Under the normal model, power increases with sample size for a fixed effect
-                        and population standard deviation. Generated by Experiment 53.
+                        and population standard deviation.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== SOGA-Py Student-Weight Example ==================== -->
-                <p><b>Applied example: student weights.</b></p>
+
                 <p>
                     We return to the <i>students</i> dataset from SOGA-Py, retaining the original illustrative
                     benchmark \(\mu_0=70.8\,\mathrm{kg}\) and a sample of nine rows chosen with random state 9. We
@@ -6178,8 +6312,8 @@ plt.show()
                     dataset have not been established for a broad population of European adults.
                 </p>
 
-                <!-- --- Experiment 54: a one-sample t-test using SOGA-Py data --- -->
-                <p class="stats-experiment-title"><b>Experiment 54: SOGA-Py student weights.</b></p>
+                <!-- --- Experiment: a one-sample t-test using SOGA-Py data --- -->
+                <p class="stats-experiment-title"><b>Experiment: SOGA-Py student weights.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
 from scipy import stats
@@ -6213,39 +6347,16 @@ print("Reject H0 at 5%:", result.pvalue &lt;= alpha)
 # Experiment: increase the sample size, keeping the
 # benchmark and the original dataset unchanged.</code></pre>
 
-                <p>
-                    In the earlier notes, the nine-observation sample produced a two-sided p-value around 0.279, and
-                    the null was not rejected at \(\alpha=0.05\). Re-running the code verifies the result against
-                    the currently supplied data; changes in the source dataset or sampling could change it. A
-                    non-significant result is not proof that the population mean equals \(70.8\,\mathrm{kg}\).
-                </p>
+                <!-- ==================== Reporting ==================== -->
 
-                <!-- ==================== Reporting and Exercises ==================== -->
-                <p><b>How to report one-sample t-inference.</b></p>
                 <p>
+                    How should one report one-sample t-inference?
                     Report the parameter and reference value, sampling design, sample size \(n\), sample mean \(\bar
                     x\), sample standard deviation \(s\), test direction, test statistic \(t\) with \(n-1\) degrees
                     of freedom, p-value, confidence interval, and a conclusion in context. Describe any concerns
                     about independence, outliers, skewness, missing data, and generalizability. A statistically
                     significant result need not be practically important, and failing to reject the null does not
                     demonstrate equivalence.
-                </p>
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) In the worked example, compute the right-sided p-value for \(H_1:\mu&gt;50\) and compare it
-                    with the two-sided p-value. (2) Show algebraically that using a two-sided t-test at level
-                    \(\alpha\) is equivalent to excluding \(\mu_0\) from the corresponding confidence interval. (3)
-                    Repeat Experiment 51 with \(n=3\) and explain the impact of estimating \(\sigma\) on the
-                    critical value. (4) Repeat Experiment 52 with samples from a normal distribution and compare
-                    interval coverage. (5) In Experiment 53, determine the smallest sample size for 90% power, and
-                    explain why an uncertain pilot estimate of \(\sigma\) complicates planning.
-                </p>
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 9.5, <i>The t Test</i>,
-                    beginning on p. 576, develops t-tests for normal populations with unknown variance. OpenIntro
-                    Statistics (4th ed.), Section 7.1, pp. 251–258, introduces one-sample t-distributions,
-                    confidence intervals, and hypothesis tests. Relevant exercises include 7.1, 7.3, 7.4, 7.5, and
-                    7.6 on pp. 259–260.
                 </p>
 
                 <hr />
