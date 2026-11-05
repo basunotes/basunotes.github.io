@@ -6362,6 +6362,7 @@ print("Reject H0 at 5%:", result.pvalue &lt;= alpha)
                 <hr />
 
                 <!-- ========================= MAIN SECTION 10: Inference for Two Independent Population Means with Equal Standard Deviations ========================= -->
+
                 <span id="TwoPopulationMeansEqualSD"><b>Inference for Two Independent Population Means with Equal
                         Standard Deviations</b></span>
 
@@ -6374,7 +6375,6 @@ print("Reject H0 at 5%:", result.pvalue &lt;= alpha)
                 </p>
 
                 <!-- ==================== Independent Samples and the Statistical Model ==================== -->
-                <p><b>Independent versus paired samples.</b></p>
                 <p>
                     Two samples are independent when observations in one group do not determine or directly
                     correspond to observations in the other. For example, randomly selected individuals assigned to
@@ -6475,7 +6475,7 @@ print("Reject H0 at 5%:", result.pvalue &lt;= alpha)
                 </p>
 
                 <!-- ==================== Hypothesis Tests and Confidence Intervals ==================== -->
-                <p><b>Two-sided and one-sided tests.</b></p>
+
                 <p>
                     Let \(F_\nu\) be the CDF of Student's t-distribution with \(\nu\) degrees of freedom. Under the
                     boundary null \(\delta=\delta_0\), the familiar rejection regions and p-values are:
@@ -6532,9 +6532,9 @@ print("Reject H0 at 5%:", result.pvalue &lt;= alpha)
                     describe effect magnitude.
                 </p>
 
-                <!-- --- Experiment 55: pooled t-test and confidence interval from raw data --- -->
+                <!-- --- Experiment: pooled t-test and confidence interval from raw data --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 55: pooled t-test and confidence interval from raw data.</b>
+                    <b>Experiment: pooled t-test and confidence interval from raw data.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -6568,9 +6568,6 @@ print(f"t({df}) = {statistic:.4f}, two-sided p = {p_value:.5f}")
 print(f"95% CI: ({ci[0]:.3f}, {ci[1]:.3f})")
 print("SciPy result:", software_result)
 
-assert np.isclose(statistic, software_result.statistic)
-assert np.isclose(p_value, software_result.pvalue)
-
 # Experiment: add the same constant to both groups.
 # What happens to the difference, t-statistic, and p-value?
 </code></pre>
@@ -6580,9 +6577,9 @@ assert np.isclose(p_value, software_result.pvalue)
                     t-statistic but not the two-sided p-value or the width of the confidence interval.
                 </p>
 
-                <!-- --- Experiment 56: summary statistics and directional alternatives --- -->
+                <!-- --- Experiment: summary statistics and directional alternatives --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 56: computing pooled tests from summary statistics.</b>
+                    <b>Experiment: computing pooled tests from summary statistics.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -6619,7 +6616,7 @@ print(f"H1: mu1 < mu2: p = {left_p:.5f}")
 </code></pre>
 
                 <!-- ==================== Checking the Assumptions ==================== -->
-                <p><b>What must be checked before using the pooled test?</b></p>
+                <p>What must be checked before using the pooled test?</p>
                 <p>
                     The design must justify independence within and across samples. A normal Q-Q plot can help
                     assess the plausibility of normality within each group; histograms and box plots can reveal
@@ -6641,9 +6638,9 @@ print(f"H1: mu1 < mu2: p = {left_p:.5f}")
                     is a useful default and will be treated in the following section.
                 </p>
 
-                <!-- --- Experiment 57: visual diagnostics for two independent groups --- -->
+                <!-- --- Experiment: visual diagnostics for two independent groups --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 57: visual diagnostics for two independent groups.</b>
+                    <b>Experiment: visual diagnostics for two independent groups.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -6668,7 +6665,7 @@ axes[2].set_title("Group spreads and unusual values")
 axes[2].set_ylabel("Observation")
 
 fig.tight_layout()
-fig.savefig("pooled_t_assumptions_diagnostics.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/pooled_t_assumptions_diagnostics.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 print("Sample SDs:", np.std(normal_group, ddof=1),
@@ -6681,14 +6678,14 @@ print("Sample SDs:", np.std(normal_group, ddof=1),
                     <img src="../images/pooled_t_assumptions_diagnostics.png"
                         alt="Two normal Q-Q plots and a comparison box plot illustrating assumptions for two-sample t-inference"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Q-Q plots and a box plot can help assess normality, skewness, and unequal
-                        spreads, but cannot establish the assumptions with certainty. Generated by Experiment 57.
+                        spreads, but cannot establish the assumptions with certainty.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Sampling Distribution and Confidence-Interval Coverage ==================== -->
-                <p><b>Why the degrees of freedom and standard error matter.</b></p>
+
                 <p>
                     Under the equal-variance normal model, the pooled t-statistic has exactly \(n_1+n_2-2\) degrees
                     of freedom. Increasing the sample sizes generally reduces the standard error, making the
@@ -6697,9 +6694,9 @@ print("Sample SDs:", np.std(normal_group, ddof=1),
                     recorded observations.
                 </p>
 
-                <!-- --- Experiment 58: null distribution and confidence-interval coverage --- -->
+                <!-- --- Experiment: null distribution and confidence-interval coverage --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 58: null distribution and confidence-interval coverage.</b>
+                    <b>Experiment: null distribution and confidence-interval coverage.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -6746,7 +6743,7 @@ ax.set_ylabel("Density")
 ax.set_title("Pooled t-statistic under the null")
 ax.legend()
 fig.tight_layout()
-fig.savefig("pooled_t_null_distribution.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/pooled_t_null_distribution.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: increase n1 and n2; inspect the t-distribution.
@@ -6757,13 +6754,12 @@ plt.show()
                         loading="lazy" />
                     <figcaption>
                         <b>Figure.</b> Under independent normal sampling with a common variance, the simulated
-                        pooled t-statistics follow the expected Student's t-distribution. Generated by Experiment
-                        58.
+                        pooled t-statistics follow the expected Student's t-distribution.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== What Happens When Variances Differ? ==================== -->
-                <p><b>The equal-variance assumption is substantive, not cosmetic.</b></p>
+                <p>The equal-variance assumption is substantive, not cosmetic.</p>
                 <p>
                     If the population variances differ, the pooled standard error estimates the wrong quantity. The
                     problem can be particularly serious when sample sizes are unequal. For example, if the
@@ -6780,9 +6776,9 @@ plt.show()
                     degrees-of-freedom formula will be developed in the next section.
                 </p>
 
-                <!-- --- Experiment 59: type I error when the common-variance assumption fails --- -->
+                <!-- --- Experiment: type I error when the common-variance assumption fails --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 59: unequal variances and unequal sample sizes.</b>
+                    <b>Experiment: unequal variances and unequal sample sizes.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -6830,7 +6826,7 @@ ax.set_ylabel("Fraction of true nulls rejected")
 ax.set_title("Type I error under different variance and allocation patterns")
 ax.legend()
 fig.tight_layout()
-fig.savefig("pooled_t_unequal_variances.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/pooled_t_unequal_variances.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: interchange group variances or sample sizes.
@@ -6842,12 +6838,12 @@ plt.show()
                     <figcaption>
                         <b>Figure.</b> The pooled t-test can have severely distorted false-positive rates when group
                         variances differ and group sizes are unbalanced. Welch's test is generally more stable in
-                        these scenarios. Generated by Experiment 59.
+                        these scenarios.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Power, Sample Size, and Allocation ==================== -->
-                <p><b>Effect size, power, and sample allocation.</b></p>
+                <p>Let us investigate the effect size, the power, and the sample allocation.</p>
                 <p>
                     Under the two-normal-population model with a common variance, the test statistic for
                     \(H_0:\delta=0\) has, when the true difference is \(\delta\), a noncentral t-distribution with
@@ -6881,9 +6877,9 @@ plt.show()
                     practical importance.
                 </p>
 
-                <!-- --- Experiment 60: theoretical power and group allocation --- -->
+                <!-- --- Experiment: theoretical power and group allocation --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 60: power, sample size, and balanced allocation.</b>
+                    <b>Experiment: power, sample size, and balanced allocation.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -6925,7 +6921,7 @@ ax.set_ylim(0, 1)
 ax.grid(alpha=0.25)
 ax.legend()
 fig.tight_layout()
-fig.savefig("pooled_t_power_sample_size.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/pooled_t_power_sample_size.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: double the true standard deviation.
@@ -6935,16 +6931,16 @@ plt.show()
                     <img src="../images/pooled_t_power_sample_size.png"
                         alt="Theoretical power of a two-sided pooled t-test as the balanced per-group sample size increases"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller">
                         <b>Figure.</b> With fixed effect size, population standard deviation, and significance
-                        level, power generally increases with sample size. Generated by Experiment 60.
+                        level, power generally increases with sample size.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Applied Example: Graduate Salaries ==================== -->
-                <p><b>Application: comparing graduate salaries in the SOGA-Py students dataset.</b></p>
+
                 <p>
-                    We return to the students dataset used earlier. The original example compares salaries for male
+                    Let us return to the students dataset. We compare salaries for male
                     and female graduates using independent subsamples and a pooled two-sample t-test. Let \(\mu_M\)
                     and \(\mu_F\) denote the population mean salaries for the two groups in a clearly defined target
                     population. A two-sided comparison is \[ H_0:\mu_M-\mu_F=0 \qquad\text{versus}\qquad
@@ -6954,9 +6950,9 @@ plt.show()
                     effects, and the original data-collection design matter.
                 </p>
 
-                <!-- --- Experiment 61: pooled t-inference for graduate salaries --- -->
+                <!-- --- Experiment: pooled t-inference for graduate salaries --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 61: graduate salaries and the equal-variance assumption.</b>
+                    <b>Experiment: graduate salaries and the equal-variance assumption.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
@@ -7019,7 +7015,7 @@ axes[2].boxplot([male, female], tick_labels=["Male", "Female"])
 axes[2].set_title("Salaries by group")
 axes[2].set_ylabel("Annual salary (EUR)")
 fig.tight_layout()
-fig.savefig("pooled_t_graduate_salary_diagnostics.png",
+fig.savefig("../../images/pooled_t_graduate_salary_diagnostics.png",
             dpi=180, bbox_inches="tight")
 plt.show()
 
@@ -7030,10 +7026,10 @@ plt.show()
                     <img src="../images/pooled_t_graduate_salary_diagnostics.png"
                         alt="Normal Q-Q plots and salary box plots for independent samples of male and female graduates"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Diagnostic plots for the two salary samples. These plots support an
                         exploratory assessment of distribution shapes and variation but cannot establish normality
-                        or a common variance. Generated by Experiment 61.
+                        or a common variance.
                     </figcaption>
                 </figure>
                 <p>
@@ -7043,8 +7039,8 @@ plt.show()
                     difference is an <i>association</i>, not automatically a causal effect.
                 </p>
 
-                <!-- ==================== Practical Summary and Exercises ==================== -->
-                <p><b>When should we use the pooled two-sample t-test?</b></p>
+                <!-- ==================== Practical Summary ==================== -->
+                <p>When should we use the pooled two-sample t-test?</p>
                 <table>
                     <thead>
                         <tr>
@@ -7071,24 +7067,6 @@ plt.show()
                         </tr>
                     </tbody>
                 </table>
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Derive the pooled variance formula from the combined within-group sums of squares. (2) In
-                    Experiment 55, exchange the group labels and explain what changes. (3) For \(n_1=12\),
-                    \(n_2=48\), compute \(1/n_1+1/n_2\), then compare it with the balanced allocation
-                    \(n_1=n_2=30\). (4) In Experiment 59, explain why a larger population variance in the smaller
-                    group leads to anti-conservative pooled inference. (5) In Experiment 61, state which conclusions
-                    are descriptive, inferential, and causal.
-                </p>
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 9.6, pp. 587–591, derives the
-                    two-sample t-statistic for independent normal populations with a common unknown variance and
-                    discusses one- and two-sided tests. OpenIntro Statistics (4th ed.), Section 7.3.4, p. 273,
-                    explains pooled standard deviation estimation and emphasizes that pooling requires a substantive
-                    justification for equal population standard deviations. For practice, consult the exercises
-                    accompanying these sections.
-                </p>
-
                 <hr />
 
                 <!-- ========================= MAIN SECTION 11: Inference for Two Independent Population Means with Unequal Standard Deviations ========================= -->
