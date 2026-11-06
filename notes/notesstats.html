@@ -7161,7 +7161,7 @@ plt.show()
                     sample sizes and variances differ substantially.
                 </p>
 
-                <p><b>Why do the degrees of freedom have this form?</b></p>
+                <p>Why do the degrees of freedom have this form?</p>
                 <p>
                     Under normal sampling, the two sample variances are independent, and \((n_i-1)S_i^2/\sigma_i^2\)
                     has a chi-square distribution with \(n_i-1\) degrees of freedom. Therefore, for
@@ -7175,7 +7175,7 @@ plt.show()
                 </p>
 
                 <!-- ==================== Hypothesis Tests and Confidence Intervals ==================== -->
-                <p><b>Hypothesis tests.</b></p>
+
                 <p>
                     Write \(t_{q,\nu}\) for the \(q\)-quantile of Student's t-distribution with \(\nu\) degrees of
                     freedom, and let \(t_{\mathrm{obs}}\) denote the observed Welch statistic. The usual approximate
@@ -7212,8 +7212,9 @@ plt.show()
                 </p>
 
                 <!-- ==================== Complete Numerical Example ==================== -->
-                <p><b>Worked example: comparing two process means.</b></p>
+
                 <p>
+                    Let us work through a concrete example where we compare the means of two different processes.
                     Suppose two independent processes yield the following sample summaries. Process A has
                     \(n_1=12\), \(\bar x=82\), and \(s_1=15\); process B has \(n_2=18\), \(\bar y=70\), and
                     \(s_2=8\). We test \(H_0:\mu_1-\mu_2=0\) against the two-sided alternative.
@@ -7226,12 +7227,11 @@ plt.show()
                     95% confidence interval for \(\mu_1-\mu_2\) is approximately \[ 12\pm t_{0.975,15.2134}(4.7229)
                     \approx[1.95,22.05]. \] Thus, under the model and Welch approximation, these data give evidence
                     against equal population means at the 5% level. The interval also describes the estimated size
-                    and uncertainty of the difference. The results are illustrative and do not come from a real
-                    experiment.
+                    and uncertainty of the difference.
                 </p>
 
-                <!-- --- Experiment 62: Welch's test from summary statistics --- -->
-                <p class="stats-experiment-title"><b>Experiment 62: Welch's test from summary statistics.</b></p>
+                <!-- --- Experiment: Welch's test from summary statistics --- -->
+                <p class="stats-experiment-title"><b>Experiment: Welch's test from summary statistics.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
 
@@ -7263,15 +7263,12 @@ check = stats.ttest_ind_from_stats(
     equal_var=False
 )
 
-assert np.isclose(check.statistic, t_statistic)
-assert np.isclose(check.pvalue, p_value)
-
 # Experiment: exchange the two groups.
 # Which reported values change sign, and which do not?
 </code></pre>
 
                 <!-- ==================== Welch Versus Pooled t-Test ==================== -->
-                <p><b>Comparison with the pooled two-sample t-test.</b></p>
+                <p>Let us compare this procedure with the pooled two-sample t-test.</p>
                 <p>
                     The two procedures test differences in population means but estimate the standard error
                     differently. The pooled method assumes \(\sigma_1^2=\sigma_2^2\), whereas Welch's method does
@@ -7288,9 +7285,9 @@ assert np.isclose(check.pvalue, p_value)
                     do not make its equal-variance assumption true.
                 </p>
 
-                <!-- --- Experiment 63: compare SciPy's pooled and Welch tests --- -->
+                <!-- --- Experiment: compare SciPy's pooled and Welch tests --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 63: pooled and Welch tests on the same observations.</b>
+                    <b>Experiment: pooled and Welch tests on the same observations.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -7317,7 +7314,7 @@ print(f"Welch:  t={welch.statistic:.4f}, p={welch.pvalue:.4f}")
 </code></pre>
 
                 <!-- ==================== Assumptions and Model Checking ==================== -->
-                <p><b>Assumptions and limitations.</b></p>
+
                 <p>
                     Welch's method assumes that the two samples are independent and that the observations within
                     each group are suitably independent. Under independent normal sampling, the procedure uses the
@@ -7339,9 +7336,9 @@ print(f"Welch:  t={welch.statistic:.4f}, p={welch.pvalue:.4f}")
                     inference is generally inappropriate without accounting for that dependence.
                 </p>
 
-                <!-- --- Experiment 64: distribution diagnostics --- -->
+                <!-- --- Experiment: distribution diagnostics --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 64: visual diagnostics for two independent groups.</b>
+                    <b>Experiment: visual diagnostics for two independent groups.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -7368,7 +7365,7 @@ axes[2].set_ylabel("Observed values")
 
 fig.tight_layout()
 fig.savefig(
-    "welch_diagnostics.png", dpi=180, bbox_inches="tight"
+    "../../images/welch_diagnostics.png", dpi=180, bbox_inches="tight"
 )
 plt.show()
 
@@ -7381,15 +7378,14 @@ print("Group B: n =", len(group_b), "SD =", group_b.std(ddof=1))
                 <figure class="stats-figure">
                     <img src="../images/welch_diagnostics.png"
                         alt="Two normal Q-Q plots and box plots used to examine group distributions" loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Q–Q plots and box plots can reveal differences in shape, spread, and extreme
-                        observations. They are descriptive diagnostics, not proofs of the assumptions. Generated by
-                        Experiment 64.
+                        observations. They are descriptive diagnostics, not proofs of the assumptions.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Simulation: Type I Error Control ==================== -->
-                <p><b>How unequal variances affect type I error.</b></p>
+                <p>How do unequal variances affect type I error?</p>
                 <p>
                     The effect of variance heterogeneity depends partly on the relative sample sizes. In particular,
                     the pooled test can become <i>anti-conservative</i>
@@ -7399,9 +7395,9 @@ print("Group B: n =", len(group_b), "SD =", group_b.std(ddof=1))
                     method substantially reduces this problem under the normal model.
                 </p>
 
-                <!-- --- Experiment 65: simulated type I error rates --- -->
+                <!-- --- Experiment: simulated type I error rates --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 65: type I error under unequal variances and sample sizes.</b>
+                    <b>Experiment: type I error under unequal variances and sample sizes.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -7456,7 +7452,7 @@ ax.set_title("Type I error under a true equality null")
 ax.legend()
 fig.tight_layout()
 fig.savefig(
-    "welch_type1_rates.png", dpi=180, bbox_inches="tight"
+    "../../images/welch_type1_rates.png", dpi=180, bbox_inches="tight"
 )
 plt.show()
 
@@ -7466,15 +7462,14 @@ plt.show()
                     <img src="../images/welch_type1_rates.png"
                         alt="Simulated false-rejection rates of pooled and Welch t-tests under four variance patterns"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Both groups have identical population means, so every rejection is a type I
                         error. The pooled test can behave poorly when group sizes and variances are mismatched.
-                        Generated by Experiment 65.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Confidence Interval Coverage ==================== -->
-                <p><b>Confidence interval coverage.</b></p>
+
                 <p>
                     Confidence intervals can be evaluated by repeated sampling in the same way as hypothesis tests.
                     For a nominal 95% confidence interval, <i>coverage</i>
@@ -7484,9 +7479,9 @@ plt.show()
                     with very small or strongly nonnormal samples.
                 </p>
 
-                <!-- --- Experiment 66: confidence interval coverage --- -->
+                <!-- --- Experiment: confidence interval coverage --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 66: coverage of pooled and Welch confidence intervals.</b>
+                    <b>Experiment: coverage of pooled and Welch confidence intervals.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -7547,7 +7542,7 @@ ax.set_title("Confidence interval coverage under the null")
 ax.legend()
 fig.tight_layout()
 fig.savefig(
-    "welch_ci_coverage.png", dpi=180, bbox_inches="tight"
+    "../../images/welch_ci_coverage.png", dpi=180, bbox_inches="tight"
 )
 plt.show()
 
@@ -7557,14 +7552,14 @@ plt.show()
                     <img src="../images/welch_ci_coverage.png"
                         alt="Simulation of 95 percent confidence interval coverage for pooled and Welch methods"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Repeated confidence intervals should contain the true population difference
-                        at approximately their advertised confidence rate. Generated by Experiment 66.
+                        at approximately their advertised confidence rate.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Power and Sample-Size Allocation ==================== -->
-                <p><b>Power and the allocation of observations.</b></p>
+                <p>Let us now come to the discussion of power and the allocation of observations.</p>
                 <p>
                     To detect an actual difference \(\delta=\mu_1-\mu_2\), power generally increases when sample
                     sizes grow or when the difference becomes larger relative to the standard error. For a fixed
@@ -7595,8 +7590,8 @@ plt.show()
                     pilot estimates.
                 </p>
 
-                <!-- --- Experiment 67: simulate Welch power under different allocations --- -->
-                <p class="stats-experiment-title"><b>Experiment 67: Welch-test power and sample allocation.</b></p>
+                <!-- --- Experiment: simulate Welch power under different allocations --- -->
+                <p class="stats-experiment-title"><b>Experiment: Welch-test power and sample allocation.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -7635,7 +7630,7 @@ ax.set_ylim(0, 1)
 ax.set_title("Power with fixed total sample size")
 fig.tight_layout()
 fig.savefig(
-    "welch_power_allocation.png", dpi=180, bbox_inches="tight"
+    "../../images/welch_power_allocation.png", dpi=180, bbox_inches="tight"
 )
 plt.show()
 
@@ -7645,18 +7640,16 @@ plt.show()
                     <img src="../images/welch_power_allocation.png"
                         alt="Simulated statistical power of Welch's t-test for different allocations with fixed total sample size"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> With equal sampling costs and a fixed total sample size, allocating more
                         observations to the more variable group can improve precision and statistical power.
-                        Generated by Experiment 67.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Applied Example: Graduate Salaries ==================== -->
-                <p><b>Application: comparing graduate salaries by field of study.</b></p>
                 <p>
-                    We return to the SOGA-Py <i>students</i> dataset used in the previous section. The original
-                    example compares the annual salaries of female graduates whose reported majors are
+                    We return to the SOGA-Py <i>students</i> dataset. We compare
+                    the annual salaries of female graduates whose reported majors are
                     <i>Political Science</i> and <i>Social Sciences</i>. Let \(\mu_P\) and \(\mu_S\) denote the
                     respective group means in the population represented by the data. Our two-sided research
                     question is \[ H_0:\mu_P-\mu_S=0, \qquad H_1:\mu_P-\mu_S\neq0. \]
@@ -7669,9 +7662,9 @@ plt.show()
                     not by itself make these samples representative of all graduates in either field.
                 </p>
 
-                <!-- --- Experiment 68: an applied graduate-salary comparison --- -->
+                <!-- --- Experiment: an applied graduate-salary comparison --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 68: Welch's t-test for two graduate-salary groups.</b>
+                    <b>Experiment: Welch's t-test for two graduate-salary groups.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
@@ -7735,7 +7728,7 @@ ax.set_ylabel("Reported annual salary (EUR)")
 ax.set_title("Illustrative samples of graduate salaries")
 fig.tight_layout()
 fig.savefig(
-    "welch_graduate_salary_comparison.png",
+    "../../images/welch_graduate_salary_comparison.png",
     dpi=180, bbox_inches="tight"
 )
 plt.show()
@@ -7746,10 +7739,9 @@ plt.show()
                 <figure class="stats-figure">
                     <img src="../images/welch_graduate_salary_comparison.png"
                         alt="Box plots of salary samples for female graduates from two majors" loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Salary distributions for the sampled graduates in the two reported majors.
-                        The figure can only be generated after retrieving the external SOGA-Py dataset. Generated by
-                        Experiment 68.
+                        The figure can only be generated after retrieving the external SOGA-Py dataset.
                     </figcaption>
                 </figure>
 
@@ -7762,7 +7754,7 @@ plt.show()
                 </p>
 
                 <!-- ==================== Interpretation and Practical Guidance ==================== -->
-                <p><b>Practical considerations.</b></p>
+                 
                 <p>
                     Welch's t-test compares <i>population means</i>, not medians or entire distribution shapes. A
                     statistically significant difference does not imply that one group's observations generally
@@ -7776,23 +7768,6 @@ plt.show()
                     independent means. With heavy tails or influential observations, consider whether robust
                     estimators or another scientifically appropriate analysis better addresses the question;
                     switching automatically to a rank test changes the hypothesis being tested.
-                </p>
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Reproduce the worked example with the summary-statistic formulas, then change the null
-                    difference from zero to five. (2) Compare the two-sided and one-sided p-values for Experiment
-                    62. (3) In Experiment 65, interchange the group sample sizes while keeping the standard
-                    deviations fixed. Explain the change in pooled-test size. (4) In Experiment 66, estimate the
-                    coverage of a 90% instead of a 95% confidence interval. (5) In Experiment 67, compare the
-                    allocations 30:90, 60:60, and 90:30 with the optimal variance-minimizing ratio.
-                </p>
-                <p>
-                    <b>Further reading.</b> DeGroot and Schervish (4th ed.), Section 9.6, pp. 593–594, discusses the
-                    Behrens–Fisher problem and Welch's approximation, with a numerical example (Example 9.6.6).
-                    Compare these results with the pooled t-test under equal population variances in the preceding
-                    section of these notes. For software implementation, consult the SciPy documentation for
-                    <code>scipy.stats.ttest_ind</code> and <code>scipy.stats.ttest_ind_from_stats</code>, both with
-                    <code>equal_var=False</code>.
                 </p>
 
                 <hr />
