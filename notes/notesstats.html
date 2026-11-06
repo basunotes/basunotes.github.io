@@ -7754,7 +7754,7 @@ plt.show()
                 </p>
 
                 <!-- ==================== Interpretation and Practical Guidance ==================== -->
-                 
+
                 <p>
                     Welch's t-test compares <i>population means</i>, not medians or entire distribution shapes. A
                     statistically significant difference does not imply that one group's observations generally
@@ -7839,20 +7839,57 @@ plt.show()
                     nearly equal sums of squares.
                 </p>
 
-                <div class="stats-note stats-lemma">
-                    <p class="stats-note-heading"><b>Lemma (the role of within-pair covariance).</b></p>
-                    <p>
-                        If \(X_i\) and \(Y_i\) have finite variances, then \[ \begin{aligned}
-                        \operatorname{Var}(D_i) &amp;=\operatorname{Var}(Y_i-X_i)\\ &amp;=\sigma_Y^2+\sigma_X^2
-                        -2\operatorname{Cov}(X_i,Y_i). \end{aligned} \] For independent and identically distributed
-                        pairs, \[\operatorname{Var}(\bar D)=\operatorname{Var}(D_i)/n.\]
-                    </p>
-                </div>
                 <p>
-                    Proof. Expand \(\operatorname{Var}[(Y_i-\mu_Y)-(X_i-\mu_X)]\) and collect the two variances and
-                    covariance terms. Independence <i>between different pairs</i>
-                    gives the second identity.
+                    Proof. Recall that \(D_i=Y_i-X_i\), so its expected value is
+                    \[
+                        E[D_i]=E[Y_i]-E[X_i]=\mu_Y-\mu_X.
+                    \]
+                    By the definition of variance,
+                    \[
+                        \begin{aligned}
+                        \operatorname{Var}(D_i)
+                        &=E[(D_i-E[D_i])^2]\\
+                        &=E[((Y_i-\mu_Y)-(X_i-\mu_X))^2].
+                        \end{aligned}
+                    \]
+                    Expanding the square gives
+                    \[
+                        \begin{aligned}
+                        \operatorname{Var}(D_i)
+                        &=E[(Y_i-\mu_Y)^2]
+                        +E[(X_i-\mu_X)^2]\\
+                        &\quad-2E[(Y_i-\mu_Y)(X_i-\mu_X)]\\
+                        &=\operatorname{Var}(Y_i)+\operatorname{Var}(X_i)
+                        -2\operatorname{Cov}(X_i,Y_i)\\
+                        &=\sigma_Y^2+\sigma_X^2
+                        -2\operatorname{Cov}(X_i,Y_i).
+                        \end{aligned}
+                    \]
+                    Notice that we have not assumed independence between \(X_i\)
+                    and \(Y_i\), since the two observations belong to the same pair.
                 </p>
+
+                <p>
+                    Now consider the sample mean of the paired differences,
+                    \[
+                        \bar{D}=\frac{1}{n}\sum_{i=1}^{n}D_i.
+                    \]
+                    If the pairs are independent, then the differences
+                    \(D_1,\ldots,D_n\) are also independent. Therefore,
+                    \[
+                        \begin{aligned}
+                        \operatorname{Var}(\bar{D})
+                        &=\operatorname{Var}\left(\frac{1}{n}
+                        \sum_{i=1}^{n}D_i\right)\\
+                        &=\frac{1}{n^2}\sum_{i=1}^{n}\operatorname{Var}(D_i)\\
+                        &=\frac{n\operatorname{Var}(D_i)}{n^2}\\
+                        &=\frac{\operatorname{Var}(D_i)}{n},
+                        \end{aligned}
+                    \]
+                    where the third equality follows because the pairs are
+                    identically distributed.
+                </p>
+
                 <p>
                     Positive within-pair covariance decreases the variance of the difference, often making a paired
                     comparison more precise than an unpaired one. Negative covariance has the opposite effect.
@@ -7913,8 +7950,8 @@ plt.show()
                     of the mean difference.
                 </p>
 
-                <!-- --- Experiment 69: a paired t-test by hand and with SciPy --- -->
-                <p class="stats-experiment-title"><b>Experiment 69: a paired t-test by hand and with SciPy.</b></p>
+                <!-- --- Experiment: a paired t-test by hand and with SciPy --- -->
+                <p class="stats-experiment-title"><b>Experiment: a paired t-test by hand and with SciPy.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
 
@@ -7942,10 +7979,6 @@ print(f"t statistic: {t_manual:.4f}")
 print(f"Two-sided p-value: {p_manual:.6f}")
 print(f"95% CI: ({ci[0]:.3f}, {ci[1]:.3f})")
 
-assert np.isclose(t_manual, paired_result.statistic)
-assert np.isclose(p_manual, paired_result.pvalue)
-assert np.isclose(paired_result.statistic, one_sample_result.statistic)
-
 # Experiment: reverse the subtraction order.
 # Which results change sign, and which do not?</code></pre>
                 <p>
@@ -7955,15 +7988,15 @@ assert np.isclose(paired_result.statistic, one_sample_result.statistic)
                 </p>
 
                 <!-- ==================== Why Pairing Matters ==================== -->
-                <p><b>Pairing, correlation, and loss of information.</b></p>
+
                 <p>
                     A paired analysis preserves the connection between two observations from the same experimental
                     unit. An independent two-sample analysis discards that connection and generally estimates the
                     wrong standard error for paired data. With positive within-pair correlation it is often
                     unnecessarily conservative; with negative correlation it can be anti-conservative.
                 </p>
-                <!-- --- Experiment 70: the effect of within-pair correlation --- -->
-                <p class="stats-experiment-title"><b>Experiment 70: the effect of within-pair correlation.</b></p>
+                <!-- --- Experiment: the effect of within-pair correlation --- -->
+                <p class="stats-experiment-title"><b>Experiment: the effect of within-pair correlation.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7999,7 +8032,7 @@ ax.set_title("Correspondence between paired measurements")
 ax.legend()
 ax.grid(alpha=0.25)
 fig.tight_layout()
-fig.savefig("paired_measurement_relationship.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/paired_measurement_relationship.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: replace the off-diagonal covariance 80 with -80.
@@ -8008,14 +8041,14 @@ plt.show()
                     <img src="../images/paired_measurement_relationship.png"
                         alt="Scatterplot of corresponding before and after measurements with a no-change reference line"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Each point represents a pair of measurements. Their association influences
-                        the uncertainty of the mean paired difference. Generated by Experiment 70.
+                        the uncertainty of the mean paired difference.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Checking the Assumptions ==================== -->
-                <p><b>Assumptions and diagnostic checks.</b></p>
+
                 <p>
                     The most important design requirement is that the paired units are selected appropriately and
                     the <i>differences between different units</i> can reasonably be treated as independent. The
@@ -8033,8 +8066,8 @@ plt.show()
                     cannot be calculated without further assumptions. Simply dropping incomplete pairs can bias an
                     analysis when missingness is related to outcomes or changes.
                 </p>
-                <!-- --- Experiment 71: diagnostic plots of paired differences --- -->
-                <p class="stats-experiment-title"><b>Experiment 71: diagnostic plots of paired differences.</b></p>
+                <!-- --- Experiment: diagnostic plots of paired differences --- -->
+                <p class="stats-experiment-title"><b>Experiment: diagnostic plots of paired differences.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -8052,7 +8085,7 @@ axes[0].set_ylabel("Frequency")
 stats.probplot(differences, dist="norm", plot=axes[1])
 axes[1].set_title("Normal Q-Q plot of differences")
 fig.tight_layout()
-fig.savefig("paired_difference_diagnostics.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/paired_difference_diagnostics.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 print("Paired t-test:", stats.ttest_1samp(differences, popmean=0))
@@ -8062,21 +8095,21 @@ print("Paired t-test:", stats.ttest_1samp(differences, popmean=0))
                 <figure class="stats-figure">
                     <img src="../images/paired_difference_diagnostics.png"
                         alt="Histogram and normal Q-Q plot of paired differences" loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Diagnostics focus on the within-pair differences, because their distribution
-                        determines the validity of exact paired t-inference. Generated by Experiment 71.
+                        determines the validity of exact paired t-inference.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Incorrectly Treating Pairs as Independent ==================== -->
-                <p><b>Repeated-sampling comparison with an unpaired test.</b></p>
+                <p>Repeated-sampling comparison with an unpaired test.</p>
                 <p>
                     A statistically significant result is not guaranteed to occur, even if a real effect exists;
                     conversely, a true equality null can be rejected by chance. To see why the analysis method
                     matters, we can repeatedly simulate data under the null when pairs share a common baseline.
                 </p>
-                <!-- --- Experiment 72: type I error with and without pairing --- -->
-                <p class="stats-experiment-title"><b>Experiment 72: type I error with and without pairing.</b></p>
+                <!-- --- Experiment: type I error with and without pairing --- -->
+                <p class="stats-experiment-title"><b>Experiment: type I error with and without pairing.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -8111,7 +8144,7 @@ ax.set_ylabel("Fraction of true nulls rejected")
 ax.set_title("Type I error when the pairing is ignored")
 ax.legend()
 fig.tight_layout()
-fig.savefig("paired_vs_unpaired_type1.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/paired_vs_unpaired_type1.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: create negatively correlated pairs instead.
@@ -8120,10 +8153,9 @@ plt.show()
                     <img src="../images/paired_vs_unpaired_type1.png"
                         alt="Simulated type I error rates for correctly paired and incorrectly unpaired analyses"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Both methods are applied to the same dependent observations under a true
                         equality null. The unpaired analysis does not correctly account for their dependence.
-                        Generated by Experiment 72.
                     </figcaption>
                 </figure>
                 <p>
@@ -8133,7 +8165,7 @@ plt.show()
                 </p>
 
                 <!-- ==================== Confidence Interval Coverage and Sample Size ==================== -->
-                <p><b>Coverage, power, and planning the number of pairs.</b></p>
+                <p>Let us now come to the discussion of coverage, power, and planning the number of pairs.</p>
                 <p>
                     Under the normal-differences model, the paired confidence interval has its stated coverage in
                     repeated sampling. A narrower interval generally requires more independent pairs or a smaller
@@ -8144,8 +8176,8 @@ plt.show()
                     standard deviation of the <i>differences</i>, rather than the two marginal standard deviations
                     separately, that governs precision.
                 </p>
-                <!-- --- Experiment 73: confidence interval coverage and power --- -->
-                <p class="stats-experiment-title"><b>Experiment 73: confidence-interval coverage and power.</b></p>
+                <!-- --- Experiment: confidence interval coverage and power --- -->
+                <p class="stats-experiment-title"><b>Experiment: confidence-interval coverage and power.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -8189,7 +8221,7 @@ ax.set_title("Coverage and power in a paired normal model")
 ax.grid(alpha=0.25)
 ax.legend()
 fig.tight_layout()
-fig.savefig("paired_ci_coverage_power.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/paired_ci_coverage_power.png", dpi=180, bbox_inches="tight")
 plt.show()
 
 # Experiment: change the standard deviation of differences.
@@ -8198,10 +8230,10 @@ plt.show()
                     <img src="../images/paired_ci_coverage_power.png"
                         alt="Confidence interval coverage and one-sided test power as functions of the number of independent pairs"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> For normally distributed differences, the t-based interval achieves
                         approximately 95% coverage, while power increases with the number of independent pairs when
-                        the true effect is positive. Generated by Experiment 73.
+                        the true effect is positive.
                     </figcaption>
                 </figure>
 
@@ -8223,9 +8255,9 @@ plt.show()
                     comparison of changes, not two separate declarations that one within-group test is significant
                     and the other is not.
                 </p>
-                <!-- --- Experiment 74: paired tests and a comparison of improvements --- -->
+                <!-- --- Experiment: paired tests and a comparison of improvements --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 74: tutorial attendance and paired exam-score changes.</b>
+                    <b>Experiment: tutorial attendance and paired exam-score changes.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
@@ -8274,15 +8306,15 @@ ax.set_title("Exam-score changes by tutorial attendance")
 ax.grid(axis="y", alpha=0.25)
 ax.legend()
 fig.tight_layout()
-fig.savefig("paired_tutorial_score_changes.png", dpi=180, bbox_inches="tight")
+fig.savefig("../../images/paired_tutorial_score_changes.png", dpi=180, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/paired_tutorial_score_changes.png"
                         alt="Box plots of within-student exam-score changes for tutorial and non-tutorial groups"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Exam-score changes, rather than the raw scores, are compared across
-                        tutorial-attendance groups. Generated by Experiment 74. The actual values depend on the
+                        tutorial-attendance groups. The actual values depend on the
                         downloaded dataset.
                     </figcaption>
                 </figure>
@@ -8298,7 +8330,7 @@ plt.show()</code></pre>
                 </p>
 
                 <!-- ==================== Alternatives for Non-Normal Differences ==================== -->
-                <p><b>Robust and nonparametric alternatives.</b></p>
+
                 <p>
                     For a small sample with pronounced skewness or influential differences, an ordinary paired
                     t-test may be sensitive to its normality assumption. Alternatives include a <i>sign test</i> and
@@ -8313,8 +8345,8 @@ plt.show()</code></pre>
                     about zero under its null hypothesis. Neither test, in general, is simply a test that the
                     <i>mean</i> difference equals zero.
                 </p>
-                <!-- --- Experiment 75: sign and Wilcoxon signed-rank tests --- -->
-                <p class="stats-experiment-title"><b>Experiment 75: sign and Wilcoxon signed-rank tests.</b></p>
+                <!-- --- Experiment: sign and Wilcoxon signed-rank tests --- -->
+                <p class="stats-experiment-title"><b>Experiment: sign and Wilcoxon signed-rank tests.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
 
@@ -8349,8 +8381,8 @@ print(f"Wilcoxon signed-rank p-value: {wilcoxon.pvalue:.5f}")
                     suitable procedure based on the study design and its assumptions.
                 </p>
 
-                <!-- ==================== Practical Guidance and Exercises ==================== -->
-                <p><b>Practical considerations when working with paired data.</b></p>
+                <!-- ==================== Practical Guidance ==================== -->
+
                 <p>
                     The number of complete pairs determines the sample size for paired inference. Always document
                     the direction of subtraction; retain matching identifiers; examine missing pairs and extreme
@@ -8358,29 +8390,10 @@ print(f"Wilcoxon signed-rank p-value: {wilcoxon.pvalue:.5f}")
                     For intervention studies, distinguish the existence of a change from evidence that the
                     intervention caused that change.
                 </p>
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Using Experiment 69, calculate the mean paired difference and 95% confidence interval by
-                    hand, and verify the results in SciPy. (2) Derive the covariance formula for
-                    \(\operatorname{Var}(Y-X)\) and explain when pairing improves precision. (3) In Experiment 72,
-                    change the simulated within-pair correlation from positive to negative and investigate the two
-                    rejection rates. (4) In Experiment 73, determine the smallest number of pairs that achieves at
-                    least 80% theoretical power for the specified one-sided test. (5) Explain why a significant
-                    before–after change in one group and an insignificant change in another group do not, by
-                    themselves, establish a significant difference between the groups.
-                </p>
-                <p>
-                    <b>Further reading.</b> OpenIntro Statistics (4th ed.), Section 7.2, pp. 262–265, develops
-                    inference based on paired observations; Exercises 7.15 and following offer paired-data practice.
-                    DeGroot and Schervish (4th ed.), Section 9.5, pp. 580–581, gives a paired t-test example using
-                    matched injury measurements. The tutorial example follows the topic and dataset used in SOGA-Py;
-                    the additional comparison of changes and cautions about causal interpretation expand the
-                    original discussion.
-                </p>
 
                 <hr />
 
-                <!-- ========================= One-Way Analysis of Variance (ANOVA) ========================= -->
+                <!-- ========================= MAIN SECTION 13: One-Way Analysis of Variance (ANOVA) ========================= -->
                 <span id="OneWayANOVA"><b>One-Way Analysis of Variance (ANOVA)</b></span>
 
                 <p>
@@ -9375,7 +9388,7 @@ print(f"Permutation p (Monte Carlo): {p_mc:.5f}")</code></pre>
 
                 <hr />
 
-                <!-- ========================= Nonparametric Tests ========================= -->
+                <!-- ========================= MAIN SECTION 14: Nonparametric Tests ========================= -->
                 <span id="NonparametricTests"><b>Nonparametric Tests</b></span>
 
                 <p>
@@ -10266,7 +10279,7 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                 </p>
                 <hr />
 
-                <!-- ========================= Bootstrap, Permutation, and Resampling Methods ========================= -->
+                <!-- ========================= MAIN SECTION 15: Bootstrap, Permutation, and Resampling Methods ========================= -->
                 <span id="BootstrapPermutationResampling"><b>Bootstrap, Permutation, and Resampling Methods</b></span>
 
                 <p>
@@ -11136,7 +11149,7 @@ plt.show()</code></pre>
                 </p>
                 <hr />
 
-                <!-- ========================= Inference for Proportions and A/B Testing ========================= -->
+                <!-- ========================= MAIN SECTION 16: Inference for Proportions and A/B Testing ========================= -->
                 <span id="InferenceProportionsABTesting"><b>Inference for Proportions and A/B Testing</b></span>
 
                 <p>
@@ -11894,7 +11907,7 @@ print(f"User-level false-positive rate:    {(proper_p&lt;.05).mean():.3f}")</cod
                 </p>
                 <hr />
 
-                <!-- ========================= MAIN SECTION 13: Inferences for One Population Standard Deviation ========================= -->
+                <!-- ========================= MAIN SECTION 17: Inferences for One Population Standard Deviation ========================= -->
 
                 <span id="InferencesOnePopulationSD"><b>Inferences for One Population Standard Deviation</b></span>
 
@@ -12585,7 +12598,7 @@ plt.show()
                 </p>
 
                 <hr />
-                <!-- ========================= MAIN SECTION 14: Inferences for Two Population Standard Deviations ========================= -->
+                <!-- ========================= MAIN SECTION 18: Inferences for Two Population Standard Deviations ========================= -->
 
                 <span id="InferencesTwoPopulationSD"><b>Inferences for Two Population Standard Deviations</b></span>
 
@@ -13313,7 +13326,7 @@ plt.show()
                 </p>
 
                 <hr />
-                <!-- ========================= MAIN SECTION 15: Chi-Square Goodness-of-Fit Test ========================= -->
+                <!-- ========================= MAIN SECTION 19: Chi-Square Goodness-of-Fit Test ========================= -->
 
                 <span id="ChiSquareGoodnessofFitTest"><b>Chi-Square Goodness-of-Fit Test</b></span>
 
@@ -14020,7 +14033,7 @@ plt.show()
 
                 <hr />
 
-                <!-- ========================= MAIN SECTION 16: Chi-Square Independence Test ========================= -->
+                <!-- ========================= MAIN SECTION 20: Chi-Square Independence Test ========================= -->
                 <span id="ChiSquareIndependenceTest"><b>The Chi-Square Independence Test</b></span>
 
                 <p>
@@ -14736,7 +14749,7 @@ for name, table in [
 
                 <hr />
 
-                <!-- ========================= MAIN SECTION 17: Linear Regression: Linear Regression ========================= -->
+                <!-- ========================= MAIN SECTION 21: Linear Regression ========================= -->
                 <span id="LinearRegression"><b>Linear Regression</b></span>
 
                 <p>
@@ -15129,7 +15142,7 @@ print("The generating relationship is curved: inspect residuals before trusting 
 
                 <hr />
 
-                <!-- ========================= MAIN SECTION 18: Inferences About the Slope: Inferences About the Slope ========================= -->
+                <!-- ========================= MAIN SECTION 22: Inferences About the Slope ========================= -->
                 <span id="InferencesSlope"><b>Inferences About the Slope</b></span>
 
                 <p>
@@ -15424,7 +15437,7 @@ print("Even a significant slope can account for little of the response variation
 
                 <hr />
 
-                <!-- ========================= MAIN SECTION 19: Inferences About the Linear Correlation Coefficient: Inferences About the Linear Correlation Coefficient ========================= -->
+                <!-- ========================= MAIN SECTION 23: Inferences About the Linear Correlation Coefficient ========================= -->
                 <span id="InferencesLinearCorrelationCoefficient"><b>Inferences About the Linear Correlation
                         Coefficient</b></span>
 
@@ -15761,7 +15774,7 @@ print("n:", len(sample))</code></pre>
 
                 <hr />
 
-                <!-- ========================= MAIN SECTION 20: Polynomial Regression ========================= -->
+                <!-- ========================= MAIN SECTION 24: Polynomial Regression ========================= -->
                 <span id="PolynomialRegression"><b>Polynomial Regression</b></span>
                 <p>
                     <i>Polynomial regression</i> extends simple linear regression by allowing the conditional mean
@@ -16483,7 +16496,7 @@ plt.show()</code></pre>
 
                 <hr />
 
-                <!-- ========================= MAIN SECTION 21: Logistic Regression ========================= -->
+                <!-- ========================= MAIN SECTION 25: Logistic Regression ========================= -->
                 <span id="LogisticRegression"><b>Logistic Regression</b></span>
                 <p>
                     Linear and polynomial regression model the conditional mean of a <i>numerical</i> response. We
@@ -17306,7 +17319,7 @@ plt.show()</code></pre>
                 </p>
                 <hr />
 
-                <!-- ========================= MAIN SECTION 22: Maximum Likelihood Estimation ========================= -->
+                <!-- ========================= MAIN SECTION 26: Maximum Likelihood Estimation ========================= -->
 
                 <span id="MaximumLikelihoodEstimation"><b>Maximum Likelihood Estimation</b></span>
 
