@@ -14895,7 +14895,8 @@ plt.show()
                     p\text{-value}=\mathbb{P}(\chi^2_d\geq Q_{\mathrm{obs}}). \]
                 </p>
                 <p>
-                    <b>Why \((r-1)(c-1)\) degrees of freedom?</b> An unrestricted \(r\times c\) joint probability
+                    Why \((r-1)(c-1)\) degrees of freedom?<br>
+                    An unrestricted \(r\times c\) joint probability
                     distribution has \(rc-1\) free probabilities because all cell probabilities sum to 1. Under
                     independence, the row probabilities have \(r-1\) free parameters and the column probabilities
                     have \(c-1\). The difference is \[ (rc-1)-[(r-1)+(c-1)]=(r-1)(c-1). \] This parameter-count
@@ -14905,7 +14906,7 @@ plt.show()
 
                 <!-- ==================== Worked Example: Customer Channel and Purchase ==================== -->
 
-                <p><b>Worked example: acquisition channel and purchase status.</b></p>
+                <p>Let us work through an example where we look at acquisition channel and purchase status.</p>
                 <p>
                     Consider the following <i>illustrative</i> counts. Every observation represents one independent
                     customer, classified by acquisition channel and purchase outcome.
@@ -14952,9 +14953,9 @@ plt.show()
                     of freedom.
                 </p>
 
-                <!-- --- Experiment 99: manual and SciPy calculations --- -->
+                <!-- --- Experiment: manual and SciPy calculations --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 99: calculating the test statistic manually and with SciPy.</b>
+                    <b>Experiment: calculating the test statistic manually and with SciPy.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import chi2, chi2_contingency
@@ -14981,9 +14982,6 @@ print(f"Degrees of freedom: {df}")
 print(f"Manual p-value: {p_value:.6f}")
 print(f"SciPy p-value: {result.pvalue:.6f}")
 
-assert np.isclose(chi_square, result.statistic)
-assert np.isclose(p_value, result.pvalue)
-
 # Experiment: change the Email purchase count, while
 # considering how the other counts should change.</code></pre>
 
@@ -14995,18 +14993,22 @@ assert np.isclose(p_value, result.pvalue)
 
                 <!-- ==================== Applied Example: Student Major and Gender ==================== -->
 
-                <p><b>Application: field of study and gender in the SOGA-Py example.</b></p>
                 <p>
-                    The earlier version of these notes used a sample of 865 observations from the SOGA-Py
-                    <i>students</i> dataset. The reported cross-tabulation is reproduced below, so the calculation
-                    can be checked without downloading the original dataset. The category labels reflect the
-                    original dataset; the example describes an observed association, not a causal effect or the
-                    population distribution of all students.
+                    Let us consider a sample of 865 students from the SOGA-Py
+                    <i>students</i> dataset. We want to investigate whether
+                    field of study and gender are independent. The observed counts
+                    for six fields of study and two gender categories are given
+                    below. We use these counts to perform a chi-square test of
+                    independence. The category labels follow those used in the
+                    dataset.
                 </p>
 
-                <!-- --- Experiment 100: reproduce the original student example --- -->
-                <p class="stats-experiment-title"><b>Experiment 100: a 6-by-2 independence test.</b></p>
-                <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
+                <!-- --- Experiment: chi-square test of independence --- -->
+                <p class="stats-experiment-title">
+                    <b>Experiment: a 6-by-2 independence test.</b>
+                </p>
+
+<pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
 import numpy as np
 from scipy.stats import chi2_contingency
 
@@ -15039,23 +15041,25 @@ print(f"Chi-square statistic: {result.statistic:.4f}")
 print(f"Degrees of freedom: {result.dof}")
 print(f"p-value: {result.pvalue:.4g}")
 
-assert observed.to_numpy().sum() == 865
-assert np.isclose(result.statistic, 77.31526633939146)
-
 # Experiment: inspect column proportions, rather
 # than comparing raw counts only.</code></pre>
-
+             
                 <p>
-                    In this sample, the test gives approximately \(Q=77.3153\), with five degrees of freedom and a
-                    very small p-value. This is evidence against independence in the source population, provided the
-                    sampling and modeling assumptions are appropriate. It does <i>not</i> justify the claim that
-                    gender causes field-of-study choices, nor does it establish that the teaching dataset represents
-                    all students.
+                    In this sample, the test gives approximately \(Q=77.3153\),
+                    with five degrees of freedom and a very small p-value.
+                    This provides evidence against independence between field
+                    of study and gender in the source population, provided the
+                    sampling and modeling assumptions are appropriate.
+                    However, the observed association does not imply that gender
+                    causes differences in field-of-study choices. Moreover, the
+                    sample cannot be assumed to represent the population of all
+                    students.
                 </p>
+
 
                 <!-- ==================== Cell Contributions and Residuals ==================== -->
 
-                <p><b>Which cells contribute to the association?</b></p>
+                <p>Which cells contribute to the association?</p>
                 <p>
                     The global chi-square test does not explain where an association occurs. The contribution of
                     cell \((i,j)\) to Pearson's statistic is \[ C_{ij}=\frac{(O_{ij}-E_{ij})^2}{E_{ij}}. \] The
@@ -15069,9 +15073,9 @@ assert np.isclose(result.statistic, 77.31526633939146)
                     residuals should initially be regarded as diagnostic.
                 </p>
 
-                <!-- --- Experiment 101: residuals and their contributions --- -->
+                <!-- --- Experiment: residuals and their contributions --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 101: examining the cells driving an association.</b>
+                    <b>Experiment: examining the cells driving an association.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
@@ -15125,7 +15129,7 @@ for i in range(pearson.shape[0]):
 
 fig.colorbar(image, ax=ax, label="Pearson residual")
 fig.tight_layout()
-fig.savefig("chi_square_independence_residuals.png",
+fig.savefig("../../images/chi_square_independence_residuals.png",
             dpi=180, bbox_inches="tight")
 plt.show()</code></pre>
 
@@ -15134,13 +15138,13 @@ plt.show()</code></pre>
                         alt="Heatmap of Pearson residuals for gender and major categories" loading="lazy" />
                     <figcaption>
                         <b>Figure.</b> Positive values mark cells with more observations than predicted by
-                        independence; negative values mark cells with fewer. Generated by Experiment 101.
+                        independence; negative values mark cells with fewer.
                     </figcaption>
                 </figure>
 
                 <!-- ==================== Effect Size and Interpretation ==================== -->
 
-                <p><b>Statistical significance versus strength of association.</b></p>
+                <p>Statistical significance versus strength of association.</p>
                 <p>
                     A p-value measures evidence against the null relative to a statistical model; it is not a
                     measure of how strong the categorical association is. With a large sample, even a small
@@ -15164,9 +15168,9 @@ plt.show()</code></pre>
                     differences and odds ratios may be more interpretable.
                 </p>
 
-                <!-- --- Experiment 102: Cramér's V and conditional proportions --- -->
+                <!-- --- Experiment: Cramér's V and conditional proportions --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 102: effect size and conditional proportions.</b>
+                    <b>Experiment: effect size and conditional proportions.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import pandas as pd
@@ -15203,7 +15207,7 @@ print((observed.div(observed.sum(axis=0), axis=1) * 100).round(1))
 
                 <!-- ==================== Assumptions and Small Counts ==================== -->
 
-                <p><b>Assumptions and expected-count guidelines.</b></p>
+                <p>Assumptions and expected-count guidelines.</p>
                 <p>
                     The key design assumption is that observations are independent at the relevant sampling unit.
                     Repeated measurements on the same customer, student or household generally cannot be treated as
@@ -15225,8 +15229,8 @@ print((observed.div(observed.sum(axis=0), axis=1) * 100).round(1))
                     be preferable.
                 </p>
 
-                <!-- --- Experiment 103: Fisher's exact test for a small 2-by-2 table --- -->
-                <p class="stats-experiment-title"><b>Experiment 103: chi-square versus Fisher's exact test.</b></p>
+                <!-- --- Experiment: Fisher's exact test for a small 2-by-2 table --- -->
+                <p class="stats-experiment-title"><b>Experiment: chi-square versus Fisher's exact test.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import chi2_contingency, fisher_exact
 
@@ -15258,7 +15262,7 @@ print(f"Sample odds ratio:     {fisher.statistic:.4f}")
 
                 <!-- ==================== Conditional Monte Carlo Test ==================== -->
 
-                <p><b>Conditional Monte Carlo testing for sparse larger tables.</b></p>
+                <p>Conditional Monte Carlo testing for sparse larger tables.</p>
                 <p>
                     For tables larger than \(2\times2\), conditional Monte Carlo simulation offers one way to avoid
                     relying solely on the asymptotic chi-square tail. Under independence and conditional on the
@@ -15273,9 +15277,9 @@ print(f"Sample odds ratio:     {fisher.statistic:.4f}")
                     observed one.
                 </p>
 
-                <!-- --- Experiment 104: conditional Monte Carlo p-value --- -->
+                <!-- --- Experiment: conditional Monte Carlo p-value --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 104: fixed-margin Monte Carlo test for a sparse 2-by-3 table.</b>
+                    <b>Experiment: fixed-margin Monte Carlo test for a sparse 2-by-3 table.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import chi2_contingency
@@ -15319,7 +15323,7 @@ print(f"Conditional Monte Carlo p-value: {monte_carlo_p:.5f}")
 
                 <!-- ==================== Type I Errors and Power ==================== -->
 
-                <p><b>Sampling variability, sample size, and statistical power.</b></p>
+                <p>Sampling variability, sample size, and statistical power.</p>
                 <p>
                     A valid test should reject a true null with approximately the nominal probability, but it should
                     reject increasingly often under a fixed departure from independence as the sample size grows.
@@ -15327,9 +15331,9 @@ print(f"Conditional Monte Carlo p-value: {monte_carlo_p:.5f}")
                     distributions, one independent and one associated.
                 </p>
 
-                <!-- --- Experiment 105: type I error and power --- -->
+                <!-- --- Experiment: type I error and power --- -->
                 <p class="stats-experiment-title">
-                    <b>Experiment 105: Type I error and power of the independence test.</b>
+                    <b>Experiment: Type I error and power of the independence test.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -15395,7 +15399,7 @@ ax.set_title("Type I error and power of the chi-square test")
 ax.legend()
 ax.grid(alpha=0.25)
 fig.tight_layout()
-fig.savefig("chi_square_independence_power.png",
+fig.savefig("../../images/chi_square_independence_power.png",
             dpi=180, bbox_inches="tight")
 plt.show()</code></pre>
 
@@ -15403,9 +15407,9 @@ plt.show()</code></pre>
                     <img src="../images/chi_square_independence_power.png"
                         alt="Simulated chi-square test rejection frequencies under independence and association"
                         loading="lazy" />
-                    <figcaption>
+                    <figcaption style="font-size: smaller;">
                         <b>Figure.</b> Rejection probabilities under an independent and an associated joint
-                        distribution for several sample sizes. Generated by Experiment 105.
+                        distribution for several sample sizes.
                     </figcaption>
                 </figure>
 
@@ -15417,7 +15421,7 @@ plt.show()</code></pre>
 
                 <!-- ==================== Confounding, Simpson's Paradox and Causality ==================== -->
 
-                <p><b>Association does not imply causation.</b></p>
+                <p>Association does not imply causation.</p>
                 <p>
                     The chi-square test does not establish a causal mechanism. An apparent association can arise
                     from confounding, selection effects, or other aspects of data collection. Moreover, an
@@ -15426,8 +15430,8 @@ plt.show()</code></pre>
                     <i>Simpson's paradox</i>.
                 </p>
 
-                <!-- --- Experiment 106: aggregation and Simpson's paradox --- -->
-                <p class="stats-experiment-title"><b>Experiment 106: Simpson's paradox in categorical data.</b></p>
+                <!-- --- Experiment: aggregation and Simpson's paradox --- -->
+                <p class="stats-experiment-title"><b>Experiment: Simpson's paradox in categorical data.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import chi2_contingency
 
@@ -15473,7 +15477,7 @@ for name, table in [
 
                 <!-- ==================== Independence versus Homogeneity ==================== -->
 
-                <p><b>Independence and homogeneity tests.</b></p>
+                <p>Independence and homogeneity tests.</p>
                 <p>
                     A <i>test of independence</i> usually arises from one sample in which every observation is
                     classified by two categorical variables. A <i>test of homogeneity</i> compares the distributions
@@ -15488,9 +15492,9 @@ for name, table in [
                     process, not solely through a chi-square p-value.
                 </p>
 
-                <!-- ==================== Practical Guidance and Exercises ==================== -->
+                <!-- ==================== Practical Guidance ==================== -->
 
-                <p><b>Practical considerations.</b></p>
+                <p>Practical considerations.</p>
                 <p>
                     Before performing a chi-square independence test, verify what each row and column represents,
                     whether the counts are mutually exclusive, whether the observational units are independent, and
@@ -15498,27 +15502,6 @@ for name, table in [
                     computed percentages, unless an appropriate count-based model has been reconstructed. After the
                     omnibus test, inspect conditional proportions and residuals; report a useful effect-size summary
                     and the sample size alongside the p-value.
-                </p>
-
-                <p>
-                    <b>Try it yourself.</b>
-                    (1) Compute the expected counts and Pearson contributions for the acquisition-channel table by
-                    hand. (2) Reproduce the six-by-two student example and identify the cells with the largest
-                    absolute Pearson residuals. (3) Multiply every cell count in the student table by 10; explain
-                    the changes to the p-value and Cramér's V. (4) For a sparse two-by-two table, compare Pearson,
-                    Yates-corrected, and Fisher p-values. (5) In Experiment 105, change the alternative distribution
-                    while preserving its margins; examine how the power curve changes. (6) Explain why the
-                    aggregated conclusion in Experiment 106 reverses the conclusions in its subgroups.
-                </p>
-                <p>
-                    <b>Further reading.</b>
-                    DeGroot and Schervish (4th ed.), Section 10.3, pp. 641–646, develops the chi-square independence
-                    test for contingency tables; Sections 10.4–10.5, pp. 647–655, discuss homogeneity tests and
-                    Simpson's paradox. OpenIntro Statistics (4th ed.), Section 6.4, pp. 240–247, presents the test
-                    for two-way tables, expected counts, and the interpretation of independence tests. Relevant
-                    exercises appear at the end of Section 6.4. For implementation details, see the SciPy
-                    documentation for
-                    <code>scipy.stats.chi2_contingency</code> and <code>scipy.stats.fisher_exact</code>.
                 </p>
 
                 <hr />
