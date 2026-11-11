@@ -10293,6 +10293,28 @@ print(f"Parametric ANOVA p-value: {p_parametric:.5f}")
                     can—and cannot—be interpreted as differences between population medians.
                 </p>
 
+                <p>
+                    <b>What do we mean by a nonparametric test?</b> Consider the difference between asking whether
+                    two populations have the same <i>mean</i> and asking whether their observations tend to be
+                    ordered differently. A t-test targets a difference in means. The Mann–Whitney test instead
+                    compares relative positions in two independent samples. Both questions can be scientifically
+                    useful, but they are not interchangeable.
+                </p>
+                <p>
+                    For example, suppose the response is a customer's waiting time in seconds. The values
+                    \(2,3,4,100\) have mean \(27.25\) but median \(3.5\). The final observation has a large
+                    effect on the mean. A rank-based procedure replaces these observations by positions
+                    \(1,2,3,4\) and therefore cannot distinguish the last observation from a value of 5 that
+                    occupies the same position. This may make inference more resistant to very large values,
+                    but it also removes information about the size of the difference.
+                </p>
+                <p>
+                    In the tests below, <i>distribution-free</i> refers to a particular null distribution under
+                    specified assumptions, such as independent observations from the same continuous population.
+                    It does not mean that a test works regardless of sampling design, dependence, ties, or the
+                    null hypothesis being tested.
+                </p>
+
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (rank and tied rank).</b></p>
                     <p>
@@ -10304,6 +10326,18 @@ print(f"Parametric ANOVA p-value: {p_parametric:.5f}")
                         observations.
                     </p>
                 </div>
+                <p>
+                    <b>A pooled-ranking example.</b> In Experiment 164, Method A has observations
+                    \(7,9,9,13,18\), while Method B has \(5,9,12,15,19\). Combining and ordering all ten
+                    observations gives \(5,7,9,9,9,12,13,15,18,19\). The three observations equal to 9
+                    occupy positions 3, 4, and 5, so each receives midrank
+                    \[(3+4+5)/3=4.\]
+                    Method A therefore receives pooled ranks \(2,4,4,7,9\), while Method B receives
+                    \(1,4,6,8,10\). Their rank sums, 26 and 29, add to
+                    \(1+2+\cdots+10=55\). Notice that the gap between 18 and 19 plays no larger role
+                    than the gap between 12 and 13: ranks capture ordering, not numerical distance.
+                </p>
+
                 <p>
                     <b>How to choose a test.</b> The sampling design matters at least as much as the appearance of
                     the histogram.
@@ -10353,6 +10387,16 @@ print(f"Parametric ANOVA p-value: {p_parametric:.5f}")
                     stated.
                 </p>
 
+                <p>
+                    <b>First identify the observational units.</b> Suppose one website version is evaluated by
+                    ten users and another version by ten different users. These are two <i>independent groups</i>,
+                    assuming their recruitment and responses do not introduce dependence. If instead the same
+                    ten users try both versions, each user contributes a <i>matched pair</i>; subtracting the two
+                    measurements removes that user's common baseline from the comparison. If the same users try
+                    three versions, each user is a block in a Friedman test. The numerical observations can
+                    look similar in these three designs, but the appropriate null distributions differ.
+                </p>
+
                 <!-- ========================= Ranks and Ties ========================= -->
                 <p><b>Why ranks are useful—and what they lose.</b></p>
                 <p>
@@ -10362,6 +10406,15 @@ print(f"Parametric ANOVA p-value: {p_parametric:.5f}")
                     hand, two datasets with the same order but very different numerical gaps receive the same ranks:
                     a rank-based p-value alone cannot tell us the practical size of a treatment effect in seconds,
                     euros, or points.
+                </p>
+
+                <p>
+                    <b>Example: order versus magnitude.</b> The samples \(2,4,6\) and \(2,4,600\) have
+                    exactly the same ranks \(1,2,3\), although their means are very different.
+                    Likewise, applying the strictly increasing transformation \(g(x)=10x+3\) to every
+                    observation leaves the ranks unchanged. It would not generally leave the raw means,
+                    variances, or mean differences unchanged. Therefore a rank-based result should be
+                    accompanied by summaries in the original units whenever the magnitude matters.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -10390,7 +10443,7 @@ axes[1].set_xlabel(&quot;Pooled midrank&quot;)
 axes[1].set_ylabel(&quot;Observation number&quot;)
 axes[1].set_title(&quot;Rank transformation&quot;)
 fig.tight_layout()
-fig.savefig(&quot;nonparametric_ranks.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/nonparametric_ranks.png&quot;, dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/nonparametric_ranks.png"
@@ -10417,6 +10470,18 @@ plt.show()</code></pre>
                     </p>
                 </div>
                 <p>
+                    <b>Where does the binomial distribution come from?</b> Under a continuous null distribution
+                    with median \(m_0\), each independent difference has probability one half of falling
+                    above \(m_0\) and one half of falling below. If we write
+                    \[I_i=\mathbf 1\{D_i>m_0\},\]
+                    then each \(I_i\) is Bernoulli with success probability \(1/2\). Their sum
+                    \(B=\sum I_i\) consequently has a \(\operatorname{Binomial}(n,1/2)\)
+                    distribution. The exact p-value counts how many sign patterns are at least as unfavorable
+                    to the null as the observed number of positive signs. We use both tails because there is
+                    no prespecified direction of change.
+                </p>
+
+                <p>
                     The sign test does not require symmetry; it ignores the sizes of the differences. Dropping zeros
                     changes the estimand when zeros are genuine point masses, so the standard
                     continuous-distribution interpretation should not be applied automatically to highly discrete
@@ -10429,6 +10494,17 @@ plt.show()</code></pre>
                     all-negative sequences are as extreme: \[ p=2\left(\frac{1}{2}\right)^6=\frac{2}{64}=0.03125. \]
                     We reject at the 5% level. This test provides evidence of a change in the median paired
                     difference under the stated sampling assumptions; it does not estimate the average improvement.
+                </p>
+
+                <p>
+                    <b>What if some paired differences are zero?</b> Take
+                    \(D=(3,-1,0,4,-2,5,6)\). The zero is omitted under the convention used here, leaving
+                    \(n^*=6\), with four positive and two negative signs. Thus
+                    \[p=2\Pr\{\operatorname{Binomial}(6,1/2)\leq2\}
+                    =2\frac{1+6+15}{64}=0.6875.\]
+                    The sample does not give evidence against balanced positive and negative differences.
+                    This calculation is conditional on the chosen zero-handling rule; a large proportion of
+                    genuine zeros merits separate substantive attention.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -10448,8 +10524,8 @@ p_scipy = stats.binomtest(positive, n, 0.5).pvalue
 print(f&quot;Positive differences: {positive} of {n}&quot;)
 print(f&quot;Manual p-value: {p_manual:.5f}&quot;)
 print(f&quot;SciPy p-value:  {p_scipy:.5f}&quot;)
-assert np.isclose(p_manual, 0.03125)
-assert np.isclose(p_manual, p_scipy)</code></pre>
+
+</code></pre>
                 <!-- ========================= Mann–Whitney U ========================= -->
                 <p><b>Mann–Whitney U: two independent groups.</b></p>
                 <div class="stats-note stats-definition">
@@ -10463,6 +10539,20 @@ assert np.isclose(p_manual, p_scipy)</code></pre>
                         The standard test uses the null of <i>equal population distributions</i>.
                     </p>
                 </div>
+                <p>
+                    <b>Why does the rank sum equal a count of pairwise comparisons?</b> Consider the two small
+                    samples \(X=(2,5)\) and \(Y=(3,5)\). There are four possible cross-group pairs.
+                    The first X observation, 2, beats neither Y observation. The second X observation, 5,
+                    beats 3 and ties 5. Assigning one point to a win and half a point to a tie gives
+                    \[U_X=0+0+1+\tfrac12=1.5.\]
+                    The pooled ranks are 1 for 2, 2 for 3, and 3.5 for each 5. Therefore the rank sum for X
+                    is \(R_X=1+3.5=4.5\), and the rank formula gives the same answer:
+                    \[U_X=4.5-\frac{2(3)}2=1.5.\]
+                    The estimated probability of superiority is \(\widehat\theta=1.5/(2\cdot2)=0.375\).
+                    The probability is defined for a randomly selected X observation versus an independently
+                    selected Y observation; it is not the probability that an individual treatment works.
+                </p>
+
                 <div class="stats-note stats-theorem">
                     <p class="stats-note-heading"><b>Theorem (null mean and variance, without ties).</b></p>
                     <p>
@@ -10540,7 +10630,17 @@ p_exact = min(1.0, 2*min(
 result = stats.mannwhitneyu(a, b, alternative=&quot;two-sided&quot;, method=&quot;exact&quot;)
 print(f&quot;R_A={rank_sum_a:.0f}; U_A={u_observed:.0f}&quot;)
 print(f&quot;Exact p-value={p_exact:.6f}; SciPy p-value={result.pvalue:.6f}&quot;)
-assert np.isclose(p_exact, result.pvalue)</code></pre>
+</code></pre>
+                <p>
+                    <b>Why is the p-value \(2/70\) in Worked example 2?</b> Under the null of identical
+                    continuous distributions, the eight pooled rank positions contain no information about
+                    which four should be labeled A. There are \(\binom84=70\) equally likely assignments.
+                    One assignment places all four smallest ranks in A, giving \(U_A=0\); another places all
+                    four largest in A, giving \(U_A=16\). Counting both extreme tails produces
+                    \(2/70\). We do not condition on the numerical gaps between the scores for this exact
+                    rank calculation.
+                </p>
+
                 <p>
                     <b>Interpretation is crucial.</b> The Mann–Whitney test is often described as a "test of two
                     medians". That is justified as a location comparison when the groups have the same shape and
@@ -10555,6 +10655,17 @@ assert np.isclose(p_exact, result.pvalue)</code></pre>
                     <i>Cliff's delta</i>, with A compared with B, is \[\widehat\delta=2\widehat\theta-1.\] It lies
                     between \(-1\) and \(1\) and summarizes pairwise ordering; it is not a difference in the
                     original measurement units.
+                </p>
+
+                <p>
+                    <b>Example of an effect size.</b> For the eight observations in each group in Experiment 167,
+                    the Mann–Whitney statistic is \(U_A=5.5\) out of \(8\cdot8=64\) cross-group pairs.
+                    Therefore
+                    \[\widehat\theta=\frac{5.5}{64}\approx0.0859,
+                    \qquad \widehat\delta=2\widehat\theta-1\approx-0.8281.\]
+                    The negative sign says that A usually gives smaller measurements than B. This could be
+                    desirable if the variable is completion time, but undesirable if it is a test score.
+                    The numerical orientation of the effect size is essential to interpretation.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -10584,7 +10695,7 @@ ax.set_ylabel(&quot;Empirical cumulative probability&quot;)
 ax.set_title(&quot;Empirical CDFs show distributional differences&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;nonparametric_ecdf.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/nonparametric_ecdf.png&quot;, dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/nonparametric_ecdf.png"
@@ -10611,6 +10722,16 @@ plt.show()</code></pre>
                         =\frac{n^*(n^*+1)(2n^*+1)}{24}. \]
                     </p>
                 </div>
+                <p>
+                    <b>Why rank absolute differences?</b> Suppose two paired changes are \(+1\) and
+                    \(-10\). The sign test regards them as one positive and one negative change, so they
+                    cancel in its sign count. The signed-rank test assigns the larger absolute change a higher
+                    rank: the second observation contributes more to the negative rank sum. Under the symmetry
+                    null, sign flips are equally likely <i>for the fixed collection of absolute differences</i>.
+                    That conditional symmetry is the source of the signed-rank null distribution. It is
+                    stronger than merely assuming a median of zero.
+                </p>
+
                 <p>
                     The signed-rank test uses more information than the sign test, but needs a symmetry assumption
                     for its usual location interpretation. If paired differences are strongly asymmetric, the sign
@@ -10642,7 +10763,21 @@ result = stats.wilcoxon(d, alternative=&quot;two-sided&quot;, method=&quot;exact
 print(&quot;Absolute-difference ranks:&quot;, rank_abs.tolist())
 print(f&quot;W+={w_plus:.0f}, W-={w_minus:.0f}, W={min(w_plus, w_minus):.0f}&quot;)
 print(f&quot;Exact p-value: {result.pvalue:.5f}&quot;)
-assert np.isclose(result.pvalue, 0.03125)</code></pre>
+</code></pre>
+                <p>
+                    <b>Worked comparison: the two tests need not agree.</b> Consider eight independent paired
+                    differences
+                    \[D=(-2,1,3,4,5,6,7,8).\]
+                    Seven signs are positive, so the two-sided sign-test p-value is
+                    \[p_{\mathrm{sign}}=2\frac{\binom80+\binom81}{2^8}
+                    =\frac{18}{256}=0.0703125.\]
+                    For the signed-rank test, the negative difference has absolute rank 2, while all the
+                    remaining ranks sum to \(34\). Thus \(W_-=2\), \(W_+=34\), and exhaustive sign
+                    enumeration gives the two-sided p-value \(0.0234375\). At the 5% level, the signed-rank
+                    test rejects and the sign test does not. This is not an inconsistency: they use different
+                    information and require different assumptions.
+                </p>
+
                 <p>
                     <b>Zeros, ties, and floating-point differences.</b> Real data often contain repeated differences
                     or exactly zero differences. These alter the null distribution and require an explicit
@@ -10683,6 +10818,15 @@ print(f&quot;Exact conditional sign-flip p={p_exact_signflip:.5f}&quot;)
 print(&quot;SciPy asymptotic p (not exact):&quot;,
       f&quot;{stats.wilcoxon(nonzero, method=&#x27;asymptotic&#x27;).pvalue:.5f}&quot;)</code></pre>
                 <p>
+                    <b>How the tied example is ranked.</b> After dropping the zero in Experiment 169, the
+                    absolute differences are \((0.5,0.5,1.2,1.2,2.0,0.8)\). Their midranks in the order
+                    listed are \((1.5,1.5,4.5,4.5,6,3)\). The positive-rank total is
+                    \(1.5+4.5+4.5+6=16.5\) and the negative-rank total is \(1.5+3=4.5\). Rather than
+                    pretending these are six distinct ranks 1 through 6, Experiment 169 enumerates sign flips
+                    while preserving these tied magnitudes.
+                </p>
+
+                <p>
                     This conditional enumeration is exact for the <i>sign-symmetry</i> null, given the observed
                     nonzero magnitudes and the specified zero convention. The asymptotic p-value is shown only as a
                     comparison, not as an interchangeable exact result.
@@ -10702,6 +10846,18 @@ print(&quot;SciPy asymptotic p (not exact):&quot;,
                         sufficiently large. This is an approximation, not an exact small-sample result.
                     </p>
                 </div>
+                <p>
+                    <b>What does the H statistic measure?</b> Under equality of the group distributions,
+                    each observation is equally likely to occupy any pooled rank, and the mean rank in each
+                    group should be near \((N+1)/2\). Writing \(\bar r_i=R_i/n_i\), the no-tie formula is
+                    equivalently
+                    \[H=\frac{12}{N(N+1)}\sum_{i=1}^k
+                    n_i\left(\bar r_i-\frac{N+1}{2}\right)^2.\]
+                    Therefore H measures how far the <i>group mean ranks</i> are from the overall mean rank,
+                    weighted by group size. It resembles ANOVA's comparison of between-group variation,
+                    except that it analyzes ranks rather than the original measurements.
+                </p>
+
                 <p>
                     Like ANOVA, Kruskal–Wallis is an <i>omnibus</i> test; a significant result does not identify
                     which groups differ. If distributions have the same shape, rejection can be interpreted as
@@ -10754,6 +10910,20 @@ print(&quot;SciPy asymptotic p (not exact):&quot;,
                     dataset; it is not a difference in score units or an unbiased population effect estimate.
                 </p>
 
+                <p>
+                    <b>Calculate the rank deviations explicitly.</b> In Worked example 4, \(N=15\) and the
+                    overall mean rank is \((15+1)/2=8\). The group mean ranks are
+                    \[\bar r_A=19/5=3.8,\quad
+                    \bar r_B=37/5=7.4,\quad
+                    \bar r_C=64/5=12.8.\]
+                    The deviations from 8 are \(-4.2,-0.6,4.8\). Hence
+                    \[H=\frac{12}{15\cdot16}
+                    [5(4.2)^2+5(0.6)^2+5(4.8)^2]=10.26.\]
+                    This makes the source of the large statistic visible: group C occupies predominantly high
+                    ranks and group A predominantly low ranks. The resulting chi-square p-value is approximate;
+                    the sample sizes of five per group are small enough that the approximation deserves caution.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 170: calculate Kruskal–Wallis from pooled ranks and verify it.</b>
                 </p>
@@ -10777,7 +10947,7 @@ print(&quot;Rank sums:&quot;, rank_sums)
 print(f&quot;Manual H={H_manual:.2f}; SciPy H={result.statistic:.2f}&quot;)
 print(f&quot;Approximate chi-square p={result.pvalue:.6f}&quot;)
 print(f&quot;Approximate epsilon_H^2={(H_manual-k+1)/(N-k):.3f}&quot;)
-assert np.isclose(H_manual, result.statistic)</code></pre>
+</code></pre>
                 <p>
                     <b>Post-hoc comparisons and multiple testing.</b> Kruskal–Wallis does not tell us which pair
                     differs. With three groups there are three pairs; with \(k\) groups there are \(\binom{k}{2}\).
@@ -10787,6 +10957,17 @@ assert np.isclose(H_manual, result.statistic)</code></pre>
                     pooled-rank post-hoc procedure. The chosen comparisons should be specified in advance when
                     possible, and an omnibus rejection does not authorize unlimited exploratory tests without
                     further adjustment.
+                </p>
+
+                <p>
+                    <b>Why adjust pairwise p-values?</b> With groups A, B, and C, there are three pairwise
+                    comparisons: A–B, A–C, and B–C. If each true-null comparison were tested separately at 5%,
+                    the probability of at least one false rejection across the family could exceed 5%.
+                    Holm's method sorts the three raw p-values from smallest to largest, compares them
+                    successively with \(0.05/3\), \(0.05/2\), and \(0.05\), and stops rejecting after the
+                    first failure. The adjusted p-values from the code provide the same decision rule. This
+                    adjustment addresses multiple testing; it does not change which null hypothesis each
+                    pairwise test targets.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -10830,6 +11011,16 @@ for (a,b), raw, adj, significant in zip(pairs, p_raw, p_adjusted, reject):
                         required.
                     </p>
                 </div>
+                <p>
+                    <b>Why rank within each block rather than pooling all observations?</b> Suppose one user is
+                    generally fast and has times \((12,15,21)\), while another is generally slow and has times
+                    \((52,55,61)\). Their raw times differ by 40 units, but both rank the conditions
+                    \(A,B,C\) as \((1,2,3)\). Friedman gives each user's within-person ordering equal
+                    weight and does not confuse the second person's slower baseline with a treatment effect.
+                    If the treatments were instead tested on unrelated groups of users, within-person ranks
+                    would not be available and Friedman would be inappropriate.
+                </p>
+
                 <p>
                     Blocks should be independent of one another; observations within a block are deliberately
                     related. A suitable null for an exact within-block randomization calculation makes condition
@@ -10907,6 +11098,18 @@ for (a,b), raw, adj, significant in zip(pairs, p_raw, p_adjusted, reject):
                     is \(W=8.4/[5(3-1)]=0.84\). Neither p-value identifies a particular pair of interfaces.
                 </p>
 
+                <p>
+                    <b>Why is the exact result different from the chi-square approximation?</b> In Worked example 5,
+                    the expected rank sum for each interface under exchangeability is
+                    \(n(k+1)/2=5(4)/2=10\). The observed sums are \((6,9,15)\), which deviate from
+                    expectation by \((-4,-1,5)\). Substitution into the statistic produces \(Q=8.4\).
+                    The asymptotic chi-square tail is approximately 0.0150, while the finite set of
+                    \(6^5=7776\) within-participant rearrangements gives \(66/7776\approx0.00849\).
+                    With only five participants, the exact randomization distribution is discrete and need
+                    not resemble a smooth chi-square curve closely. This exact calculation is justified by
+                    exchangeability of condition labels within each participant under the null.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 172: calculate Friedman Q and enumerate its exact small-sample null
                         distribution.</b>
@@ -10939,8 +11142,8 @@ p_exact = np.mean(null_q &gt;= q - 1e-12)
 print(&quot;Rank sums:&quot;, rank_sums)
 print(f&quot;Q={q:.2f}, asymptotic p={asymptotic.pvalue:.6f}&quot;)
 print(f&quot;Exact p={p_exact:.6f}, Kendall W={q/(n*(k-1)):.2f}&quot;)
-assert np.isclose(q, 8.4)
-assert np.isclose(p_exact, 66/7776)</code></pre>
+
+</code></pre>
                 <p class="stats-experiment-title">
                     <b>Experiment 173: visualize matched observations without losing participant identities.</b>
                 </p>
@@ -10962,7 +11165,7 @@ ax.set_ylabel(&quot;Task completion time (synthetic units)&quot;)
 ax.set_title(&quot;Matched observations: follow each participant&quot;)
 ax.legend(fontsize=8)
 fig.tight_layout()
-fig.savefig(&quot;nonparametric_matched_profiles.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/nonparametric_matched_profiles.png&quot;, dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/nonparametric_matched_profiles.png"
@@ -10981,6 +11184,17 @@ plt.show()</code></pre>
                     \(E\sim\operatorname{Exponential}(1)\), has median zero, as does \(Y\sim N(0,1)\). But \(X\) is
                     strongly right-skewed and \(Y\) is symmetric. We can estimate their pairwise superiority
                     probability using independent draws. It need not be \(1/2\) merely because the medians agree.
+                </p>
+
+                <p>
+                    <b>What is the distinction between a median and a distribution?</b> A median describes the
+                    location of the midpoint of a distribution; it does not determine tail behavior or skewness.
+                    In the example below, subtracting \(\log 2\) from an exponential random variable
+                    moves its median to zero because
+                    \[\Pr(E\leq\log2)=1-e^{-\log2}=\frac12.\]
+                    The standard normal distribution also has median zero, but it is symmetric and has a very
+                    different shape. Equal medians therefore need not imply equal probabilities of superiority
+                    or equality of the two distributions.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11012,6 +11226,17 @@ print(&quot;Theoretical population medians are both zero.&quot;)</code></pre>
                     Rather than using the tie-free <code>method="exact"</code> approximation as though there were no
                     ties, one can build an exact label-permutation distribution for a small sample, preserving group
                     sizes. This tests <i>exchangeability of treatment labels</i> under the relevant null.
+                </p>
+
+                <p>
+                    <b>Why ties change the exact reference distribution.</b> With five-point satisfaction ratings,
+                    many different observations can occupy the same rank. The probability of each distinct rank
+                    ordering is no longer described by the tie-free Mann–Whitney formula. We can instead hold
+                    the observed ten ratings fixed and enumerate all \(\binom{10}{5}=252\) assignments of
+                    five labels to A and five to B. Each assignment yields a U statistic, and the exact
+                    permutation p-value counts outcomes as extreme as the observed one according to the stated
+                    two-sided permutation convention. Its validity rests on the study's label-exchangeability
+                    assumption, not merely on the ratings being ordinal.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11097,6 +11322,17 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     and missing data.
                 </p>
 
+                <p>
+                    <b>Putting the tests together.</b> For one sample of numerical or ordinal differences against
+                    a reference value, the sign test targets sign balance (and, with appropriate continuity,
+                    a median). For paired measurements, the signed-rank test uses magnitudes through their
+                    ranks but requires sign symmetry for its exact reference. For two independent groups,
+                    Mann–Whitney compares pooled ordering. For three or more independent groups,
+                    Kruskal–Wallis compares pooled mean ranks; for the same participants under three or more
+                    conditions, Friedman compares ranks within participants. In every case, the study design,
+                    test null, method of handling ties, and effect size should be stated alongside the p-value.
+                </p>
+
                 <!-- ========================= Exercises ========================= -->
                 <p><b>Exercises.</b></p>
                 <ol>
@@ -11162,6 +11398,7 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html"
                         target="_blank" rel="noopener noreferrer">statsmodels: multiple-testing adjustments</a>.
                 </p>
+
                 <hr />
 
                 <!-- ========================= MAIN SECTION 15: Bootstrap, Permutation, and Resampling Methods ========================= -->
