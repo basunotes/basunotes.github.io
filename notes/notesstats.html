@@ -11419,6 +11419,28 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     Resampling does not correct a biased survey, dependent observations, a poorly chosen estimand,
                     or violations of the sampling/randomization design.
                 </p>
+                <p>
+                    To see why these methods are different, imagine observing eight task-completion times and
+                    calculating their average. We cannot repeatedly sample the original population to discover exactly
+                    how that average would vary. A <i>bootstrap</i> uses the eight observed times as an approximation
+                    to the population and repeatedly draws new samples from them. This gives an approximation to the
+                    uncertainty of the estimated average.
+                </p>
+                <p>
+                    Now suppose those eight users were randomly assigned to two interfaces, and we wish to test whether
+                    the interfaces have any effect. A <i>permutation test</i> instead asks what differences in group
+                    averages we could observe if the assignment labels were rearranged under the null hypothesis.
+                    No observations are created and none are repeated: the same eight outcomes are redistributed.
+                    A bootstrap distribution and a permutation null distribution therefore answer different questions.
+                </p>
+                <p>
+                    We also distinguish three layers of randomness. Before data collection, the original observations
+                    and their statistic are random. After the dataset is observed, we treat those observations as fixed
+                    and introduce <i>artificial resampling randomness</i>. If only a finite number of resamples are
+                    generated, the resulting estimates have additional <i>Monte Carlo error</i>. Increasing the number
+                    of resamples reduces that computational error, but does not supply more original observations.
+                </p>
+
                 <div class="scrollable">
                     <table>
                         <thead>
@@ -11481,6 +11503,24 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     </p>
                 </div>
                 <p>
+                    <b>What distribution are we sampling from?</b> Take the observed sample
+                    \(x=(2,4,6)\). The empirical distribution puts probability \(1/3\) on each value:
+                    \[
+                    \widehat F_3(t)=
+                    \begin{cases}
+                    0, &amp; t&lt;2,\\
+                    1/3, &amp; 2\leq t&lt;4,\\
+                    2/3, &amp; 4\leq t&lt;6,\\
+                    1, &amp; t\geq6.
+                    \end{cases}
+                    \]
+                    A bootstrap sample might be \((6,2,6)\) or \((2,2,2)\), because each of its three draws is
+                    independent and made <i>with replacement</i>. By contrast, drawing the three observations without
+                    replacement would merely rearrange the original values, giving exactly the same sample mean on
+                    every draw. It could not approximate the sampling variation of that mean.
+                </p>
+
+                <p>
                     In particular, the bootstrap estimates a <i>sampling distribution</i>, not the distribution of
                     individual observations. Repetition of the same observed value in one resample is normal.
                     Resamples of size \(n\) are drawn from the original dataset, not from the previous resample.
@@ -11542,6 +11582,13 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     </table>
                 </div>
                 <p>
+                    <b>How do the frequencies in this table arise?</b> For instance, the bootstrap mean is exactly
+                    \(4\) for the six permutations of \((2,4,6)\) and the one sample \((4,4,4)\). Thus exactly seven
+                    of the 27 ordered resamples have mean \(4\). The probability of a bootstrap mean of \(4\) is
+                    consequently \(7/27\), not \(1/7\). Distinct ordered resamples can produce the same statistic.
+                </p>
+
+                <p>
                     The <i>conditional bootstrap expectation</i> is \(\operatorname E_*(\overline X^*)=\overline
                     x=4\). Since the empirical variance with divisor \(n\) is \(\widehat
                     v=n^{-1}\sum_i(x_i-\overline x)^2=8/3\), independence of the bootstrap draws gives \[
@@ -11571,10 +11618,21 @@ for mean, count in zip(values, counts):
 print(&quot;Conditional mean:&quot;, boot_means.mean())
 print(&quot;Conditional standard error:&quot;, boot_means.std(ddof=0))
 
-assert len(boot_means) == 27
-assert counts.tolist() == [1, 3, 6, 7, 6, 3, 1]
-assert np.isclose(boot_means.mean(), 4.)
-assert np.isclose(boot_means.var(ddof=0), 8/9)</code></pre>
+</code></pre>
+
+                <p>
+                    We can also derive the bootstrap variance directly. Conditional on the observed sample, one
+                    bootstrap draw \(X^*\) has mean \(4\) and variance
+                    \[
+                    \operatorname{Var}_*(X^*)
+                    =\frac{(2-4)^2+(4-4)^2+(6-4)^2}{3}=\frac83.
+                    \]
+                    Because the three bootstrap draws are independent, the variance of their mean is
+                    \(\operatorname{Var}_*(\overline X^*)=(8/3)/3=8/9\). Here the subscript \(*\) is a reminder
+                    that the expectation and variance refer to the <i>bootstrap drawing mechanism, conditional on the
+                        observed dataset</i>. It is not an expectation over new samples from the actual, unknown
+                    population.
+                </p>
 
                 <p>
                     <b>From enumeration to Monte Carlo approximation.</b> For \(n\) observations, there are \(n^n\)
@@ -11584,6 +11642,15 @@ assert np.isclose(boot_means.var(ddof=0), 8/9)</code></pre>
                     =\sqrt{\frac{1}{B-1}\sum_{b=1}^{B} (T_b^*-\overline T^*)^2},\qquad \overline
                     T^*=\frac1B\sum_{b=1}^{B}T_b^*. \] Here \(B-1\) corrects the Monte Carlo variance estimate of
                     the simulated bootstrap statistics; it does not change the resampling design.
+                </p>
+
+                <p>
+                    For a more realistic dataset we approximate the bootstrap distribution rather than enumerate it.
+                    Suppose the eight observed times are \(12,14,15,15,17,18,20,32\) seconds. Each of the
+                    \(B=10{,}000\) bootstrap datasets contains eight independently selected entries from these same
+                    observed times. We compute its mean, resulting in \(10{,}000\) different estimates. The standard
+                    deviation of those bootstrap means measures the estimated <i>uncertainty of the sample mean</i>;
+                    it is not the standard deviation of task times themselves.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11607,7 +11674,7 @@ ax.set(xlabel=&quot;Bootstrap sample mean&quot;, ylabel=&quot;Estimated density&
        title=&quot;Sampling uncertainty estimated from one dataset&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;resampling_bootstrap_means.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/resampling_bootstrap_means.png&quot;, dpi=160)
 plt.show()</code></pre>
 
                 <figure class="stats-figure">
@@ -11633,6 +11700,22 @@ plt.show()</code></pre>
                         asymmetric; neither method guarantees nominal coverage in small samples.
                     </p>
                 </div>
+                <p>
+                    <b>Why are the two intervals different?</b> Think of the bootstrap estimates as describing which
+                    values an estimator could produce when the empirical population is repeatedly sampled. The
+                    percentile method takes the central \(95\%\) of those values directly. The basic method instead
+                    uses the centered differences \(\widehat\theta^*-\widehat\theta\) as approximations to the
+                    estimation error \(\widehat\theta-\theta\). If the bootstrap error lies approximately between
+                    \(q^*_{0.025}-\widehat\theta\) and \(q^*_{0.975}-\widehat\theta\), solving for \(\theta\)
+                    reverses the endpoints and gives
+                    \[
+                    \left[2\widehat\theta-q^*_{0.975},\;
+                    2\widehat\theta-q^*_{0.025}\right].
+                    \]
+                    Both methods rely on approximations: reflecting an inaccurate bootstrap error distribution does not
+                    make it accurate, and the percentile method also can have poor small-sample coverage.
+                </p>
+
                 <p>
                     <b>Worked example 2 (response times with a long upper tail).</b>
                     Suppose eight independent tasks have completion times in seconds \(12,14,15,15,17,18,20,32\).
@@ -11663,7 +11746,16 @@ low, high = np.quantile(replicates, [0.025, 0.975])
 print(f&quot;Point estimate: {est:.3f} seconds&quot;)
 print(f&quot;Percentile 95% CI: ({low:.3f}, {high:.3f})&quot;)
 print(f&quot;Basic 95% CI:      ({2*est-high:.3f}, {2*est-low:.3f})&quot;)
-assert np.allclose([low, high], [14.625, 22.375])</code></pre>
+</code></pre>
+
+                <p>
+                    In this example, the bootstrap distribution of the mean is not perfectly symmetric because
+                    the largest recorded time, 32 seconds, occasionally appears several times in a resample.
+                    The upper percentile endpoint is \(22.375\), which is \(4.5\) seconds above the observed mean,
+                    while the lower endpoint \(14.625\) is only \(3.25\) seconds below it. Reflecting those endpoints
+                    reverses that asymmetry and produces the basic interval. Neither interval should be chosen simply
+                    because its width or location looks more appealing.
+                </p>
 
                 <p>
                     <b>Bias correction and acceleration (BCa).</b> The percentile interval can misbehave when an
@@ -11681,6 +11773,16 @@ assert np.allclose([low, high], [14.625, 22.375])</code></pre>
                     sufficiently regular statistics, but can become undefined for degenerate or very discrete
                     resampling distributions. It is not a remedy for an unrepresentative sample or a broken
                     dependence assumption.
+                </p>
+
+                <p>
+                    The BCa correction attempts to account for two effects. The <i>bias-correction</i> term \(z_0\)
+                    records whether the observed estimate sits above or below the center of its bootstrap estimates.
+                    The <i>acceleration</i> term \(a\) uses leave-one-out estimates to detect how strongly different
+                    observations influence the statistic. For our eight response times, deleting 32 changes the mean
+                    much more than deleting 15, which is why a skewness-sensitive adjustment may matter. The formula
+                    gives adjusted quantile levels; it does not change the recorded data or magically eliminate
+                    sampling bias.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11703,6 +11805,15 @@ for method in (&quot;percentile&quot;, &quot;basic&quot;, &quot;BCa&quot;):
           f&quot;bootstrap SE = {result.standard_error:.3f}&quot;)</code></pre>
 
                 <p>
+                    For the supplied data and fixed seed, the three methods yield different intervals even though they
+                    use the same point estimate and the same number of resamples: percentile
+                    \([14.625,22.375]\), basic \([13.375,21.125]\), and approximately BCa
+                    \([15.125,24.250]\). The difference is due to the <i>interval construction</i>, not three
+                    different estimates of the sample mean. The precise BCa endpoints also depend on implementation
+                    details such as the quantile convention and the generated bootstrap replicates.
+                </p>
+
+                <p>
                     Interpretation matters more than selecting the narrowest interval. For the deliberately small,
                     skewed sample in Worked example 2, the BCa interval moves upward relative to the percentile
                     interval. Report the method, sample size, number of resamples, and the parameter being
@@ -11715,6 +11826,16 @@ for method in (&quot;percentile&quot;, &quot;basic&quot;, &quot;BCa&quot;):
                     for both, but a small sample median yields a <i>discrete</i> bootstrap distribution. For very
                     small samples, boundary parameters, extremely heavy tails, maxima, rare-event probabilities, and
                     other nonregular statistics may require specialized methods or stronger assumptions.
+                </p>
+
+                <p>
+                    <b>Why might the mean and median behave differently?</b> Changing the largest value from 32 to 80
+                    adds \(48\) to the sample sum, so the sample mean increases by \(48/8=6\) seconds, from
+                    \(17.875\) to \(23.875\). But the middle two ordered values remain 15 and 17, so the median
+                    stays at \(16\). Bootstrap intervals reflect this difference in sensitivity: resampling 80
+                    several times can make the mean much larger, whereas the median is determined by central order
+                    statistics. This is robustness to an extreme measurement, not proof that the median is always the
+                    more scientifically appropriate target.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11742,6 +11863,31 @@ for label, x in ((&quot;Original&quot;, original), (&quot;With extreme value&quo
                     <i>within each group</i> and take the difference of the resulting group estimates. With matched
                     observations, resample entire <i>pairs</i>, not individual measurements independently. Otherwise
                     the resampling discards the covariance that makes a paired analysis useful.
+                </p>
+
+                <p>
+                    <b>Why must the resampling unit follow the design?</b> In an independent two-group study, the
+                    estimator \(\overline A-\overline B\) has variance
+                    \[
+                    \operatorname{Var}(\overline A-\overline B)
+                    =\operatorname{Var}(\overline A)+\operatorname{Var}(\overline B),
+                    \]
+                    when the samples are independent. It is natural to resample within A and within B separately.
+                    Pooling both samples would erase their observed difference and is instead useful for some
+                    <i>null-hypothesis tests</i>, not for this ordinary bootstrap confidence interval.
+                </p>
+                <p>
+                    In a paired study, we observe \((A_i,B_i)\) from the same person and estimate
+                    \(\overline D\), where \(D_i=B_i-A_i\). For one pair,
+                    \[
+                    \operatorname{Var}(D_i)
+                    =\operatorname{Var}(B_i)+\operatorname{Var}(A_i)
+                    -2\operatorname{Cov}(A_i,B_i).
+                    \]
+                    Independently resampling before and after measurements would destroy their within-person
+                    covariance. Resampling complete paired rows, or equivalently the observed differences when the
+                    statistic depends only on differences, preserves that aspect of the design. In Experiment 181 the
+                    paired differences are \((2,3,4,5,7,8)\), with mean \(29/6\approx4.833\).
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11773,6 +11919,16 @@ print(&quot;Paired percentile CI:&quot;, np.quantile(paired_effect, [.025, .975]
 
                 <!-- ========================= Permutation Tests ========================= -->
                 <p><b>Permutation tests: build the distribution under a null hypothesis.</b></p>
+                <p>
+                    A bootstrap usually tries to reproduce the estimator's variability under a fitted or empirical
+                    population. A permutation test deliberately creates the world of a <i>null hypothesis</i>:
+                    it asks how unusual the observed statistic would be if certain labels carried no information.
+                    For example, if eight users are assigned to two interfaces in groups of four, then under a
+                    completely randomized sharp no-effect null, any four of the eight observed outcomes could have
+                    carried the A label. There are \(\binom84=70\) assignments. Unlike bootstrap sampling, this
+                    does not duplicate outcomes or change group sizes.
+                </p>
+
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (exact independent-label permutation test).</b></p>
                     <p>
@@ -11809,6 +11965,24 @@ print(&quot;Paired percentile CI:&quot;, np.quantile(paired_effect, [.025, .975]
                     question.
                 </p>
 
+                <p>
+                    <b>Why are only two allocations extreme?</b> The observed group A contains the four largest
+                    outcomes and B contains the four smallest. Because each group has four observations, no alternative
+                    allocation can make the mean of A exceed 11.5 or the mean of B fall below 5.5. Thus \(T=6\)
+                    is the greatest possible difference. Reversing the two labels gives the smallest possible
+                    difference, \(T=-6\). Each occurs once among the 70 assignments, giving
+                    \(p=(1+1)/70=0.02857\).
+                </p>
+                <p>
+                    This calculation depends on the <i>exchangeability</i> assumption. In a randomized experiment,
+                    reassignment is justified by the actual randomization scheme under a suitable sharp null. For
+                    two independent observational samples, an equality-of-distributions null can instead justify
+                    exchanging labels. Equal population means alone do not: for example,
+                    \(X\sim N(0,1)\) and \(Y\sim N(0,9)\) have the same mean but different distributions.
+                    Observations from them are not identically distributed, so unrestricted label shuffling is not
+                    automatically a valid exact test of equality of their means.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 182: enumerate all 70 label allocations and plot the exact null distribution.</b>
                 </p>
@@ -11833,7 +12007,6 @@ p_value = extreme / len(null)
 print(f&quot;Observed difference: {observed:.1f}&quot;)
 print(f&quot;Extreme allocations: {extreme} / {len(null)}&quot;)
 print(f&quot;Exact two-sided p-value: {p_value:.6f}&quot;)
-assert len(null) == 70 and extreme == 2
 
 fig, ax = plt.subplots(figsize=(8, 4.5))
 values, counts = np.unique(null, return_counts=True)
@@ -11844,7 +12017,7 @@ ax.set(xlabel=&quot;Mean difference under reallocated labels&quot;,
        ylabel=&quot;Number of allocations&quot;, title=&quot;Exact permutation null distribution&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;resampling_permutation_null.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/resampling_permutation_null.png&quot;, dpi=160)
 plt.show()</code></pre>
 
                 <figure class="stats-figure">
@@ -11866,6 +12039,16 @@ plt.show()</code></pre>
                     probability \(p\), the ordinary Monte Carlo proportion has approximate standard error
                     \(\sqrt{p(1-p)/B}\). At \(p=0.05\) and \(B=9999\), this is about \(0.00218\). Monte Carlo error
                     differs from <i>sampling uncertainty in the original study</i>.
+                </p>
+
+                <p>
+                    <b>Why the correction \((r+1)/(B+1)\)?</b> Suppose we generate 999 randomized allocations and
+                    none produces a statistic as extreme as the observed one. Reporting \(r/B=0\) would incorrectly
+                    suggest a null-tail probability of exactly zero. The adjusted value is \(1/1000=0.001\): the
+                    observed configuration itself provides at least one extreme configuration in the collection used
+                    by the conservative Monte Carlo test. If instead four of the 999 sampled assignments were as
+                    extreme, we would report \((4+1)/1000=0.005\). The procedure is still an approximation to
+                    the exact randomization distribution, with uncertainty due to the random permutations chosen.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -11900,7 +12083,15 @@ exact = stats.permutation_test(
     alternative=&quot;two-sided&quot;, vectorized=False
 )
 print(f&quot;Exact p-value for Worked example 3: {exact.pvalue:.8f}&quot;)
-assert np.isclose(exact.pvalue, 2/70)</code></pre>
+</code></pre>
+
+                <p>
+                    In the larger synthetic example, the observed mean difference is \(2.2\); the randomization
+                    calculation with 999 and with 9999 draws produces slightly different p-values because the
+                    selected allocations differ. Neither result is a bootstrap confidence interval. The null
+                    distribution here describes how group labels could have been rearranged, not how the group means
+                    would vary in repeated population samples.
+                </p>
 
                 <p>
                     SciPy's default two-sided permutation convention is twice the smaller one-sided p-value, capped
@@ -11928,6 +12119,16 @@ assert np.isclose(exact.pvalue, 2/70)</code></pre>
                     by a symmetric distribution of independent differences.
                 </p>
 
+                <p>
+                    To see the design constraint directly, a pair with difference \(d_i=5\) contributes either
+                    \(+5\) or \(-5\) when its treatment and control labels are exchanged. It never becomes an
+                    unrelated measurement from somebody else's pair. With six pairs there are \(2^6=64\) permitted
+                    sign combinations, not the \(\binom{12}{6}=924\) ways of splitting twelve unrelated numbers into
+                    groups. If the measurements are chronologically <i>before</i> and <i>after</i> an intervention,
+                    the order was not randomized automatically; then independent symmetric differences provide a
+                    different possible justification for sign-flip inference.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 184: enumerate an exact paired sign-flip test and verify it in SciPy.</b>
                 </p>
@@ -11953,9 +12154,7 @@ check = stats.permutation_test(
     vectorized=False
 )
 print(f&quot;SciPy paired permutation p-value: {check.pvalue:.5f}&quot;)
-assert len(null) == 64
-assert np.isclose(p_exact, 2/64)
-assert np.isclose(p_exact, check.pvalue)</code></pre>
+</code></pre>
 
                 <!-- ========================= Parametric Bootstrap ========================= -->
                 <p><b>The parametric bootstrap: simulate from a fitted distribution.</b></p>
@@ -11978,6 +12177,20 @@ assert np.isclose(p_exact, check.pvalue)</code></pre>
                     exponential waiting times with scale \(\widehat\mu\) and compares the variability of their means
                     with the analytical value. This is an illustration, not evidence that real waiting times must
                     follow an exponential model.
+                </p>
+
+                <p>
+                    In Experiment 185, the observed times sum to \(9.5\), so the fitted exponential mean is
+                    \(\widehat\mu=9.5/7\approx1.3571\). The exponential model stipulates that
+                    \(\operatorname{Var}(X)=\mu^2\); thus it predicts
+                    \[
+                    \widehat{\operatorname{SE}}(\overline X)
+                    =\frac{\widehat\mu}{\sqrt7}\approx0.5130.
+                    \]
+                    Parametric resampling generates continuous values from the fitted exponential distribution and
+                    should reproduce this standard error up to Monte Carlo error. Nonparametric resampling instead
+                    draws only from the seven recorded values. The two standard errors need not agree because the
+                    empirical distribution and the fitted exponential model have different variances.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12005,6 +12218,14 @@ print(f&quot;Model-based theoretical SE: {mu_hat/np.sqrt(n):.4f}&quot;)
 print(f&quot;Parametric bootstrap SE: {param_means.std(ddof=1):.4f}&quot;)
 print(f&quot;Nonparametric bootstrap SE: {nonparam_means.std(ddof=1):.4f}&quot;)</code></pre>
 
+                <p>
+                    Here, the simulated parametric bootstrap standard error is about \(0.513\), while the ordinary
+                    empirical bootstrap gives about \(0.411\). Neither is universally superior: the former relies
+                    on a correctly specified exponential family, and the latter is sensitive to how representative
+                    seven observations are of the unknown distribution, especially its upper tail. This is why
+                    choosing a resampling model is part of the statistical reasoning, not merely a software option.
+                </p>
+
                 <!-- ========================= Coverage and Model Validation ========================= -->
                 <p><b>Does a confidence-interval method achieve its advertised coverage?</b></p>
                 <p>
@@ -12015,6 +12236,20 @@ print(f&quot;Nonparametric bootstrap SE: {nonparam_means.std(ddof=1):.4f}&quot;)
                     many simulated datasets. This is a simulation of
                     <i>frequentist coverage</i>; the inner bootstrap resamples must be rebuilt separately for every
                     newly generated dataset.
+                </p>
+
+                <p>
+                    <b>Why do we need two simulation loops?</b> Let \(I(X)\) be a confidence interval calculated
+                    from a fresh dataset \(X\), and let \(\mu\) be the true population mean. Its coverage is
+                    \[
+                    \Pr_F\bigl(\mu\in I(X)\bigr),
+                    \]
+                    where the probability concerns repeated <i>original datasets</i> from the population \(F\).
+                    The inner loop approximates one interval using bootstrap draws from the current dataset.
+                    The outer loop generates a new dataset and repeats the entire calculation. Counting the
+                    proportion of outer datasets whose intervals cover \(\mu\) estimates the coverage probability.
+                    Taking 100,000 bootstrap draws from just one observed dataset would not replace those outer
+                    independent experiments.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12054,7 +12289,7 @@ ax.set(ylim=(0, 1.04), ylabel=&quot;Proportion of intervals covering true mean&q
        title=f&quot;Estimated coverage: {studies} independent datasets, n={n}&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;resampling_coverage.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/resampling_coverage.png&quot;, dpi=160)
 plt.show()</code></pre>
 
                 <figure class="stats-figure">
@@ -12065,6 +12300,15 @@ plt.show()</code></pre>
                         procedure; results have Monte Carlo uncertainty.
                     </figcaption>
                 </figure>
+
+                <p>
+                    For the particular simulation seed here, the percentile interval covers the known mean in about
+                    \(95.2\%\) of the normal samples but only about \(88.0\%\) of the exponential samples.
+                    The exponential population is right-skewed, and with only \(n=15\) original observations its
+                    upper tail is often poorly represented. The exercise illustrates a substantive limitation of
+                    basic percentile intervals: making the inner bootstrap more precise does not remove coverage
+                    error caused by an inadequate approximation to the estimator's sampling distribution.
+                </p>
 
                 <p>
                     The fraction of intervals that cover the true mean has its own Monte Carlo uncertainty; if the
@@ -12084,6 +12328,25 @@ plt.show()</code></pre>
                     <i>moving-block bootstrap</i> resamples contiguous segments and concatenates them to form a
                     synthetic series. This preserves short-range dependence within blocks, although the block length
                     introduces a bias–variance trade-off and stationarity-type assumptions are still needed.
+                </p>
+
+                <p>
+                    <b>Why does positive serial correlation increase uncertainty?</b> For a weakly stationary series
+                    with autocovariance \(\gamma_h=\operatorname{Cov}(X_t,X_{t+h})\), the variance of the sample mean is
+                    \[
+                    \operatorname{Var}(\overline X)
+                    =\frac1{n^2}\left[n\gamma_0+
+                    2\sum_{h=1}^{n-1}(n-h)\gamma_h\right].
+                    \]
+                    The familiar independent-data formula \(\gamma_0/n\) arises only when all lagged covariances
+                    vanish. For a stationary AR(1) process with correlation \(\operatorname{Corr}(X_t,X_{t+h})=\phi^h\),
+                    and large \(n\), the variance of the mean is approximately
+                    \[
+                    \frac{\gamma_0}{n}\frac{1+\phi}{1-\phi}.
+                    \]
+                    At \(\phi=0.8\), the factor is \(9\): the standard error can be roughly three times the
+                    independent-data approximation. This explains why preserving local stretches of the time series
+                    matters when resampling.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12123,7 +12386,7 @@ ax.set(xlabel=&quot;Bootstrapped time-series mean&quot;, ylabel=&quot;Estimated 
        title=&quot;Why temporal dependence changes uncertainty&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;resampling_block_dependence.png&quot;, dpi=160)
+fig.savefig(&quot;../../images/resampling_block_dependence.png&quot;, dpi=160)
 plt.show()</code></pre>
 
                 <figure class="stats-figure">
@@ -12134,6 +12397,15 @@ plt.show()</code></pre>
                         produces greater uncertainty than an inappropriate i.i.d. bootstrap.
                     </figcaption>
                 </figure>
+
+                <p>
+                    In the simulation, the naive resampling standard error is about \(0.121\), while resampling
+                    contiguous blocks of length 12 gives about \(0.308\). The difference comes from retaining
+                    positive dependence inside blocks. It does not establish that block length 12 is optimal:
+                    blocks that are too short miss longer-range dependence, while blocks that are too long leave
+                    too few effectively distinct segments. A trend, seasonal change, or structural break may also
+                    require a different model or resampling scheme.
+                </p>
 
                 <!-- ========================= Decision Checklist ========================= -->
                 <p><b>Choosing the resampling method.</b></p>
@@ -12187,6 +12459,17 @@ plt.show()</code></pre>
                     state the null hypothesis and reason labels are exchangeable. For a bootstrap interval, state
                     what makes the sampled units representative and sufficiently independent for the chosen method.
                     Monte Carlo replication counts do not replace genuine independent study observations.
+                </p>
+
+                <p>
+                    <b>Final comparison.</b> When the goal is an interval for \(\mu_A-\mu_B\), a typical
+                    bootstrap resamples observations <i>within</i> each group to estimate the uncertainty of the
+                    observed difference. When the goal is to test a suitable no-effect null in a completely
+                    randomized experiment, a permutation test <i>pools the fixed outcomes and reassigns labels</i>
+                    according to the original randomization. When the goal is to check a method's coverage, an
+                    outer Monte Carlo simulation generates many entirely new datasets from a known law. These
+                    operations may all use random-number generators, but they represent three different probability
+                    calculations.
                 </p>
 
                 <!-- ========================= Exercises ========================= -->
@@ -12256,9 +12539,9 @@ plt.show()</code></pre>
                 <p>
                     <b>Related material.</b> <i>OpenIntro Statistics</i>, 4th ed., Chapter 5 (foundations of
                     sampling variability and inference) supplies background but is <i>not</i> a dedicated treatment
-                    of bootstrap confidence intervals or permutation tests. Review the earlier notes on sampling
-                    distributions, confidence intervals, hypothesis testing, paired samples, and nonparametric
-                    tests.
+                    of bootstrap confidence intervals or permutation tests. Related foundational topics include sampling
+                    distributions, confidence intervals,
+                    hypothesis testing, paired samples, and nonparametric tests.
                 </p>
                 <p>
                     <b>Software and methodology references.</b>
@@ -12283,6 +12566,25 @@ plt.show()</code></pre>
                     want), the <b>estimator</b> (what we calculate), and the <b>decision rule</b> (how we act on
                     uncertainty).
                 </p>
+
+                <p>
+                    <b>Concrete example: a signup experiment.</b> Suppose 100 randomly assigned users see version A
+                    of a signup form and another 100 see version B. We observe 18 signups under A and 24 under B.
+                    If a signup is coded as 1 and no signup as 0, the sample conversion rates are
+                    \(\widehat p_A=18/100=0.18\) and \(\widehat p_B=24/100=0.24\).
+                    The observed difference is \(0.24-0.18=0.06\), or 6 percentage points.
+                    But these 200 users are only one possible realization of the experiment: other randomized
+                    assignments and other sampled users could produce different rates. Statistical inference asks
+                    how much uncertainty surrounds the population difference \(p_B-p_A\), not whether the
+                    arithmetic \(24/100-18/100\) is correct.
+                </p>
+                <p>
+                    The <i>estimand</i> is the population quantity \(p_B-p_A\). The
+                    <i>estimator</i> is the random variable \(\widehat p_B-\widehat p_A\), and the
+                    <i>estimate</i> is its realized value, \(0.06\). A business decision, such as whether to
+                    deploy version B, requires considering the size and uncertainty of this estimate, costs,
+                    and possible harm to other outcomes.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (Bernoulli and binomial model).</b></p>
                     <p>
@@ -12294,6 +12596,40 @@ plt.show()</code></pre>
                         \(\widehat{\mathrm{SE}}=\sqrt{\widehat p(1-\widehat p)/n}\).
                     </p>
                 </div>
+
+                <p>
+                    <b>Where does the standard error come from?</b> Because a Bernoulli random variable takes only
+                    the values 0 and 1, \(\mathbb E(Y_i)=p\) and \(\operatorname{Var}(Y_i)=p(1-p)\).
+                    We estimate \(p\) with the sample proportion
+                    \[
+                    \widehat p=\frac1n\sum_{i=1}^nY_i.
+                    \]
+                    For independent outcomes,
+                    \[
+                    \begin{aligned}
+                    \mathbb E(\widehat p)
+                    &=\frac1n\sum_i\mathbb E(Y_i)=p,\\
+                    \operatorname{Var}(\widehat p)
+                    &=\frac1{n^2}\sum_i\operatorname{Var}(Y_i)
+                    =\frac{p(1-p)}{n}.
+                    \end{aligned}
+                    \]
+                    The square root of this variance is the <i>standard error</i>: it measures how much the
+                    estimated proportion would vary across independent repetitions of the sampling process.
+                    We substitute \(\widehat p\) because \(p\) is unknown.
+                </p>
+                <p>
+                    <b>Numerical example.</b> If the true conversion probability is \(p=0.20\) and we observe
+                    \(n=400\) independent users, then
+                    \[
+                    \operatorname{SE}(\widehat p)
+                    =\sqrt{\frac{0.20(0.80)}{400}}=0.02.
+                    \]
+                    Thus the sample conversion proportion fluctuates on a scale of roughly 2 percentage points.
+                    If we increase the number of independent users to 1,600, this standard error falls to
+                    \(0.01\): quadrupling the sample size halves the standard error. Experiment 188 simulates
+                    this sampling distribution.
+                </p>
                 <p>
                     The binomial model assumes a fixed number of effectively independent, identically distributed
                     trials. Repeated sessions from one user, shared households, spillovers between users, missing
@@ -12305,6 +12641,14 @@ plt.show()</code></pre>
                     Differentiating \(\ell(p)=k\log p+(n-k)\log(1-p)\) gives \(\ell'(p)=k/p-(n-k)/(1-p)\), hence
                     \(\widehat p=k/n\) (including boundary solutions for \(k=0,n\)). This connects the chapter with
                     maximum likelihood estimation.
+                </p>
+
+                <p>
+                    It is useful to keep the random and observed quantities separate. Before collecting outcomes,
+                    \(X\sim\operatorname{Binomial}(n,p)\) is random and \(\widehat p=X/n\) is an
+                    estimator. After observing, say, \(k=80\) conversions among \(400\) users, the estimate is
+                    \(80/400=0.20\). We do not know whether this estimate equals the population probability.
+                    A confidence interval or a test uses a sampling model to quantify that uncertainty.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12333,12 +12677,47 @@ print(f"Theoretical SE:           {np.sqrt(p * (1-p) / n):.5f}")</code></pre>
                     z=z_{1-\alpha/2}. \] The Clopper–Pearson interval instead inverts the exact binomial tails; it
                     has at least its nominal coverage under the binomial model, but can be conservative.
                 </p>
+
+                <p>
+                    <b>Why can the Wald interval fail?</b> It approximates the sampling distribution of
+                    \(\widehat p\) by a normal distribution centered at the observed proportion, with estimated
+                    standard error \(\sqrt{\widehat p(1-\widehat p)/n}\). For \(k=2\) signups among \(n=12\),
+                    \[
+                    \widehat p=\frac2{12}=0.1667,\qquad
+                    \widehat{\operatorname{SE}}
+                    =\sqrt{\frac{(2/12)(10/12)}{12}}\approx0.1076.
+                    \]
+                    Using \(z_{0.975}\approx1.96\), the lower limit is about
+                    \(0.1667-1.96(0.1076)=-0.0442\). But a probability cannot be negative.
+                    With zero observed successes, the Wald interval is even more misleading: the estimated
+                    standard error is zero, so it collapses to \([0,0]\), although the population probability
+                    could be positive.
+                </p>
+                <p>
+                    <b>Why is Wilson different?</b> Instead of plugging the observed proportion into the
+                    uncertainty formula, consider each candidate population probability \(p_0\) and ask whether
+                    the observed count would be unusually far from \(p_0\) under the binomial model. The score
+                    inequality is
+                    \[
+                    \left|\frac{\widehat p-p_0}
+                    {\sqrt{p_0(1-p_0)/n}}\right|\leq z_{1-\alpha/2}.
+                    \]
+                    Squaring and multiplying through gives
+                    \[
+                    n(\widehat p-p_0)^2\leq z^2p_0(1-p_0).
+                    \]
+                    This is a quadratic inequality in \(p_0\). Solving for all candidate values that satisfy it
+                    produces the Wilson endpoints stated above. For zero successes out of 12, its 95% interval
+                    is approximately \([0,0.2425]\), reflecting uncertainty that the Wald interval misses.
+                    Wilson coverage is improved but is not exactly 95% at every possible \(p\) and \(n\).
+                </p>
                 <p>
                     <b>Worked example 1 (two successful signups out of twelve).</b> Here \(\widehat p=2/12=0.1667\).
                     At 95% confidence, the Wald interval is approximately \([-0.044,0.378]\), an impossible negative
                     lower probability. The Wilson interval is approximately \([0.0470,0.4480]\); the Clopper–Pearson
                     interval is approximately \([0.0209,0.4841]\). A 95% confidence procedure covers the fixed true
-                    probability in 95% of repeated samples under its stated conditions; it does <i>not</i> assign a
+                    probability in approximately 95% of repeated samples when the method is well calibrated
+                    (and at least the nominal rate for the Clopper–Pearson method); it does <i>not</i> assign a
                     95% frequentist probability to the parameter lying in the observed interval.
                 </p>
 
@@ -12379,7 +12758,7 @@ ax.set(xlabel="Observed proportion k/12", ylabel="95% CI endpoint",
        title="Binary-proportion intervals: small samples")
 ax.legend(ncol=3, fontsize=8)
 fig.tight_layout()
-fig.savefig("ab_single_proportion_intervals.png", dpi=160)
+fig.savefig("../../images/ab_single_proportion_intervals.png", dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_single_proportion_intervals.png"
@@ -12413,6 +12792,27 @@ plt.show()</code></pre>
                     interval as well.
                 </p>
 
+                <p>
+                    <b>Why do we use the null probability in a test?</b> A hypothesis test asks whether
+                    the observed proportion is surprising <i>if \(H_0\) is true</i>. Under \(H_0:p=p_0\),
+                    \(\operatorname{Var}(\widehat p)=p_0(1-p_0)/n\), so we standardize with this null variance.
+                    For 10 successes out of 12 under \(p_0=0.5\),
+                    \[
+                    z_{\mathrm{obs}}
+                    =\frac{10/12-0.5}{\sqrt{0.5(0.5)/12}}
+                    \approx2.3094.
+                    \]
+                    The two-sided normal approximation gives approximately \(0.0209\), whereas the exact
+                    binomial calculation gives \(0.03857\). With only 12 trials the discrete binomial
+                    distribution matters: the normal approximation is not guaranteed to be accurate.
+                </p>
+                <p>
+                    For a general null \(p_0\ne0.5\), the binomial distribution is asymmetric. The usual
+                    SciPy two-sided exact p-value adds the probabilities of counts whose null probabilities are
+                    no greater than the probability of the observed count. It is therefore not always equal to
+                    twice the smaller one-sided tail.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 190: calculate an exact binomial p-value by hand and with SciPy.</b>
                 </p>
@@ -12428,7 +12828,7 @@ zhat = (k/n - p0) / ((p0*(1-p0)/n)**0.5)
 print(f"Exact p:  {manual_p:.8f} (SciPy: {result.pvalue:.8f})")
 print(f"Normal score approximation p: {2*norm.sf(abs(zhat)):.8f}")
 print(f"95% Wilson CI: {result.proportion_ci(method='wilson')}")
-assert abs(manual_p - result.pvalue) &lt; 1e-12</code></pre>
+</code></pre>
 
                 <!-- ========================= Comparing Independent Proportions ========================= -->
                 <p><b>Two independent conversion probabilities.</b></p>
@@ -12438,6 +12838,31 @@ assert abs(manual_p - result.pvalue) &lt; 1e-12</code></pre>
                     \(\Delta=p_B-p_A\), estimated by \(\widehat\Delta=\widehat p_B-\widehat p_A\). For positive
                     baseline risk one may also report the <i>risk ratio</i> \(RR=p_B/p_A\), and the relative uplift
                     \(RR-1\). They describe different scales.
+                </p>
+
+                <p>
+                    The distinction between an absolute and a relative change matters. If conversion rises from
+                    20% to 27.5%, the absolute change is 7.5 <i>percentage points</i>, but the relative uplift
+                    is \((0.275-0.20)/0.20=37.5\%\). The second number describes the change relative to the
+                    baseline, not the fraction of all users gained. When the baseline probability is zero, the
+                    risk ratio is undefined even though the absolute difference is well defined.
+                </p>
+                <p>
+                    <b>Deriving uncertainty for the difference.</b> With independent samples,
+                    \[
+                    \begin{aligned}
+                    \operatorname{Var}(\widehat p_B-\widehat p_A)
+                    &=\operatorname{Var}(\widehat p_B)
+                    +\operatorname{Var}(\widehat p_A)\\
+                    &=\frac{p_B(1-p_B)}{n_B}
+                    +\frac{p_A(1-p_A)}{n_A}.
+                    \end{aligned}
+                    \]
+                    For a confidence interval we replace \(p_A\) and \(p_B\) separately with their sample
+                    estimates. When testing \(H_0:p_A=p_B\), however, the hypothesis itself says both groups
+                    share a common probability \(p\). Pooling all conversions estimates that common probability,
+                    giving the pooled test standard error. <i>This explains why the test and the ordinary
+                        unpooled confidence interval use different denominators.</i>
                 </p>
                 <div class="stats-note stats-theorem">
                     <p class="stats-note-heading"><b>Two-proportion z-test and difference interval.</b></p>
@@ -12490,6 +12915,45 @@ assert abs(manual_p - result.pvalue) &lt; 1e-12</code></pre>
                     harm to guardrail metrics.
                 </p>
 
+                <p>
+                    <b>Complete calculation for the checkout experiment.</b> We observed \(X_A=80\) conversions
+                    among \(n_A=400\) users and \(X_B=110\) among \(n_B=400\). Under the null of equal conversion
+                    probabilities, the common estimated rate is \(\widehat p=(80+110)/800=0.2375\). Hence
+                    \[
+                    \begin{aligned}
+                    \widehat{\operatorname{SE}}_0
+                    &=\sqrt{0.2375(1-0.2375)\left(\frac1{400}+\frac1{400}\right)}\\
+                    &\approx0.03009,\\
+                    Z_{\mathrm{obs}}&=\frac{0.275-0.200}{0.03009}\approx2.4924.
+                    \end{aligned}
+                    \]
+                    The two-sided normal reference gives \(p\approx0.01269\). Separately, the estimated
+                    standard error for an interval is
+                    \[
+                    \sqrt{\frac{0.20(0.80)}{400}
+                    +\frac{0.275(0.725)}{400}}\approx0.02997,
+                    \]
+                    yielding \(0.075\pm1.96(0.02997)\), or approximately \([0.0163,0.1337]\).
+                    The numerical agreement between rejection by the pooled test and exclusion of zero by this
+                    interval is reassuring here, but pooled-score tests and unpooled-Wald intervals are not
+                    exactly inverse procedures in every dataset.
+                </p>
+                <p>
+                    <b>When is this a causal effect?</b> For user \(i\), imagine two possible binary outcomes:
+                    \(Y_i(0)\) if assigned to control and \(Y_i(1)\) if assigned to treatment. We cannot observe
+                    both outcomes for the same user. The average treatment effect for the target population is
+                    \[
+                    \Delta=\mathbb E[Y(1)-Y(0)]
+                    =\mathbb E[Y(1)]-\mathbb E[Y(0)].
+                    \]
+                    With well-executed random assignment, control and treatment groups are comparable in
+                    expectation, so the difference in observed group rates estimates this average effect of
+                    <i>assignment</i>. This interpretation additionally relies on consistently defined outcomes,
+                    no meaningful interference between units, and appropriate handling of missing observations.
+                    It does not identify an individual user's treatment effect or automatically generalize to a
+                    different population.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 191: reproduce the pooled two-proportion z-test and effect measures.</b>
                 </p>
@@ -12509,7 +12973,7 @@ print(f"Risk difference:     {pB-pA:.4f} ({100*(pB-pA):.2f} pp)")
 print(f"Risk ratio:          {pB/pA:.3f} ({100*(pB/pA-1):.1f}% relative uplift)")
 print(f"Pooled z: {z:.4f}; two-sided p: {pvalue:.6f}")
 print(f"statsmodels: z={sm_z:.4f}; p={sm_p:.6f}")
-assert np.isclose(z, sm_z)</code></pre>
+</code></pre>
 
                 <p class="stats-experiment-title">
                     <b>Experiment 192: compare Wald and Newcombe confidence intervals for absolute uplift.</b>
@@ -12540,7 +13004,7 @@ ax.set(yticks=[0, 1], yticklabels=["Wald", "Newcombe"],
        title="Estimated absolute uplift and 95% intervals")
 ax.set_ylim(-0.6, 1.6)
 fig.tight_layout()
-fig.savefig("ab_uplift_intervals.png", dpi=160)
+fig.savefig("../../images/ab_uplift_intervals.png", dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_uplift_intervals.png"
@@ -12568,6 +13032,30 @@ plt.show()</code></pre>
                     two-sided p-value is approximately <b>0.06865</b>. This does not mean that the true rates are
                     equal; the small study provides limited evidence and imprecise estimates. For count data, always
                     report the estimated difference and uncertainty as well.
+                </p>
+
+                <p>
+                    <b>Where does the Fisher calculation come from?</b> In the table above there are
+                    \(N=24\) people and exactly seven recorded failures. When we condition on both the total
+                    number of failures and the two group sizes, the number \(K_A\) of failures allocated to A
+                    has a hypergeometric distribution under the no-association null:
+                    \[
+                    \Pr(K_A=k\mid\text{margins})
+                    =\frac{\binom7k\binom{17}{12-k}}{\binom{24}{12}},
+                    \qquad k=0,\ldots,7.
+                    \]
+                    The observed table has \(k=1\). Its conditional probability is about \(0.03204\);
+                    the equally probable opposite extreme has \(k=6\). The still more extreme tables \(k=0\)
+                    and \(k=7\) have probability about \(0.00229\) each. Summing these four table
+                    probabilities gives the two-sided Fisher p-value
+                    \[
+                    p\approx2(0.03204)+2(0.00229)=0.06865.
+                    \]
+                    For comparison, the uncorrected chi-square approximation in Experiment 193 gives
+                    \(ppprox0.02474\), which would lead to a different 5% decision. This illustrates why
+                    sparse counts can make an asymptotic reference unreliable. The exact conditional reference
+                    avoids that approximation, but conditioning on the margins is itself part of the
+                    inferential method.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12638,12 +13126,32 @@ print(f"Chi-square approximation p:   {p_chi2:.6f}")</code></pre>
                     automatically ensure generalization to all future users. Consider rollout risks, heterogeneous
                     effects, and metric tradeoffs separately.
                 </p>
+
+                <p>
+                    <b>Example of a prespecified decision.</b> Suppose a company only considers a checkout change
+                    worthwhile if the conversion increase exceeds 1 percentage point and the complaint rate does
+                    not worsen meaningfully. Before assignment, it defines eligible users, the conversion
+                    measurement window, a minimum detectable effect, the analysis sample size, and the treatment
+                    decision criteria. After observing a statistically significant conversion increase, it still
+                    checks the estimated size, the entire confidence interval, instrumentation quality, and
+                    complaint outcomes. This separates <i>evidence of an effect</i> from a decision to deploy.
+                </p>
                 <p>
                     <b>A/A validation.</b> Randomize users into two versions that are in fact identical. Under a
                     well-calibrated continuous p-value test with a true null, p-values should be approximately
                     uniform on \([0,1]\), so about 5% fall below 0.05. Discreteness and approximation affect this
                     idealization; an A/A test also helps detect assignment and instrumentation bugs, though a finite
                     sample cannot guarantee correctness.
+                </p>
+
+                <p>
+                    <b>Why is A/A useful?</b> If two groups are assigned the same experience, the population
+                    treatment effect should be zero. Across many correctly analyzed independent experiments, a
+                    nominal 5% test should reject about 5% of true nulls, allowing for the test's discrete and
+                    approximate behavior. If the rejection fraction is much larger, the analysis may be treating
+                    repeated events as independent, repeatedly checking p-values, or violating another assumption.
+                    Separately, a single A/A run can uncover an unequal assignment split or missing event logging.
+                    A nonsignificant A/A result does not prove the implementation is sound.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12692,6 +13200,24 @@ print("Expected Monte Carlo SE near 0.05:",
                     allocation) is more defensible than stopping as soon as the p-value first drops below 0.05.
                 </p>
 
+                <p>
+                    <b>How the sample-size expression is used.</b> With \(p_A=0.10\), \(p_B=0.12\), and
+                    \(\delta=0.02\), the midpoint probability is \(\bar p=0.11\). For 5% two-sided significance
+                    and 80% power, \(z_{0.975}\approx1.960\) and \(z_{0.80}\approx0.842\). Thus
+                    \[
+                    n\approx\frac{\left[
+                    1.960\sqrt{2(0.11)(0.89)}
+                    +0.842\sqrt{(0.10)(0.90)+(0.12)(0.88)}
+                    \right]^2}{(0.02)^2}
+                    \approx3841.
+                    \]
+                    The denominator is \(\delta^2=0.0004\). This makes smaller effects expensive to detect:
+                    roughly halving a target effect requires around four times as many observations, with the
+                    remaining inputs held approximately fixed. The calculation is for independent users
+                    <i>per group</i>, not the total sample. Power is computed for the assumed effect size;
+                    it is not the probability that the alternative is true after observing the data.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 195: calculate power and approximate sample size for a planned uplift.</b>
                 </p>
@@ -12725,7 +13251,7 @@ ax.set(xlabel="Independent users per arm", ylabel="Approximate power",
        ylim=(0, 1), title="Detecting 10% to 12% conversion improvement")
 ax.legend()
 fig.tight_layout()
-fig.savefig("ab_power_sample_size.png", dpi=160)
+fig.savefig("../../images/ab_power_sample_size.png", dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_power_sample_size.png"
@@ -12745,6 +13271,18 @@ plt.show()</code></pre>
                     false alarm can still substantially exceed 5%. A prespecified group-sequential design with
                     appropriate spending boundaries, or valid always-valid inference, addresses this; an ordinary
                     fixed-sample confidence interval does not.
+                </p>
+
+                <p>
+                    <b>Why looking repeatedly changes the test.</b> Suppose an analyst plans to test after
+                    1,000 users per arm, but checks the accumulating data at 200, 400, 600, 800, and 1,000 users
+                    per arm and stops whenever the two-sided p-value drops below 0.05. Each calculation uses the
+                    same previously observed users plus new ones, so the five p-values are correlated. Even so,
+                    there are five chances for a chance fluctuation to cross the threshold. The probability of
+                    <i>ever</i> crossing 0.05 can exceed 0.05 even though each fixed-look test individually has
+                    about a 5% null rejection rate. We cannot simply multiply the single-look p-value by five,
+                    nor can we treat the five tests as independent. Experiment 196 estimates the actual
+                    false-alarm rate for the specified monitoring schedule.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12779,7 +13317,7 @@ ax.set(xlabel="Number of opportunities to stop", ylabel="False-positive probabil
        xticks=np.arange(1, looks+1), title="Repeated unadjusted peeking")
 ax.legend()
 fig.tight_layout()
-fig.savefig("ab_optional_stopping.png", dpi=160)
+fig.savefig("../../images/ab_optional_stopping.png", dpi=160)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_optional_stopping.png"
@@ -12804,6 +13342,18 @@ plt.show()</code></pre>
                     procedure at \(q=0.05\) rejects the first two. The difference is intentional: controlling the
                     chance of <i>any</i> false rejection is a stricter target than controlling the expected
                     proportion of false discoveries among rejections.
+                </p>
+
+                <p>
+                    <b>Why do the decisions differ?</b> Order the four p-values as
+                    \(0.009,0.021,0.040,0.20\). Holm's step-down method first compares \(0.009\) with
+                    \(0.05/4=0.0125\), so the first null is rejected. The next comparison is
+                    \(0.021\) versus \(0.05/3\approx0.0167\); it fails, so the procedure stops rejecting.
+                    Benjamini–Hochberg instead compares the ordered values with
+                    \((0.0125,0.025,0.0375,0.050)\), and selects the largest index satisfying its bound.
+                    Here \(0.021\leq0.025\) but \(0.040>0.0375\), so it rejects the first two.
+                    Which method is appropriate depends on whether the study aims to control the probability
+                    of <i>any</i> false rejection or the expected fraction among discoveries.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -12839,6 +13389,16 @@ for method in ["holm", "fdr_bh"]:
                     investigate before interpreting the treatment effect.
                 </p>
 
+                <p>
+                    <b>A quick numerical interpretation.</b> Under independent 50:50 assignment, the expected
+                    treatment count is 5,000 and its standard deviation is
+                    \(\sqrt{10{,}000(0.5)(0.5)}=50\). Observing 5,200 is a deviation of four standard
+                    deviations. The exact binomial test gives the reported p-value, approximately
+                    \(6.59\times10^{-5}\). The correct denominator is the set of users who were supposed to
+                    be included in the assignment check. Restricting the check to converters can change the
+                    observed ratio because conversion itself may differ by treatment.
+                </p>
+
                 <p class="stats-experiment-title">
                     <b>Experiment 198: detect sample-ratio mismatch using the exact binomial test.</b>
                 </p>
@@ -12861,6 +13421,30 @@ print("Investigate logging, randomization, and analysis eligibility first.")</co
                     user, aggregate sessions by user and compare <i>user-level outcomes</i>, or use appropriate
                     cluster-robust methods. With user-specific numbers of sessions, the user-average and
                     session-weighted rates answer different questions.
+                </p>
+
+                <p>
+                    <b>Why sessions cannot be counted as independent users.</b> Consider \(m\) sessions for a
+                    single user. Suppose each session outcome has variance \(v\), and any two distinct outcomes
+                    from that user have correlation \(\rho\). The variance of their average is
+                    \[
+                    \begin{aligned}
+                    \operatorname{Var}\!\left(\frac1m\sum_{j=1}^mY_j\right)
+                    &=\frac1{m^2}\left[mv+m(m-1)\rho v\right]\\
+                    &=\frac vm\left[1+(m-1)\rho\right].
+                    \end{aligned}
+                    \]
+                    If \(m=8\) and \(\rho=0.4\), the variance is 3.8 times the variance one would calculate
+                    under independent sessions. Eight such sessions therefore provide much less information
+                    than eight independent users. The formula illustrates why the randomization and analysis
+                    units must be distinguished; the precise adjustment depends on the sampling design and
+                    dependence structure.
+                </p>
+                <p>
+                    With equal numbers of sessions per user, averaging user-level conversion rates is the same
+                    point estimate as pooling all sessions, but its uncertainty must still be computed from
+                    independent users or by an appropriate clustered method. With unequal session counts, the two
+                    averages differ: pooling gives greater weight to users who create more sessions.
                 </p>
                 <p>
                     Within a randomized experiment, analyze the metric and population defined up front.
@@ -12951,6 +13535,16 @@ print(f"User-level false-positive rate:    {(proper_p&lt;.05).mean():.3f}")</cod
                     percentage-point treatment effect.
                 </p>
 
+
+                <p>
+                    <b>Example of careful A/B reporting.</b> “In a randomized comparison with 400 independent
+                    users per arm, control converted 80/400 users (20.0%) and treatment converted 110/400
+                    (27.5%). The estimated absolute uplift was 7.5 percentage points, with an approximate 95%
+                    Newcombe interval of 1.6 to 13.3 percentage points. The prespecified two-sided pooled
+                    proportion test gave \(p\approx0.0127\). The effect is statistically distinguishable from
+                    zero under the stated analysis assumptions; rollout still depends on data-quality checks,
+                    operating costs, and prespecified guardrail outcomes.”
+                </p>
                 <p><b>Exercises.</b></p>
                 <ol>
                     <li>
@@ -13009,7 +13603,7 @@ print(f"User-level false-positive rate:    {(proper_p&lt;.05).mean():.3f}")</cod
                     <b>5.2</b> (confidence intervals for a proportion), <b>5.3</b> (hypothesis testing for a
                     proportion), <b>6.1</b> (inference for a single proportion), and <b>6.2</b> (difference of two
                     proportions). See also DeGroot &amp; Schervish, <i>Probability and Statistics</i>, 4th ed.,
-                    Section <b>5.2</b> for Bernoulli and binomial distributions, and earlier sections of these notes
+                    Section <b>5.2</b> for Bernoulli and binomial distributions, as well as the sections
                     on hypothesis testing, MLE, and logistic regression. Practical experiment design, SRM, repeated
                     peeking, and clustering extend beyond the above textbook sections.
                 </p>
@@ -13028,6 +13622,7 @@ print(f"User-level false-positive rate:    {(proper_p&lt;.05).mean():.3f}")</cod
                         target="_blank" rel="noopener noreferrer">statsmodels: multiple testing</a>.
                 </p>
                 <hr />
+
 
                 <!-- ========================= MAIN SECTION 17: Inferences for One Population Standard Deviation ========================= -->
 
