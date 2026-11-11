@@ -17197,7 +17197,8 @@ plt.show()</code></pre>
                     <img src="../images/corr_nonlinear_dependence.png"
                         alt="A U-shaped quadratic relationship has near-zero linear correlation despite clear nonlinear dependence."
                         loading="lazy" />
-                    <figcaption style="font-size: smaller;"><b>Figure.</b> The response follows a quadratic trend with additional noise.
+                    <figcaption style="font-size: smaller;"><b>Figure.</b> The response follows a quadratic trend with
+                        additional noise.
                         Pearson's correlation can be close to zero even when the nonlinear pattern is unmistakable.
                     </figcaption>
                 </figure>
@@ -17611,77 +17612,195 @@ print("n:", len(sample))</code></pre>
 
                 <hr />
 
-
                 <!-- ========================= MAIN SECTION 24: Polynomial Regression ========================= -->
                 <span id="PolynomialRegression"><b>Polynomial Regression</b></span>
                 <p>
-                    <i>Polynomial regression</i> extends simple linear regression by allowing the conditional mean
-                    of a numerical response to change nonlinearly with a predictor. It retains the least-squares
-                    framework developed in the Linear Regression section, but expands the feature space from a
-                    straight line to polynomial curves. The central problem is no longer only how to estimate
-                    coefficients: it is also how much model complexity the available data can support.
+                    Simple linear regression models the mean of a numerical response by a straight line,
+                    \(m(x)=\beta_0+\beta_1x\). In practice, a scatterplot may suggest that the mean response
+                    rises and then falls, or that it increases at a rate that changes with \(x\).
+                    <i>Polynomial regression</i> lets the conditional mean follow a curve while keeping the
+                    familiar least-squares framework.
                 </p>
                 <p>
-                    For a concrete data-science application, imagine predicting a measurement or a continuous
-                    outcome from an explanatory variable when a scatterplot shows curvature. A high-degree curve may
-                    reproduce the training observations impressively while making poor predictions on new data. We
-                    will study both the mathematical model and the procedures used to detect and control that
-                    failure.
+                    Consider an illustrative relationship between hours of practice and an assessment score.
+                    Suppose the population conditional mean is
+                    \[
+                    m(x)=3+2x-0.5x^2.
+                    \]
+                    This gives the following mean scores at different practice durations. The numbers are
+                    hypothetical and illustrate the shape of a quadratic relationship, not a causal finding.
+                </p>
+                <div class="scrollable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Practice hours \(x\)</th>
+                                <th>Conditional mean \(m(x)\)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>3.0</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>4.5</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>5.0</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>4.5</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>3.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    No straight line can reproduce this pattern: the mean increases between 0 and 2 hours
+                    and decreases afterward. The squared term makes such curvature possible. Individual
+                    students need not score exactly at the conditional mean; as in linear regression,
+                    observations vary around it. We will first explain how to fit a polynomial, then
+                    investigate how its flexibility can improve or harm predictions on new observations.
                 </p>
 
                 <!-- ==================== Model and Least-Squares Estimation ==================== -->
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (polynomial regression).</b></p>
                     <p>
-                        For a single predictor and a degree <i>fixed in advance</i>, the degree-\(d\) regression
-                        model is
-                    </p>
-                    \[Y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\cdots+\beta_dx_i^d+\varepsilon_i, \qquad \mathbb
-                    E(\varepsilon_i\mid x_i)=0.\]
-                    <p>
-                        Equivalently, the conditional mean is \(m(x)=\mathbb E(Y\mid
-                        X=x)=\sum_{j=0}^{d}\beta_jx^j\). The model is <i>nonlinear in the predictor</i> but
-                        <i>linear in the unknown coefficients</i> \(\beta_j\). Consequently, polynomial regression
-                        is a special case of the <i>general linear model</i>, not an example of nonlinear least
-                        squares in the parameters.
+                        Given fixed predictor values \(x_1,\ldots,x_n\), a degree-\(d\) polynomial
+                        regression model is
+                        \[
+                        Y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\cdots+\beta_dx_i^d+\varepsilon_i,
+                        \qquad \mathbb E(\varepsilon_i)=0.
+                        \]
+                        Here the \(Y_i\) are random responses, the \(\beta_j\) are unknown population
+                        coefficients, and the errors describe individual variation around the mean curve.
+                        In the fixed-design interpretation, the \(x_i\) are treated as given numbers.
+                        If the predictors are random variables \(X_i\), the corresponding model is
+                        \[
+                        Y_i=\beta_0+\beta_1X_i+\cdots+\beta_dX_i^d+\varepsilon_i,
+                        \qquad \mathbb E(\varepsilon_i\mid X_i)=0.
+                        \]
+                        In either formulation the conditional mean curve is
+                        \[
+                        m(x)=\mathbb E(Y\mid X=x)=\sum_{j=0}^{d}\beta_jx^j
+                        \]
+                        when the random-design notation is used, or the analogous mean at a fixed
+                        design value \(x\).
                     </p>
                 </div>
                 <p>
-                    For \(d=1\) we recover the usual straight line. For \(d=2\),
-                    \(m(x)=\beta_0+\beta_1x+\beta_2x^2\) is a parabola. For \(d=3\), the curve is cubic and may
-                    change curvature. The polynomial basis provides one way of representing a curved regression
-                    function; it does not imply that the physical relationship is intrinsically polynomial.
+                    The zero-mean condition has the same purpose as in simple regression: the polynomial
+                    describes the mean response, while the error describes departures of individual
+                    responses from that mean. It does <i>not</i> assert that every observed error is zero.
+                    For instance, if \(m(2)=5\) and a student with \(x=2\) obtains a score of 4,
+                    the realized error is \(-1\). The population mean of errors at that predictor
+                    value is nevertheless zero under the model.
                 </p>
+                <p>
+                    Setting \(d=1\) gives the usual straight-line model.
+                    Setting \(d=2\) gives \(m(x)=\beta_0+\beta_1x+\beta_2x^2\), a parabola.
+                    Setting \(d=3\) gives a cubic curve, which can change curvature.
+                    Although the mean is nonlinear in \(x\), it is still <i>linear in the
+                        unknown coefficients</i>: each coefficient multiplies a known feature
+                    \(1,x,x^2,\ldots\), and no coefficients are multiplied together or raised
+                    to powers. Thus, polynomial regression is a special case of linear regression
+                    with additional features.
+                </p>
+                <p>
+                    For a quadratic model, we can rename the transformed predictors as
+                    \(z_{i1}=x_i\) and \(z_{i2}=x_i^2\). Then
+                    \[
+                    Y_i=\beta_0+\beta_1z_{i1}+\beta_2z_{i2}+\varepsilon_i.
+                    \]
+                    This is the familiar multiple linear regression model, even though the two
+                    features were constructed from the same original predictor. The model need
+                    not describe a genuinely polynomial physical mechanism; polynomials can also
+                    be useful approximations over a limited predictor range.
+                </p>
+
                 <div class="stats-note stats-theorem">
                     <p class="stats-note-heading"><b>Theorem (least-squares polynomial fit).</b></p>
                     <p>
-                        Let \(X\) be the \(n\times(d+1)\) design matrix with \(i\)-th row
-                        \((1,x_i,x_i^2,\ldots,x_i^d)\), and let \(y=(y_1,\ldots,y_n)^T\). The least-squares problem
-                        is
-                    </p>
-                    \[\hat\beta\in\operatorname*{arg\,min}_{b\in\mathbb R^{d+1}} \|y-Xb\|_2^2.\]
-                    <p>
-                        Every minimizer satisfies the normal equations \(X^TX\hat\beta=X^Ty\). If \(X\) has full
-                        column rank, the minimizer is unique and
-                    </p>
-                    \[\hat\beta=(X^TX)^{-1}X^Ty,\qquad \hat y=X\hat\beta.\]
-                    <p>
-                        A degree-\(d\) Vandermonde design with \(d+1\) or more <i>distinct</i> predictor values has
-                        full column rank.
+                        Let \(X\) be the \(n\times(d+1)\) design matrix whose \(i\)-th row is
+                        \((1,x_i,x_i^2,\ldots,x_i^d)\), and let \(y=(y_1,\ldots,y_n)^T\).
+                        Ordinary least squares minimizes
+                        \[
+                        \operatorname{SSE}(b)=\|y-Xb\|_2^2
+                        =\sum_{i=1}^{n}\left(y_i-\sum_{j=0}^{d}b_jx_i^j\right)^2.
+                        \]
+                        Every minimizer solves the normal equations
+                        \[
+                        X^TX\hat\beta=X^Ty.
+                        \]
+                        If \(X\) has full column rank, the minimizer is unique and
+                        \[
+                        \hat\beta=(X^TX)^{-1}X^Ty,
+                        \qquad \hat y=X\hat\beta.
+                        \]
+                        In exact arithmetic, a univariate degree-\(d\) design has full column
+                        rank when at least \(d+1\) distinct predictor values are present.
                     </p>
                 </div>
                 <p>
-                    Proof. Expanding \(\|y-Xb\|^2\) and differentiating gives the gradient \(-2X^T(y-Xb)\), which
-                    vanishes at a minimum. Full column rank makes \(X^TX\) positive definite, so the quadratic
-                    objective has a unique minimizer. For distinct \(x_i\), a polynomial of degree at most \(d\)
-                    that vanishes at \(d+1\) distinct inputs is identically zero, proving linear independence of the
-                    design columns.
+                    <b>What does the design matrix do?</b> Instead of fitting a single predictor
+                    column, we place the value of each polynomial feature into its own column.
+                    For a quadratic model and three observations at \(x=-1,0,1\), the matrix is
+                    \[
+                    X=\begin{pmatrix}
+                    1&amp;-1&amp;1\\
+                    1&amp;0&amp;0\\
+                    1&amp;1&amp;1
+                    \end{pmatrix}.
+                    \]
+                    The first column represents the intercept; the next two represent \(x\)
+                    and \(x^2\). For example, the first row is \((1,-1,1)\) because
+                    \((-1)^2=1\). Multiplying this matrix by the coefficient vector produces
+                    the fitted values at the observed predictor locations.
                 </p>
                 <p>
-                    <b>Computational caution.</b> The inverse formula explains the mathematics; it is <i>not</i> a
-                    recommended numerical implementation. Use a QR- or SVD-based least-squares solver such as
-                    <code>numpy.linalg.lstsq</code> or <code>sklearn.linear_model.LinearRegression</code>. Powers of
-                    an unscaled predictor can become badly conditioned.
+                    Suppose these three observations are \((-1,5)\), \((0,2)\), and \((1,3)\).
+                    To fit them exactly using \(b_0+b_1x+b_2x^2\), we solve
+                    \[
+                    \begin{aligned}
+                    b_0-b_1+b_2&amp;=5,\\
+                    b_0&amp;=2,\\
+                    b_0+b_1+b_2&amp;=3.
+                    \end{aligned}
+                    \]
+                    The second equation gives \(b_0=2\); adding the first and third
+                    gives \(2b_2=4\), and subtracting gives \(2b_1=-2\).
+                    Thus,
+                    \[
+                    \hat m(x)=2-x+2x^2.
+                    \]
+                    This example illustrates the design-matrix calculation, but it also gives
+                    a warning: we used three coefficients to fit exactly three points. A zero
+                    training error in this setting says nothing about how well the curve
+                    predicts a new observation. With more observations than coefficients,
+                    the system usually cannot fit every score exactly, and OLS instead
+                    minimizes the total squared error.
+                </p>
+                <p>
+                    To see where the normal equations come from, expand the squared-error
+                    function as
+                    \[
+                    \|y-Xb\|_2^2
+                    =(y-Xb)^T(y-Xb).
+                    \]
+                    Its derivative with respect to \(b\) is
+                    \(2X^TXb-2X^Ty\). Setting this to zero yields
+                    \(X^TX\hat\beta=X^Ty\). Full column rank makes \(X^TX\) invertible.
+                    The formula explains OLS mathematically; in actual software, QR- or SVD-based
+                    solvers are preferable to explicitly computing \((X^TX)^{-1}\), especially
+                    when powers of the predictor are numerically badly scaled.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -17700,29 +17819,30 @@ y = 1.5 - 0.8*x + 1.2*x**2 + rng.normal(0, 0.7, x.size)
 X = np.column_stack((np.ones_like(x), x, x**2))
 coef, residual_sums, rank, singular_values = np.linalg.lstsq(
     X, y, rcond=None)
-print(&quot;Quadratic coefficients [intercept, x, x^2]:&quot;, np.round(coef, 4))
-print(&quot;Design rank:&quot;, rank)
+print("Quadratic coefficients [intercept, x, x^2]:", np.round(coef, 4))
+print("Design rank:", rank)
 
 # The same model using a feature transformer and an OLS estimator.
 features = PolynomialFeatures(degree=2, include_bias=False)
 XP = features.fit_transform(x.reshape(-1, 1))
 model = LinearRegression().fit(XP, y)
-print(&quot;scikit-learn coefficients:&quot;,
+print("scikit-learn coefficients:",
       np.round(np.r_[model.intercept_, model.coef_], 4))
-assert np.allclose(np.r_[model.intercept_, model.coef_], coef)
+print("Coefficient differences:",
+      np.round(np.r_[model.intercept_, model.coef_] - coef, 10))
 
 grid = np.linspace(-2.2, 2.2, 300)
 grid_X = np.column_stack((np.ones_like(grid), grid, grid**2))
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.scatter(x, y, s=24, alpha=0.7, label=&quot;Observed sample&quot;)
-ax.plot(grid, grid_X @ coef, linewidth=2, label=&quot;OLS quadratic&quot;)
+ax.scatter(x, y, s=24, alpha=0.7, label="Observed sample")
+ax.plot(grid, grid_X @ coef, linewidth=2, label="OLS quadratic")
 ax.plot(grid, 1.5 - 0.8*grid + 1.2*grid**2,
-        linestyle=&quot;--&quot;, label=&quot;True conditional mean&quot;)
-ax.set(xlabel=&quot;Predictor x&quot;, ylabel=&quot;Response y&quot;,
-       title=&quot;Polynomial regression is linear in its coefficients&quot;)
+        linestyle="--", label="True conditional mean")
+ax.set(xlabel="Predictor x", ylabel="Response y",
+       title="Polynomial regression is linear in its coefficients")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_quadratic_fit.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_quadratic_fit.png", dpi=170, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_quadratic_fit.png"
@@ -17734,34 +17854,65 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    <b>What Experiment 124 demonstrates.</b> The data were generated from the quadratic
+                    conditional mean \(1.5-0.8x+1.2x^2\) with additional random errors.
+                    The fitted curve will therefore generally be close to, but not identical
+                    to, the true mean curve. The three coefficients returned by
+                    <code>numpy.linalg.lstsq</code> and the scikit-learn pipeline describe
+                    the same quadratic least-squares solution. The difference between a
+                    population curve and an estimated curve is sampling uncertainty,
+                    not evidence that polynomial regression is nonlinear in its coefficients.
+                </p>
+
                 <!-- ==================== Polynomial Complexity and Overfitting ==================== -->
+                <p>
+                    More polynomial terms give us a larger collection of curves from which to choose.
+                    This makes the fitted model more flexible, but does not guarantee better predictions.
+                    We need to distinguish <i>training error</i> (calculated using the observations
+                    used to fit the curve) from <i>test error</i> (calculated on new observations).
+                </p>
                 <div class="stats-note stats-lemma">
                     <p class="stats-note-heading">
-                        <b>Lemma (training SSE cannot increase as degree increases).</b>
+                        <b>Lemma (training SSE cannot increase when polynomial degree increases).</b>
                     </p>
                     <p>
-                        Let \(\mathrm{SSE}_d\) be the minimum sum of squared residuals among all polynomials of
-                        degree <i>at most</i> \(d\). Then
-                    </p>
-                    \[\mathrm{SSE}_{d+1}\leq\mathrm{SSE}_d.\]
-                    <p>
-                        Proof. Every polynomial of degree at most \(d\) is also a polynomial of degree at most
-                        \(d+1\) (set its highest coefficient to zero). Minimizing over the larger set cannot give a
-                        larger minimum.
+                        Let \(\mathrm{SSE}_d\) be the minimum sum of squared residuals among
+                        polynomials of degree at most \(d\), fitted to the <i>same</i> observations.
+                        Then
+                        \[
+                        \mathrm{SSE}_{d+1}\leq\mathrm{SSE}_d.
+                        \]
+                        Every polynomial of degree at most \(d\) can be written as one of
+                        degree at most \(d+1\) by setting the new highest-degree coefficient
+                        to zero. Thus the larger model contains every curve available to the
+                        smaller model, so minimizing SSE cannot give a larger value.
                     </p>
                 </div>
                 <p>
-                    This nesting property makes training error a poor standalone criterion for selecting polynomial
-                    degree. As flexibility grows, a model can fit sampling noise rather than stable features of the
-                    conditional mean. <i>Underfitting</i> occurs when the chosen function class is too restrictive;
-                    <i>overfitting</i> occurs when the fitted model reacts too strongly to sample-specific noise.
-                    Evaluation on observations not used for fitting is needed to assess predictive generalization.
+                    Consider five distinct predictor values and five observed responses.
+                    A degree-four polynomial has five coefficients. In exact arithmetic, it can
+                    pass through every observation, however noisy those responses are.
+                    Its training SSE is then zero. However, the fifth observation could be
+                    unusually high because of random noise, and the fitted polynomial may bend
+                    sharply to pass through it. For a new observation at a similar predictor
+                    value, that bend may lead to a worse prediction than a simpler quadratic.
+                    <b>Perfect interpolation is not the same as learning the population mean.</b>
                 </p>
                 <p>
-                    <b>Parameter count.</b> An univariate degree-\(d\) polynomial has \(d+1\) coefficients. When
-                    \(d\geq n-1\) and all inputs are distinct, a degree-\(n-1\) polynomial can interpolate all \(n\)
-                    observations, giving zero training residuals even when the observed responses contain noise.
-                    This does not imply a good population model.
+                    An <i>underfitted</i> model is too restrictive to capture an important
+                    feature, such as using a straight line when the population mean bends.
+                    An <i>overfitted</i> model reacts too strongly to peculiarities of the
+                    training sample, such as using a degree-16 curve to fit a modest collection
+                    of noisy observations. Between these extremes, we want a model complex
+                    enough to capture a stable signal but not so flexible that it chases noise.
+                </p>
+                <p>
+                    For \(n\) distinct predictors, the degree-\(n-1\) interpolating polynomial
+                    exists and is unique. Increasing the degree further does not make it
+                    meaningful to estimate additional separate coefficients from these same
+                    \(n\) observations. Different curves can fit all the training data equally
+                    well, and the design matrix no longer has full column rank.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -17785,8 +17936,8 @@ y_test = mean_curve(x_test) + rng.normal(0, 0.28, x_test.size)
 grid = np.linspace(-1, 1, 400)
 
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.scatter(x_train, y_train, s=28, label=&quot;Training observations&quot;)
-ax.plot(grid, mean_curve(grid), linestyle=&quot;--&quot;, label=&quot;True mean&quot;)
+ax.scatter(x_train, y_train, s=28, label="Training observations")
+ax.plot(grid, mean_curve(grid), linestyle="--", label="True mean")
 for degree in (1, 3, 16):
     model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
                           LinearRegression())
@@ -17795,15 +17946,15 @@ for degree in (1, 3, 16):
         y_train, model.predict(x_train[:, None])))
     test_rmse = np.sqrt(mean_squared_error(
         y_test, model.predict(x_test[:, None])))
-    print(f&quot;Degree {degree:2d}: train RMSE={train_rmse:.3f}, &quot;
-          f&quot;independent test RMSE={test_rmse:.3f}&quot;)
+    print(f"Degree {degree:2d}: train RMSE={train_rmse:.3f}, "
+          f"independent test RMSE={test_rmse:.3f}")
     ax.plot(grid, model.predict(grid[:, None]),
-            label=f&quot;Degree {degree}&quot;)
-ax.set(xlabel=&quot;x&quot;, ylabel=&quot;y&quot;, ylim=(-4, 5),
-       title=&quot;Training fit and polynomial complexity&quot;)
+            label=f"Degree {degree}")
+ax.set(xlabel="x", ylabel="y", ylim=(-4, 5),
+       title="Training fit and polynomial complexity")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_degree_overfit.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_degree_overfit.png", dpi=170, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_degree_overfit.png"
@@ -17815,19 +17966,59 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    <b>Interpreting Experiment 125.</b> The generator is cubic, so a degree-one
+                    model misses systematic curvature. A degree-three model can describe the
+                    mean function without needing to follow individual random errors. A
+                    degree-16 model can achieve lower training error by adapting to noise,
+                    but this can create unstable bends between observed points. The reported
+                    independent test RMSE, not the training RMSE alone, tells us which fitted
+                    model predicts these new observations more accurately in this simulation.
+                    Results from one simulated split are illustrative rather than guarantees
+                    about every future dataset.
+                </p>
+
                 <!-- ==================== Polynomial Features and Interactions ==================== -->
                 <p>
-                    For several predictors, polynomial features can also include cross-products. For example, two
-                    predictors and degree two produce the basis \(1,x_1,x_2,x_1^2,x_1x_2,x_2^2\). The \(x_1x_2\)
-                    term is an <i>interaction</i>: its coefficient allows the association between one predictor and
-                    the response to vary with the other predictor. Adding polynomial and interaction features still
-                    yields a linear-in-parameters regression model.
+                    Polynomial regression can also use several original predictors. Suppose
+                    \(x_1\) measures hours of preparation and \(x_2\) measures prior
+                    experience. A quadratic model can contain the features
+                    \[
+                    1,\quad x_1,\quad x_2,\quad x_1^2,\quad x_1x_2,\quad x_2^2.
+                    \]
+                    The term \(x_1x_2\) is called an <i>interaction</i>. It allows the
+                    association between one predictor and the response to depend on the value
+                    of the other predictor.
                 </p>
                 <p>
-                    For \(p\) original predictors, the number of monomials with total degree at most \(d\),
-                    <i>including the constant term</i>, is \(\binom{p+d}{d}\). This can grow rapidly. In
-                    scikit-learn, <code>PolynomialFeatures(include_bias=False)</code> omits the column of ones
-                    because <code>LinearRegression()</code> already fits an intercept by default.
+                    For example, consider the conditional mean function
+                    \[
+                    m(x_1,x_2)=50+5x_1+3x_2+2x_1x_2.
+                    \]
+                    At \(x_2=0\), an increase in \(x_1\) by one unit changes the mean by 5.
+                    At \(x_2=2\), the same increase changes the mean by
+                    \[
+                    m(x_1+1,2)-m(x_1,2)=5+2(2)=9.
+                    \]
+                    The effect of a one-unit increase in \(x_1\) depends on \(x_2\).
+                    This is a statement about the modeled association, not necessarily
+                    a causal intervention. Without the interaction term, this particular
+                    model would impose the same \(x_1\)-slope for every \(x_2\).
+                </p>
+                <p>
+                    The number of coefficients can increase quickly. With \(p\) original
+                    predictors and all monomials of total degree at most \(d\), including
+                    the constant term, their number is
+                    \[
+                    \binom{p+d}{d}.
+                    \]
+                    For example, two predictors and degree two give
+                    \(\binom{4}{2}=6\) coefficients, whereas five predictors and degree
+                    three give \(\binom{8}{3}=56\). This rapid growth is another reason
+                    to validate model complexity. scikit-learn's
+                    <code>PolynomialFeatures(include_bias=False)</code> omits the constant
+                    column when the subsequent <code>LinearRegression</code> estimator already
+                    fits an intercept.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -17846,44 +18037,87 @@ y = y + rng.normal(0, 0.25, len(y))
 
 poly = PolynomialFeatures(degree=2, include_bias=False)
 XP = poly.fit_transform(X)
-print(&quot;Feature names:&quot;, poly.get_feature_names_out([&quot;x1&quot;, &quot;x2&quot;]))
-print(&quot;Feature-matrix shape:&quot;, XP.shape)
+print("Feature names:", poly.get_feature_names_out(["x1", "x2"]))
+print("Feature-matrix shape:", XP.shape)
 
 cv = KFold(n_splits=5, shuffle=True, random_state=126)
 for title, estimator in [
-    (&quot;Main effects only&quot;, LinearRegression()),
-    (&quot;Quadratic with interactions&quot;,
+    ("Main effects only", LinearRegression()),
+    ("Quadratic with interactions",
      make_pipeline(PolynomialFeatures(2, include_bias=False),
                    LinearRegression()))
 ]:
     scores = cross_val_score(estimator, X, y, cv=cv,
-                             scoring=&quot;neg_mean_squared_error&quot;)
-    print(f&quot;{title}: cross-validated RMSE=&quot;
-          f&quot;{np.sqrt(-scores).mean():.3f}&quot;)</code></pre>
+                             scoring="neg_mean_squared_error")
+    print(f"{title}: cross-validated RMSE="
+          f"{np.sqrt(-scores).mean():.3f}")</code></pre>
+
+                <p>
+                    Experiment 126 compares a model containing only \(x_1,x_2\) with a
+                    polynomial model containing the interaction and squared terms. Its
+                    simulated response contains a genuine \(x_1x_2\) term. Cross-validation
+                    evaluates whether including those additional features improves prediction
+                    on observations that were left out of each training fold.
+                </p>
 
                 <!-- ==================== Selecting Degree with Validation ==================== -->
                 <div class="stats-note stats-definition">
-                    <p class="stats-note-heading"><b>Definition (validation and cross-validation).</b></p>
+                    <p class="stats-note-heading"><b>Definition (training, validation, and test data).</b></p>
                     <p>
-                        In supervised prediction, the <i>training set</i> estimates model parameters;
-                        <i>validation data</i> compare candidate models or hyperparameters; an
-                        <i>independent test set</i> is reserved for a final evaluation of the chosen procedure. In
-                        \(K\)-fold cross-validation, training data are partitioned into \(K\) folds, and each fold
-                        is predicted using a model trained on the other \(K-1\) folds.
+                        A <i>training set</i> is used to estimate a model's coefficients.
+                        <i>Validation data</i> are used to compare candidate settings such
+                        as polynomial degree. An <i>independent test set</i> is used for a
+                        final assessment of the selected modeling procedure. In
+                        \(K\)-fold cross-validation, the training portion is divided
+                        into \(K\) folds. Each fold is predicted by a model fitted on
+                        the other \(K-1\) folds, so every training observation is
+                        evaluated once as a held-out validation observation.
                     </p>
                 </div>
                 <p>
-                    For a regression outcome, one convenient criterion is the root mean squared error,
-                    \(\mathrm{RMSE}=\sqrt{\frac{1}{m}\sum_{i=1}^{m}(y_i-\hat y_i)^2}\), evaluated on observations
-                    not used to fit the corresponding model. Compare candidate degrees on the <i>same</i> splits. In
-                    a preprocessing pipeline, transformations learned from data must be fitted separately within
-                    each training fold. A completely untouched test set avoids reporting the optimistically selected
-                    minimum validation error as though it were independent evidence.
+                    Why not choose the polynomial degree by minimizing training SSE?
+                    We just proved that training SSE cannot increase with degree. Such a
+                    rule would systematically favor more flexible models, even if they fit
+                    noise. We instead estimate how each candidate predicts observations
+                    it did not use for fitting.
                 </p>
                 <p>
-                    These random-split procedures are appropriate only when observations are reasonably independent
-                    and exchangeable for the prediction task. For time-ordered, grouped, or repeated-measures data,
-                    use an appropriate temporal or grouped split instead.
+                    For a concrete example, suppose we have 100 independent observations.
+                    We reserve 20 as a final test set and use the other 80 for model selection.
+                    In five-fold cross-validation, we split those 80 observations into five
+                    folds of 16. For each candidate degree, we fit five models: each uses
+                    64 observations for estimation and predicts the other 16. We calculate
+                    an error score on each validation fold and average the scores. We repeat
+                    these <i>same</i> folds for degrees 1, 2, 3, and so on.
+                </p>
+                <p>
+                    For regression, one useful measure is root mean squared error,
+                    \[
+                    \operatorname{RMSE}
+                    =\sqrt{\frac{1}{m}\sum_{i=1}^{m}(y_i-\hat y_i)^2},
+                    \]
+                    where the sum is over the \(m\) observations being evaluated.
+                    RMSE is measured in the same units as the response. For example,
+                    an RMSE of 4 score points means the root mean of the squared
+                    prediction errors is 4 points; it does not mean every error
+                    has absolute value 4.
+                </p>
+                <p>
+                    After choosing a degree using cross-validation, we refit a model of
+                    that degree on all 80 training observations, then evaluate it once
+                    on the untouched 20-observation test set. The smallest observed
+                    cross-validation error is generally somewhat optimistic because
+                    it was used to choose the model. The separate test evaluation avoids
+                    confusing this selection criterion with an independent estimate
+                    of predictive performance.
+                </p>
+                <p>
+                    Transformations that learn from data must be fitted within each
+                    training fold. Keeping polynomial feature generation and regression
+                    together in a scikit-learn pipeline enforces this workflow. Random
+                    folds are appropriate only when the observations are suitably
+                    independent and exchangeable for the intended task; time series,
+                    repeated subjects, and clustered measurements require different splits.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -17911,10 +18145,10 @@ for degree in degrees:
     model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
                           LinearRegression())
     result = cross_validate(model, X_train, y_train, cv=cv,
-                            scoring=&quot;neg_mean_squared_error&quot;,
+                            scoring="neg_mean_squared_error",
                             return_train_score=True)
-    train_rmse.append(np.sqrt(-result[&quot;train_score&quot;]).mean())
-    validation_rmse.append(np.sqrt(-result[&quot;test_score&quot;]).mean())
+    train_rmse.append(np.sqrt(-result["train_score"]).mean())
+    validation_rmse.append(np.sqrt(-result["test_score"]).mean())
 
 best_degree = degrees[int(np.argmin(validation_rmse))]
 final_model = make_pipeline(
@@ -17922,19 +18156,19 @@ final_model = make_pipeline(
     LinearRegression()).fit(X_train, y_train)
 held_out_rmse = np.sqrt(mean_squared_error(
     y_test, final_model.predict(X_test)))
-print(&quot;Selected polynomial degree:&quot;, best_degree)
-print(f&quot;CV RMSE (used for selection): {min(validation_rmse):.3f}&quot;)
-print(f&quot;Independent test RMSE (reported once): {held_out_rmse:.3f}&quot;)
+print("Selected polynomial degree:", best_degree)
+print(f"CV RMSE (used for selection): {min(validation_rmse):.3f}")
+print(f"Independent test RMSE (reported once): {held_out_rmse:.3f}")
 
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.plot(list(degrees), train_rmse, marker=&quot;o&quot;, label=&quot;CV training folds&quot;)
-ax.plot(list(degrees), validation_rmse, marker=&quot;o&quot;, label=&quot;CV validation folds&quot;)
-ax.axvline(best_degree, linestyle=&quot;--&quot;, label=&quot;Selected degree&quot;)
-ax.set(xlabel=&quot;Polynomial degree&quot;, ylabel=&quot;Average fold RMSE&quot;,
-       title=&quot;Select degree using training-set cross-validation&quot;)
+ax.plot(list(degrees), train_rmse, marker="o", label="CV training folds")
+ax.plot(list(degrees), validation_rmse, marker="o", label="CV validation folds")
+ax.axvline(best_degree, linestyle="--", label="Selected degree")
+ax.set(xlabel="Polynomial degree", ylabel="Average fold RMSE",
+       title="Select degree using training-set cross-validation")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_cv_degree.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_cv_degree.png", dpi=170, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_cv_degree.png"
@@ -17946,26 +18180,74 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    <b>Reading Experiment 127.</b> The cross-validation training and
+                    validation curves are not expected to coincide. Training errors tend
+                    to decrease with complexity, whereas validation errors can decrease
+                    at first and then increase. The vertical line marks the selected
+                    degree. The reported held-out RMSE is calculated only after selection
+                    and refitting; repeatedly using that test error to adjust the degree
+                    would turn the test set into another validation set.
+                </p>
+
                 <!-- ==================== Regularization ==================== -->
+                <p>
+                    Even if cross-validation favors a relatively high degree, the estimated
+                    polynomial coefficients may be unstable. <i>Regularization</i> offers
+                    another way to control flexibility: instead of only minimizing
+                    squared prediction errors, we also discourage overly large
+                    coefficients.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (Ridge-penalized polynomial regression).</b></p>
                     <p>
-                        Let \(z_j(x)\) denote a chosen polynomial feature, and let \(b_0\) be an unpenalized
-                        intercept. Ridge regression estimates coefficients by minimizing
-                    </p>
-                    \[\sum_{i=1}^{n}\left(y_i-b_0-\sum_{j=1}^{q}b_jz_j(x_i)\right)^2
-                    +\lambda\sum_{j=1}^{q}b_j^2,\qquad \lambda\geq0.\]
-                    <p>
-                        For \(\lambda=0\), this reduces to ordinary least squares; positive \(\lambda\) penalizes
-                        large non-intercept coefficients. Standardizing nonconstant polynomial features makes the
-                        penalty comparable across feature scales. The intercept is typically not penalized.
+                        Let \(z_1(x),\ldots,z_q(x)\) be chosen polynomial features.
+                        With \(b_0\) an unpenalized intercept, Ridge regression minimizes
+                        \[
+                        \sum_{i=1}^{n}
+                        \left(y_i-b_0-\sum_{j=1}^{q}b_jz_j(x_i)\right)^2
+                        +\lambda\sum_{j=1}^{q}b_j^2,
+                        \qquad \lambda\geq0.
+                        \]
+                        The first term is ordinary training SSE; the second is a
+                        penalty on the non-intercept coefficients. When \(\lambda=0\)
+                        we recover OLS. Positive values of \(\lambda\) trade a potentially
+                        larger training SSE for smaller coefficient magnitudes.
                     </p>
                 </div>
                 <p>
-                    Ridge regularization generally introduces bias into coefficient estimates but can reduce
-                    prediction variance and improve predictive error. It does not guarantee that a polynomial model
-                    is scientifically appropriate or that extrapolation is reliable. Degree and regularization
-                    strength are both <i>hyperparameters</i>, ideally selected inside a validation workflow.
+                    To see the mechanism in one dimension, suppose we are estimating a
+                    single coefficient \(b\) from one response \(y=4\) with predictor 1.
+                    Ordinary least squares minimizes \((4-b)^2\) and chooses \(b=4\).
+                    Ridge instead minimizes
+                    \[
+                    (4-b)^2+\lambda b^2.
+                    \]
+                    Differentiating and setting the derivative to zero gives
+                    \[
+                    -2(4-b)+2\lambda b=0
+                    \quad\Longrightarrow\quad
+                    \hat b_{\mathrm{Ridge}}=\frac{4}{1+\lambda}.
+                    \]
+                    For \(\lambda=1\), the coefficient is 2 instead of 4. This
+                    simplified calculation illustrates <i>shrinkage</i>; actual polynomial
+                    Ridge regression estimates several related coefficients jointly.
+                </p>
+                <p>
+                    The reason shrinkage may help is that a highly flexible OLS curve can
+                    depend strongly on the particular random errors in the training data.
+                    Accepting a small amount of bias can reduce the variability of its
+                    fitted predictions on new samples. Ridge does not guarantee better
+                    results: its penalty strength must be selected and evaluated.
+                </p>
+                <p>
+                    Because \(x\), \(x^2\), and higher powers may have very different
+                    scales, standardizing the nonconstant polynomial features before
+                    applying Ridge is important. Otherwise, the same coefficient penalty
+                    can affect features unequally merely because of their units.
+                    The intercept is usually not penalized. When scaling is learned
+                    from data, it should be fitted within each training fold to avoid
+                    data leakage.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -17989,27 +18271,27 @@ y_test = true_mean(x_test) + rng.normal(0, 0.23, len(x_test))
 grid = np.linspace(-1, 1, 350)
 
 models = {
-    &quot;High-degree OLS&quot;: make_pipeline(
+    "High-degree OLS": make_pipeline(
         PolynomialFeatures(16, include_bias=False),
         StandardScaler(), LinearRegression()),
-    &quot;High-degree Ridge&quot;: make_pipeline(
+    "High-degree Ridge": make_pipeline(
         PolynomialFeatures(16, include_bias=False),
         StandardScaler(), Ridge(alpha=1.0))
 }
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.scatter(x_train, y_train, s=25, label=&quot;Training observations&quot;)
-ax.plot(grid, true_mean(grid), linestyle=&quot;--&quot;, label=&quot;True mean&quot;)
+ax.scatter(x_train, y_train, s=25, label="Training observations")
+ax.plot(grid, true_mean(grid), linestyle="--", label="True mean")
 for label, model in models.items():
     model.fit(x_train[:, None], y_train)
     rmse = np.sqrt(mean_squared_error(
         y_test, model.predict(x_test[:, None])))
-    print(f&quot;{label}: independent test RMSE={rmse:.3f}&quot;)
+    print(f"{label}: independent test RMSE={rmse:.3f}")
     ax.plot(grid, model.predict(grid[:, None]), label=label)
-ax.set(xlabel=&quot;x&quot;, ylabel=&quot;y&quot;, ylim=(-2, 3),
-       title=&quot;Ridge shrinks a high-degree polynomial fit&quot;)
+ax.set(xlabel="x", ylabel="y", ylim=(-2, 3),
+       title="Ridge shrinks a high-degree polynomial fit")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_ridge_regularization.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_ridge_regularization.png", dpi=170, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_ridge_regularization.png"
@@ -18021,25 +18303,75 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    Experiment 128 fits degree-16 polynomials with and without a Ridge
+                    penalty. The test RMSE is computed using independently generated
+                    observations. The example illustrates that a curve can fit its
+                    training data closely while having unstable predictions, and that
+                    regularization can help control this behavior. It does not imply
+                    that degree 16 or \(\lambda=1\) is generally optimal.
+                </p>
+
                 <!-- ==================== Numerical Conditioning and Interpretation ==================== -->
                 <p>
-                    <b>Feature scaling and numerical stability.</b> With raw predictors measured on a large scale,
-                    columns \(x,x^2,\ldots,x^d\) can differ by many orders of magnitude and become highly
-                    correlated. The numerical condition number \(\kappa_2(X)=\sigma_{\max}(X)/\sigma_{\min}(X)\)
-                    summarizes sensitivity to perturbations; large values warn of unstable coefficient estimates.
-                    The normal-equation matrix may be much worse conditioned than the design itself. Centering and
-                    rescaling \(x\), using a stable solver, lowering degree, or adopting alternative polynomial
-                    bases can help.
+                    <b>Numerical conditioning.</b> Polynomial regression also has a
+                    computational difficulty that is separate from statistical overfitting.
+                    If the predictor is measured around 100, its powers have vastly
+                    different magnitudes:
+                    \[
+                    100=10^2,\qquad 100^2=10^4,\qquad 100^6=10^{12}.
+                    \]
+                    Columns of the design matrix can become both highly correlated
+                    and very differently scaled. The least-squares problem may then
+                    be sensitive to small rounding errors, even when the mathematical
+                    polynomial model is well defined.
                 </p>
                 <p>
-                    <b>Coefficient interpretation.</b> Unlike the constant slope in simple linear regression, a
-                    fitted polynomial's marginal change is location dependent:
+                    One measure of numerical sensitivity is the 2-norm condition number
+                    \[
+                    \kappa_2(X)=\frac{\sigma_{\max}(X)}{\sigma_{\min}(X)},
+                    \]
+                    where \(\sigma_{\max}\) and \(\sigma_{\min}\) are the largest and
+                    smallest singular values of a full-column-rank design matrix.
+                    A large condition number warns that small perturbations can greatly
+                    affect the estimated coefficients. Forming the normal-equation
+                    matrix \(X^TX\) makes the problem worse: in exact arithmetic,
+                    \(\kappa_2(X^TX)=\kappa_2(X)^2\) for full-column-rank \(X\).
                 </p>
-                \[m'(x)=\beta_1+2\beta_2x+3\beta_3x^2+\cdots+d\beta_dx^{d-1}.\]
                 <p>
-                    Thus \(\beta_1\) alone is not the total effect of increasing \(x\) by one unit when higher
-                    powers are present. The value of the derivative depends on \(x\); an observational derivative is
-                    not automatically a causal effect.
+                    For predictor values around 100, one possible transformation is
+                    \[
+                    z=\frac{x-100}{5}.
+                    \]
+                    Then \(x=95\), \(100\), and \(105\) correspond to \(z=-1\),
+                    \(0\), and \(1\). We can express a degree-six polynomial in
+                    powers of \(z\) instead of large powers of \(x\). Because this
+                    is an invertible affine transformation, it does not change the
+                    set of degree-at-most-six polynomial functions in exact
+                    arithmetic. It can, however, make numerical estimation
+                    considerably more stable. Raw and transformed coefficients
+                    have different interpretations and should not be compared
+                    term by term.
+                </p>
+                <p>
+                    <b>Interpreting a polynomial's slope.</b> The slope of a straight
+                    regression line is constant. For a polynomial mean curve, the
+                    derivative generally depends on the predictor value:
+                    \[
+                    m'(x)=\beta_1+2\beta_2x+3\beta_3x^2
+                    +\cdots+d\beta_dx^{d-1}.
+                    \]
+                    For example, the quadratic \(m(x)=3+2x-0.5x^2\) introduced
+                    above has derivative
+                    \[
+                    m'(x)=2-x.
+                    \]
+                    Its slope is 2 at \(x=0\), 1 at \(x=1\), zero at \(x=2\),
+                    and negative after \(x=2\). More precisely, a finite one-unit
+                    change is \(m(x+1)-m(x)\), which need not equal the derivative
+                    exactly; the derivative describes the instantaneous rate of
+                    change. Neither a fitted derivative nor an association observed
+                    in a dataset automatically identifies a causal effect.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -18056,46 +18388,100 @@ y = true_y + rng.normal(0, 0.12, len(x))
 # Both designs span the same polynomial functions in exact arithmetic.
 X_raw = np.vander(x, N=7, increasing=True)
 X_scaled = np.vander(z, N=7, increasing=True)
-for name, design in [(&quot;Raw x&quot;, X_raw), (&quot;Centered/scaled x&quot;, X_scaled)]:
+for name, design in [("Raw x", X_raw), ("Centered/scaled x", X_scaled)]:
     cond = np.linalg.cond(design)
     coefficients = np.linalg.lstsq(design, y, rcond=None)[0]
     fitted = design @ coefficients
-    print(f&quot;{name:18s}: condition number={cond:.3e}, &quot;
-          f&quot;SSE={np.sum((y - fitted)**2):.4f}, &quot;
-          f&quot;numerical rank={np.linalg.matrix_rank(design)}&quot;)
-print(&quot;A coordinate change preserves the polynomial space in exact arithmetic,&quot;)
-print(&quot;but a poorly scaled numerical design can lose effective rank.&quot;)</code></pre>
+    print(f"{name:18s}: condition number={cond:.3e}, "
+          f"SSE={np.sum((y - fitted)**2):.4f}, "
+          f"numerical rank={np.linalg.matrix_rank(design)}")
+print("A coordinate change preserves the polynomial space in exact arithmetic,")
+print("but a poorly scaled numerical design can lose effective rank.")</code></pre>
+
+                <p>
+                    Experiment 129 fits the same degree-six polynomial space in two
+                    coordinate systems. It prints the condition number and the
+                    numerical rank inferred from floating-point calculations.
+                    If the raw design appears rank-deficient while the centered
+                    design does not, that is a numerical warning: the data have
+                    not suddenly lost mathematical information because we changed
+                    units. The stable design should more reliably preserve it
+                    in the computation.
+                </p>
 
                 <!-- ==================== Inference for a Prespecified Polynomial Degree ==================== -->
+                <p>
+                    We have so far focused mainly on prediction. We may instead want
+                    to test a specific scientific question, such as whether adding
+                    a quadratic term improves a straight-line mean model. The two
+                    models are <i>nested</i>: the quadratic model contains the
+                    straight-line model as the special case \(\beta_2=0\).
+                </p>
                 <div class="stats-note stats-theorem">
-                    <p class="stats-note-heading"><b>Theorem (nested-model F-test for a quadratic term).</b></p>
-                    <p>Consider the <i>prespecified</i> nested models</p>
-                    \[M_R:\ \mathbb E(Y_i\mid x_i)=\beta_0+\beta_1x_i,\qquad M_F:\ \mathbb E(Y_i\mid
-                    x_i)=\beta_0+\beta_1x_i+\beta_2x_i^2.\]
-                    <p>
-                        If the independent errors are normal with common variance \(\sigma^2\), the full design has
-                        rank three, \(n&gt;3\), and the null hypothesis \(H_0:\beta_2=0\) is true, then
+                    <p class="stats-note-heading">
+                        <b>Theorem (nested-model F-test for a prespecified quadratic term).</b>
                     </p>
-                    \[F=\frac{(\operatorname{SSE}_R-\operatorname{SSE}_F)/1} {\operatorname{SSE}_F/(n-3)}\sim
-                    F_{1,n-3}.\]
                     <p>
-                        The numerator measures the reduction in residual sum of squares obtained by adding the
-                        quadratic feature; the denominator estimates error variance from the full model.
+                        Consider a reduced model \(M_R\) and a full model \(M_F\):
+                        \[
+                        \begin{aligned}
+                        M_R:\quad &amp;\mathbb E(Y_i\mid x_i)=\beta_0+\beta_1x_i,\\
+                        M_F:\quad &amp;\mathbb E(Y_i\mid x_i)=\beta_0+\beta_1x_i+\beta_2x_i^2.
+                        \end{aligned}
+                        \]
+                        Suppose the models were specified independently of the observed
+                        response noise, the full design has rank three, \(n&gt;3\),
+                        and the errors are independent \(N(0,\sigma^2)\) with common
+                        variance. To test \(H_0:\beta_2=0\), use
+                        \[
+                        F=\frac{(\operatorname{SSE}_R-\operatorname{SSE}_F)/1}
+                        {\operatorname{SSE}_F/(n-3)}.
+                        \]
+                        Under \(H_0\), the statistic has the exact distribution
+                        \(F\sim F_{1,n-3}\).
                     </p>
                 </div>
                 <p>
-                    Proof sketch. Under the normal full model and \(H_0\), the orthogonal projections onto the
-                    reduced and full regression spaces give independent scaled chi-square sums of squares:
-                    \((\mathrm{SSE}_R-\mathrm{SSE}_F)/\sigma^2\sim\chi^2_1\) and
-                    \(\mathrm{SSE}_F/\sigma^2\sim\chi^2_{n-3}\). Their ratio, divided by the corresponding degrees
-                    of freedom, is F-distributed.
+                    Why are there two sums of squares? The reduced model fits a line,
+                    while the full model fits a parabola. Because the full model
+                    contains the reduced model, its training SSE cannot be larger.
+                    The quantity \(\operatorname{SSE}_R-\operatorname{SSE}_F\) measures
+                    how much residual variation the additional quadratic coefficient
+                    removes. The numerator is divided by 1 because the full model
+                    adds one coefficient. The denominator divides the full-model
+                    SSE by \(n-3\), since we fitted three coefficients and use
+                    the remaining degrees of freedom to estimate the error variance.
                 </p>
                 <p>
-                    <b>Selection warning.</b> This classical reference distribution presumes the compared models
-                    were chosen independently of the observed noise. If polynomial degree was searched using the
-                    <i>same</i> data before reporting the most significant coefficient or F-test, the naive p-values
-                    and intervals generally fail to account for that selection. Separate exploratory model selection
-                    from confirmatory inference.
+                    For a simple numerical illustration, suppose \(n=15\), a straight
+                    line gives \(\operatorname{SSE}_R=30\), and adding \(x^2\) gives
+                    \(\operatorname{SSE}_F=12\). Then
+                    \[
+                    F=\frac{(30-12)/1}{12/(15-3)}
+                    =\frac{18}{1}=18.
+                    \]
+                    Whether this improvement is significant is determined by
+                    comparing 18 with the right tail of an \(F_{1,12}\) distribution,
+                    rather than treating any reduction in SSE as decisive.
+                    This illustration is separate from the simulated data in Experiment 130.
+                </p>
+                <p>
+                    Under the classical normal model and \(H_0\), the scaled reduction
+                    in SSE has a \(\chi^2_1\) distribution, while the scaled full-model
+                    SSE has an independent \(\chi^2_{n-3}\) distribution. Dividing
+                    each by its degrees of freedom produces the F-statistic above.
+                    This is the same principle used to compare nested regression
+                    models and to construct classical ANOVA F-tests.
+                </p>
+                <p>
+                    <b>Why prespecification matters.</b> If we first search many polynomial
+                    degrees on the same data, then report the most significant
+                    quadratic or higher-order term as though it were the only
+                    planned test, the resulting p-value generally ignores the
+                    selection process. Exploratory degree selection and confirmatory
+                    inference are different tasks. An independent dataset or a
+                    properly selection-adjusted procedure may be needed for the
+                    latter.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -18116,22 +18502,22 @@ sse_r = np.sum(reduced.resid**2)
 sse_f = np.sum(full.resid**2)
 F = ((sse_r - sse_f)/1) / (sse_f/(len(x) - 3))
 p_value = stats.f.sf(F, 1, len(x) - 3)
-print(f&quot;Reduced SSE={sse_r:.3f}; full SSE={sse_f:.3f}&quot;)
-print(f&quot;Quadratic-term F={F:.4f}; p-value={p_value:.5g}&quot;)
-print(&quot;statsmodels comparison (F, p, df difference):&quot;,
+print(f"Reduced SSE={sse_r:.3f}; full SSE={sse_f:.3f}")
+print(f"Quadratic-term F={F:.4f}; p-value={p_value:.5g}")
+print("statsmodels comparison (F, p, df difference):",
       full.compare_f_test(reduced))
-print(&quot;Quadratic coefficient 95% CI:&quot;,
+print("Quadratic coefficient 95% CI:",
       np.round(full.conf_int()[2], 4))
 
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.scatter(x, y, s=18, alpha=0.65, label=&quot;Observed responses&quot;)
-ax.plot(x, reduced.fittedvalues, label=&quot;Reduced: degree 1&quot;)
-ax.plot(x, full.fittedvalues, label=&quot;Full: degree 2&quot;)
-ax.set(xlabel=&quot;x&quot;, ylabel=&quot;y&quot;,
-       title=&quot;Prespecified comparison of nested regression models&quot;)
+ax.scatter(x, y, s=18, alpha=0.65, label="Observed responses")
+ax.plot(x, reduced.fittedvalues, label="Reduced: degree 1")
+ax.plot(x, full.fittedvalues, label="Full: degree 2")
+ax.set(xlabel="x", ylabel="y",
+       title="Prespecified comparison of nested regression models")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_nested_f_test.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_nested_f_test.png", dpi=170, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_nested_f_test.png"
@@ -18143,14 +18529,51 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    In Experiment 130, the simulated data give approximately
+                    \(\operatorname{SSE}_R=220.773\) and
+                    \(\operatorname{SSE}_F=73.913\). Therefore,
+                    \[
+                    F\approx\frac{220.773-73.913}{73.913/87}
+                    \approx172.86.
+                    \]
+                    The corresponding p-value is about \(2.21\times10^{-22}\).
+                    Under the stated model assumptions, this is strong evidence
+                    against a zero quadratic coefficient. It is not evidence
+                    that the population relationship must literally be a
+                    quadratic over every possible value of \(x\).
+                </p>
+
                 <!-- ==================== Extrapolation and Model Scope ==================== -->
                 <p>
-                    <b>Extrapolation.</b> Within the range of observed predictors, smooth polynomial curves may
-                    approximate the conditional mean usefully. Outside that range, polynomial terms with high powers
-                    can dominate, and small coefficient errors can produce extreme predictions. A narrow in-sample
-                    confidence band does not justify extrapolating the functional form into an unobserved region.
-                    Even a correctly computed interval is conditional on model assumptions that are especially hard
-                    to justify outside the training domain.
+                    <b>Extrapolation.</b> Even a well-validated polynomial over the observed
+                    predictor range may behave poorly outside it. Higher powers grow rapidly,
+                    so a small difference between two curves inside the training region
+                    can become a large difference far away.
+                </p>
+                <p>
+                    For example, compare the functions
+                    \[
+                    m_1(x)=1+x^2,
+                    \qquad
+                    m_2(x)=1+x^2+0.02x^4.
+                    \]
+                    On the interval \([-1,1]\), they differ by at most 0.02.
+                    A small or noisy training sample might not distinguish them
+                    reliably. But at \(x=3\), their predictions differ by
+                    \[
+                    m_2(3)-m_1(3)=0.02(3^4)=1.62.
+                    \]
+                    A higher-degree feature that appears negligible within the
+                    observed range can dominate the prediction outside it.
+                </p>
+                <p>
+                    This is a <i>model-form uncertainty</i> problem, not merely a
+                    matter of calculating a standard error. Even a narrow classical
+                    confidence interval can be misleading when the assumed polynomial
+                    shape is unsupported beyond the data. Report the range of observed
+                    predictors and avoid interpreting distant predictions as
+                    reliable without additional evidence.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -18168,18 +18591,18 @@ y = 0.5 + 0.4*x + 1.6*x**2 + rng.normal(0, 0.22, len(x))
 grid = np.linspace(-2, 2, 500)
 
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.axvspan(-1, 1, alpha=0.10, label=&quot;Training x range&quot;)
-ax.scatter(x, y, s=22, label=&quot;Observed training data&quot;)
+ax.axvspan(-1, 1, alpha=0.10, label="Training x range")
+ax.scatter(x, y, s=22, label="Observed training data")
 for degree in (2, 5, 10):
     model = make_pipeline(PolynomialFeatures(degree, include_bias=False),
                           LinearRegression()).fit(x[:, None], y)
     pred = model.predict(grid[:, None])
-    ax.plot(grid, pred, label=f&quot;Degree {degree}&quot;)
-ax.set(xlabel=&quot;x&quot;, ylabel=&quot;Predicted y&quot;, ylim=(-4, 13),
-       title=&quot;Polynomial extrapolation outside the observed domain&quot;)
+    ax.plot(grid, pred, label=f"Degree {degree}")
+ax.set(xlabel="x", ylabel="Predicted y", ylim=(-4, 13),
+       title="Polynomial extrapolation outside the observed domain")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_extrapolation.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_extrapolation.png", dpi=170, bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_extrapolation.png"
@@ -18191,19 +18614,45 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    Experiment 131 fits polynomials of degrees 2, 5, and 10 using
+                    observations only from the interval \([-1,1]\), then displays
+                    their predictions over \([-2,2]\). The region outside the
+                    training interval is extrapolation. The point is not that
+                    one specific degree must always diverge, but that curves
+                    agreeing on the observed range can behave very differently
+                    where there are no observations to constrain them.
+                </p>
+
                 <!-- ==================== Applied Student Data Example ==================== -->
                 <p>
-                    <b>Applied example: predicting student weight from height.</b> We return to the SOGA-Py
-                    <i>students</i> data used in earlier regression sections, and compare a straight line with
-                    quadratic and cubic alternatives. The response is <code>weight</code> and the predictor is
-                    <code>height</code>. This is a descriptive and predictive exercise, not an explanation of why
-                    students have particular weights. An improved test RMSE does not establish a causal
-                    relationship.
+                    <b>Applied example: predicting student weight from height.</b>
+                    We can compare a straight-line model with quadratic and cubic
+                    models using two numerical columns from the SOGA-Py
+                    <i>students</i> dataset: <code>height</code> as the predictor
+                    and <code>weight</code> as the response. The statistical question
+                    is predictive: does allowing curvature improve predictions of
+                    weight for other students drawn under comparable conditions?
+                    Even if a curved model performs better, this does not
+                    establish that changing a person's height would cause
+                    the predicted change in weight.
                 </p>
                 <p>
-                    The code attempts to load the external data. When the download is unavailable, it explicitly
-                    switches to a <i>simulated demonstration dataset</i>, so the example and figure remain runnable
-                    offline. Synthetic fallback results must not be presented as empirical findings about students.
+                    We first separate observations into training and test sets.
+                    Within the training set, five-fold cross-validation compares
+                    degrees 1, 2, and 3. After selecting the degree with the
+                    smallest average validation RMSE, we fit it using the full
+                    training set and evaluate its RMSE on the untouched test set.
+                    We also plot the observed pairs and selected mean curve.
+                </p>
+                <p>
+                    The script tries to read the external dataset. If that
+                    download fails, it generates an explicitly labeled
+                    <i>synthetic demonstration</i> so that the model-selection
+                    workflow can still be examined. Any result obtained from
+                    the synthetic fallback must not be reported as an empirical
+                    finding about students. The code also requires enough
+                    complete numerical height–weight pairs for the analysis.
                 </p>
 
                 <p class="stats-experiment-title">
@@ -18218,26 +18667,26 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-url = &quot;https://userpage.fu-berlin.de/soga/data/raw-data/students.csv&quot;
+url = "https://userpage.fu-berlin.de/soga/data/raw-data/students.csv"
 try:
     students = pd.read_csv(url)
-    data_source = &quot;SOGA-Py students (external dataset)&quot;
+    data_source = "SOGA-Py students (external dataset)"
 except Exception as error:
-    print(&quot;External data unavailable; using a simulated example instead:&quot;,
+    print("External data unavailable; using a simulated example instead:",
           type(error).__name__)
     rng = np.random.default_rng(132)
     height = rng.normal(171, 9, 450)
     weight = 68 + 0.60*(height - 171) + 0.012*(height - 171)**2
     weight += rng.normal(0, 7.5, height.size)
-    students = pd.DataFrame({&quot;height&quot;: height, &quot;weight&quot;: weight})
-    data_source = &quot;SIMULATED DEMONSTRATION DATA&quot;
+    students = pd.DataFrame({"height": height, "weight": weight})
+    data_source = "SIMULATED DEMONSTRATION DATA"
 
-clean = students[[&quot;height&quot;, &quot;weight&quot;]].apply(
-    pd.to_numeric, errors=&quot;coerce&quot;).dropna()
+clean = students[["height", "weight"]].apply(
+    pd.to_numeric, errors="coerce").dropna()
 if len(clean) &lt; 25:
-    raise ValueError(&quot;Need at least 25 complete height/weight observations&quot;)
-X = clean[[&quot;height&quot;]].to_numpy()
-y = clean[&quot;weight&quot;].to_numpy()
+    raise ValueError("Need at least 25 complete height/weight observations")
+X = clean[["height"]].to_numpy()
+y = clean["weight"].to_numpy()
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.25, random_state=132)
 cv = KFold(n_splits=5, shuffle=True, random_state=132)
@@ -18248,32 +18697,32 @@ for degree in (1, 2, 3):
                           LinearRegression())
     fold_rmse = np.sqrt(-cross_val_score(
         model, X_train, y_train, cv=cv,
-        scoring=&quot;neg_mean_squared_error&quot;))
+        scoring="neg_mean_squared_error"))
     models[degree] = (fold_rmse.mean(), model)
 
 selected_degree = min(models, key=lambda d: models[d][0])
 selected_model = models[selected_degree][1].fit(X_train, y_train)
 test_rmse = np.sqrt(mean_squared_error(
     y_test, selected_model.predict(X_test)))
-print(&quot;Data source:&quot;, data_source, &quot;| complete observations:&quot;, len(clean))
+print("Data source:", data_source, "| complete observations:", len(clean))
 for degree, (cv_rmse, _) in models.items():
-    print(f&quot;Degree {degree}: 5-fold CV RMSE={cv_rmse:.3f}&quot;)
-print(f&quot;Selected degree: {selected_degree}; held-out RMSE: {test_rmse:.3f}&quot;)
+    print(f"Degree {degree}: 5-fold CV RMSE={cv_rmse:.3f}")
+print(f"Selected degree: {selected_degree}; held-out RMSE: {test_rmse:.3f}")
 
 height_grid = np.linspace(X.min(), X.max(), 250).reshape(-1, 1)
 fig, ax = plt.subplots(figsize=(8, 5))
 ax.scatter(X_train[:, 0], y_train, s=13, alpha=0.35,
-           label=&quot;Training observations&quot;)
+           label="Training observations")
 ax.scatter(X_test[:, 0], y_test, s=18, alpha=0.50,
-           label=&quot;Held-out observations&quot;)
+           label="Held-out observations")
 ax.plot(height_grid[:, 0], selected_model.predict(height_grid),
-        linewidth=2, label=f&quot;Selected degree {selected_degree}&quot;)
-ax.set(xlabel=&quot;Height&quot;, ylabel=&quot;Weight&quot;,
-       title=f&quot;Height-weight regression: {data_source}&quot;)
+        linewidth=2, label=f"Selected degree {selected_degree}")
+ax.set(xlabel="Height", ylabel="Weight",
+       title=f"Height-weight regression: {data_source}")
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;poly_students_height_weight.png&quot;, dpi=170,
-            bbox_inches=&quot;tight&quot;)
+fig.savefig("../../images/poly_students_height_weight.png", dpi=170,
+            bbox_inches="tight")
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/poly_students_height_weight.png"
@@ -18284,6 +18733,16 @@ plt.show()</code></pre>
                         the title identifies whether the data are real or simulated. Generated by Experiment 132.
                     </figcaption>
                 </figure>
+
+                <p>
+                    After running Experiment 132, compare the three cross-validated
+                    errors before interpreting the selected degree. A lower error
+                    indicates better out-of-fold predictive accuracy for this sample
+                    and evaluation design; it does not prove that a specific
+                    polynomial is the true population relationship. The final test
+                    RMSE provides an additional check and should not be used
+                    repeatedly to tune the analysis.
+                </p>
 
                 <!-- ==================== Interpretation, Exercises, and Sources ==================== -->
                 <p>
@@ -18333,6 +18792,7 @@ plt.show()</code></pre>
                 </p>
 
                 <hr />
+
 
                 <!-- ========================= MAIN SECTION 25: Logistic Regression ========================= -->
                 <span id="LogisticRegression"><b>Logistic Regression</b></span>
@@ -19955,7 +20415,7 @@ plt.show()</code></pre>
                 </p>
 
                 <hr />
-                
+
             </article>
         </main>
     </div>
