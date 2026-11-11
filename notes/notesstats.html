@@ -17030,7 +17030,7 @@ print("Even a significant slope can account for little of the response variation
                     \(-1\) and \(1\).
                 </p>
                 <p>
-                    <b>Concrete calculation.</b> Suppose four students have the following scores on
+                    Let us do a concrete calculation. Suppose four students have the following scores on
                     two short assessments:
                 </p>
                 <div class="scrollable">
@@ -17123,7 +17123,7 @@ print("Even a significant slope can account for little of the response variation
                     association, not necessarily little dependence of every kind.
                 </p>
 
-                <p class="stats-experiment-title"><b>Experiment 118: calculate Pearson correlation and check its
+                <p class="stats-experiment-title"><b>Experiment: calculate Pearson correlation and check its
                         invariances.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -17151,7 +17151,7 @@ print("Theoretical correlation in the generator: 0.6")</code></pre>
 
                 <!-- ==================== Nonlinear Association ==================== -->
                 <p>
-                    <b>Zero correlation does not imply independence.</b> To understand why, let
+                    Zero correlation does not imply independence. To understand why, let
                     \(X\sim\operatorname{Uniform}(-1,1)\), and define \(Y=X^2\). If we know \(X\),
                     we know \(Y\) exactly. The variables are therefore dependent. Nevertheless,
                     \[
@@ -17173,7 +17173,7 @@ print("Theoretical correlation in the generator: 0.6")</code></pre>
                     measurement error to \(Y\) would preserve zero covariance, while generally
                     leaving a nonlinear dependence between \(X\) and \(Y\).
                 </p>
-                <p class="stats-experiment-title"><b>Experiment 119: visualize nonlinear dependence with small Pearson
+                <p class="stats-experiment-title"><b>Experiment: visualize nonlinear dependence with small Pearson
                         correlation.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -17197,7 +17197,7 @@ plt.show()</code></pre>
                     <img src="../images/corr_nonlinear_dependence.png"
                         alt="A U-shaped quadratic relationship has near-zero linear correlation despite clear nonlinear dependence."
                         loading="lazy" />
-                    <figcaption><b>Figure.</b> The response follows a quadratic trend with additional noise.
+                    <figcaption style="font-size: smaller;"><b>Figure.</b> The response follows a quadratic trend with additional noise.
                         Pearson's correlation can be close to zero even when the nonlinear pattern is unmistakable.
                     </figcaption>
                 </figure>
@@ -17234,7 +17234,7 @@ plt.show()</code></pre>
                     </p>
                 </div>
                 <p>
-                    <b>Where does this t-statistic come from?</b> Recall from simple regression with
+                    Where does this t-statistic come from? Recall from simple regression with
                     an intercept that
                     \[
                     \hat\beta_1=\frac{S_{xy}}{S_{xx}},\qquad
@@ -17264,7 +17264,7 @@ plt.show()</code></pre>
                     necessarily exact.
                 </p>
                 <p>
-                    <b>Numerical illustration.</b> Suppose \(n=22\) paired observations yield
+                    Suppose \(n=22\) paired observations yield
                     \(r=0.50\). Under \(H_0:\rho=0\),
                     \[
                     \begin{aligned}
@@ -17279,7 +17279,7 @@ plt.show()</code></pre>
                     \(0.018\), not the probability that \(H_0\) is true.
                 </p>
                 <p>
-                    <b>A limitation.</b> If \(X\) and \(Y\) are dependent but have
+                    If \(X\) and \(Y\) are dependent but have
                     \(\rho=0\), as in the earlier quadratic example, the null of zero
                     correlation is true even though the variables are not independent.
                     The exact t-reference above does not generally extend to arbitrary
@@ -17326,7 +17326,7 @@ plt.show()</code></pre>
                     \(\tanh\), its inverse, to return to the correlation scale.
                 </p>
                 <p>
-                    <b>Worked calculation.</b> If \(n=30\) and \(r=0.50\), then
+                    If \(n=30\) and \(r=0.50\), then
                     \[
                     z=\frac12\log 3\approx0.5493,\qquad
                     \widehat{\operatorname{SE}}_z\approx\frac{1}{\sqrt{27}}\approx0.1925.
@@ -17342,7 +17342,7 @@ plt.show()</code></pre>
                     of the procedure, not a 95% posterior probability for the fixed parameter.
                 </p>
 
-                <p class="stats-experiment-title"><b>Experiment 120: compute Pearson p-values, Fisher confidence limits,
+                <p class="stats-experiment-title"><b>Experiment: compute Pearson p-values, Fisher confidence limits,
                         and a permutation p-value.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -17376,7 +17376,7 @@ print(f"Permutation p-value (independence null): {p_perm:.5g}")</code></pre>
                     test to numerical precision. The Fisher interval is only approximate.
                 </p>
                 <p>
-                    <b>What is the permutation calculation doing?</b> The code fixes the 65
+                    What is the permutation calculation doing? The code fixes the 65
                     observed \(x\)-values and randomly reshuffles the \(y\)-values 4,000 times.
                     Each reshuffling breaks the original pairing and computes a new correlation.
                     The permutation p-value counts the fraction whose <i>absolute</i> correlation
@@ -17393,7 +17393,7 @@ print(f"Permutation p-value (independence null): {p_perm:.5g}")</code></pre>
 
                 <!-- ==================== Rank Correlation ==================== -->
                 <p>
-                    <b>Pearson versus Spearman.</b> Pearson correlation uses the original
+                    Pearson versus Spearman. Pearson correlation uses the original
                     numerical values and measures linear association. <i>Spearman's rank
                         correlation</i> first replaces the observations by their ranks and
                     then calculates Pearson correlation between those ranks (using
@@ -17416,7 +17416,7 @@ print(f"Permutation p-value (independence null): {p_perm:.5g}")</code></pre>
                     and the sign. Rank correlation can reduce the influence of very
                     large magnitudes, but it is not immune to problematic observations.
                 </p>
-                <p class="stats-experiment-title"><b>Experiment 121: contrast Pearson and Spearman under a nonlinear
+                <p class="stats-experiment-title"><b>Experiment: contrast Pearson and Spearman under a nonlinear
                         monotonic relationship.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import pearsonr, spearmanr
@@ -17431,7 +17431,7 @@ print("Spearman after strictly increasing rescaling of x:", spearmanr(np.exp(x),
 
                 <!-- ==================== Outliers, Grouping, and Causation ==================== -->
                 <p>
-                    <b>Outliers and pooled-group correlation.</b> Correlation is computed
+                    Outliers and pooled-group correlation. Correlation is computed
                     from centered cross-products. One pair far from both sample means
                     may contribute a very large cross-product and substantially change
                     Pearson's \(r\). Also, an apparent association in the pooled sample
@@ -17471,7 +17471,7 @@ print("Spearman after strictly increasing rescaling of x:", spearmanr(np.exp(x),
                     factor for both variables. This is a useful warning against drawing
                     causal conclusions from a single pooled correlation.
                 </p>
-                <p class="stats-experiment-title"><b>Experiment 122: demonstrate confounding and sensitivity to a single
+                <p class="stats-experiment-title"><b>Experiment: demonstrate confounding and sensitivity to a single
                         outlier.</b></p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -17504,7 +17504,7 @@ plt.show()</code></pre>
                     <img src="../images/corr_confounding_groups.png"
                         alt="Two clusters shifted together in x and y, producing pooled correlation despite weak within-group correlations."
                         loading="lazy" />
-                    <figcaption><b>Figure.</b> The correlation in the pooled sample reflects
+                    <figcaption style="font-size: smaller;"><b>Figure.</b> The correlation in the pooled sample reflects
                         the separation between the groups. Within each group, the simulated
                         x- and y-values are generated independently.
                     </figcaption>
@@ -17520,7 +17520,7 @@ plt.show()</code></pre>
 
                 <!-- ==================== Applied Two-Exam Scores ==================== -->
                 <p>
-                    <b>Applied example (two examination scores).</b> Suppose we want to know
+                    Suppose we want to know
                     whether students who performed well on one statistics examination
                     also tend to perform well on another. The SOGA-Py
                     <i>students</i> dataset contains the variables <code>score1</code>
@@ -17536,7 +17536,7 @@ plt.show()</code></pre>
                     habits, could influence both. Sampling and distributional
                     assumptions matter for the population-level inference.
                 </p>
-                <p class="stats-experiment-title"><b>Experiment 123: analyze students' two statistics-exam scores.</b>
+                <p class="stats-experiment-title"><b>Experiment: analyze students' two statistics-exam scores.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import pandas as pd
 from scipy.stats import pearsonr, spearmanr
@@ -17607,34 +17607,6 @@ print("n:", len(sample))</code></pre>
                     that formulation does not assume a bivariate random sample.
                     The simple identity does not extend unchanged to individual partial
                     slopes in multiple regression.
-                </p>
-
-                <!-- ==================== Exercises and References ==================== -->
-                <p>
-                    <b>Worked exercise.</b> Suppose \(n=22\) and \(r=0.50\). We obtain
-                    \(t=0.50\sqrt{20/(1-0.25)}\approx2.582\) with 20 degrees of freedom.
-                    Calculate the two-sided p-value with SciPy and explain why iid
-                    bivariate normality makes the usual Pearson t-reference exact.
-                </p>
-                <p>
-                    <b>Further exercises.</b> (a) Verify the calculation \(r=0.8\) for the
-                    four-student example. (b) Show that \(\operatorname{Corr}(X,X^2)=0\)
-                    when \(X\) is symmetric about zero and has the required moments.
-                    (c) Explain why Spearman correlation equals one for
-                    \(x=(1,2,3,4,5)\), \(y=(1,4,9,16,25)\).
-                    (d) Derive the pooled correlation \(9/13\) in the group-shift model.
-                    (e) Explain why permuting \(Y\) does not necessarily test the
-                    general hypothesis \(\rho=0\).
-                </p>
-                <p>
-                    <b>References.</b> OpenIntro Statistics, 4th ed., Sections 8.1 and 8.4
-                    (pp. 305–311, 331–337), Exercises 8.13 and 8.33; DeGroot and Schervish,
-                    4th ed., Chapter 4 (covariance and correlation) and Chapter 11,
-                    Sections 11.2–11.3. Documentation:
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html"
-                        target="_blank" rel="noopener noreferrer">SciPy pearsonr</a> and
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html"
-                        target="_blank" rel="noopener noreferrer">SciPy spearmanr</a>.
                 </p>
 
                 <hr />
