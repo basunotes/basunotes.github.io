@@ -18793,7 +18793,6 @@ plt.show()</code></pre>
 
                 <hr />
 
-
                 <!-- ========================= MAIN SECTION 25: Logistic Regression ========================= -->
                 <span id="LogisticRegression"><b>Logistic Regression</b></span>
                 <p>
@@ -18810,26 +18809,75 @@ plt.show()</code></pre>
                     important throughout the section.
                 </p>
 
+
+                <p>
+                    Consider a subscription service. Let \(Y_i=1\) if customer \(i\) renews their
+                    subscription and \(Y_i=0\) otherwise. Suppose \(x_i\) is the number of times that
+                    customer logged in during the previous month. Two customers with the same number
+                    of logins need not make the same decision: one may renew and the other may not.
+                    Our aim is therefore to estimate the probability of renewal for a given number
+                    of logins, rather than to predict a deterministic outcome.
+                </p>
+                <p>
+                    For a Bernoulli random variable with success probability \(p\),
+                    \[P(Y=1)=p,\qquad P(Y=0)=1-p.\]
+                    Its mean is \(\mathbb E(Y)=p\). This is why modeling the conditional mean
+                    of a binary response is the same as modeling its conditional probability
+                    of taking the value one.
+                </p>
                 <!-- ==================== Probability Model and the Logit Link ==================== -->
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (binary logistic regression).</b></p>
                     <p>
-                        For observations \((x_i,Y_i)\), assume that, conditionally on the predictors, the outcomes
-                        are independent Bernoulli variables:
-                    </p>
-                    \[Y_i\mid x_i\sim\operatorname{Bernoulli}(p_i),\qquad P(Y_i=1\mid x_i)=p_i,\quad
-                    0&lt;p_i&lt;1.\]
-                    <p>
-                        For a predictor vector \(x_i=(x_{i1},\ldots,x_{ik})^T\), the model specifies a linear
-                        predictor \(\eta_i=\beta_0+\sum_{j=1}^k\beta_j x_{ij}\) and the <i>logit link</i>
-                    </p>
-                    \[\operatorname{logit}(p_i)=\log\!\left(\frac{p_i}{1-p_i}\right)=\eta_i.\]
-                    <p>
+                        For predictor values \(x_i\) and binary random responses \(Y_i\), suppose the
+                        responses are independent conditional on the predictor values, with
+                        \[
+                        Y_i\mid x_i\sim\operatorname{Bernoulli}(p_i),
+                        \qquad P(Y_i=1\mid x_i)=p_i,
+                        \qquad 0&lt;p_i&lt;1.
+                        \]
+                        For a predictor vector \(x_i=(x_{i1},\ldots,x_{ik})^T\),
+                        the <i>linear predictor</i> is
+                        \[
+                        \eta_i=\beta_0+\sum_{j=1}^k\beta_jx_{ij}.
+                        \]
+                        Logistic regression specifies that the <i>logit</i> of the event probability
+                        equals this linear predictor:
+                        \[
+                        \operatorname{logit}(p_i)
+                        =\log\!\left(\frac{p_i}{1-p_i}\right)=\eta_i.
+                        \]
                         Equivalently, with \(\sigma(t)=1/(1+e^{-t})\), the success probability is
-                        \(p_i=\sigma(\eta_i)\). This is a Bernoulli generalized linear model (GLM) with canonical
-                        link.
+                        \(p_i=\sigma(\eta_i)\). This is a Bernoulli generalized linear model (GLM)
+                        with the canonical logit link.
                     </p>
                 </div>
+
+                <p>
+                    The notation \(Y_i\mid x_i\) means that we consider the distribution of the
+                    random outcome after the predictor value \(x_i\) has been specified. In a
+                    fixed-design analysis, \(x_i\) is simply a fixed number; in random design it
+                    can be the observed realization of a predictor \(X_i\), and we write
+                    \(P(Y_i=1\mid X_i=x_i)=p_i\). The outcome \(Y_i\) is random before observation,
+                    while the observed outcome \(y_i\) equals either zero or one. These
+                    conditional distributions are the model's assumptions, not statements
+                    that the individual outcomes can be known with certainty.
+                </p>
+                <p>
+                    Why do we use a logit instead of putting \(p_i=\beta_0+\beta_1x_i\)? A straight
+                    line can take values below zero or above one. For example,
+                    \(0.2+0.15x=1.1\) at \(x=6\), which cannot be a probability. The logit
+                    \(\log[p/(1-p)]\), however, can take any real value. Solving
+                    \(\log[p/(1-p)]=\eta\) for \(p\) gives
+                    \[
+                    \frac{p}{1-p}=e^\eta
+                    \quad\Longrightarrow\quad
+                    p=\frac{e^\eta}{1+e^\eta}
+                    =\frac{1}{1+e^{-\eta}}.
+                    \]
+                    Thus, any real linear predictor produces a probability strictly between
+                    zero and one.
+                </p>
                 <p>
                     Unlike ordinary least squares applied directly to \(Y\in\{0,1\}\), the logistic model always
                     gives probabilities between zero and one. Since \(\mathbb E(Y_i\mid x_i)=p_i\) and
@@ -18856,6 +18904,22 @@ plt.show()</code></pre>
                     unit change in \(x\) does <i>not</i> generally produce a constant change in probability.
                 </p>
 
+
+                <p>
+                    For a numerical illustration, take \(\eta(x)=-2+0.8x\). We obtain
+                    \[
+                    \begin{aligned}
+                    p(0)&amp;=\sigma(-2)\approx0.119,\\
+                    p(1)&amp;=\sigma(-1.2)\approx0.231,\\
+                    p(2)&amp;=\sigma(-0.4)\approx0.401.
+                    \end{aligned}
+                    \]
+                    The probability rises with \(x\), but the increase from \(0\) to \(1\)
+                    is not the same as the increase from \(1\) to \(2\). Also, the outcome
+                    remains binary: if \(p(1)=0.231\), a customer with \(x=1\) still either
+                    renews (\(Y=1\)) or does not (\(Y=0\)); \(0.231\) describes a probability,
+                    not a possible observed response.
+                </p>
                 <p class="stats-experiment-title">
                     <b>Experiment 133: visualize the logistic link and simulate binary responses.</b>
                 </p>
@@ -18885,7 +18949,7 @@ ax.set(xlabel=&quot;Predictor x&quot;, ylabel=&quot;P(Y=1 | x)&quot;, ylim=(-0.1
        title=&quot;Binary outcomes and a continuous probability model&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_sigmoid_probability.png&quot;, dpi=170,
+fig.savefig(&quot;../../images/logistic_sigmoid_probability.png&quot;, dpi=170,
             bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
@@ -18898,6 +18962,14 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+
+                <p>
+                    Experiment 133 displays the two distinct objects: the observed outcomes,
+                    which appear at zero or one (with small visual jitter), and the smooth
+                    probability curve, which represents the model's conditional success
+                    probability. The jitter only separates overlapping points; it does not
+                    change their recorded binary values.
+                </p>
                 <!-- ==================== Odds and Coefficient Interpretation ==================== -->
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (odds, log-odds, and odds ratio).</b></p>
@@ -18919,6 +18991,31 @@ plt.show()</code></pre>
                     \(x_j\) increases \(\eta\) by \(\beta_j\), so the new-to-old odds ratio equals
                     \(e^{\eta+\beta_j}/e^\eta=e^{\beta_j}\).
                 </p>
+
+                <p>
+                    Odds compare the probability that an event happens with the probability
+                    that it does not. For instance, if the probability of renewal is \(p=0.20\),
+                    the odds are \(0.20/0.80=0.25\), or \(1\) to \(4\). At \(p=0.50\), the odds
+                    are \(1\); at \(p=0.80\), they are \(4\). Odds and probabilities are
+                    different scales. If the odds equal \(o\), we recover the probability from
+                    \(p=o/(1+o)\).
+                </p>
+                <p>
+                    A logistic coefficient is easiest to interpret on the odds scale.
+                    Starting from
+                    \[
+                    \log\left(\frac{p(x)}{1-p(x)}\right)=\beta_0+\beta_1x,
+                    \]
+                    exponentiating gives \(\operatorname{odds}(x)=e^{\beta_0+\beta_1x}\).
+                    Hence
+                    \[
+                    \frac{\operatorname{odds}(x+1)}{\operatorname{odds}(x)}
+                    =\frac{e^{\beta_0+\beta_1(x+1)}}{e^{\beta_0+\beta_1x}}
+                    =e^{\beta_1}.
+                    \]
+                    This multiplier is constant across \(x\), even though changes in
+                    probability are not constant.
+                </p>
                 <p>
                     <b>Worked example.</b> For \(\eta(x)=-2+0.8x\), the odds ratio per extra unit of \(x\) is
                     \(e^{0.8}\approx2.23\). However, the predicted probabilities are approximately \(p(0)=0.119\),
@@ -18927,7 +19024,61 @@ plt.show()</code></pre>
                     category coded 0, holding other variables fixed.
                 </p>
 
+
+                <p>
+                    In the preceding example the odds are multiplied by
+                    \(e^{0.8}\approx2.23\) each time \(x\) increases by one. But the
+                    probability increases from about \(0.119\) to \(0.231\), a ratio of
+                    approximately \(1.94\), not \(2.23\). This is why interpreting an
+                    odds ratio as a relative risk, or saying that the probability
+                    is multiplied by the odds ratio, would be incorrect.
+                </p>
                 <!-- ==================== Likelihood and Optimization ==================== -->
+
+                <p>
+                    In linear regression, we estimated coefficients by minimizing the
+                    squared residuals. In logistic regression, the conditional outcomes
+                    follow Bernoulli distributions, so we instead estimate coefficients
+                    by <i>maximum likelihood</i>: choose the coefficients that assign
+                    relatively high probability to the actual observed sequence of
+                    zeros and ones.
+                </p>
+                <p>
+                    For example, suppose three predictor values are \(x=(0,1,2)\) and their
+                    observed outcomes are \(y=(0,1,1)\). Consider the proposed coefficients
+                    \(\beta_0=-1\) and \(\beta_1=1\). The corresponding event probabilities are
+                    \[
+                    p_1=\sigma(-1)\approx0.269,\quad
+                    p_2=\sigma(0)=0.5,\quad
+                    p_3=\sigma(1)\approx0.731.
+                    \]
+                    Since we observed a failure followed by two successes, the probability
+                    of precisely this outcome sequence, conditional on the predictors, is
+                    \[
+                    L(-1,1)=(1-p_1)p_2p_3
+                    \approx(0.731)(0.5)(0.731)\approx0.267.
+                    \]
+                    In comparison, coefficients \(\beta_0=\beta_1=0\) assign every observation
+                    probability \(0.5\) of success and give likelihood
+                    \((0.5)^3=0.125\). Thus, the first pair of coefficients fits this
+                    particular observed sequence better in the likelihood sense.
+                    Neither pair has yet been claimed to be the maximum-likelihood estimate.
+                </p>
+                <p>
+                    For a single Bernoulli outcome, the probability of the observed
+                    value \(y_i\in\{0,1\}\) can be written compactly as
+                    \[
+                    P(Y_i=y_i\mid x_i)=p_i^{y_i}(1-p_i)^{1-y_i}.
+                    \]
+                    When \(y_i=1\), the expression equals \(p_i\); when \(y_i=0\),
+                    it equals \(1-p_i\). Under conditional independence, multiplying
+                    these factors gives the joint likelihood:
+                    \[
+                    L(\beta)=\prod_{i=1}^n p_i^{y_i}(1-p_i)^{1-y_i}.
+                    \]
+                    Taking logarithms turns the product into the sum appearing
+                    in the following theorem.
+                </p>
                 <div class="stats-note stats-theorem">
                     <p class="stats-note-heading"><b>Theorem (log-likelihood, score, and curvature).</b></p>
                     <p>
@@ -18951,6 +19102,27 @@ plt.show()</code></pre>
                     \(y_i-\sigma(\eta)\), and the second is \(-\sigma(\eta)[1-\sigma(\eta)]\). Applying the chain
                     rule and summing yields the stated expressions. For any vector \(v\),
                     \(v^T\nabla^2\ell(\beta)v=-(Xv)^TW(Xv)\leq0\).
+                </p>
+
+                <p>
+                    The score \(X^T(y-p)\) has a useful interpretation. For the intercept,
+                    its component is \(\sum_i(y_i-p_i)\): the sum of the observed zeros and ones
+                    minus the sum of the probabilities predicted by the current coefficients.
+                    The component for predictor \(x_j\) is
+                    \(\sum_i x_{ij}(y_i-p_i)\). At an interior maximum of the
+                    likelihood these components are zero. The Hessian describes how the
+                    score changes with the coefficients, and its negative semidefiniteness
+                    explains why the log-likelihood has no isolated local maximum
+                    that is worse than another finite maximum.
+                </p>
+                <p>
+                    For the three-observation calculation above, the score at
+                    \((\beta_0,\beta_1)=(-1,1)\) is not zero: its intercept component is
+                    \[(0-0.269)+(1-0.5)+(1-0.731)\approx0.500.\]
+                    This confirms that the illustrative coefficients do not yet satisfy
+                    the interior first-order condition. A numerical optimizer changes the
+                    coefficients until the negative log-likelihood cannot be reduced
+                    further, subject to numerical tolerance and existence of a solution.
                 </p>
                 <p>
                     Unlike OLS, logistic regression has no general closed-form formula for its maximum-likelihood
@@ -18987,9 +19159,10 @@ fit_statsmodels = sm.Logit(y, X).fit(disp=False)
 print(&quot;Numerical optimization:&quot;, np.round(fit_manual.x, 5))
 print(&quot;statsmodels MLE:     &quot;, np.round(fit_statsmodels.params, 5))
 print(&quot;Optimizer message:&quot;, fit_manual.message)
-assert np.allclose(fit_manual.x, fit_statsmodels.params, atol=1e-4)
+print("Coefficient difference:",
+      np.round(fit_manual.x - fit_statsmodels.params, 6))
 
-# Profile the likelihood in the slope, fixing the intercept at its MLE.
+# Slice the negative log-likelihood in the slope, holding the intercept fixed.
 beta0_hat, beta1_hat = fit_statsmodels.params
 slopes = np.linspace(beta1_hat - 1, beta1_hat + 1, 240)
 losses = [negative_log_likelihood([beta0_hat, b]) for b in slopes]
@@ -19000,7 +19173,7 @@ ax.set(xlabel=&quot;Slope coefficient&quot;, ylabel=&quot;Negative log-likelihoo
        title=&quot;Likelihood-based estimation of logistic coefficients&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_likelihood_profile.png&quot;, dpi=170,
+fig.savefig(&quot;../../images/logistic_likelihood_profile.png&quot;, dpi=170,
             bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
@@ -19013,6 +19186,14 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+
+                <p>
+                    The curve in Experiment 134 is a <i>slice</i> of the negative
+                    log-likelihood: only the slope is varied, while the intercept is
+                    held at its fitted value. Its minimum occurs near the fitted
+                    slope. A genuine profile likelihood, in contrast, would re-optimize
+                    the intercept separately for every candidate slope.
+                </p>
                 <!-- ==================== Inference for Logistic Coefficients ==================== -->
                 <p>
                     In a correctly specified finite-dimensional model with identifiable coefficients, suitable
@@ -19027,6 +19208,18 @@ plt.show()</code></pre>
                     model specification. Clustered or otherwise dependent observations require a design-appropriate
                     approach.
                 </p>
+
+                <p>
+                    Why is the information matrix relevant? Near its maximum, the
+                    log-likelihood can be approximated by a quadratic function.
+                    The larger the curvature (in absolute value), the more sharply
+                    the likelihood concentrates around the estimated coefficients.
+                    In the usual large-sample approximation, the inverse information
+                    matrix describes their sampling covariance. In particular, the
+                    square root of its \(j\)-th diagonal element is the estimated
+                    standard error of \(\hat\beta_j\). These approximations require
+                    enough information in the sample and an identifiable model.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (Wald test and confidence interval).</b></p>
                     <p>To test \(H_0:\beta_j=\beta_{j,0}\), the usual Wald statistic is</p>
@@ -19039,6 +19232,27 @@ plt.show()</code></pre>
                         be unreliable with small samples, very rare outcomes, or separation.
                     </p>
                 </div>
+
+                <p>
+                    As a numerical illustration, suppose an estimated log-odds slope is
+                    \(\hat\beta_1=0.8\) with estimated standard error \(0.2\). To test
+                    \(H_0:\beta_1=0\), the Wald statistic is
+                    \[
+                    z_{\mathrm{obs}}=\frac{0.8-0}{0.2}=4.
+                    \]
+                    The approximate two-sided p-value is
+                    \(2[1-\Phi(4)]\approx0.000063\). A 95% coefficient interval is
+                    \[
+                    0.8\pm1.96(0.2)=[0.408,1.192].
+                    \]
+                    Exponentiating the endpoints produces an approximate 95%
+                    confidence interval for the odds ratio:
+                    \[
+                    [e^{0.408},e^{1.192}]\approx[1.50,3.29].
+                    \]
+                    These numbers are illustrative; the actual estimated coefficients
+                    and standard errors depend on the observed dataset.
+                </p>
                 <p>
                     For a nested-model comparison, a <i>likelihood-ratio test</i> uses \(G^2=2[\ell(\hat\beta_{\rm
                     full})-\ell(\hat\beta_{\rm reduced})]\), which is approximately chi-square with degrees of
@@ -19046,6 +19260,24 @@ plt.show()</code></pre>
                     the Wald nor the likelihood-ratio reference distribution should be treated as exact here.
                 </p>
 
+
+                <p>
+                    A likelihood-ratio test compares two fits of the same dataset.
+                    The full model contains the coefficient under investigation; the
+                    reduced model imposes its null-hypothesis value. Because the full
+                    model can choose from more parameter values, its maximized
+                    log-likelihood cannot be smaller. For example, if the reduced
+                    and full maximized log-likelihoods are \(-310\) and \(-304\), respectively,
+                    then
+                    \[
+                    G^2=2[-304-(-310)]=12.
+                    \]
+                    When one coefficient is removed, the usual large-sample reference
+                    is \(\chi^2_1\). The corresponding approximate p-value is
+                    \(P(\chi^2_1\geq12)\approx0.00053\). Wald and likelihood-ratio tests
+                    are not exactly equal in finite samples; they rely on different
+                    approximations to the same null hypothesis.
+                </p>
                 <p class="stats-experiment-title">
                     <b>Experiment 135: interpret estimated odds ratios and confidence intervals.</b>
                 </p>
@@ -19117,6 +19349,29 @@ print(&quot;95% confidence interval for its OR:&quot;, np.round(np.exp(ci), 4))<
                     logistic fit may have no finite slope estimate. Warnings, huge coefficients, and unstable
                     standard errors are symptoms, not evidence of a very precisely estimated effect.
                 </p>
+
+                <p>
+                    Consider an especially simple separated dataset with
+                    \(x=(-2,-1,1,2)\) and \(y=(0,0,1,1)\). Set the intercept to zero
+                    and write the slope as \(b&gt;0\). The likelihood of the four
+                    observed outcomes approaches one as \(b\) becomes arbitrarily
+                    large: predicted probabilities approach zero for negative \(x\)
+                    and one for positive \(x\). The negative log-likelihood is
+                    \[
+                    -\ell(b)=2\log(1+e^{-2b})+2\log(1+e^{-b}),
+                    \]
+                    which decreases toward zero but is strictly positive at every
+                    finite \(b\). Thus there is no finite unpenalized maximum-likelihood
+                    estimate in this example.
+                </p>
+                <p>
+                    Regularization changes the problem by adding a penalty for large
+                    coefficients. For example, the positive term \(\lambda b^2/2\)
+                    grows as \(|b|\) grows. It counteracts the tendency of a perfectly
+                    separated model to send its slope toward infinity and permits a
+                    finite optimum. A regularized coefficient is a trade-off between
+                    fitting the observations and keeping the fitted coefficients small.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (L2-penalized logistic estimation).</b></p>
                     <p>
@@ -19157,7 +19412,7 @@ ax.set(xlabel=&quot;Predictor x&quot;, ylabel=&quot;Predicted P(Y=1)&quot;,
        title=&quot;Separation and the role of L2 regularization&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_separation.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig(&quot;../../images/logistic_separation.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/logistic_separation.png"
@@ -19169,6 +19424,15 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+
+                <p>
+                    Experiment 137 varies scikit-learn's parameter <code>C</code>.
+                    A smaller <code>C</code> means stronger regularization, producing a
+                    flatter transition between predicted probabilities near zero and
+                    near one. A larger <code>C</code> weakens the penalty, allowing a
+                    steeper fitted curve. The data are perfectly separated, so an
+                    unpenalized maximum-likelihood interpretation would be misleading.
+                </p>
                 <!-- ==================== Predictive Modeling and Data Leakage ==================== -->
                 <p>
                     For prediction, <code>sklearn.linear_model.LogisticRegression</code> is convenient, but its
@@ -19186,6 +19450,17 @@ plt.show()</code></pre>
                     the final test set.
                 </p>
 
+
+                <p>
+                    Suppose a classifier estimates a probability \(\hat p=0.35\) for
+                    a particular case. At a threshold of \(0.5\), it predicts class
+                    zero; at a threshold of \(0.3\), it predicts class one. The
+                    predicted probability has not changed, only the decision rule.
+                    This distinction matters because a false positive and a false
+                    negative may have very different consequences. A threshold
+                    therefore belongs to the decision procedure, not to the
+                    definition of logistic regression itself.
+                </p>
                 <p class="stats-experiment-title">
                     <b>Experiment 138: fit a leakage-safe binary classifier and evaluate held-out predictions.</b>
                 </p>
@@ -19239,7 +19514,7 @@ axes[1].set(xlabel=&quot;Recall&quot;, ylabel=&quot;Precision&quot;, ylim=(0, 1.
             title=&quot;Precision-recall curve&quot;)
 axes[1].legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_roc_pr.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
+fig.savefig(&quot;../../images/logistic_roc_pr.png&quot;, dpi=170, bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/logistic_roc_pr.png"
@@ -19266,6 +19541,63 @@ plt.show()</code></pre>
                         Undefined ratios require explicit treatment when their denominators vanish.
                     </p>
                 </div>
+
+                <p>
+                    Consider five cases with predicted probabilities and observed
+                    outcomes as follows:
+                </p>
+                <div class="scrollable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Case</th>
+                                <th>Predicted probability</th>
+                                <th>Observed outcome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>0.90</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>0.70</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>0.60</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>0.35</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>0.10</td>
+                                <td>0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>
+                    At threshold \(t=0.5\), cases 1, 2, and 3 are predicted positive.
+                    We obtain \(TP=2\), \(FP=1\), \(FN=1\), and \(TN=1\). Therefore,
+                    \[
+                    \operatorname{precision}=\frac{2}{3},\qquad
+                    \operatorname{recall}=\frac{2}{3},\qquad
+                    \operatorname{specificity}=\frac12.
+                    \]
+                    Lowering the threshold to \(0.3\) also classifies case 4 as positive.
+                    This gives \(TP=3\), \(FP=1\), \(FN=0\), and \(TN=1\), so precision
+                    becomes \(3/4\) and recall becomes \(1\). This example illustrates
+                    how moving the threshold changes the confusion matrix. A lower
+                    threshold often increases recall, but need not always reduce precision.
+                </p>
                 <p>
                     A receiver-operating-characteristic (ROC) curve plots recall against FPR over score thresholds;
                     ROC AUC measures ranking discrimination. A precision-recall (PR) curve and average precision are
@@ -19329,7 +19661,7 @@ ax.set(xlabel=&quot;Classification threshold&quot;, ylabel=&quot;Metric value&qu
        ylim=(0, 1.05), title=&quot;The precision-recall trade-off&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_threshold_tradeoff.png&quot;, dpi=170,
+fig.savefig(&quot;../../images/logistic_threshold_tradeoff.png&quot;, dpi=170,
             bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
@@ -19342,7 +19674,33 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+
+                <p>
+                    Experiment 139 keeps the test sample untouched while choosing a
+                    threshold on validation data. Its rule maximizes validation recall
+                    among thresholds whose validation precision is at least 0.90.
+                    This is a particular demonstration rule, not a universally
+                    appropriate choice. Validation metrics are estimates with sampling
+                    uncertainty, so achieving 90% precision on one validation split
+                    does not guarantee the same precision on future data.
+                </p>
                 <!-- ==================== Discrimination, Calibration, and Rare Outcomes ==================== -->
+
+                <p>
+                    We must distinguish two questions. <i>Discrimination</i> asks whether
+                    cases that actually have \(Y=1\) tend to receive higher scores than
+                    cases with \(Y=0\). <i>Calibration</i> asks whether the reported
+                    probabilities agree with observed frequencies. A model can rank
+                    customers correctly yet assign probabilities that are too extreme.
+                </p>
+                <p>
+                    For example, imagine many customers to whom a model assigns
+                    renewal probability \(0.80\). If roughly 80% renew, that is
+                    consistent with calibration at \(0.80\). If only 60% renew,
+                    the model is overconfident at that probability. The proportion
+                    in such a group should be estimated from enough held-out
+                    observations; one individual outcome cannot establish calibration.
+                </p>
                 <div class="stats-note stats-definition">
                     <p class="stats-note-heading"><b>Definition (log loss and Brier score).</b></p>
                     <p>
@@ -19357,6 +19715,17 @@ plt.show()</code></pre>
                         though scores also depend on the difficulty and prevalence of the task.
                     </p>
                 </div>
+
+                <p>
+                    Both scoring rules evaluate the predicted probability itself,
+                    rather than only a thresholded classification. For instance,
+                    if \(y=1\) and the model predicts \(\hat p=0.9\), the Brier contribution
+                    is \((1-0.9)^2=0.01\), and the log-loss contribution is
+                    \(-\log(0.9)\approx0.105\). Predicting \(\hat p=0.1\) for the
+                    same observation gives Brier contribution \(0.81\) and log-loss
+                    contribution \(-\log(0.1)\approx2.303\). Thus, confidently wrong
+                    probabilities receive a larger penalty.
+                </p>
                 <p>
                     <i>Calibration</i> concerns whether events assigned probability about \(q\) occur about \(q\) of
                     the time. A reliability diagram compares observed outcome rates with mean predicted
@@ -19401,7 +19770,7 @@ ax.set(xlabel=&quot;Mean forecast probability&quot;, ylabel=&quot;Observed event
        title=&quot;Discrimination and calibration are different&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_calibration.png&quot;, dpi=170,
+fig.savefig(&quot;../../images/logistic_calibration.png&quot;, dpi=170,
             bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
@@ -19414,6 +19783,16 @@ plt.show()</code></pre>
                     </figcaption>
                 </figure>
 
+
+                <p>
+                    In Experiment 140, the overconfident probabilities are obtained
+                    by multiplying the correct log-odds by two. The logistic function
+                    is strictly increasing, so this transformation preserves the
+                    ranking of every pair of cases and therefore the ROC AUC.
+                    However, the numerical probabilities change, so calibration,
+                    log loss, and Brier score can become worse. The experiment
+                    contrasts ranking performance with probability accuracy.
+                </p>
                 <p class="stats-experiment-title">
                     <b>Experiment 141: compare ROC AUC, average precision, and baseline accuracy for rare
                         events.</b>
@@ -19454,10 +19833,21 @@ print(&quot;Average precision:&quot;,
       round(average_precision_score(y_test, pred_prob), 4))
 print(&quot;PR baseline (prevalence):&quot;, round(np.mean(y_test), 4))</code></pre>
 
+
+                <p>
+                    A simple example shows why class prevalence matters. If just
+                    2% of observations are positive, an always-negative classifier
+                    gets 98% accuracy but has recall \(0\): it never identifies
+                    a positive case. ROC AUC and average precision evaluate the
+                    ranking of predicted probabilities instead of treating
+                    accuracy as the sole criterion. In particular, the baseline
+                    precision in a precision-recall curve is determined by the
+                    positive-class prevalence for a random ranking.
+                </p>
                 <!-- ==================== Applied Student Example ==================== -->
                 <p>
-                    <b>Applied example: predicting an examination-score indicator.</b> We return to the SOGA-Py
-                    <i>students</i> dataset used in earlier notes. The continuous first-exam result,
+                    <b>Applied example: predicting an examination-score indicator.</b> We use the SOGA-Py
+                    <i>students</i> dataset. The continuous first-exam result,
                     <code>score1</code>, is the predictor; the second-exam result, <code>score2</code>, supplies a
                     <i>constructed</i> binary response. We define the outcome as whether <code>score2</code> is at
                     least the <i>training-set median</i> of <code>score2</code>. This is a demonstration of binary
@@ -19473,6 +19863,18 @@ print(&quot;PR baseline (prevalence):&quot;, round(np.mean(y_test), 4))</code></
                     second.
                 </p>
 
+
+                <p>
+                    Suppose the training-set median for the second exam were 70.
+                    We would define \(Y=1\) for scores of at least 70 and \(Y=0\)
+                    otherwise. A student with first-exam score 65 would then
+                    receive a model-estimated probability of reaching 70 on the
+                    second exam. The logistic model does not attempt to predict
+                    the student's numerical second-exam score. Because the median
+                    is calculated using the training set only, the test outcomes
+                    are defined using the same threshold without consulting the
+                    test-set scores to choose it.
+                </p>
                 <p class="stats-experiment-title">
                     <b>Experiment 142: apply logistic regression to a constructed exam-score outcome.</b>
                 </p>
@@ -19530,7 +19932,7 @@ ax.set(xlabel=&quot;First examination score&quot;, ylabel=&quot;P(second score &
        ylim=(-0.05, 1.05), title=f&quot;Examination classification: {data_source}&quot;)
 ax.legend()
 fig.tight_layout()
-fig.savefig(&quot;logistic_student_exam_outcome.png&quot;, dpi=170,
+fig.savefig(&quot;../../images/logistic_student_exam_outcome.png&quot;, dpi=170,
             bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
                 <figure class="stats-figure">
@@ -19616,6 +20018,7 @@ plt.show()</code></pre>
                         estimates</a>.
                 </p>
                 <hr />
+
 
                 <!-- ========================= MAIN SECTION 26: Maximum Likelihood Estimation ========================= -->
 
