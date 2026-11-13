@@ -11536,7 +11536,7 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 176: enumerate all 27 nonparametric bootstrap samples exactly.</b>
+                    <b>Experiment: enumerate all 27 nonparametric bootstrap samples exactly.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import itertools
@@ -11589,7 +11589,7 @@ print(&quot;Conditional standard error:&quot;, boot_means.std(ddof=0))
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 177: visualize the bootstrap distribution of a sample mean.</b>
+                    <b>Experiment: visualize the bootstrap distribution of a sample mean.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -11615,8 +11615,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/resampling_bootstrap_means.png"
                         alt="Histogram of resampled sample means, centered near the observed sample mean" />
-                    <figcaption>
-                        Experiment 177. Bootstrap means vary even though every resample is drawn from the same eight
+                    <figcaption style="font-size: smaller;">
+                        Bootstrap means vary even though every resample is drawn from the same eight
                         observed values.
                     </figcaption>
                 </figure>
@@ -11665,7 +11665,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 178: calculate percentile and basic bootstrap intervals without a library
+                    <b>Experiment: calculate percentile and basic bootstrap intervals without a library
                         wrapper.</b>
                 </p>
 
@@ -11721,7 +11721,7 @@ print(f&quot;Basic 95% CI:      ({2*est-high:.3f}, {2*est-low:.3f})&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 179: compare percentile, basic, and BCa confidence intervals using SciPy.</b>
+                    <b>Experiment: compare percentile, basic, and BCa confidence intervals using SciPy.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -11774,7 +11774,7 @@ for method in (&quot;percentile&quot;, &quot;basic&quot;, &quot;BCa&quot;):
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 180: compare mean and median uncertainty in the presence of an extreme value.</b>
+                    <b>Experiment: compare mean and median uncertainty in the presence of an extreme value.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -11826,7 +11826,7 @@ for label, x in ((&quot;Original&quot;, original), (&quot;With extreme value&quo
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 181: bootstrap independent-group and paired mean differences correctly.</b>
+                    <b>Experiment: bootstrap independent-group and paired mean differences correctly.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -11919,7 +11919,7 @@ print(&quot;Paired percentile CI:&quot;, np.quantile(paired_effect, [.025, .975]
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 182: enumerate all 70 label allocations and plot the exact null distribution.</b>
+                    <b>Experiment: enumerate all 70 label allocations and plot the exact null distribution.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import itertools
@@ -11958,8 +11958,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/resampling_permutation_null.png"
                         alt="Exact permutation distribution of differences in group means, with only two allocations as extreme as the observed difference" />
-                    <figcaption>
-                        Experiment 182. The null distribution is centered at zero and is computed by reassigning
+                    <figcaption style="font-size: smaller;">
+                        The null distribution is centered at zero and is computed by reassigning
                         group labels, not by sampling from each group with replacement.
                     </figcaption>
                 </figure>
@@ -11987,7 +11987,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 183: compare a randomized permutation test with a reproducible SciPy
+                    <b>Experiment: compare a randomized permutation test with a reproducible SciPy
                         calculation.</b>
                 </p>
 
@@ -12065,7 +12065,7 @@ print(f&quot;Exact p-value for Worked example 3: {exact.pvalue:.8f}&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 184: enumerate an exact paired sign-flip test and verify it in SciPy.</b>
+                    <b>Experiment: enumerate an exact paired sign-flip test and verify it in SciPy.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import itertools
@@ -12115,7 +12115,7 @@ print(f&quot;SciPy paired permutation p-value: {check.pvalue:.5f}&quot;)
                 </p>
 
                 <p>
-                    In Experiment 185, the observed times sum to \(9.5\), so the fitted exponential mean is
+                    In the experiment below, the observed times sum to \(9.5\), so the fitted exponential mean is
                     \(\widehat\mu=9.5/7\approx1.3571\). The exponential model stipulates that
                     \(\operatorname{Var}(X)=\mu^2\); thus it predicts
                     \[
@@ -12129,7 +12129,7 @@ print(f&quot;SciPy paired permutation p-value: {check.pvalue:.5f}&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 185: contrast parametric and nonparametric bootstrap standard errors.</b>
+                    <b>Experiment: contrast parametric and nonparametric bootstrap standard errors.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -12188,7 +12188,7 @@ print(f&quot;Nonparametric bootstrap SE: {nonparam_means.std(ddof=1):.4f}&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 186: estimate the coverage of percentile bootstrap intervals by simulation.</b>
+                    <b>Experiment: estimate the coverage of percentile bootstrap intervals by simulation.</b>
                 </p>
 
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -12230,8 +12230,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/resampling_coverage.png"
                         alt="Bar chart of simulated 95 percent bootstrap confidence interval coverage under normal and exponential populations" />
-                    <figcaption>
-                        Experiment 186. Coverage is evaluated by repeating the entire sampling-and-bootstrap
+                    <figcaption style="font-size: smaller;">
+                        Coverage is evaluated by repeating the entire sampling-and-bootstrap
                         procedure; results have Monte Carlo uncertainty.
                     </figcaption>
                 </figure>
@@ -12285,7 +12285,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 187: compare an invalid i.i.d. bootstrap with a moving-block bootstrap for
+                    <b>Experiment: compare an invalid i.i.d. bootstrap with a moving-block bootstrap for
                         serial data.</b>
                 </p>
 
@@ -12327,8 +12327,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/resampling_block_dependence.png"
                         alt="Comparison of bootstrap mean distributions using individual observation resampling versus moving blocks from a correlated time series" />
-                    <figcaption>
-                        Experiment 187. For a positively autocorrelated simulated series, block resampling typically
+                    <figcaption style="font-size: smaller;">
+                        For a positively autocorrelated simulated series, block resampling typically
                         produces greater uncertainty than an inappropriate i.i.d. bootstrap.
                     </figcaption>
                 </figure>
@@ -12407,86 +12407,6 @@ plt.show()</code></pre>
                     calculations.
                 </p>
 
-                <!-- ========================= Exercises ========================= -->
-                <p><b>Exercises.</b></p>
-                <ol>
-                    <li>
-                        <b>Exact bootstrap enumeration.</b> For \(x=(1,3)\), list all four ordered size-two
-                        bootstrap resamples, their means, and the exact bootstrap variance. Compare with
-                        \(s/\sqrt2\).
-                    </li>
-                    <li>
-                        <b>Empirical distribution.</b> Show that sampling an index uniformly with replacement from
-                        \(\{1,\ldots,n\}\) is equivalent to drawing from \(\widehat F_n\). Derive \(\operatorname
-                        E_*(\overline X^*)\) and \(\operatorname{Var}_*(\overline X^*)\) for general \(n\).
-                    </li>
-                    <li>
-                        <b>Hand-calculated interval.</b> Suppose \(\widehat\theta=12\) and the 2.5% and 97.5%
-                        bootstrap quantiles are 9 and 18. Calculate both the percentile and basic 95% intervals.
-                        Explain why they differ.
-                    </li>
-                    <li>
-                        <b>Jackknife and BCa.</b> For \(x=(1,2,3,8,10)\), compute the leave-one-out means, their
-                        grand mean, and the acceleration \(a\) in the BCa formula. Compare the three SciPy interval
-                        methods.
-                    </li>
-                    <li>
-                        <b>Exact permutation test.</b> For A = (5, 7, 9) and B = (2, 3, 4), enumerate all
-                        \(\binom63=20\) reassignments and calculate the exact two-sided p-value for the mean
-                        difference.
-                    </li>
-                    <li>
-                        <b>Paired exchangeability.</b> For differences \(d=(1,-2,3,4)\), enumerate all 16 sign
-                        patterns. Compare an absolute-mean permutation statistic with a sign-count statistic.
-                        Explain their different notions of extremeness.
-                    </li>
-                    <li>
-                        <b>Number of permutations.</b> Calculate \(\binom{30}{15}\). Discuss when exhaustive
-                        enumeration is computationally practical, why randomized sampling is needed otherwise, and
-                        what a finite Monte Carlo p-value means.
-                    </li>
-                    <li>
-                        <b>Coverage.</b> Repeat Experiment 186 with sample sizes \(n=10,30,100\). Use enough
-                        independently simulated studies to estimate uncertainty in your coverage estimates. Explain
-                        why increasing \(B\) alone cannot fix systematic undercoverage.
-                    </li>
-                    <li>
-                        <b>Dependence.</b> Repeat Experiment 187 with \(\phi=0,0.4,0.8\) and block lengths
-                        \(L=5,12,24\). Interpret changes in the estimated standard error and explain why block
-                        bootstrap is not an automatic cure for trends or structural breaks.
-                    </li>
-                    <li>
-                        <b>Design.</b> A product experiment randomizes entire schools but records student-level
-                        outcomes. Propose a permutation scheme and a bootstrap scheme that respect the school-level
-                        randomization and dependence.
-                    </li>
-                </ol>
-
-                <!-- ========================= Sources ========================= -->
-                <p>
-                    <b>Core textbook reference.</b> M. H. DeGroot and M. J. Schervish,
-                    <i>Probability and Statistics</i>, 4th ed., <b>Section 12.6, The Bootstrap</b> (printed pp.
-                    839–849). In particular, review Examples 12.6.1–12.6.2 for the nonparametric and parametric
-                    methods, and Section 12.6 Exercises <b>1–3</b> (printed p. 849) for theoretical practice. The
-                    permutation tests and dependent-data resampling examples developed above extend beyond that
-                    section.
-                </p>
-                <p>
-                    <b>Related material.</b> <i>OpenIntro Statistics</i>, 4th ed., Chapter 5 (foundations of
-                    sampling variability and inference) supplies background but is <i>not</i> a dedicated treatment
-                    of bootstrap confidence intervals or permutation tests. Related foundational topics include sampling
-                    distributions, confidence intervals,
-                    hypothesis testing, paired samples, and nonparametric tests.
-                </p>
-                <p>
-                    <b>Software and methodology references.</b>
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: bootstrap confidence intervals</a>;
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.permutation_test.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: permutation tests</a>; B. Efron and R. J.
-                    Tibshirani, <i>An Introduction to the Bootstrap</i>
-                    (1993), for more advanced theory and interval construction.
-                </p>
                 <hr />
 
                 <!-- ========================= MAIN SECTION 16: Inference for Proportions and A/B Testing ========================= -->
