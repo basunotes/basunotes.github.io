@@ -10418,7 +10418,7 @@ print(f"Parametric ANOVA p-value: {p_parametric:.5f}")
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 164: visualize pooled ranks and midranks for ties.</b>
+                    <b>Experiment: visualize pooled ranks and midranks for ties.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -10448,8 +10448,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/nonparametric_ranks.png"
                         alt="Comparison of observed values and their pooled midranks, including tied values" />
-                    <figcaption>
-                        Experiment 164. Equal observed values share a midrank; large gaps between observations
+                    <figcaption style="font-size: smaller;">
+                        <b>Figure.</b> Equal observed values share a midrank; large gaps between observations
                         disappear after ranking.
                     </figcaption>
                 </figure>
@@ -10508,7 +10508,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 165: derive and verify the exact binomial sign-test p-value.</b>
+                    <b>Experiment: derive and verify the exact binomial sign-test p-value.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -10524,7 +10524,6 @@ p_scipy = stats.binomtest(positive, n, 0.5).pvalue
 print(f&quot;Positive differences: {positive} of {n}&quot;)
 print(f&quot;Manual p-value: {p_manual:.5f}&quot;)
 print(f&quot;SciPy p-value:  {p_scipy:.5f}&quot;)
-
 </code></pre>
                 <!-- ========================= Mann–Whitney U ========================= -->
                 <p><b>Mann–Whitney U: two independent groups.</b></p>
@@ -10605,7 +10604,7 @@ print(f&quot;SciPy p-value:  {p_scipy:.5f}&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 166: reproduce the exact Mann–Whitney test by enumerating rank allocations.</b>
+                    <b>Experiment: reproduce the exact Mann–Whitney test by enumerating rank allocations.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from itertools import combinations
 import numpy as np
@@ -10669,7 +10668,7 @@ print(f&quot;Exact p-value={p_exact:.6f}; SciPy p-value={result.pvalue:.6f}&quot
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 167: estimate probability of superiority and compare empirical distributions.</b>
+                    <b>Experiment: estimate probability of superiority and compare empirical distributions.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -10700,8 +10699,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/nonparametric_ecdf.png"
                         alt="Two empirical cumulative distribution functions for independent samples" />
-                    <figcaption>
-                        Experiment 167. Empirical CDFs reveal spread and shape information that an omnibus p-value
+                    <figcaption style="font-size: smaller;">
+                        <b>Figure.</b> Empirical CDFs reveal spread and shape information that an omnibus p-value
                         does not convey.
                     </figcaption>
                 </figure>
@@ -10749,7 +10748,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 168: compute the Wilcoxon signed-rank statistic and its exact p-value.</b>
+                    <b>Experiment: compute the Wilcoxon signed-rank statistic and its exact p-value.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -10789,7 +10788,7 @@ print(f&quot;Exact p-value: {result.pvalue:.5f}&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 169: enumerate signed-rank sign flips with ties and a zero difference.</b>
+                    <b>Experiment: enumerate signed-rank sign flips with ties and a zero difference.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from itertools import product
 import numpy as np
@@ -10925,7 +10924,7 @@ print(&quot;SciPy asymptotic p (not exact):&quot;,
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 170: calculate Kruskal–Wallis from pooled ranks and verify it.</b>
+                    <b>Experiment: calculate Kruskal–Wallis from pooled ranks and verify it.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -10971,7 +10970,7 @@ print(f&quot;Approximate epsilon_H^2={(H_manual-k+1)/(N-k):.3f}&quot;)
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 171: run pairwise Mann–Whitney comparisons with Holm-adjusted p-values.</b>
+                    <b>Experiment: run pairwise Mann–Whitney comparisons with Holm-adjusted p-values.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from itertools import combinations
 import numpy as np
@@ -11111,7 +11110,7 @@ for (a,b), raw, adj, significant in zip(pairs, p_raw, p_adjusted, reject):
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 172: calculate Friedman Q and enumerate its exact small-sample null
+                    <b>Experiment: calculate Friedman Q and enumerate its exact small-sample null
                         distribution.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from itertools import permutations, product
@@ -11145,7 +11144,7 @@ print(f&quot;Exact p={p_exact:.6f}, Kendall W={q/(n*(k-1)):.2f}&quot;)
 
 </code></pre>
                 <p class="stats-experiment-title">
-                    <b>Experiment 173: visualize matched observations without losing participant identities.</b>
+                    <b>Experiment: visualize matched observations without losing participant identities.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -11170,8 +11169,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/nonparametric_matched_profiles.png"
                         alt="Five participants each measured under three interface conditions, linked across conditions" />
-                    <figcaption>
-                        Experiment 173. Connecting repeated observations makes the blocking structure explicit; a
+                    <figcaption style="font-size: smaller;">
+                        <b>Figure.</b> Connecting repeated observations makes the blocking structure explicit; a
                         test that treats all 15 observations as independent would ignore that structure.
                     </figcaption>
                 </figure>
@@ -11198,7 +11197,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 174: show why equal population medians do not imply equal distributions.</b>
+                    <b>Experiment: show why equal population medians do not imply equal distributions.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 
@@ -11240,7 +11239,7 @@ print(&quot;Theoretical population medians are both zero.&quot;)</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 175: perform an exact label-permutation rank comparison with tied ratings.</b>
+                    <b>Experiment: perform an exact label-permutation rank comparison with tied ratings.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy import stats
@@ -11313,11 +11312,13 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     </table>
                 </div>
                 <p>
-                    <b>Example of careful reporting.</b> “In an independent-groups comparison of eight observations
+                    <b>Example of careful reporting.</b><br> 
+                    <i>In an independent-groups comparison of eight observations
                     per condition, a two-sided Mann–Whitney test was applied to the synthetic data. We report the U
                     statistic, the p-value method, both empirical distributions, and the probability of superiority.
                     Because the group shapes may differ, we interpret the result as a rank-based distributional
-                    comparison rather than a test that their population medians differ.” A real report should add
+                    comparison rather than a test that their population medians differ.</i><br>
+                    A real report should add
                     uncertainty intervals for the main effect, prespecified hypotheses, and a discussion of design
                     and missing data.
                 </p>
@@ -11331,72 +11332,6 @@ print(&quot;Possible label reallocations:&quot;, 252)</code></pre>
                     Kruskal–Wallis compares pooled mean ranks; for the same participants under three or more
                     conditions, Friedman compares ranks within participants. In every case, the study design,
                     test null, method of handling ties, and effect size should be stated alongside the p-value.
-                </p>
-
-                <!-- ========================= Exercises ========================= -->
-                <p><b>Exercises.</b></p>
-                <ol>
-                    <li>
-                        <b>Signs and exactness.</b> A paired study has differences \((-2,4,0,3,5,-1,6)\). Identify
-                        the zero-handling decision, compute \(B\), \(n^*\), and the two-sided sign-test p-value;
-                        verify with <code>scipy.stats.binomtest</code>.
-                    </li>
-                    <li>
-                        <b>Manual U statistic.</b> For A = (3, 7, 9) and B = (5, 8, 10), write the six pooled ranks,
-                        calculate \(R_A\), \(U_A\), and \(U_B\), and enumerate the exact two-sided p-value from all
-                        \(\binom{6}{3}\) rank allocations.
-                    </li>
-                    <li>
-                        <b>Ties.</b> For A = (3, 4, 4, 5) and B = (4, 5, 5, 5), compute midranks and \(U_A\)
-                        manually. Explain why the tie-free exact U distribution is not the right conditional
-                        reference.
-                    </li>
-                    <li>
-                        <b>Signed ranks.</b> For paired differences \((2,-1,3,-4,5,6)\), calculate signed ranks and
-                        the smaller of \(W_+\) and \(W_-\). Discuss whether symmetry is defensible with only six
-                        pairs.
-                    </li>
-                    <li>
-                        <b>Kruskal–Wallis.</b> Repeat Worked example 4 with B replaced by \((4,7,9,10,11)\), thereby
-                        introducing a tie with C. Calculate the tie correction and verify the statistic with SciPy.
-                    </li>
-                    <li>
-                        <b>Friedman.</b> Recompute Worked example 5 after changing participant 4's B time from 15 to
-                        18. Determine the new within-block ranks, \(Q\), and Kendall's \(W\), and explain why the
-                        rows must remain intact.
-                    </li>
-                    <li>
-                        <b>Interpretation.</b> Construct two distributions with equal medians but different shapes.
-                        Describe why a rank test may detect differences without demonstrating a difference in
-                        medians.
-                    </li>
-                    <li>
-                        <b>Study design.</b> A website collects ratings from each visitor on four consecutive days
-                        after a product change. Describe why neither Kruskal–Wallis nor Friedman automatically
-                        handles serial dependence and a temporal intervention.
-                    </li>
-                </ol>
-
-                <!-- ========================= References ========================= -->
-                <p>
-                    <b>Core reference.</b> M. H. DeGroot and M. J. Schervish, <i>Probability and Statistics</i>, 4th
-                    ed., <b>Section 10.8, Sign and Rank Tests</b> (printed pp. 678–685). In particular, Exercises
-                    <b>1, 11, 15, and 16</b> address the sign test, U/rank-sum identity, the signed-rank statistic,
-                    and a paired application. The Kruskal–Wallis and Friedman extensions here are developed as
-                    additional applied material.
-                </p>
-                <p>
-                    <b>Software references.</b>
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: Mann–Whitney U</a>;
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: Wilcoxon signed-rank</a>;
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kruskal.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: Kruskal–Wallis</a>;
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: Friedman</a>;
-                    <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html"
-                        target="_blank" rel="noopener noreferrer">statsmodels: multiple-testing adjustments</a>.
                 </p>
 
                 <hr />
