@@ -12507,7 +12507,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 188: simulate a Bernoulli conversion experiment and verify the standard error.</b>
+                    <b>Experiment: simulate a Bernoulli conversion experiment and verify the standard error.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 
@@ -12577,7 +12577,7 @@ print(f"Theoretical SE:           {np.sqrt(p * (1-p) / n):.5f}")</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 189: compare Wald, Wilson, and exact intervals at every possible count.</b>
+                    <b>Experiment: compare Wald, Wilson, and exact intervals at every possible count.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -12618,8 +12618,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_single_proportion_intervals.png"
                         alt="The Wald method fails at the boundaries; Wilson and exact limits remain within the parameter space." />
-                    <figcaption>
-                        Experiment 189. The Wald method fails at the boundaries; Wilson and exact limits remain
+                    <figcaption style="font-size: smaller;">
+                        The Wald method fails at the boundaries; Wilson and exact limits remain
                         within the parameter space.
                     </figcaption>
                 </figure>
@@ -12669,7 +12669,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 190: calculate an exact binomial p-value by hand and with SciPy.</b>
+                    <b>Experiment: calculate an exact binomial p-value by hand and with SciPy.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from math import comb
 from scipy.stats import binomtest, norm
@@ -12810,7 +12810,7 @@ print(f"95% Wilson CI: {result.proportion_ci(method='wilson')}")
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 191: reproduce the pooled two-proportion z-test and effect measures.</b>
+                    <b>Experiment: reproduce the pooled two-proportion z-test and effect measures.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import norm
@@ -12831,7 +12831,7 @@ print(f"statsmodels: z={sm_z:.4f}; p={sm_p:.6f}")
 </code></pre>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 192: compare Wald and Newcombe confidence intervals for absolute uplift.</b>
+                    <b>Experiment: compare Wald and Newcombe confidence intervals for absolute uplift.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -12864,8 +12864,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_uplift_intervals.png"
                         alt="Both intervals express uncertainty in the absolute conversion uplift; neither is a confidence interval for relative uplift." />
-                    <figcaption>
-                        Experiment 192. Both intervals express uncertainty in the absolute conversion uplift;
+                    <figcaption style="font-size: smaller;">
+                        Both intervals express uncertainty in the absolute conversion uplift;
                         neither is a confidence interval for relative uplift.
                     </figcaption>
                 </figure>
@@ -12914,7 +12914,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 193: use Fisher exact testing when the contingency table is sparse.</b>
+                    <b>Experiment: use Fisher exact testing when the contingency table is sparse.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import fisher_exact, chi2_contingency
 
@@ -13010,7 +13010,7 @@ print(f"Chi-square approximation p:   {p_chi2:.6f}")</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 194: simulate many A/A experiments and inspect false-positive calibration.</b>
+                    <b>Experiment: simulate many A/A experiments and inspect false-positive calibration.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from scipy.stats import norm
@@ -13074,7 +13074,7 @@ print("Expected Monte Carlo SE near 0.05:",
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 195: calculate power and approximate sample size for a planned uplift.</b>
+                    <b>Experiment: calculate power and approximate sample size for a planned uplift.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -13111,8 +13111,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_power_sample_size.png"
                         alt="Power increases with the number of independent randomized units; these calculations assume a fixed-horizon two-sided test." />
-                    <figcaption>
-                        Experiment 195. Power increases with the number of independent randomized units; these
+                    <figcaption style="font-size: smaller;">
+                        Power increases with the number of independent randomized units; these
                         calculations assume a fixed-horizon two-sided test.
                     </figcaption>
                 </figure>
@@ -13141,7 +13141,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 196: simulate repeated significance peeking under a true null.</b>
+                    <b>Experiment: simulate repeated significance peeking under a true null.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
@@ -13177,8 +13177,8 @@ plt.show()</code></pre>
                 <figure class="stats-figure">
                     <img src="../images/ab_optional_stopping.png"
                         alt="Under no real treatment effect, stopping at the first nominally significant result increases the overall false-positive probability." />
-                    <figcaption>
-                        Experiment 196. Under no real treatment effect, stopping at the first nominally significant
+                    <figcaption style="font-size: smaller;">
+                        Under no real treatment effect, stopping at the first nominally significant
                         result increases the overall false-positive probability.
                     </figcaption>
                 </figure>
@@ -13212,7 +13212,7 @@ plt.show()</code></pre>
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 197: control multiplicity with Holm and Benjamini–Hochberg.</b>
+                    <b>Experiment: control multiplicity with Holm and Benjamini–Hochberg.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
 from statsmodels.stats.multitest import multipletests
@@ -13255,7 +13255,7 @@ for method in ["holm", "fdr_bh"]:
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 198: detect sample-ratio mismatch using the exact binomial test.</b>
+                    <b>Experiment: detect sample-ratio mismatch using the exact binomial test.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">from scipy.stats import binomtest
 
@@ -13309,7 +13309,7 @@ print("Investigate logging, randomization, and analysis eligibility first.")</co
                 </p>
 
                 <p class="stats-experiment-title">
-                    <b>Experiment 199: simulate how treating repeated sessions as independent inflates false
+                    <b>Experiment: simulate how treating repeated sessions as independent inflates false
                         positives.</b>
                 </p>
                 <pre class="plain stats-code code-python"><code class="language-python">import numpy as np
@@ -13400,82 +13400,7 @@ print(f"User-level false-positive rate:    {(proper_p&lt;.05).mean():.3f}")</cod
                     zero under the stated analysis assumptions; rollout still depends on data-quality checks,
                     operating costs, and prespecified guardrail outcomes.”
                 </p>
-                <p><b>Exercises.</b></p>
-                <ol>
-                    <li>
-                        <b>Bernoulli inference.</b> For 7 successes in 50 attempts, compute the likelihood, MLE,
-                        plug-in SE, 95% Wald and Wilson confidence intervals, and an exact two-sided test of
-                        \(p=0.10\). Explain why the test SE differs from the interval SE.
-                    </li>
-                    <li>
-                        <b>Exact test by hand.</b> Test \(H_0:p=0.5\) when 9 of 10 trials succeed. Enumerate the
-                        relevant binomial outcomes and report the exact two-sided p-value.
-                    </li>
-                    <li>
-                        <b>A/B calculation.</b> Control has 45/300 conversions and treatment 65/300. Calculate
-                        absolute uplift (percentage points), relative uplift, pooled z-test, 95% unpooled CI, and a
-                        Newcombe CI. State a business decision and what additional information it requires.
-                    </li>
-                    <li>
-                        <b>Sparse data.</b> Compare 0/20 and 4/20 successes using Fisher's exact test. Discuss the
-                        limits of normal approximations, and distinguish a p-value from an effect-size confidence
-                        interval.
-                    </li>
-                    <li>
-                        <b>Design.</b> Plan a two-sided 5%-level experiment with baseline conversion 5%, MDE 1
-                        percentage point, and 90% power. Estimate the required independent users per arm; evaluate
-                        how a 20% loss of eligible outcomes affects your target.
-                    </li>
-                    <li>
-                        <b>Sequential monitoring.</b> Repeat Experiment 196 with 2, 5, 10, and 20 equally spaced
-                        looks at fixed maximum sample size. Explain how your simulated false-alarm rate differs from
-                        a valid group-sequential design.
-                    </li>
-                    <li>
-                        <b>Multiplicity.</b> Apply Holm and BH to p-values \((0.004,0.014,0.026,0.048,0.16)\) and
-                        explain which error criterion is appropriate for a single primary metric versus exploratory
-                        metrics.
-                    </li>
-                    <li>
-                        <b>SRM and eligibility.</b> Why might selecting only users who clicked the purchase button
-                        cause sample ratio mismatch? Explain using a simple causal diagram or conditional
-                        probability argument.
-                    </li>
-                    <li>
-                        <b>Independence.</b> Repeat Experiment 199 with one session per user, then with 4 and 16
-                        sessions. Explain the difference between the user-average conversion rate and the
-                        session-weighted conversion rate when users have different numbers of sessions.
-                    </li>
-                    <li>
-                        <b>Reporting.</b> Draft a short A/B report stating randomization unit, users per arm,
-                        conversion rates, absolute difference, 95% CI, p-value, primary metric, guardrail outcomes,
-                        and a qualified rollout recommendation.
-                    </li>
-                </ol>
-
-                <p>
-                    <b>Textbook references.</b> <i>OpenIntro Statistics</i>, 4th ed.: Sections
-                    <b>5.2</b> (confidence intervals for a proportion), <b>5.3</b> (hypothesis testing for a
-                    proportion), <b>6.1</b> (inference for a single proportion), and <b>6.2</b> (difference of two
-                    proportions). See also DeGroot &amp; Schervish, <i>Probability and Statistics</i>, 4th ed.,
-                    Section <b>5.2</b> for Bernoulli and binomial distributions, as well as the sections
-                    on hypothesis testing, MLE, and logistic regression. Practical experiment design, SRM, repeated
-                    peeking, and clustering extend beyond the above textbook sections.
-                </p>
-                <p>
-                    <b>Software documentation.</b>
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: binomial test and confidence intervals</a>;
-                    <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fisher_exact.html"
-                        target="_blank" rel="noopener noreferrer">SciPy: Fisher exact test</a>;
-                    <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.confint_proportions_2indep.html"
-                        target="_blank" rel="noopener noreferrer">statsmodels: intervals for differences of
-                        proportions</a>;
-                    <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.power.NormalIndPower.html"
-                        target="_blank" rel="noopener noreferrer">statsmodels: normal-theory power</a>;
-                    <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.multitest.multipletests.html"
-                        target="_blank" rel="noopener noreferrer">statsmodels: multiple testing</a>.
-                </p>
+                
                 <hr />
 
 
